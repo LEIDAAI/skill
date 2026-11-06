@@ -349,6 +349,16 @@
     <div class="modal-body"><pre id="modal-content"></pre></div>
   </div>
 </div>
+
+<div class="modal-mask" id="form-modal">
+  <div class="modal" id="form-modal-box">
+    <div class="modal-head">
+      <h3 id="form-modal-title">添加</h3>
+      <button class="modal-close" id="form-modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="form-modal-body"></div>
+  </div>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -876,6 +886,35 @@ function renderGrid() {
 }
 function refreshAll() { renderMeta(); renderPtabs(); renderChips(); renderGrid(); }
 
+/* ================= 表单弹窗（技能/专家/知识库 添加表单统一用弹窗打开） ================= */
+const formModal = document.getElementById('form-modal');
+const formModalBody = document.getElementById('form-modal-body');
+let formModalHost = null; // 被移入弹窗的原表单节点
+
+function openFormModal(formEl, title) {
+  formModalHost = formEl;
+  document.getElementById('form-modal-title').textContent = title;
+  formModalBody.innerHTML = '';
+  formModalBody.appendChild(formEl);
+  formEl.style.display = 'block';
+  formModal.classList.add('open');
+}
+function closeFormModal() {
+  formModal.classList.remove('open');
+  if (formModalHost) {
+    // 放回原视图容器末尾，保持 DOM 结构可复原
+    const anchor = {
+      'addform': document.getElementById('grid'),
+      'eaddform': document.getElementById('egrid')
+    }[formModalHost.id];
+    if (anchor && anchor.parentNode) anchor.parentNode.appendChild(formModalHost);
+    formModalHost.style.display = 'none';
+    formModalHost = null;
+  }
+}
+document.getElementById('form-modal-close').addEventListener('click', closeFormModal);
+formModal.addEventListener('click', e => { if (e.target === formModal) closeFormModal(); });
+
 /* ================= 交互 ================= */
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -941,8 +980,8 @@ pfBox.innerHTML = PLATFORM_KEYS.map((k, i) =>
   '<label><input type="checkbox" name="fpf" value="' + k + '"' + (i === 1 ? ' checked' : '') + '>' +
   '<span style="color:' + PLATFORMS[k].color + ';font-weight:600">' + PLATFORMS[k].label + '</span></label>'
 ).join('');
-document.getElementById('btn-add').addEventListener('click', () => addform.classList.toggle('open'));
-document.getElementById('btn-cancel').addEventListener('click', () => { addform.classList.remove('open'); });
+document.getElementById('btn-add').addEventListener('click', () => openFormModal(addform, '添加自定义技能'));
+document.getElementById('btn-cancel').addEventListener('click', closeFormModal);
 document.getElementById('btn-save').addEventListener('click', () => {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { toast('请填写技能名称'); return; }
@@ -964,7 +1003,7 @@ document.getElementById('btn-save').addEventListener('click', () => {
   localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
   ['f-name','f-slug','f-desc','f-prompt'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-built').checked = false;
-  addform.classList.remove('open');
+  closeFormModal();
   refreshAll(); toast('✓ 技能已添加');
 });
 
@@ -1350,8 +1389,8 @@ document.getElementById('egrid').addEventListener('click', e => {
 const eaddform = document.getElementById('eaddform');
 const eSelPf = document.getElementById('e-f-platform');
 eSelPf.innerHTML = '<option value="all">全部平台</option>' + PLATFORM_KEYS.map(k => '<option value="' + k + '">' + PLATFORMS[k].label + '</option>').join('');
-document.getElementById('ebtn-add').addEventListener('click', () => eaddform.classList.toggle('open'));
-document.getElementById('ebtn-cancel').addEventListener('click', () => eaddform.classList.remove('open'));
+document.getElementById('ebtn-add').addEventListener('click', () => openFormModal(eaddform, '添加自定义专家'));
+document.getElementById('ebtn-cancel').addEventListener('click', closeFormModal);
 document.getElementById('ebtn-save').addEventListener('click', () => {
   const name = document.getElementById('e-f-name').value.trim();
   if (!name) { toast('请填写专家名称'); return; }
@@ -1371,7 +1410,7 @@ document.getElementById('ebtn-save').addEventListener('click', () => {
   customExperts.push(expert);
   localStorage.setItem(EXPERTS_LS_KEY, JSON.stringify(customExperts));
   ['e-f-name','e-f-desc','e-f-greet','e-f-sys','e-f-skills'].forEach(id => document.getElementById(id).value = '');
-  eaddform.classList.remove('open');
+  closeFormModal();
   refreshExperts(); toast('✓ 专家已添加');
 });
 
