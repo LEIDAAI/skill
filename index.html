@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>店雷达技能导航 · 多平台</title>
+<link rel="icon" type="image/png" href="logo.png">
 <style>
   :root {
     --primary: #005bff;
@@ -23,9 +24,8 @@
   /* ===== Header ===== */
   header { margin-bottom: 28px; }
   .brand { display: flex; align-items: center; gap: 14px; }
-  .logo {
-    width: 46px; height: 46px; border-radius: 12px; background: var(--primary);
-    color: #fff; font-weight: 700; font-size: 21px; display: flex; align-items: center; justify-content: center;
+  .logo-img {
+    width: 46px; height: 46px; border-radius: 12px; object-fit: contain;
     flex-shrink: 0;
   }
   h1 { font-size: 24px; letter-spacing: 0.5px; line-height: 1.3; }
@@ -201,7 +201,7 @@
 
   <header>
     <div class="brand">
-      <div class="logo">店</div>
+      <img class="logo-img" src="logo.png" alt="店雷达">
       <div>
         <h1>店雷达技能导航</h1>
         <div class="sub">按平台 × 场景组织技能，复制调用指令粘贴到任意对话即可使用，无需翻历史记录</div>
