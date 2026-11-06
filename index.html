@@ -58,6 +58,18 @@
   .ptab.active { color: #fff; }
   .ptab.active .cnt { background: rgba(255,255,255,0.22); color: #fff; }
 
+  /* ===== View tabs (技能/专家) ===== */
+  .vtabs { display: flex; gap: 10px; margin-bottom: 18px; }
+  .vtab {
+    border: 1.5px solid var(--border); background: var(--card); border-radius: 12px;
+    padding: 10px 26px; font-size: 15px; font-weight: 700; cursor: pointer;
+    color: var(--muted); transition: all .15s; display: flex; align-items: center; gap: 8px;
+    font-family: inherit;
+  }
+  .vtab:hover { border-color: #c4d2ee; color: var(--text); }
+  .vtab.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(0,91,255,.25); }
+  .vtab .vicon { font-size: 16px; }
+
   /* ===== Search + actions row ===== */
   .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
   .search {
@@ -206,12 +218,18 @@
       <img class="logo-img" src="logo.png" alt="店雷达">
       <div>
         <h1>店雷达技能导航</h1>
-        <div class="sub">按平台 × 场景组织技能，复制调用指令粘贴到任意对话即可使用，无需翻历史记录</div>
+        <div class="sub">技能 × 专家双库 · 复制调用指令粘贴到任意对话即可使用，无需翻历史记录</div>
       </div>
     </div>
     <div class="meta" id="meta"></div>
   </header>
 
+  <div class="vtabs">
+    <button class="vtab active" id="vtab-skills" onclick="switchView('skills')"><span class="vicon">🧩</span>技能</button>
+    <button class="vtab" id="vtab-experts" onclick="switchView('experts')"><span class="vicon">👤</span>专家</button>
+  </div>
+
+  <div id="view-skills">
   <div class="toolbar">
     <input id="search" class="search" placeholder="搜索技能名称 / 描述 / 触发词…">
     <div class="actions">
@@ -249,6 +267,42 @@
   </div>
 
   <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="view-experts" style="display:none">
+    <div class="toolbar">
+      <input id="esearch" class="search" placeholder="搜索专家名称 / 简介 / 能力…">
+      <div class="actions">
+        <button class="btn btn-add" id="ebtn-add">＋ 添加专家</button>
+        <button class="btn btn-mini" id="ebtn-export" title="导出自定义专家为 JSON">导出</button>
+        <button class="btn btn-mini" id="ebtn-import" title="从 JSON 导入自定义专家">导入</button>
+        <input type="file" id="efile-import" accept=".json" style="display:none">
+      </div>
+    </div>
+    <div class="ptabs-wrap">
+      <div class="ptabs" id="eptabs"></div>
+    </div>
+    <div class="grid" id="egrid"></div>
+    <div class="addform" id="eaddform">
+      <h3>添加自定义专家</h3>
+      <div class="frow">
+        <input id="e-f-name" placeholder="专家名称，如：Ozon 选品专家">
+        <select id="e-f-platform"></select>
+      </div>
+      <label class="flabel">专家简介（副标题）</label>
+      <div class="frow"><input id="e-f-desc" placeholder="一句话介绍这个专家"></div>
+      <label class="flabel">开场白（会话第一条消息）</label>
+      <div class="frow"><input id="e-f-greet" placeholder="你好！我是…，可以帮你…"></div>
+      <label class="flabel">人设 System Prompt（复制到对话开头即可让助手变身该专家）</label>
+      <div class="frow"><textarea id="e-f-sys" placeholder="你是…助手，职责是…&#10;规则：…&#10;输出格式：…"></textarea></div>
+      <label class="flabel">绑定的技能（多个用逗号分隔）</label>
+      <div class="frow"><input id="e-f-skills" placeholder="如：Ozon选品搜索, 利润测算"></div>
+      <div class="form-foot">
+        <button class="btn-solid" id="ebtn-save">保存</button>
+        <button class="btn-plain" id="ebtn-cancel">取消</button>
+      </div>
+    </div>
+  </div>
 
   <div class="section">
     <h2>📦 各平台数据源</h2>
@@ -927,6 +981,234 @@ document.getElementById('file-import').addEventListener('change', e => {
 
 /* ---- init ---- */
 refreshAll();
+
+/* ================= 专家库 ================= */
+const EXPERTS_LS_KEY = 'dld_experts_custom_v1';
+let customExperts = [];
+try { customExperts = JSON.parse(localStorage.getItem(EXPERTS_LS_KEY) || '[]'); } catch (e) { customExperts = []; }
+let curExpertPlatform = 'all';
+let curExpertSearch = '';
+
+const BASE_EXPERTS = [
+  {
+    id: 'exp-1688-sel',
+    name: '1688分销选品专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '面向 1688 分销场景的选品助手：关键词分析、竞品监控、类目趋势与利润测算，一键生成选品报告。',
+    greet: '你好！我是 1688 分销选品专家，可以帮你分析关键词、监控竞品、测算利润并生成选品报告。可以直接说需求，或点下面的参考提示词。',
+    abilities: ['关键词竞争度分析', '竞品价格与销量监控', '类目趋势洞察', '分销利润测算', '一键生成选品报告'],
+    refPrompts: ['帮我分析"收纳盒"关键词在1688的竞争度', '对比近30天收纳类目TOP10竞品的价格分布', '生成一份厨房收纳类目的月度选品报告'],
+    skills: ['1688选品搜索', '1688竞品价格监控', '1688类目趋势分析', '1688商品详情解析', '1688店铺排行分析', '1688利润测算', '1688选品报告生成'],
+    sysPrompt: [
+      '你是1688分销选品专家，负责基于 1688 MCP 的可验证数据完成选品决策。',
+      '工作流程：先理解选品意图 → 路由到合适技能（选品搜索/竞品监控/类目趋势/商品解析/店铺分析/利润测算/报告生成）→ 调用工具取数 → 按技能输出格式整理。',
+      '纪律：调用工具前确认参数完整；类目编码必须用 get_category_info 查询，不要猜；数据缺失明确标注，不编造数值。',
+      '输出：结论 + 数据表格 + 1-3条建议，附数据来源（接口名）。'
+    ].join('\n')
+  },
+  {
+    id: 'exp-ozon-sel',
+    name: 'Ozon选品专家',
+    platforms: ['ozon'],
+    status: 'plan',
+    desc: 'Ozon（俄罗斯电商）选品助手：类目大盘、热销榜、竞品监控与卢布计价利润测算。',
+    greet: '你好！我是 Ozon 选品专家，可以帮你搜商品、看类目趋势、监控竞品、算卢布利润、出选品报告。类目词我会先查字典再查询，保证数据准确。',
+    abilities: ['类目大盘与趋势分析', 'SKU/SPU 商品搜索与解析', '竞品价格与跟卖监控', '卢布计价利润测算', '结构化选品报告'],
+    refPrompts: ['帮我看看 Ozon 家居类目近28天有什么好卖的', '分析这个 SKU 的销量趋势和跟卖情况', '算一下这个商品的分销利润（卢布售价/1688拿货价）'],
+    skills: ['Ozon选品搜索', '竞品价格监控', '类目趋势分析', '商品详情解析', '店铺排行分析', '利润测算', '选品报告生成'],
+    sysPrompt: [
+      '你是 Ozon 选品专家，负责基于 yunqi-data MCP（yq_ozon_* 系列接口）完成俄罗斯市场选品决策。',
+      '工作流程：理解意图 → 先用 yq_dict_lookup 查类目 ID（绝不猜编码）→ 路由技能（选品搜索/竞品监控/类目趋势/商品解析/店铺分析/利润测算/报告生成）→ 按技能输出格式整理。',
+      '纪律：金额默认卢布（以返回 symbol 为准）；dailySales=日/weeklySales=周/monthSales=月，带7/28后缀=近7/28天；空字段≠0，缺数据标注「—」；不编造数值。',
+      '输出：结论 + 数据表格 + 1-3条建议，附数据来源（接口名+查询参数）。'
+    ].join('\n')
+  },
+  {
+    id: 'exp-cross-border',
+    name: '跨境电商选品专家',
+    platforms: ['amazon', 'temu'],
+    status: 'plan',
+    desc: '亚马逊 + TEMU 双平台选品：市场调研、关键词挖掘、竞品拆解与托管利润测算。',
+    greet: '你好！我是跨境电商选品专家，覆盖亚马逊（sellersprite 数据）和 TEMU（指令式调研）。可以帮你评估产品机会、挖关键词、拆竞品、算托管利润。',
+    abilities: ['亚马逊市场调研与竞品拆解', '关键词挖掘与投放建议', 'TEMU 半托管/全托管利润测算', '双平台机会对比'],
+    refPrompts: ['评估这个产品在亚马逊能不能做', '挖一下 wireless earbuds 的关键词并分组', '算一下这个产品 TEMU 全托管的利润'],
+    skills: ['亚马逊竞品分析', '亚马逊关键词挖掘', '亚马逊销量与类目趋势', '亚马逊选品报告', 'TEMU利润测算', 'TEMU竞品调研'],
+    sysPrompt: [
+      '你是跨境电商选品专家，覆盖亚马逊与 TEMU 双平台。',
+      '亚马逊：用 sellersprite MCP（asin_detail/keyword_research/market_research 等），金额美刀；TEMU：暂无接口，指令式——请用户提供后台数据或授权网页采集。',
+      '工作流程：理解意图 → 判断平台 → 路对应技能 → 取数分析 → 按技能格式输出。',
+      '纪律：标注站点与数据来源；估算项标「估算」；不编造数值。输出：结论 + 数据表格 + 1-3条建议。'
+    ].join('\n')
+  }
+];
+
+function allExperts() {
+  return BASE_EXPERTS.concat(customExperts).sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
+}
+function renderEPtabs() {
+  const box = document.getElementById('eptabs');
+  let html = '<button class="ptab' + (curExpertPlatform === 'all' ? ' active' : '') + '" data-pf="all"' +
+    (curExpertPlatform === 'all' ? ' style="background:#16a34a"' : '') + '>全部 <span class="cnt">' + allExperts().length + '</span></button>';
+  PLATFORM_KEYS.forEach(k => {
+    const p = PLATFORMS[k];
+    const n = allExperts().filter(x => (x.platforms || []).includes(k)).length;
+    const active = curExpertPlatform === k;
+    html += '<button class="ptab' + (active ? ' active' : '') + '" data-pf="' + k + '"' +
+      (active ? ' style="background:' + p.color + '"' : '') + '>' +
+      '<span class="dot" style="background:' + p.color + '"></span>' + p.label +
+      ' <span class="cnt">' + n + '</span></button>';
+  });
+  box.innerHTML = html;
+}
+function renderEGrid() {
+  const grid = document.getElementById('egrid');
+  const kw = curExpertSearch.trim().toLowerCase();
+  const list = allExperts().filter(x => {
+    const okPf = curExpertPlatform === 'all' || (x.platforms || []).includes(curExpertPlatform);
+    const hay = (x.name + ' ' + (x.desc || '') + ' ' + (x.abilities || []).join(' ')).toLowerCase();
+    return okPf && (!kw || hay.includes(kw));
+  });
+  if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的专家，换个条件或添加一个吧</div>'; return; }
+  grid.innerHTML = list.map(x => {
+    const built = x.status === 'built';
+    const ptags = (x.platforms || []).map(k => {
+      const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
+      return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
+    }).join('');
+    const abil = (x.abilities || []).slice(0, 4).map(a => '<span style="display:inline-block;font-size:11.5px;color:#3a6df0;background:#eef3ff;border-radius:999px;padding:1px 9px;margin:2px 4px 2px 0">' + esc(a) + '</span>').join('');
+    return '<div class="card" data-eid="' + esc(x.id) + '">' +
+      '<div class="card-head">' +
+        '<div class="tags">' + ptags + '</div>' +
+        '<span class="badge ' + (built ? 'badge-built' : 'badge-plan') + '">' + (built ? '✓ 已建成' : '待建 · 提示词可用') + '</span>' +
+      '</div>' +
+      '<h3>' + esc(x.name) + '</h3>' +
+      '<div class="desc">' + esc(x.desc || '') + '</div>' +
+      (abil ? '<div style="margin-top:2px">' + abil + '</div>' : '') +
+      (x.skills && x.skills.length ? '<div class="ver">绑定技能：' + esc(x.skills.join('、')) + '</div>' : '') +
+      '<div class="card-actions">' +
+        '<button class="btn-solid" data-eaction="copy-sys">📋 复制人设提示词</button>' +
+        '<button class="btn-plain" data-eaction="detail">详情</button>' +
+        (x.custom ? '<button class="btn-plain btn-del" data-eaction="del">删除</button>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+function refreshExperts() { renderEPtabs(); renderEGrid(); }
+
+function switchView(v) {
+  document.getElementById('view-skills').style.display = v === 'skills' ? '' : 'none';
+  document.getElementById('view-experts').style.display = v === 'experts' ? '' : 'none';
+  document.getElementById('vtab-skills').classList.toggle('active', v === 'skills');
+  document.getElementById('vtab-experts').classList.toggle('active', v === 'experts');
+  if (v === 'experts') refreshExperts();
+}
+document.getElementById('vtab-skills').addEventListener('click', () => switchView('skills'));
+document.getElementById('vtab-experts').addEventListener('click', () => switchView('experts'));
+
+document.getElementById('eptabs').addEventListener('click', e => {
+  const tab = e.target.closest('.ptab');
+  if (!tab) return;
+  curExpertPlatform = tab.dataset.pf;
+  refreshExperts();
+});
+document.getElementById('esearch').addEventListener('input', e => { curExpertSearch = e.target.value; renderEGrid(); });
+
+function openExpertModal(expert) {
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = expert.name + ' · 专家配置';
+  document.getElementById('modal-content').textContent = [
+    '【专家名称】' + expert.name,
+    '【适用平台】' + (expert.platforms || []).map(k => (PLATFORMS[k] || {label:k}).label).join(' / '),
+    '【专家简介】' + (expert.desc || '—'),
+    '【开场白】' + (expert.greet || '—'),
+    '',
+    '【核心能力】',
+    (expert.abilities || []).map(a => '· ' + a).join('\n') || '—',
+    '',
+    '【绑定技能】',
+    (expert.skills || []).map(s => '· ' + s).join('\n') || '—',
+    '',
+    '【参考提示词（可让用户直接发）】',
+    (expert.refPrompts || []).map(p => '· ' + p).join('\n') || '—',
+    '',
+    '【人设 System Prompt（复制到对话开头）】',
+    expert.sysPrompt || '—'
+  ].join('\n');
+  modal.classList.add('open');
+}
+
+document.getElementById('egrid').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-eaction]');
+  if (!btn) return;
+  const card = btn.closest('.card');
+  const expert = allExperts().find(x => x.id === card.dataset.eid);
+  if (!expert) return;
+  const act = btn.dataset.eaction;
+  if (act === 'copy-sys') copyText(expert.sysPrompt || '');
+  if (act === 'detail') openExpertModal(expert);
+  if (act === 'del') {
+    customExperts = customExperts.filter(x => x.id !== expert.id);
+    localStorage.setItem(EXPERTS_LS_KEY, JSON.stringify(customExperts));
+    refreshExperts(); toast('已删除');
+  }
+});
+
+/* ---- 添加自定义专家 ---- */
+const eaddform = document.getElementById('eaddform');
+const eSelPf = document.getElementById('e-f-platform');
+eSelPf.innerHTML = '<option value="all">全部平台</option>' + PLATFORM_KEYS.map(k => '<option value="' + k + '">' + PLATFORMS[k].label + '</option>').join('');
+document.getElementById('ebtn-add').addEventListener('click', () => eaddform.classList.toggle('open'));
+document.getElementById('ebtn-cancel').addEventListener('click', () => eaddform.classList.remove('open'));
+document.getElementById('ebtn-save').addEventListener('click', () => {
+  const name = document.getElementById('e-f-name').value.trim();
+  if (!name) { toast('请填写专家名称'); return; }
+  const pf = eSelPf.value;
+  const expert = {
+    id: 'ce-' + Date.now(),
+    custom: true,
+    name: name,
+    platforms: pf === 'all' ? PLATFORM_KEYS.slice() : [pf],
+    status: 'plan',
+    desc: document.getElementById('e-f-desc').value.trim(),
+    greet: document.getElementById('e-f-greet').value.trim(),
+    sysPrompt: document.getElementById('e-f-sys').value.trim(),
+    skills: document.getElementById('e-f-skills').value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
+    abilities: [], refPrompts: []
+  };
+  customExperts.push(expert);
+  localStorage.setItem(EXPERTS_LS_KEY, JSON.stringify(customExperts));
+  ['e-f-name','e-f-desc','e-f-greet','e-f-sys','e-f-skills'].forEach(id => document.getElementById(id).value = '');
+  eaddform.classList.remove('open');
+  refreshExperts(); toast('✓ 专家已添加');
+});
+
+/* ---- 专家导入导出 ---- */
+document.getElementById('ebtn-export').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(customExperts, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dld-experts-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+});
+document.getElementById('ebtn-import').addEventListener('click', () => document.getElementById('efile-import').click());
+document.getElementById('efile-import').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const arr = JSON.parse(reader.result);
+      if (!Array.isArray(arr)) throw new Error();
+      const ids = new Set(customExperts.map(x => x.id));
+      arr.forEach(x => { if (x && x.name && !ids.has(x.id)) { x.custom = true; if (!x.platforms) x.platforms = ['ozon']; customExperts.push(x); } });
+      localStorage.setItem(EXPERTS_LS_KEY, JSON.stringify(customExperts));
+      refreshExperts(); toast('✓ 导入完成');
+    } catch (err) { toast('文件格式不对，需要导出的 JSON'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
 </script>
 </body>
 </html>
