@@ -229,6 +229,7 @@
   <div class="vtabs">
     <button class="vtab active" id="vtab-skills" onclick="switchView('skills')"><span class="vicon">🧩</span>技能</button>
     <button class="vtab" id="vtab-experts" onclick="switchView('experts')"><span class="vicon">🟢</span>专家</button>
+    <button class="vtab" id="vtab-knowledge" onclick="switchView('knowledge')"><span class="vicon">📚</span>知识库</button>
   </div>
 
   <div id="view-skills">
@@ -304,6 +305,19 @@
         <button class="btn-plain" id="ebtn-cancel">取消</button>
       </div>
     </div>
+  </div>
+
+  <div id="view-knowledge" style="display:none">
+    <div class="toolbar">
+      <input id="ksearch" class="search" placeholder="搜索文档标题 / 描述 / 内容要点…">
+      <div class="actions">
+        <button class="btn btn-mini" id="kbtn-openwebui" title="在新标签页打开 Open WebUI 知识库原文">🌐 打开原文库</button>
+      </div>
+    </div>
+    <div class="ptabs-wrap">
+      <div class="ptabs" id="kptabs"></div>
+    </div>
+    <div class="grid" id="kgrid"></div>
   </div>
 
   <div class="section">
@@ -1101,12 +1115,188 @@ function refreshExperts() { renderEPtabs(); renderEGrid(); }
 function switchView(v) {
   document.getElementById('view-skills').style.display = v === 'skills' ? '' : 'none';
   document.getElementById('view-experts').style.display = v === 'experts' ? '' : 'none';
+  document.getElementById('view-knowledge').style.display = v === 'knowledge' ? '' : 'none';
   document.getElementById('vtab-skills').classList.toggle('active', v === 'skills');
   document.getElementById('vtab-experts').classList.toggle('active', v === 'experts');
+  document.getElementById('vtab-knowledge').classList.toggle('active', v === 'knowledge');
   if (v === 'experts') refreshExperts();
+  if (v === 'knowledge') refreshKnowledge();
 }
 document.getElementById('vtab-skills').addEventListener('click', () => switchView('skills'));
 document.getElementById('vtab-experts').addEventListener('click', () => switchView('experts'));
+document.getElementById('vtab-knowledge').addEventListener('click', () => switchView('knowledge'));
+
+/* ================= 知识库 ================= */
+/* 场景分组（知识库维度）：fee=佣金/费用, logistics=物流 */
+const KB_SCENARIOS = {
+  'fee':       { label: '佣金费用', color: '#f59e0b' },
+  'logistics': { label: '物流规则', color: '#14b8a6' }
+};
+/* Open WebUI 知识库 ID（local.dianleida.net:21996） */
+const KB_WEBUI_URL = 'https://local.dianleida.net:21996/workspace/knowledge/dc4df2ad-1bb0-4738-9fd1-426795200756';
+
+const BASE_KNOWLEDGE = [
+  {
+    id: 'kb-commission-table',
+    name: '佣金类目表-2025-12-01',
+    platforms: ['ozon'],
+    scenario: 'fee',
+    version: '2025-12-01 生效 · 6.6KB · 来自 Open WebUI',
+    desc: 'Ozon 中国卖家 80 个类目 × realFBS/FBP × 三档价格的佣金费率总表（RUB 计价）。',
+    points: ['80 类目 × 2 模式 × 3 价格档 = 480 条费率', '价格三档：0–1500 / 1500.01–5000 / 5000.01+（RUB）', '佣金按订单 Delivered 时、下单日费率计提', '不含区域系数与推广系数'],
+    usage: '算利润/定价时告诉我商品类目和售价档位，我按此表取佣金率。',
+    file: '佣金类目表-2025-12-01.md'
+  },
+  {
+    id: 'kb-commission-rule',
+    name: '佣金规则-中国跨境-2025-12-01版',
+    platforms: ['ozon'],
+    scenario: 'fee',
+    version: '检索 2026-10-16 · 1.4KB · 来自 Open WebUI',
+    desc: 'Ozon 中国跨境佣金计算规则：适用范围、计费时点、价格档口径、WHD 专表与积分折扣。',
+    points: ['适用中国卖家 realFBS/FBP，本土 FBO/FBS 不适用', '服务费不征俄罗斯增值税', 'WHD 专表 2026-05-06 起，仅限确认通过 WHD 的交易', '积分最多覆盖 99% 佣金'],
+    usage: '对佣金口径有疑问（何时计提/怎么算档/WHD）时先查本文。',
+    file: '佣金规则-中国跨境-2025-12-01版.md'
+  },
+  {
+    id: 'kb-logistics-rates',
+    name: '物流线路摘要-2026-03-25',
+    platforms: ['ozon'],
+    scenario: 'logistics',
+    version: '2026-03-25 生效 · 28.9KB · 来自 Open WebUI',
+    desc: 'Ozon realFBS 中国→俄罗斯 353 条物流线路中的常用组 271 条：固定费+单位费、重量/申报价值/尺寸限制。',
+    points: ['覆盖 Extra Small / Budget / Small / Premium Small 四组', '承运商：ABT/ATC/CEL/GUOO/IML/OYX/RETS/TFS/Tanais/UNI/Ural/Xingyuan/ZTO 等', '币种 CNY 或 USD（按合同）', '官方未提供计费重进位规则，不得默认进位'],
+    usage: '算头程物流成本时给我重量和价值档，我按此表匹配线路报「固定费+单位费」。',
+    file: '物流线路摘要-2026-03-25.md'
+  },
+  {
+    id: 'kb-logistics-rule',
+    name: '物流规则-中国跨境-2026-03版',
+    platforms: ['ozon'],
+    scenario: 'logistics',
+    version: '检索 2026-10-16 · 1.5KB · 来自 Open WebUI',
+    desc: '中国跨境物流规则与版本说明：realFBS/FBP 适用性、计费重量口径、费用组成与汇率折算。',
+    points: ['FBP 运费与 realFBS 相同（官方正文）', '每票 15 RUB 平台费（有效性待确认）', '运费按下单日俄央行汇率从销售款扣除', '体积条件逐线路读取，不得套统一系数'],
+    usage: '物流费用口径疑问（体积重/平台费/汇率）先查本文。',
+    file: '物流规则-中国跨境-2026-03版.md'
+  }
+];
+
+let curKbPlatform = 'all';
+let curKbScenario = 'all';
+let curKbSearch = '';
+
+function allKnowledge() { return BASE_KNOWLEDGE; }
+function renderKPtabs() {
+  const box = document.getElementById('kptabs');
+  let html = '<button class="ptab' + (curKbPlatform === 'all' ? ' active' : '') + '" data-kpf="all"' +
+    (curKbPlatform === 'all' ? ' style="background:#16a34a"' : '') + '>全部平台 <span class="cnt">' + allKnowledge().length + '</span></button>';
+  PLATFORM_KEYS.forEach(k => {
+    const p = PLATFORMS[k];
+    const n = allKnowledge().filter(d => (d.platforms || []).includes(k)).length;
+    if (n === 0) return;
+    const active = curKbPlatform === k;
+    html += '<button class="ptab' + (active ? ' active' : '') + '" data-kpf="' + k + '"' +
+      (active ? ' style="background:' + p.color + '"' : '') + '>' +
+      '<span class="dot" style="background:' + p.color + '"></span>' + p.label +
+      ' <span class="cnt">' + n + '</span></button>';
+  });
+  html += '<span style="width:1px;height:22px;background:var(--border);margin:0 4px;align-self:center"></span>';
+  html += '<button class="ptab' + (curKbScenario === 'all' ? ' active' : '') + '" data-ksc="all"' +
+    (curKbScenario === 'all' ? ' style="background:#1a2233"' : '') + '>全部场景</button>';
+  Object.keys(KB_SCENARIOS).forEach(k => {
+    const s = KB_SCENARIOS[k];
+    const n = allKnowledge().filter(d => d.scenario === k && (curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform))).length;
+    const active = curKbScenario === k;
+    html += '<button class="ptab' + (active ? ' active' : '') + '" data-ksc="' + k + '"' +
+      (active ? ' style="background:' + s.color + '"' : '') + '>' + s.label + ' <span class="cnt">' + n + '</span></button>';
+  });
+  box.innerHTML = html;
+}
+function renderKGrid() {
+  const grid = document.getElementById('kgrid');
+  const kw = curKbSearch.trim().toLowerCase();
+  const list = allKnowledge().filter(d => {
+    const okPf = curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform);
+    const okSc = curKbScenario === 'all' || d.scenario === curKbScenario;
+    const hay = (d.name + ' ' + (d.desc || '') + ' ' + (d.points || []).join(' ')).toLowerCase();
+    return okPf && okSc && (!kw || hay.includes(kw));
+  });
+  if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的文档，换个筛选条件吧</div>'; return; }
+  grid.innerHTML = list.map(d => {
+    const sc = KB_SCENARIOS[d.scenario] || { label: d.scenario, color: '#8592a6' };
+    const ptags = (d.platforms || []).map(k => {
+      const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
+      return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
+    }).join('');
+    const pts = (d.points || []).map(t => '<div>· ' + esc(t) + '</div>').join('');
+    return '<div class="card" data-kid="' + esc(d.id) + '">' +
+      '<div class="card-head">' +
+        '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span></div>' +
+        '<span class="badge badge-built">📄 官方资料</span>' +
+      '</div>' +
+      '<h3>' + esc(d.name) + '</h3>' +
+      '<div class="card-sub"><span>' + esc(d.version || '') + '</span></div>' +
+      '<div class="desc">' + esc(d.desc || '') + '</div>' +
+      (pts ? '<div class="triggers"><b>内容要点</b>' + pts + '</div>' : '') +
+      '<div class="card-actions">' +
+        '<button class="btn-solid" data-kaction="use">📋 复制使用指令</button>' +
+        '<button class="btn-plain" data-kaction="view">查看全文</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+function refreshKnowledge() { renderKPtabs(); renderKGrid(); }
+
+document.getElementById('kptabs').addEventListener('click', e => {
+  const tab = e.target.closest('.ptab');
+  if (!tab) return;
+  if (tab.dataset.kpf) curKbPlatform = tab.dataset.kpf;
+  if (tab.dataset.ksc) curKbScenario = tab.dataset.ksc;
+  refreshKnowledge();
+});
+document.getElementById('ksearch').addEventListener('input', e => { curKbSearch = e.target.value; renderKGrid(); });
+document.getElementById('kbtn-openwebui').addEventListener('click', () => window.open(KB_WEBUI_URL, '_blank'));
+
+/* 知识库文档内容缓存（首次查看全文时从 GitHub Pages 同目录加载） */
+const kbContentCache = {};
+async function loadKbContent(doc) {
+  if (kbContentCache[doc.id]) return kbContentCache[doc.id];
+  try {
+    const r = await fetch(doc.file, { cache: 'no-cache' });
+    if (!r.ok) throw new Error();
+    const t = await r.text();
+    kbContentCache[doc.id] = t;
+    return t;
+  } catch (e) {
+    return '（加载失败：本地打开时请把 ' + doc.file + ' 放在与页面同目录，或通过线上版访问）';
+  }
+}
+document.getElementById('kgrid').addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-kaction]');
+  if (!btn) return;
+  const card = btn.closest('.card');
+  const doc = allKnowledge().find(d => d.id === card.dataset.kid);
+  if (!doc) return;
+  const act = btn.dataset.kaction;
+  if (act === 'use') {
+    copyText([
+      '请基于「' + doc.name + '」知识库回答我的问题。',
+      '使用方式：' + (doc.usage || ''),
+      '注意：该资料版本为 ' + (doc.version || '') + '；如我问“当前是否有效”，先给出版本与检索日期，再提醒以 Ozon 官方最新公告为准。',
+      '',
+      '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】'
+    ].join('\n'));
+  }
+  if (act === 'view') {
+    btn.textContent = '加载中…';
+    const content = await loadKbContent(doc);
+    btn.textContent = '查看全文';
+    document.getElementById('modal-title').textContent = doc.name;
+    document.getElementById('modal-content').textContent = content;
+    document.getElementById('modal').classList.add('open');
+  }
+});
 
 document.getElementById('eptabs').addEventListener('click', e => {
   const tab = e.target.closest('.ptab');
