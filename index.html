@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>店雷达技能导航 · 多平台</title>
+<style>
+  :root {
+    --primary: #005bff;
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #1a2233;
+    --muted: #6b7688;
+    --border: #e6eaf2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 36px 24px 80px; }
+
+  /* ===== Header ===== */
+  header { margin-bottom: 28px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 46px; height: 46px; border-radius: 12px; background: var(--primary);
+    color: #fff; font-weight: 700; font-size: 21px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  h1 { font-size: 24px; letter-spacing: 0.5px; line-height: 1.3; }
+  .sub { color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+  .meta {
+    margin-top: 14px; font-size: 13px; color: var(--muted);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+  .meta b { color: var(--text); font-weight: 600; }
+  .meta .sep { color: #c9d2e3; }
+
+  /* ===== Platform tabs (segmented) ===== */
+  .ptabs-wrap { margin-bottom: 12px; }
+  .ptabs {
+    display: inline-flex; background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px; gap: 4px; flex-wrap: wrap;
+  }
+  .ptab {
+    border: none; background: transparent; border-radius: 9px;
+    padding: 8px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+    color: var(--muted); transition: all .15s; display: flex; align-items: center; gap: 8px;
+    font-family: inherit;
+  }
+  .ptab .dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .ptab .cnt {
+    font-size: 12px; font-weight: 600; background: #eef1f6; color: var(--muted);
+    border-radius: 999px; padding: 1px 8px; line-height: 1.5;
+  }
+  .ptab:hover { color: var(--text); }
+  .ptab.active { color: #fff; }
+  .ptab.active .cnt { background: rgba(255,255,255,0.22); color: #fff; }
+
+  /* ===== Search + actions row ===== */
+  .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .search {
+    flex: 1; min-width: 240px; max-width: 420px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--card);
+    padding: 9px 14px; font-size: 14px; outline: none; font-family: inherit;
+  }
+  .search:focus { border-color: var(--primary); }
+  .actions { display: flex; margin-left: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--card); overflow: hidden; }
+  .actions .btn {
+    border: none; background: transparent; border-radius: 0;
+    padding: 9px 16px; font-size: 13.5px; cursor: pointer; color: var(--muted);
+    font-family: inherit; transition: all .12s; position: relative; white-space: nowrap;
+  }
+  .actions .btn:hover { color: var(--text); background: #f4f6fa; }
+  .actions .btn + .btn::before {
+    content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background: var(--border);
+  }
+  .actions .btn-accent { color: var(--primary); font-weight: 600; }
+  .actions .btn-accent:hover { background: #eef4ff; color: var(--primary); }
+
+  /* ===== Scenario chips row ===== */
+  .chiprow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .chip {
+    border: 1px solid var(--border); background: var(--card); color: var(--muted);
+    border-radius: 999px; padding: 5px 14px; font-size: 13px; cursor: pointer; transition: all .15s;
+    font-family: inherit;
+  }
+  .chip:hover { border-color: #c4d2ee; color: var(--text); }
+  .chip.active { background: #16a34a; border-color: #16a34a; color: #fff; }
+  .chip .n { opacity: .65; font-size: 12px; margin-left: 2px; }
+
+  /* ===== Add form ===== */
+  .addform {
+    display: none; background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; margin-bottom: 20px;
+  }
+  .addform.open { display: block; }
+  .addform h3 { font-size: 15px; margin-bottom: 14px; }
+  .frow { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .frow input[type=text], .frow input:not([type]), .frow select, .frow textarea {
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px;
+    font-size: 13.5px; font-family: inherit; outline: none; background: #fbfcfe;
+  }
+  .frow input:focus, .frow select:focus, .frow textarea:focus { border-color: var(--primary); }
+  .frow input:not([type=checkbox]) { flex: 1; min-width: 160px; }
+  .frow textarea { width: 100%; min-height: 84px; resize: vertical; }
+  .flabel { font-size: 12.5px; color: var(--muted); margin: 2px 0 6px; display: block; }
+  .pf-checks { display: flex; gap: 16px; flex-wrap: wrap; }
+  .pf-checks label { font-size: 13.5px; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+  .form-foot { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .btn-solid {
+    border: none; border-radius: 9px; padding: 9px 20px; font-size: 13.5px;
+    cursor: pointer; background: var(--primary); color: #fff; font-family: inherit;
+  }
+  .btn-solid:hover { filter: brightness(1.08); }
+  .btn-plain {
+    border: 1px solid var(--border); border-radius: 9px; padding: 9px 20px; font-size: 13.5px;
+    cursor: pointer; background: var(--card); color: var(--muted); font-family: inherit;
+  }
+  .btn-plain:hover { color: var(--text); }
+
+  /* ===== Grid & cards ===== */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 9px;
+    transition: box-shadow .15s, transform .15s;
+  }
+  .card:hover { box-shadow: 0 6px 20px rgba(20, 40, 90, 0.08); transform: translateY(-2px); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .ptag {
+    font-size: 11.5px; padding: 1px 9px; border-radius: 999px; font-weight: 600;
+    background: #fff; line-height: 1.7;
+  }
+  .stag { font-size: 11.5px; padding: 1px 9px; border-radius: 999px; color: #fff; font-weight: 600; line-height: 1.7; }
+  .badge {
+    font-size: 11.5px; padding: 1px 9px; border-radius: 999px; font-weight: 600; line-height: 1.7;
+    flex-shrink: 0;
+  }
+  .badge-built { background: #e7f7ee; color: #16a34a; border: 1px solid #bfe9d2; }
+  .badge-plan  { background: #f1f3f7; color: #8592a6; border: 1px solid #e2e6ee; }
+  .card h3 { font-size: 16.5px; line-height: 1.4; }
+  .card-sub { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #9aa5b8; flex-wrap: wrap; }
+  .slug { font-family: Consolas, monospace; }
+  .desc { font-size: 13px; color: var(--muted); }
+  .triggers {
+    font-size: 12.5px; color: #4a5872; background: #f6f8fc; border-radius: 8px;
+    padding: 8px 12px; display: grid; gap: 3px;
+  }
+  .triggers div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .triggers b { color: #9aa5b8; font-weight: 500; font-size: 11.5px; display: block; }
+  .card-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
+  .card-actions .btn-solid { padding: 7px 14px; font-size: 12.5px; }
+  .card-actions .btn-plain { padding: 7px 14px; font-size: 12.5px; }
+  .btn-del { border-color: #f3d4d4 !important; color: #d66 !important; }
+  .btn-del:hover { background: #fdf1f1 !important; color: #d66 !important; }
+
+  /* ===== Sections ===== */
+  .section { margin-top: 44px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; }
+  .section h2 { font-size: 15.5px; margin-bottom: 12px; }
+  .section p, .section li { font-size: 13.5px; color: var(--muted); }
+  .section ul { padding-left: 18px; }
+  .section li + li { margin-top: 4px; }
+  .section code { background: #f1f4f9; border-radius: 4px; padding: 1px 6px; font-size: 12.5px; color: #334; }
+  .src-line { font-size: 13px; color: #4a5872; margin-top: 12px; padding: 8px 0 8px 14px; border-left: 3px solid var(--border); }
+  .src-line .api { color: #5b6b85; font-family: Consolas, monospace; font-size: 12px; }
+
+  /* ===== Modal ===== */
+  .modal-mask {
+    display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
+    z-index: 100; align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-mask.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; max-width: 760px; width: 100%;
+    max-height: 82vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .modal-head h3 { font-size: 16px; }
+  .modal-body { padding: 18px 22px; overflow: auto; }
+  .modal-body pre {
+    white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.75;
+    font-family: Consolas, "Microsoft YaHei", monospace; color: #2b3648;
+  }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
+
+  /* ===== Toast ===== */
+  #toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1a2233; color: #fff; border-radius: 10px; padding: 10px 20px;
+    font-size: 13.5px; opacity: 0; pointer-events: none; transition: all .25s; z-index: 200;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .empty { text-align: center; color: var(--muted); padding: 60px 0; grid-column: 1 / -1; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo">店</div>
+      <div>
+        <h1>店雷达技能导航</h1>
+        <div class="sub">按平台 × 场景组织技能，复制调用指令粘贴到任意对话即可使用，无需翻历史记录</div>
+      </div>
+    </div>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="toolbar">
+    <input id="search" class="search" placeholder="搜索技能名称 / 描述 / 触发词…">
+    <div class="actions">
+      <button class="btn btn-accent" id="btn-add">＋ 添加技能</button>
+      <button class="btn" id="btn-export" title="导出自定义技能为 JSON">导出</button>
+      <button class="btn" id="btn-import" title="从 JSON 导入自定义技能">导入</button>
+      <input type="file" id="file-import" accept=".json" style="display:none">
+    </div>
+  </div>
+
+  <div class="ptabs-wrap">
+    <div class="ptabs" id="ptabs"></div>
+  </div>
+
+  <div class="chiprow" id="chips"></div>
+
+  <div class="addform" id="addform">
+    <h3>添加自定义技能</h3>
+    <div class="frow">
+      <input id="f-name" placeholder="技能名称，如：Ozon 广告投放分析">
+      <select id="f-scenario"></select>
+      <input id="f-slug" placeholder="编码（选填，如 /ozon-ads）">
+    </div>
+    <label class="flabel">适用平台（可多选）</label>
+    <div class="frow"><div class="pf-checks" id="f-platforms"></div></div>
+    <label class="flabel">描述</label>
+    <div class="frow"><input id="f-desc" placeholder="一句话说明这个技能做什么"></div>
+    <label class="flabel">调用指令（复制后粘贴到对话里使用的那段话）</label>
+    <div class="frow"><textarea id="f-prompt" placeholder="帮我分析 …&#10;要求：…&#10;输出：…"></textarea></div>
+    <div class="form-foot">
+      <label style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px"><input type="checkbox" id="f-built"> 标记为「已建成」</label>
+      <button class="btn-solid" id="btn-save">保存</button>
+      <button class="btn-plain" id="btn-cancel">取消</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="section">
+    <h2>📦 各平台数据源</h2>
+    <div class="src-line" style="border-color:#ff6a00"><b style="color:#ff6a00">1688</b> · 1688 MCP<br><span class="api">product_search_list</span> 关键词搜索 · <span class="api">get_category_info</span> 类目 · <span class="api">product_info</span> / <span class="api">ali_offer_realtime_detail</span> 商品详情与实时价 · <span class="api">product_billboard_list</span> 榜单 · <span class="api">product_trend_new_list</span> 新品趋势</div>
+    <div class="src-line" style="border-color:#005bff"><b style="color:#005bff">OZON</b> · yunqi-data MCP<br><span class="api">yq_ozon_goods_search</span> / <span class="api">goods_detail</span> / <span class="api">spu_search</span> / <span class="api">spu_detail</span> / <span class="api">mall_search</span> / <span class="api">mall_detail</span> / <span class="api">brand_search</span> / <span class="api">market_stat</span> + <span class="api">yq_dict_lookup</span>（查类目 ID 必用）。金额默认卢布 ₽，以返回 symbol 为准</div>
+    <div class="src-line" style="border-color:#e47911"><b style="color:#e47911">亚马逊</b> · sellersprite MCP<br><span class="api">asin_detail</span> / <span class="api">asin_sales_trend</span> / <span class="api">keyword_research</span> / <span class="api">keyword_miner</span> / <span class="api">market_research</span> / <span class="api">product_research</span> / <span class="api">competitor_lookup</span> / <span class="api">keepa_info</span> / <span class="api">review</span></div>
+    <div class="src-line" style="border-color:#e11d48"><b style="color:#e11d48">TEMU</b> · 暂无数据接口<br>技能为「指令式」：需你在对话中提供商品数据/截图，或由助手用浏览器采集，输出仍按技能格式规范整理</div>
+  </div>
+
+  <div class="section">
+    <h2>🔄 与店雷达后台的关系</h2>
+    <ul>
+      <li>标「已建成」的技能同时已录入 <code>leidaaisystem</code> 技能管理后台（可绑定专家、控制可见性）。</li>
+      <li>标「待建」的技能：调用指令现在就能用（对话直接执行），需要正式建到后台时，把指令发到对话里说"帮我把这个建成技能"即可。</li>
+      <li>本页添加的自定义技能保存在浏览器 localStorage；「导出」可备份为 JSON，换浏览器用「导入」恢复。</li>
+      <li>想让我更新页面内容（新增/修改内置技能），直接在对话里说即可。</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="modal-mask" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">技能内容</h3>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body"><pre id="modal-content"></pre></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ================= 平台定义 ================= */
+const PLATFORMS = {
+  '1688':   { label: '1688',  color: '#ff6a00' },
+  'ozon':   { label: 'OZON',  color: '#005bff' },
+  'amazon': { label: '亚马逊', color: '#e47911' },
+  'temu':   { label: 'TEMU',  color: '#e11d48' }
+};
+const PLATFORM_KEYS = Object.keys(PLATFORMS);
+
+/* ================= 场景定义 ================= */
+const SCENARIOS = {
+  'product-selection': { label: '选品',     color: '#005bff' },
+  'competitor':        { label: '竞品',     color: '#f59e0b' },
+  'category':          { label: '类目趋势', color: '#8b5cf6' },
+  'product':           { label: '商品解析', color: '#14b8a6' },
+  'shop':              { label: '店铺分析', color: '#22c55e' },
+  'profit':            { label: '利润测算', color: '#ef4444' },
+  'report':            { label: '选品报告', color: '#0ea5e9' }
+};
+
+/* ================= 内置技能 ================= */
+const OZON_SELECT_MD = [
+'# Ozon选品搜索','',
+'## 触发场景（何时使用）',
+'当用户需要在 Ozon（俄罗斯电商平台）上做选品调研时使用本技能，例如：',
+'- 输入「帮我看看 Ozon 家居类目有什么好卖的」→ 按类目搜索并返回热销商品清单',
+'- 输入「Ozon 上 2000 卢布以内、评分 4.5 以上的收纳盒找一下」→ 关键词+价格+评分筛选',
+'- 输入「找一下 Ozon 上近 28 天销量最高的宠物用品，只要跨境卖家」→ 类目+销量+卖家类型筛选','',
+'## 输入',
+'- 关键词或类目（必填其一）；价格区间（卢布）；销量门槛；评分门槛；卖家类型（1跨境/2本土/3自营）；返回数量（默认20）','',
+'## 执行步骤',
+'1. 类目名称先调 yq_dict_lookup 查 ID，不要猜编码；',
+'2. yq_ozon_goods_search（SKU 维度）或 yq_ozon_spu_search（SPU 维度），常用 sort [{"dailySales":"desc"}]；',
+'3. 需要详情时调 yq_ozon_goods_detail / yq_ozon_spu_detail；','',
+'## 输出格式',
+'结论（一句话）+ 数据表格（商品名/价格/评分/评论/28天销量/28天销售额/卖家类型）+ 1-3条建议','',
+'## 约束',
+'- 缺数据明确说明，不编造；空字段 ≠ 0；金额默认卢布；带7/28后缀=近7/28天；标注数据来源。'
+].join('\n');
+
+const BASE_SKILLS = [
+  /* ============ 1688 ============ */
+  {
+    id: 'a1688-sel-search',
+    name: '1688选品搜索',
+    slug: '/dld-selection-search',
+    platforms: ['1688'],
+    scenario: 'product-selection',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '按关键词/类目在 1688 搜索候选商品并返回结构化清单，适用于选品前期调研。',
+    triggers: ['在1688上找蓝牙耳机的货源', '查一下收纳盒的1688价格'],
+    prompt: [
+      '帮我做一次 1688 选品搜索。',
+      '选品方向：【填写类目或关键词，如：蓝牙耳机 / 收纳盒】',
+      '筛选：价格区间【元】| 月销量/复购率门槛【可选】| 发货地【可选】',
+      '要求：',
+      '1. 类目不明确时先调 get_category_info 查类目；',
+      '2. 调 product_search_list 关键词搜索，必要时用 product_info 看候选商品详情；',
+      '3. 输出：结论（货源概况）+ 数据表（商品名/价格区间/月销/复购率/发货地/实力档）+ 1-3条建议；',
+      '4. 缺数据标「—」，标注数据来源。'
+    ].join('\n')
+  },
+  {
+    id: 'a1688-competitor',
+    name: '1688竞品价格监控',
+    slug: '/competitor-price-monitor',
+    platforms: ['1688'],
+    scenario: 'competitor',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '跟踪 1688 同款货源价格与销量变化，识别低价替换货源。',
+    triggers: ['这个货源最近涨价了吗', '找找同款更便宜的1688货源'],
+    prompt: [
+      '帮我做 1688 货源价格监控。',
+      '目标商品：【填写商品名或 1688 链接/offerId】',
+      '要求：',
+      '1. 用 product_search_list 搜同款，调 ali_offer_realtime_detail 取实时价格；',
+      '2. 对比当前价格与参照值，输出价差与变化幅度；',
+      '3. 输出监控表：商品/当前价/起批量/月销/实力档 + 异常提醒（涨价/缺货）+ 更低价替代货源；',
+      '4. 单次监控说明：结果可存档，下次发我对比。'
+    ].join('\n')
+  },
+  {
+    id: 'a1688-category',
+    name: '1688类目趋势分析',
+    slug: '/category-trend-analysis',
+    platforms: ['1688'],
+    scenario: 'category',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '追踪 1688 类目热销榜与新品趋势，发现货源侧增量机会。',
+    triggers: ['1688 家居类目最近什么好卖', '看看新品趋势'],
+    prompt: [
+      '帮我分析 1688【填写类目，如：厨房用品】类目趋势。',
+      '要求：',
+      '1. get_category_info 确认类目；',
+      '2. product_billboard_list 取热销榜，product_trend_new_list 看新品趋势；',
+      '3. 输出：热销榜要点（价格带/销量档）+ 新品动向 + 货源机会分析 + 1-3条建议；',
+      '4. 标注数据来源。'
+    ].join('\n')
+  },
+  {
+    id: 'a1688-product-parse',
+    name: '1688商品详情解析',
+    slug: '/product-detail-parse',
+    platforms: ['1688'],
+    scenario: 'product',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '解析 1688 商品 SKU、价格带、起批量与卖点，输出结构化货源档案。',
+    triggers: ['解析这个1688商品', '这个货源的SKU结构怎么样'],
+    prompt: [
+      '帮我解析这个 1688 商品。',
+      '商品：【填写 1688 链接 / offerId / 商品名】',
+      '要求：',
+      '1. product_info / ali_offer_realtime_detail 取详情：价格带/起批量/SKU结构/月销/复购率/发货地/实力档；',
+      '2. 输出货源档案：基础信息 + 价格阶梯解读 + 供货能力评估；',
+      '3. 给出采购建议（值不值得拿货、议价空间）。'
+    ].join('\n')
+  },
+  {
+    id: 'a1688-shop-analysis',
+    name: '1688店铺排行分析',
+    slug: '/shop-rank-analysis',
+    platforms: ['1688'],
+    scenario: 'shop',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '分析 1688 供应商店铺实力与爆款结构，定位对标货源店铺。',
+    triggers: ['找实力工厂货源店铺', '这家1688店铺怎么样'],
+    prompt: [
+      '帮我分析 1688 供应商店铺。',
+      '店铺：【填写店铺名；或写条件如"家居类目实力工厂 TOP10"】',
+      '要求：',
+      '1. product_search_list 按 seller 筛选/搜索店铺商品；',
+      '2. 汇总店铺画像：实力档（实力工厂/超级工厂）/经营年限/主营类目/爆款结构；',
+      '3. 输出：店铺画像 + 爆款结构（价格带/品类集中度）+ 对标借鉴点 + 建议。'
+    ].join('\n')
+  },
+  {
+    id: 'a1688-profit',
+    name: '1688利润测算',
+    slug: '/profit-calc',
+    platforms: ['1688'],
+    scenario: 'profit',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '按 1688 拿货价、物流与平台费用测算分销毛利与建议售价。',
+    triggers: ['算一下这个产品的利润', '卖这个价格能赚多少'],
+    prompt: [
+      '帮我测算一个分销商品的利润。',
+      '商品：目标平台售价【币种】| 1688 拿货价【元】| 重量体积【如 0.5kg/20x15x10cm】| 物流方式 | 类目佣金比例【不知道可不填，按常见区间估】',
+      '要求：',
+      '1. 逐项列出成本：采购 + 头程物流 + 平台佣金 + 尾程/配送分摊 + 退货损耗（默认5%，可改）；',
+      '2. 输出：单位毛利/毛利率 + 不同售价下的利润敏感性（3档价格）+ 建议售价区间；',
+      '3. 所有估算项明确标注「估算」，实际以平台后台账单为准。'
+    ].join('\n')
+  },
+  {
+    id: 'a1688-report',
+    name: '1688选品报告生成',
+    slug: '/selection-report-gen',
+    platforms: ['1688'],
+    scenario: 'report',
+    status: 'built',
+    version: '已录入店雷达后台',
+    desc: '汇总榜单+商品+店铺多维数据，生成结构化 1688 货源选品报告。',
+    triggers: ['给我出一份1688选品报告', '这个类目货源怎么样出个报告'],
+    prompt: [
+      '帮我生成一份 1688 货源选品报告，主题类目：【填写类目】。',
+      '要求：',
+      '1. product_billboard_list 取类目热销榜；',
+      '2. 选 3-5 个代表商品用 product_info 深挖；',
+      '3. 输出结构化报告：① 总结论 ② 机会档位表（高/中/低）③ 重点货源卡片 ④ 风险与假设 ⑤ 下一步动作清单；',
+      '4. 数据缺失处标注，末尾列数据来源接口。'
+    ].join('\n')
+  },
+
+  /* ============ OZON ============ */
+  {
+    id: 'sel-search',
+    name: 'Ozon选品搜索',
+    slug: '/ozon',
+    platforms: ['ozon'],
+    scenario: 'product-selection',
+    status: 'built',
+    version: 'v20261106143542 · 已录入店雷达后台',
+    desc: '按关键词/类目搜索 Ozon 候选商品，支持价格、销量、评分、卖家类型筛选，返回结构化清单。',
+    triggers: ['帮我看看Ozon家居类目有什么好卖的', '2000卢布以内评分4.5以上的收纳盒', '近28天销量最高的宠物用品'],
+    prompt: [
+      '帮我做一次 Ozon 选品搜索。',
+      '选品方向：【填写类目或关键词，如：宠物碗 / 家居收纳】',
+      '筛选：价格区间【如 500-2000 卢布】| 近28天最低销量【如 500】| 评分≥【如 4.5】| 卖家类型【跨境/本土/不限】',
+      '要求：',
+      '1. 类目词先用 yq_dict_lookup 查类目 ID，不要猜；',
+      '2. 调 yq_ozon_goods_search 按销量降序取 TOP20（必要时补 yq_ozon_goods_detail）；',
+      '3. 输出：结论（一句话概括机会）+ 数据表（商品名/价格/评分/评论数/28天销量/28天销售额/卖家类型）+ 1-3条建议；',
+      '4. 金额默认卢布，缺数据标「—」，标注数据来源。'
+    ].join('\n'),
+    skillMd: OZON_SELECT_MD
+  },
+  {
+    id: 'competitor-monitor',
+    name: '竞品价格监控',
+    slug: '/competitor-price-monitor',
+    platforms: ['ozon'],
+    scenario: 'competitor',
+    status: 'plan',
+    desc: '跟踪竞品价格与销量变化，识别异常波动（降价、爆款苗头、跟卖增多）。',
+    triggers: ['帮我盯一下这个竞品的价格', '对比我们和竞品的销量差距'],
+    prompt: [
+      '帮我做 Ozon 竞品监控分析。',
+      '竞品：【填写 SKU ID / 商品链接 / 店铺名】',
+      '参照物：【我们的商品或上次记录值，没有可不填】',
+      '要求：',
+      '1. 调 yq_ozon_goods_search / yq_ozon_goods_detail 取目标商品当前价格、销量、评分、跟卖数；',
+      '2. 与参照值对比，输出价格差、销量变化幅度；',
+      '3. 输出监控表：商品/价格/28天销量/评分/跟卖数 + 异常提醒（如降幅>15%）；',
+      '4. 说明：本次为单次监控，如需持续跟踪请把结果存档，下次发我对比。'
+    ].join('\n')
+  },
+  {
+    id: 'category-trend',
+    name: '类目趋势分析',
+    slug: '/category-trend-analysis',
+    platforms: ['ozon'],
+    scenario: 'category',
+    status: 'plan',
+    desc: '追踪 Ozon 类目大盘与热销榜变化，发现增量机会和价格带空缺。',
+    triggers: ['Ozon 家居类目现在趋势怎么样', '哪个类目在增长'],
+    prompt: [
+      '帮我分析 Ozon【填写类目名，如：厨房用品】类目趋势。',
+      '要求：',
+      '1. 先调 yq_dict_lookup 查后台类目 ID（不要猜）；',
+      '2. 调 yq_ozon_market_stat 拿大盘：SKU数/店铺数/销量/销售额/价格段；',
+      '3. 调 yq_ozon_spu_search 取该类目近28天销量 TOP20，观察价格带分布与卖家类型（跨境/本土）占比；',
+      '4. 输出：大盘概览 + 热销榜要点 + 价格带机会分析（哪个价位段竞争少销量高）+ 1-3条建议。',
+      '金额默认卢布，标注数据来源。'
+    ].join('\n')
+  },
+  {
+    id: 'product-parse',
+    name: '商品详情解析',
+    slug: '/product-detail-parse',
+    platforms: ['ozon'],
+    scenario: 'product',
+    status: 'plan',
+    desc: '解析单个 Ozon 商品的销量、转化、跟卖、变体结构，输出结构化商品档案。',
+    triggers: ['分析一下这个 Ozon 商品', '这个 SKU 卖得怎么样'],
+    prompt: [
+      '帮我解析这个 Ozon 商品。',
+      '商品：【填写 SKU 或 SPU ID / 商品链接】',
+      '要求：',
+      '1. 调 yq_ozon_goods_detail 取详情：价格/销量/销售额/转化率/库存/跟卖/每日趋势；',
+      '2. 有 SPU 的话调 yq_ozon_spu_detail 看变体结构（颜色/尺寸分布）；',
+      '3. 输出商品档案：基础信息 + 销量趋势解读（起量点/衰退迹象）+ 跟卖竞争评估 + 定价点评；',
+      '4. 给出选品参考建议（值不值得跟进、差异化方向）。'
+    ].join('\n')
+  },
+  {
+    id: 'shop-analysis',
+    name: '店铺排行分析',
+    slug: '/shop-rank-analysis',
+    platforms: ['ozon'],
+    scenario: 'shop',
+    status: 'plan',
+    desc: '分析 Ozon 店铺销量排行与爆款结构，定位对标店铺。',
+    triggers: ['查一下这家 Ozon 店', '找出家居类目 top seller 店铺'],
+    prompt: [
+      '帮我分析 Ozon 店铺。',
+      '店铺：【填写店铺名或 ID；想找对标店则写：类目+排序条件，如"家居类目按日销排前10的店铺"】',
+      '要求：',
+      '1. 按名称找店：调 yq_ozon_mall_search 拿店铺 ID；按条件找店：直接 mall_search 排序筛选；',
+      '2. 调 yq_ozon_mall_detail 取店铺详情：销量/SKU数/开店时长/主营类目/卖家类型；',
+      '3. 调 yq_ozon_spu_search 按 sellerId 过滤取其 TOP 商品，看爆款结构；',
+      '4. 输出：店铺画像 + 爆款结构（价格带/品类集中度）+ 对标借鉴点 + 建议。'
+    ].join('\n')
+  },
+  {
+    id: 'profit-calc',
+    name: '利润测算',
+    slug: '/profit-calc',
+    platforms: ['ozon'],
+    scenario: 'profit',
+    status: 'plan',
+    desc: '按拿货价、物流与平台费用测算 Ozon 分销毛利与建议售价。',
+    triggers: ['算一下这个产品的利润', '卖这个价格能赚多少'],
+    prompt: [
+      '帮我测算一个 Ozon 分销商品的利润。',
+      '商品：Ozon 售价【卢布】| 1688 拿货价【元】| 重量体积【如 0.5kg/20x15x10cm】| 物流方式【如海运/陆运】| 类目佣金比例【不知道可不填，我会按常见区间估】',
+      '要求：',
+      '1. 按当前汇率换算（标注所用汇率值与日期）；',
+      '2. 逐项列出成本：采购 + 头程物流 + 平台佣金 + 尾程/配送分摊 + 退货损耗（默认5%，可改）；',
+      '3. 输出：单位毛利/毛利率 + 不同售价下的利润敏感性（3档价格）+ 建议售价区间；',
+      '4. 所有估算项明确标注「估算」，实际以平台后台账单为准。'
+    ].join('\n')
+  },
+  {
+    id: 'report-gen',
+    name: '选品报告生成',
+    slug: '/selection-report-gen',
+    platforms: ['ozon'],
+    scenario: 'report',
+    status: 'plan',
+    desc: '汇总大盘+商品+店铺多维数据，生成结构化 Ozon 选品报告。',
+    triggers: ['给我出一份 Ozon 选品报告', '这个类目能不能做，出个报告'],
+    prompt: [
+      '帮我生成一份 Ozon 选品报告，主题类目：【填写类目】。',
+      '要求：',
+      '1. 调 yq_ozon_market_stat 取类目大盘；',
+      '2. 调 yq_ozon_spu_search 取近28天销量 TOP20，汇总价格带/销量门槛/卖家类型分布；',
+      '3. 选 3-5 个代表性商品调 yq_ozon_goods_detail 深挖；',
+      '4. 输出结构化报告：① 总结论（值不值得做）② 机会档位表（高/中/低）③ 重点商品卡片 ④ 风险与假设 ⑤ 下一步动作清单。',
+      '金额卢布，数据缺失处标注，末尾列数据来源接口。'
+    ].join('\n')
+  },
+
+  /* ============ 亚马逊 ============ */
+  {
+    id: 'amz-competitor',
+    name: '亚马逊竞品分析',
+    platforms: ['amazon'],
+    scenario: 'competitor',
+    status: 'plan',
+    desc: '用 sellersprite 数据拆解竞品 ASIN：销量、价格、评论、流量词与广告策略。',
+    triggers: ['分析这个 ASIN 的竞品', '看看这条 listing 卖得怎么样'],
+    prompt: [
+      '帮我做亚马逊竞品分析。',
+      '竞品：【填写 ASIN / 商品链接 / 关键词】',
+      '要求：',
+      '1. 调 sellersprite 的 asin_detail 取竞品基础信息（价格/评分/评论/BSR）；',
+      '2. 调 asin_sales_trend 看销量趋势，competitor_lookup 找同类竞品；',
+      '3. traffic_keyword / traffic_listing 拆解其主要流量词与来源结构；',
+      '4. 输出：竞品画像 + 销量趋势解读 + 流量词结构 + 差异化切入点 + 1-3条建议。',
+      '金额以美刀为准，缺数据标「—」，标注数据来源。'
+    ].join('\n')
+  },
+  {
+    id: 'amz-keyword',
+    name: '亚马逊关键词挖掘',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    status: 'plan',
+    desc: '拓展 Listing 关键词：搜索量、竞争度、转化与出单词，辅助标题与广告投放。',
+    triggers: ['帮我挖一下这个产品的关键词', '这些词哪个适合投广告'],
+    prompt: [
+      '帮我做亚马逊关键词挖掘。',
+      '核心词/ASIN：【填写核心关键词或竞品 ASIN】',
+      '站点：【默认美站】',
+      '要求：',
+      '1. 调 keyword_research / keyword_miner 拓展相关词，keyword_research_trends 看趋势；',
+      '2. keyword_conversion / keyword_order 评估转化与出单能力；',
+      '3. 输出：关键词表（词/月搜索量/竞争度/转化相关性）分三组：核心词/长尾词/广告词建议；',
+      '4. 给出标题写法与广告投放优先级建议。标注数据来源。'
+    ].join('\n')
+  },
+  {
+    id: 'amz-trend',
+    name: '亚马逊销量与类目趋势',
+    platforms: ['amazon'],
+    scenario: 'category',
+    status: 'plan',
+    desc: '追踪类目 BSR 榜单、价格段分布与需求趋势，发现亚马逊增量机会。',
+    triggers: ['这个类目最近趋势如何', '亚马逊家居类目有什么机会'],
+    prompt: [
+      '帮我分析亚马逊【填写类目/关键词】趋势。',
+      '要求：',
+      '1. 调 market_research / market_research_statistics 拿类目概览：商品数/价格段/评分分布/卖家类型；',
+      '2. product_research 找类目 TOP 商品，aba_research_trend 看搜索趋势；',
+      '3. google_trend 交叉验证需求走势；',
+      '4. 输出：类目概览 + 需求趋势 + 价格带机会 + 竞争格局 + 1-3条建议。',
+      '标注数据来源与站点。'
+    ].join('\n')
+  },
+  {
+    id: 'amz-report',
+    name: '亚马逊选品报告',
+    platforms: ['amazon'],
+    scenario: 'report',
+    status: 'plan',
+    desc: '汇总市场+商品+关键词数据，生成结构化亚马逊选品报告。',
+    triggers: ['出一份亚马逊选品报告', '评估这个产品能不能做'],
+    prompt: [
+      '帮我生成一份亚马逊选品报告，产品方向：【填写类目/产品】。',
+      '要求：',
+      '1. market_research 取市场容量与竞争格局；',
+      '2. product_research 取 TOP 商品样表，选 3-5 个 asin_detail 深挖；',
+      '3. keyword_research 验证需求词热度；',
+      '4. 输出结构化报告：① 总结论（值不值得做）② 机会档位表 ③ 重点竞品卡片 ④ 关键词机会 ⑤ 风险与假设 ⑥ 下一步动作清单。',
+      '末尾列数据来源接口与站点。'
+    ].join('\n')
+  },
+
+  /* ============ TEMU ============ */
+  {
+    id: 'temu-profit',
+    name: 'TEMU利润测算',
+    platforms: ['temu'],
+    scenario: 'profit',
+    status: 'plan',
+    desc: '按 TEMU 核价、供货价与物流费用测算半托管/全托管利润（指令式，需提供后台数据）。',
+    triggers: ['算一下 TEMU 这单的利润', '这个供货价能不能做'],
+    prompt: [
+      '帮我测算一个 TEMU 商品的利润。',
+      '需要你提供：TEMU 核价/售价【美元或元】| 1688 拿货价【元】| 重量体积 | 物流方式【半托管自发货/全托管】| 平台扣点与尾程费用【有后台数据最好，没有我按常见区间估】',
+      '要求：',
+      '1. 逐项列出成本：采购 + 国内段物流 + 平台扣点 + 尾程/仓储 + 退货损耗；',
+      '2. 区分半托管/全托管口径（费用结构不同，说明所用假设）；',
+      '3. 输出：单位毛利/毛利率 + 不同供货价敏感性（3档）+ 建议报价；',
+      '4. 所有估算项标注「估算」，以 TEMU 后台账单为准。'
+    ].join('\n')
+  },
+  {
+    id: 'temu-research',
+    name: 'TEMU竞品调研',
+    platforms: ['temu'],
+    scenario: 'competitor',
+    status: 'plan',
+    desc: '调研 TEMU 站内同款价格带与销量结构（指令式：网页采集或你提供截图/数据）。',
+    triggers: ['看看 TEMU 上这个产品卖多少', '调研一下 TEMU 这个类目'],
+    prompt: [
+      '帮我做 TEMU 站内调研。',
+      '调研对象：【填写商品/类目；有链接或截图更好】',
+      '说明：TEMU 暂无数据接口，两种方式任选：',
+      'A. 你提供商品截图/价格数据 → 我负责结构化整理与对比分析；',
+      'B. 我用浏览器工具采集 TEMU 站内同款的价格带、销量标签（需你确认浏览器可用）。',
+      '输出：同款价格带分布 + 销量/评价结构 + 与 1688 货源价的毛利空间估算 + 选品建议。'
+    ].join('\n')
+  }
+];
+
+/* ================= 状态与渲染 ================= */
+const LS_KEY = 'dld_ozon_skills_custom_v1';
+let customSkills = [];
+try { customSkills = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { customSkills = []; }
+let curPlatform = 'all';
+let curScenario = 'all';
+let curSearch = '';
+
+function allSkills() {
+  const merged = BASE_SKILLS.concat(customSkills.map(s => Object.assign({ platforms: ['ozon'] }, s)));
+  return merged.sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
+}
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function renderMeta() {
+  const all = allSkills();
+  const built = all.filter(s => s.status === 'built').length;
+  const scCount = new Set(all.map(s => s.scenario)).size;
+  const pfCount = new Set(all.flatMap(s => s.platforms || [])).size;
+  document.getElementById('meta').innerHTML =
+    '<span><b>' + all.length + '</b> 个技能</span><span class="sep">·</span>' +
+    '<span><b>' + built + '</b> 已建成</span><span class="sep">·</span>' +
+    '<span><b>' + scCount + '</b> 个场景</span><span class="sep">·</span>' +
+    '<span>覆盖 <b>' + pfCount + '</b> 个平台</span>';
+}
+function renderPtabs() {
+  const box = document.getElementById('ptabs');
+  let html = '<button class="ptab' + (curPlatform === 'all' ? ' active' : '') + '" data-pf="all"' +
+    (curPlatform === 'all' ? ' style="background:#16a34a"' : '') + '>全部 <span class="cnt">' + allSkills().length + '</span></button>';
+  PLATFORM_KEYS.forEach(k => {
+    const p = PLATFORMS[k];
+    const n = allSkills().filter(s => (s.platforms || []).includes(k)).length;
+    const active = curPlatform === k;
+    html += '<button class="ptab' + (active ? ' active' : '') + '" data-pf="' + k + '"' +
+      (active ? ' style="background:' + p.color + '"' : '') + '>' +
+      '<span class="dot" style="background:' + p.color + '"></span>' + p.label +
+      ' <span class="cnt">' + n + '</span></button>';
+  });
+  box.innerHTML = html;
+}
+function renderChips() {
+  const box = document.getElementById('chips');
+  let html = '<button class="chip' + (curScenario === 'all' ? ' active' : '') + '" data-sc="all">全部场景</button>';
+  Object.keys(SCENARIOS).forEach(k => {
+    const n = allSkills().filter(s => s.scenario === k && (curPlatform === 'all' || (s.platforms || []).includes(curPlatform))).length;
+    if (n === 0 && curPlatform !== 'all') return;
+    html += '<button class="chip' + (curScenario === k ? ' active' : '') + '" data-sc="' + k + '">' +
+      SCENARIOS[k].label + '<span class="n">' + n + '</span></button>';
+  });
+  box.innerHTML = html;
+}
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const kw = curSearch.trim().toLowerCase();
+  const list = allSkills().filter(s => {
+    const okPf = curPlatform === 'all' || (s.platforms || []).includes(curPlatform);
+    const okSc = curScenario === 'all' || s.scenario === curScenario;
+    const hay = (s.name + ' ' + (s.desc || '') + ' ' + (s.triggers || []).join(' ')).toLowerCase();
+    return okPf && okSc && (!kw || hay.includes(kw));
+  });
+  if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的技能，换个筛选条件或添加一个吧</div>'; return; }
+  grid.innerHTML = list.map(s => {
+    const sc = SCENARIOS[s.scenario] || { label: s.scenario, color: '#8592a6' };
+    const built = s.status === 'built';
+    const trig = (s.triggers || []).slice(0, 2).map(t => '<div>「' + esc(t) + '」</div>').join('');
+    const ptags = (s.platforms || []).map(k => {
+      const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
+      return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
+    }).join('');
+    return '<div class="card" data-id="' + esc(s.id) + '">' +
+      '<div class="card-head">' +
+        '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span></div>' +
+        '<span class="badge ' + (built ? 'badge-built' : 'badge-plan') + '">' + (built ? '✓ 已建成' : '待建 · 指令可用') + '</span>' +
+      '</div>' +
+      '<h3>' + esc(s.name) + '</h3>' +
+      (s.slug || s.version ? '<div class="card-sub">' +
+        (s.slug ? '<span class="slug">' + esc(s.slug) + '</span>' : '') +
+        (s.version ? '<span>' + esc(s.version) + '</span>' : '') +
+      '</div>' : '') +
+      '<div class="desc">' + esc(s.desc || '') + '</div>' +
+      (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
+      '<div class="card-actions">' +
+        '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
+        (s.skillMd ? '<button class="btn-plain" data-action="view">查看技能内容</button>' : '') +
+        (s.custom ? '<button class="btn-plain btn-del" data-action="del">删除</button>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+function refreshAll() { renderMeta(); renderPtabs(); renderChips(); renderGrid(); }
+
+/* ================= 交互 ================= */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function copyText(text) {
+  const done = () => toast('✓ 指令已复制，去任意对话粘贴发送即可');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) { toast('复制失败，请手动选择文本复制'); }
+  document.body.removeChild(ta);
+}
+document.getElementById('grid').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const card = btn.closest('.card');
+  const skill = allSkills().find(s => s.id === card.dataset.id);
+  if (!skill) return;
+  const act = btn.dataset.action;
+  if (act === 'copy') copyText(skill.prompt || '');
+  if (act === 'view') {
+    document.getElementById('modal-title').textContent = skill.name + ' · SKILL.md';
+    document.getElementById('modal-content').textContent = skill.skillMd;
+    document.getElementById('modal').classList.add('open');
+  }
+  if (act === 'del') {
+    customSkills = customSkills.filter(s => s.id !== skill.id);
+    localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
+    refreshAll(); toast('已删除');
+  }
+});
+document.getElementById('ptabs').addEventListener('click', e => {
+  const tab = e.target.closest('.ptab');
+  if (!tab) return;
+  curPlatform = tab.dataset.pf;
+  refreshAll();
+});
+document.getElementById('chips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  curScenario = chip.dataset.sc;
+  renderChips(); renderGrid();
+});
+document.getElementById('search').addEventListener('input', e => {
+  curSearch = e.target.value; renderGrid();
+});
+document.getElementById('modal-close').addEventListener('click', () => document.getElementById('modal').classList.remove('open'));
+document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+/* ---- 添加技能 ---- */
+const addform = document.getElementById('addform');
+const selSc = document.getElementById('f-scenario');
+selSc.innerHTML = Object.keys(SCENARIOS).map(k => '<option value="' + k + '">' + SCENARIOS[k].label + '</option>').join('');
+const pfBox = document.getElementById('f-platforms');
+pfBox.innerHTML = PLATFORM_KEYS.map((k, i) =>
+  '<label><input type="checkbox" name="fpf" value="' + k + '"' + (i === 1 ? ' checked' : '') + '>' +
+  '<span style="color:' + PLATFORMS[k].color + ';font-weight:600">' + PLATFORMS[k].label + '</span></label>'
+).join('');
+document.getElementById('btn-add').addEventListener('click', () => addform.classList.toggle('open'));
+document.getElementById('btn-cancel').addEventListener('click', () => { addform.classList.remove('open'); });
+document.getElementById('btn-save').addEventListener('click', () => {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('请填写技能名称'); return; }
+  const platforms = Array.from(pfBox.querySelectorAll('input:checked')).map(i => i.value);
+  if (!platforms.length) { toast('至少勾选一个平台'); return; }
+  const skill = {
+    id: 'c-' + Date.now(),
+    custom: true,
+    name: name,
+    slug: document.getElementById('f-slug').value.trim(),
+    platforms: platforms,
+    scenario: selSc.value,
+    status: document.getElementById('f-built').checked ? 'built' : 'plan',
+    desc: document.getElementById('f-desc').value.trim(),
+    triggers: [],
+    prompt: document.getElementById('f-prompt').value.trim()
+  };
+  customSkills.push(skill);
+  localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
+  ['f-name','f-slug','f-desc','f-prompt'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-built').checked = false;
+  addform.classList.remove('open');
+  refreshAll(); toast('✓ 技能已添加');
+});
+
+/* ---- 导入导出 ---- */
+document.getElementById('btn-export').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(customSkills, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dld-skills-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+});
+document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-import').click());
+document.getElementById('file-import').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const arr = JSON.parse(reader.result);
+      if (!Array.isArray(arr)) throw new Error();
+      const ids = new Set(customSkills.map(s => s.id));
+      arr.forEach(s => { if (s && s.name && !ids.has(s.id)) { s.custom = true; if (!s.platforms) s.platforms = ['ozon']; customSkills.push(s); } });
+      localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
+      refreshAll(); toast('✓ 导入完成');
+    } catch (err) { toast('文件格式不对，需要导出的 JSON'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ---- init ---- */
+refreshAll();
+</script>
+</body>
+</html>
