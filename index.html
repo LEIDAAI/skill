@@ -309,15 +309,34 @@
 
   <div id="view-knowledge" style="display:none">
     <div class="toolbar">
-      <input id="ksearch" class="search" placeholder="搜索文档标题 / 描述 / 内容要点…">
+      <input id="ksearch" class="search" placeholder="搜索知识库 / 文档…">
       <div class="actions">
+        <button class="btn btn-add" id="kbtn-add">＋ 创建知识库</button>
         <button class="btn btn-mini" id="kbtn-openwebui" title="在新标签页打开 Open WebUI 知识库原文">🌐 打开原文库</button>
       </div>
     </div>
     <div class="ptabs-wrap">
       <div class="ptabs" id="kptabs"></div>
     </div>
-    <div class="grid" id="kgrid"></div>
+    <div class="grid" id="kblist"></div>
+    <div class="grid" id="kgrid" style="margin-top:16px"></div>
+    <div class="addform" id="kaddform">
+      <h3>创建知识库</h3>
+      <label class="flabel">知识库名称</label>
+      <div class="frow"><input id="k-f-name" placeholder="如：亚马逊 FBA 入仓规则官方资料"></div>
+      <label class="flabel">知识库描述（说明回答哪类问题、时间口径、不在范围的内容）</label>
+      <div class="frow"><textarea id="k-f-desc" placeholder="如：亚马逊 FBA 入仓费用与包装规则官方资料集，供回答…；口径：基于 2026-06 版；不含…"></textarea></div>
+      <label class="flabel">来源链接（Open WebUI 或其他 URL，选填）</label>
+      <div class="frow"><input id="k-f-src" placeholder="https://local.dianleida.net:21996/workspace/knowledge/…"></div>
+      <label class="flabel">文档（本页以要点卡片呈现；全文 md 文件放同目录后即可在线查看）</label>
+      <div class="frow"><textarea id="k-f-points" placeholder="每行一个要点：&#10;80 类目 × 2 模式 × 3 价格档&#10;价格三档：0–1500 / 1500.01–5000 / 5000.01+（RUB）"></textarea></div>
+      <label class="flabel">用法提示（复制使用指令时会带上）</label>
+      <div class="frow"><input id="k-f-usage" placeholder="如：算 FBA 费用时告诉我尺寸分段，我按此库取费"></div>
+      <div class="form-foot">
+        <button class="btn-solid" id="kbtn-save">创建</button>
+        <button class="btn-plain" id="kbtn-cancel">取消</button>
+      </div>
+    </div>
   </div>
 
   <div class="section">
@@ -1174,65 +1193,50 @@ const KB_SCENARIOS = {
 /* Open WebUI 知识库 ID（local.dianleida.net:21996） */
 const KB_WEBUI_URL = 'https://local.dianleida.net:21996/workspace/knowledge/dc4df2ad-1bb0-4738-9fd1-426795200756';
 
-const BASE_KNOWLEDGE = [
+/* 内置知识库：一个库 = 名称+描述+文档集（对齐 Open WebUI「一个库多文件」结构） */
+const BASE_KB_LIST = [
   {
-    id: 'kb-commission-table',
-    name: '佣金类目表-2025-12-01',
+    id: 'kb-ozon-fee-logistics',
+    name: 'OZON中国跨境佣金与国际物流（官方资料·2026-10-16核查）',
     platforms: ['ozon'],
-    scenario: 'fee',
-    version: '2025-12-01 生效 · 6.6KB · 来自 Open WebUI',
-    desc: 'Ozon 中国卖家 80 个类目 × realFBS/FBP × 三档价格的佣金费率总表（RUB 计价）。',
-    points: ['80 类目 × 2 模式 × 3 价格档 = 480 条费率', '价格三档：0–1500 / 1500.01–5000 / 5000.01+（RUB）', '佣金按订单 Delivered 时、下单日费率计提', '不含区域系数与推广系数'],
-    usage: '算利润/定价时告诉我商品类目和售价档位，我按此表取佣金率。',
-    file: '佣金类目表-2025-12-01.md'
-  },
-  {
-    id: 'kb-commission-rule',
-    name: '佣金规则-中国跨境-2025-12-01版',
-    platforms: ['ozon'],
-    scenario: 'fee',
-    version: '检索 2026-10-16 · 1.4KB · 来自 Open WebUI',
-    desc: 'Ozon 中国跨境佣金计算规则：适用范围、计费时点、价格档口径、WHD 专表与积分折扣。',
-    points: ['适用中国卖家 realFBS/FBP，本土 FBO/FBS 不适用', '服务费不征俄罗斯增值税', 'WHD 专表 2026-05-06 起，仅限确认通过 WHD 的交易', '积分最多覆盖 99% 佣金'],
-    usage: '对佣金口径有疑问（何时计提/怎么算档/WHD）时先查本文。',
-    file: '佣金规则-中国跨境-2025-12-01版.md'
-  },
-  {
-    id: 'kb-logistics-rates',
-    name: '物流线路摘要-2026-03-25',
-    platforms: ['ozon'],
-    scenario: 'logistics',
-    version: '2026-03-25 生效 · 28.9KB · 来自 Open WebUI',
-    desc: 'Ozon realFBS 中国→俄罗斯 353 条物流线路中的常用组 271 条：固定费+单位费、重量/申报价值/尺寸限制。',
-    points: ['覆盖 Extra Small / Budget / Small / Premium Small 四组', '承运商：ABT/ATC/CEL/GUOO/IML/OYX/RETS/TFS/Tanais/UNI/Ural/Xingyuan/ZTO 等', '币种 CNY 或 USD（按合同）', '官方未提供计费重进位规则，不得默认进位'],
-    usage: '算头程物流成本时给我重量和价值档，我按此表匹配线路报「固定费+单位费」。',
-    file: '物流线路摘要-2026-03-25.md'
-  },
-  {
-    id: 'kb-logistics-rule',
-    name: '物流规则-中国跨境-2026-03版',
-    platforms: ['ozon'],
-    scenario: 'logistics',
-    version: '检索 2026-10-16 · 1.5KB · 来自 Open WebUI',
-    desc: '中国跨境物流规则与版本说明：realFBS/FBP 适用性、计费重量口径、费用组成与汇率折算。',
-    points: ['FBP 运费与 realFBS 相同（官方正文）', '每票 15 RUB 平台费（有效性待确认）', '运费按下单日俄央行汇率从销售款扣除', '体积条件逐线路读取，不得套统一系数'],
-    usage: '物流费用口径疑问（体积重/平台费/汇率）先查本文。',
-    file: '物流规则-中国跨境-2026-03版.md'
+    scenarios: ['fee', 'logistics'],
+    source: KB_WEBUI_URL,
+    desc: 'OZON 平台面向中国跨境卖家的佣金与物流规则官方资料集，供回答：1) 各三级类目的佣金费率、最低佣金，以及 realFBS / FBP / 海外仓模式的收费差异；2) 中国发往俄罗斯的物流线路、时效区间、体积重计费方式与禁运限制；3) 佣金与物流政策的生效日期、新旧版本差异。时间口径：佣金类目表基于 2025-12-01 版，物流规则与线路摘要基于 2026-03 版。',
+    scope: '不在本库范围：实时价格、销量、排名、竞品数据——这类问题必须走网关工具实时查询，不得用本库内容替代。',
+    usage: '回答佣金/物流成本问题时引用本库；被问“当前是否仍有效”时，先给出版本与检索日期，再说明需以 OZON 官方最新公告为准。',
+    docs: [
+      { name: '佣金类目表-2025-12-01.md', size: '6.6KB', scenario: 'fee', version: '2025-12-01 生效',
+        desc: '80 个类目 × realFBS/FBP × 三档价格的佣金费率总表（RUB 计价）',
+        points: ['80 类目 × 2 模式 × 3 价格档 = 480 条费率', '价格三档：0–1500 / 1500.01–5000 / 5000.01+（RUB）', '佣金按订单 Delivered 时、下单日费率计提', '不含区域系数与推广系数'] },
+      { name: '佣金规则-中国跨境-2025-12-01版.md', size: '1.4KB', scenario: 'fee', version: '检索 2026-10-16',
+        desc: '中国跨境佣金计算规则：适用范围、计费时点、价格档口径、WHD 专表与积分折扣',
+        points: ['适用中国卖家 realFBS/FBP，本土 FBO/FBS 不适用', '服务费不征俄罗斯增值税', 'WHD 专表 2026-05-06 起', '积分最多覆盖 99% 佣金'] },
+      { name: '物流线路摘要-2026-03-25.md', size: '28.9KB', scenario: 'logistics', version: '2026-03-25 生效',
+        desc: 'realFBS 中国→俄罗斯 353 条线路中的常用组 271 条：固定费+单位费、重量/申报价值/尺寸限制',
+        points: ['覆盖 Extra Small / Budget / Small / Premium Small 四组', '承运商 ABT/ATC/CEL/GUOO/IML/OYX/RETS/TFS/Tanais/UNI/Ural/Xingyuan/ZTO 等', '币种 CNY 或 USD（按合同）', '官方未提供计费重进位规则，不得默认进位'] },
+      { name: '物流规则-中国跨境-2026-03版.md', size: '1.5KB', scenario: 'logistics', version: '检索 2026-10-16',
+        desc: '中国跨境物流规则与版本说明：realFBS/FBP 适用性、计费重量口径、费用组成与汇率折算',
+        points: ['FBP 运费与 realFBS 相同（官方正文）', '每票 15 RUB 平台费（有效性待确认）', '运费按下单日俄央行汇率从销售款扣除', '体积条件逐线路读取，不得套统一系数'] }
+    ]
   }
 ];
 
+const KB_LS_KEY = 'dld_knowledge_custom_v1';
+let customKBs = [];
+try { customKBs = JSON.parse(localStorage.getItem(KB_LS_KEY) || '[]'); } catch (e) { customKBs = []; }
 let curKbPlatform = 'all';
 let curKbScenario = 'all';
 let curKbSearch = '';
+let openKbId = null; /* 当前展开文档列表的知识库 */
 
-function allKnowledge() { return BASE_KNOWLEDGE; }
+function allKBs() { return BASE_KB_LIST.concat(customKBs); }
 function renderKPtabs() {
   const box = document.getElementById('kptabs');
   let html = '<button class="ptab' + (curKbPlatform === 'all' ? ' active' : '') + '" data-kpf="all"' +
-    (curKbPlatform === 'all' ? ' style="background:#16a34a"' : '') + '>全部平台 <span class="cnt">' + allKnowledge().length + '</span></button>';
+    (curKbPlatform === 'all' ? ' style="background:#16a34a"' : '') + '>全部平台 <span class="cnt">' + allKBs().length + '</span></button>';
   PLATFORM_KEYS.forEach(k => {
     const p = PLATFORMS[k];
-    const n = allKnowledge().filter(d => (d.platforms || []).includes(k)).length;
+    const n = allKBs().filter(d => (d.platforms || []).includes(k)).length;
     if (n === 0) return;
     const active = curKbPlatform === k;
     html += '<button class="ptab' + (active ? ' active' : '') + '" data-kpf="' + k + '"' +
@@ -1241,51 +1245,84 @@ function renderKPtabs() {
       ' <span class="cnt">' + n + '</span></button>';
   });
   html += '<span style="width:1px;height:22px;background:var(--border);margin:0 4px;align-self:center"></span>';
-  html += '<button class="ptab' + (curKbScenario === 'all' ? ' active' : '') + '" data-ksc="all"' +
-    (curKbScenario === 'all' ? ' style="background:#1a2233"' : '') + '>全部场景</button>';
   Object.keys(KB_SCENARIOS).forEach(k => {
     const s = KB_SCENARIOS[k];
-    const n = allKnowledge().filter(d => d.scenario === k && (curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform))).length;
+    const n = allKBs().filter(d => (d.scenarios || []).includes(k) && (curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform))).length;
+    if (n === 0 && curKbPlatform !== 'all') return;
     const active = curKbScenario === k;
     html += '<button class="ptab' + (active ? ' active' : '') + '" data-ksc="' + k + '"' +
       (active ? ' style="background:' + s.color + '"' : '') + '>' + s.label + ' <span class="cnt">' + n + '</span></button>';
   });
   box.innerHTML = html;
 }
-function renderKGrid() {
-  const grid = document.getElementById('kgrid');
+function kbCard(d) {
+  const built = d.custom ? 'badge-plan' : 'badge-built';
+  const builtTxt = d.custom ? '自定义' : '✓ 官方资料';
+  const ptags = (d.platforms || []).map(k => {
+    const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
+    return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
+  }).join('');
+  const stags = (d.scenarios || []).map(k => {
+    const s = KB_SCENARIOS[k] || { label: k, color: '#8592a6' };
+    return '<span class="stag" style="background:' + s.color + '">' + esc(s.label) + '</span>';
+  }).join('');
+  const docCount = (d.docs || []).length;
+  return '<div class="card" data-kbid="' + esc(d.id) + '">' +
+    '<div class="card-head">' +
+      '<div class="tags">' + ptags + stags + '</div>' +
+      '<span class="badge ' + built + '">' + builtTxt + '</span>' +
+    '</div>' +
+    '<h3>📚 ' + esc(d.name) + '</h3>' +
+    '<div class="card-sub"><span>' + docCount + ' 个文档' + (d.source ? ' · <a href="' + esc(d.source) + '" target="_blank" style="color:#5b8dff">原文链接 ↗</a>' : '') + '</span></div>' +
+    '<div class="desc">' + esc((d.desc || '').slice(0, 160)) + '…</div>' +
+    '<div class="triggers"><b>文档清单</b>' +
+      (d.docs || []).map(x => '<div>📄 ' + esc(x.name) + '（' + esc(x.size || '') + '）</div>').join('') +
+    '</div>' +
+    '<div class="card-actions">' +
+      '<button class="btn-solid" data-kaction="use">📋 复制使用指令</button>' +
+      '<button class="btn-plain" data-kaction="docs">查看文档（' + docCount + '）</button>' +
+      (d.custom ? '<button class="btn-plain btn-del" data-kaction="del">删除</button>' : '') +
+    '</div>' +
+  '</div>';
+}
+function renderKbList() {
+  const box = document.getElementById('kblist');
   const kw = curKbSearch.trim().toLowerCase();
-  const list = allKnowledge().filter(d => {
+  const list = allKBs().filter(d => {
     const okPf = curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform);
-    const okSc = curKbScenario === 'all' || d.scenario === curKbScenario;
-    const hay = (d.name + ' ' + (d.desc || '') + ' ' + (d.points || []).join(' ')).toLowerCase();
+    const okSc = curKbScenario === 'all' || (d.scenarios || []).includes(curKbScenario);
+    const hay = (d.name + ' ' + (d.desc || '')).toLowerCase();
     return okPf && okSc && (!kw || hay.includes(kw));
   });
-  if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的文档，换个筛选条件吧</div>'; return; }
-  grid.innerHTML = list.map(d => {
-    const sc = KB_SCENARIOS[d.scenario] || { label: d.scenario, color: '#8592a6' };
-    const ptags = (d.platforms || []).map(k => {
-      const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
-      return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
-    }).join('');
-    const pts = (d.points || []).map(t => '<div>· ' + esc(t) + '</div>').join('');
-    return '<div class="card" data-kid="' + esc(d.id) + '">' +
-      '<div class="card-head">' +
-        '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span></div>' +
-        '<span class="badge badge-built">📄 官方资料</span>' +
-      '</div>' +
-      '<h3>' + esc(d.name) + '</h3>' +
-      '<div class="card-sub"><span>' + esc(d.version || '') + '</span></div>' +
-      '<div class="desc">' + esc(d.desc || '') + '</div>' +
-      (pts ? '<div class="triggers"><b>内容要点</b>' + pts + '</div>' : '') +
-      '<div class="card-actions">' +
-        '<button class="btn-solid" data-kaction="use">📋 复制使用指令</button>' +
-        '<button class="btn-plain" data-kaction="view">查看全文</button>' +
-      '</div>' +
-    '</div>';
-  }).join('');
+  if (!list.length) { box.innerHTML = '<div class="empty">没有匹配的知识库</div>'; return; }
+  box.innerHTML = list.map(kbCard).join('');
 }
-function refreshKnowledge() { renderKPtabs(); renderKGrid(); }
+function renderDocGrid() {
+  const grid = document.getElementById('kgrid');
+  if (!openKbId) { grid.innerHTML = ''; grid.style.display = 'none'; return; }
+  const kb = allKBs().find(d => d.id === openKbId);
+  if (!kb) { grid.innerHTML = ''; return; }
+  const docs = kb.docs || [];
+  grid.style.display = '';
+  grid.innerHTML = '<div class="empty" style="padding:10px 0;text-align:left;font-size:14px;color:var(--text);grid-column:1/-1">📚 <b>' + esc(kb.name) + '</b> 的文档（' + docs.length + '）</div>' +
+    docs.map((x, i) => {
+      const sc = KB_SCENARIOS[x.scenario] || { label: x.scenario, color: '#8592a6' };
+      const pts = (x.points || []).map(t => '<div>· ' + esc(t) + '</div>').join('');
+      return '<div class="card" data-kbid="' + esc(kb.id) + '" data-didx="' + i + '">' +
+        '<div class="card-head"><div class="tags"><span class="stag" style="background:' + sc.color + '">' + sc.label + '</span></div>' +
+          '<span class="badge badge-plan">' + esc(x.size || '') + '</span></div>' +
+        '<h3 style="font-size:15px">📄 ' + esc(x.name) + '</h3>' +
+        '<div class="card-sub"><span>' + esc(x.version || '') + '</span></div>' +
+        '<div class="desc">' + esc(x.desc || '') + '</div>' +
+        (pts ? '<div class="triggers"><b>内容要点</b>' + pts + '</div>' : '') +
+        '<div class="card-actions">' +
+          '<button class="btn-solid" data-kaction="doc-use">📋 复制使用指令</button>' +
+          '<button class="btn-plain" data-kaction="doc-view">查看全文</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+}
+function refreshKnowledge() { renderKPtabs(); renderKbList(); renderDocGrid(); }
 
 document.getElementById('kptabs').addEventListener('click', e => {
   const tab = e.target.closest('.ptab');
@@ -1294,47 +1331,109 @@ document.getElementById('kptabs').addEventListener('click', e => {
   if (tab.dataset.ksc) curKbScenario = tab.dataset.ksc;
   refreshKnowledge();
 });
-document.getElementById('ksearch').addEventListener('input', e => { curKbSearch = e.target.value; renderKGrid(); });
+document.getElementById('ksearch').addEventListener('input', e => { curKbSearch = e.target.value; renderKbList(); });
 document.getElementById('kbtn-openwebui').addEventListener('click', () => window.open(KB_WEBUI_URL, '_blank'));
 
-/* 知识库文档内容缓存（首次查看全文时从 GitHub Pages 同目录加载） */
+/* 知识库文档内容缓存（首次查看全文时从同目录加载 md） */
 const kbContentCache = {};
-async function loadKbContent(doc) {
-  if (kbContentCache[doc.id]) return kbContentCache[doc.id];
+async function loadKbContent(filename) {
+  if (kbContentCache[filename]) return kbContentCache[filename];
   try {
-    const r = await fetch(doc.file, { cache: 'no-cache' });
+    const r = await fetch(filename, { cache: 'no-cache' });
     if (!r.ok) throw new Error();
     const t = await r.text();
-    kbContentCache[doc.id] = t;
+    kbContentCache[filename] = t;
     return t;
   } catch (e) {
-    return '（加载失败：本地打开时请把 ' + doc.file + ' 放在与页面同目录，或通过线上版访问）';
+    return '（加载失败：本地打开时请把 ' + filename + ' 放在与页面同目录，或通过线上版访问）';
   }
 }
-document.getElementById('kgrid').addEventListener('click', async e => {
+document.getElementById('kblist').addEventListener('click', async e => {
   const btn = e.target.closest('button[data-kaction]');
   if (!btn) return;
   const card = btn.closest('.card');
-  const doc = allKnowledge().find(d => d.id === card.dataset.kid);
-  if (!doc) return;
+  const kb = allKBs().find(d => d.id === card.dataset.kbid);
+  if (!kb) return;
   const act = btn.dataset.kaction;
   if (act === 'use') {
     copyText([
-      '请基于「' + doc.name + '」知识库回答我的问题。',
-      '使用方式：' + (doc.usage || ''),
-      '注意：该资料版本为 ' + (doc.version || '') + '；如我问“当前是否有效”，先给出版本与检索日期，再提醒以 Ozon 官方最新公告为准。',
+      '请基于「' + kb.name + '」知识库回答我的问题。',
+      '知识库说明：' + (kb.desc || '').slice(0, 200),
+      '使用方式：' + (kb.usage || ''),
+      '范围约束：' + (kb.scope || ''),
       '',
       '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】'
     ].join('\n'));
   }
-  if (act === 'view') {
+  if (act === 'docs') {
+    if (openKbId === kb.id) { openKbId = null; } else { openKbId = kb.id; }
+    renderDocGrid();
+    if (openKbId) document.getElementById('kgrid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  if (act === 'del') {
+    customKBs = customKBs.filter(d => d.id !== kb.id);
+    localStorage.setItem(KB_LS_KEY, JSON.stringify(customKBs));
+    if (openKbId === kb.id) openKbId = null;
+    refreshKnowledge(); toast('已删除');
+  }
+});
+document.getElementById('kgrid').addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-kaction]');
+  if (!btn) return;
+  const card = btn.closest('.card');
+  const kb = allKBs().find(d => d.id === card.dataset.kbid);
+  if (!kb) return;
+  const doc = (kb.docs || [])[parseInt(card.dataset.didx, 10)];
+  if (!doc) return;
+  const act = btn.dataset.kaction;
+  if (act === 'doc-use') {
+    copyText([
+      '请基于「' + kb.name + '」知识库中的文档「' + doc.name + '」回答我的问题。',
+      '该文档：' + (doc.desc || '') + '；版本：' + (doc.version || ''),
+      '注意：如我问“当前是否有效”，先给出版本与检索日期，再提醒以 Ozon 官方最新公告为准。',
+      '',
+      '我的问题：【填写你的问题】'
+    ].join('\n'));
+  }
+  if (act === 'doc-view') {
     btn.textContent = '加载中…';
-    const content = await loadKbContent(doc);
+    const content = await loadKbContent(doc.name);
     btn.textContent = '查看全文';
     document.getElementById('modal-title').textContent = doc.name;
     document.getElementById('modal-content').textContent = content;
     document.getElementById('modal').classList.add('open');
   }
+});
+
+/* ---- 创建知识库 ---- */
+const kaddform = document.getElementById('kaddform');
+document.getElementById('kbtn-add').addEventListener('click', () => openFormModal(kaddform, '创建知识库'));
+document.getElementById('kbtn-cancel').addEventListener('click', closeFormModal);
+document.getElementById('kbtn-save').addEventListener('click', () => {
+  const name = document.getElementById('k-f-name').value.trim();
+  if (!name) { toast('请填写知识库名称'); return; }
+  const pointsText = document.getElementById('k-f-points').value.trim();
+  const kb = {
+    id: 'ckb-' + Date.now(),
+    custom: true,
+    name: name,
+    platforms: curKbPlatform === 'all' ? ['ozon'] : [curKbPlatform],
+    scenarios: curKbScenario === 'all' ? ['fee'] : [curKbScenario],
+    source: document.getElementById('k-f-src').value.trim(),
+    desc: document.getElementById('k-f-desc').value.trim(),
+    scope: '',
+    usage: document.getElementById('k-f-usage').value.trim(),
+    docs: pointsText ? [{
+      name: name + '.md', size: '—', scenario: curKbScenario === 'all' ? 'fee' : curKbScenario,
+      version: '自定义', desc: document.getElementById('k-f-desc').value.trim().slice(0, 80),
+      points: pointsText.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 8)
+    }] : []
+  };
+  customKBs.push(kb);
+  localStorage.setItem(KB_LS_KEY, JSON.stringify(customKBs));
+  ['k-f-name','k-f-desc','k-f-src','k-f-points','k-f-usage'].forEach(id => document.getElementById(id).value = '');
+  closeFormModal();
+  refreshKnowledge(); toast('✓ 知识库已创建');
 });
 
 document.getElementById('eptabs').addEventListener('click', e => {
