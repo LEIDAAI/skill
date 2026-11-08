@@ -202,6 +202,22 @@
   }
   .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
 
+  /* ===== 实测预览（demo modal）===== */
+  .demo-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .demo-kpi { background: #f6f9fc; border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
+  .demo-kpi b { display: block; font-size: 19px; color: var(--text); margin-top: 2px; }
+  .demo-kpi span { font-size: 11.5px; color: var(--muted); }
+  .demo-sec { margin: 14px 0 6px; font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .demo-sec::before { content: ''; width: 4px; height: 15px; border-radius: 3px; background: var(--primary); }
+  .demo-flow { font-size: 12.8px; color: #47536b; line-height: 2; background: #f6f9fc; border-radius: 10px; padding: 10px 16px; }
+  .demo-flow code { background: #e8eefb; color: #2456c4; border-radius: 4px; padding: 1px 6px; font-size: 11.8px; font-family: Consolas, monospace; }
+  .demo-table { width: 100%; border-collapse: collapse; font-size: 12.3px; margin-top: 6px; }
+  .demo-table th { background: #f0f4f9; color: #47536b; font-weight: 600; padding: 7px 9px; text-align: left; white-space: nowrap; border-bottom: 1.5px solid var(--border); }
+  .demo-table td { padding: 7px 9px; border-bottom: 1px solid #eef1f6; color: #2b3648; vertical-align: top; }
+  .demo-table tr:hover td { background: #f8fafd; }
+  .demo-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .demo-badge { display: inline-block; font-size: 11px; background: #e8f7ef; color: #16a34a; border-radius: 999px; padding: 2px 10px; margin-left: 8px; font-weight: 600; vertical-align: 1px; }
+
   /* ===== Toast ===== */
   #toast {
     position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -1111,7 +1127,32 @@ const BASE_EXPERTS = [
       '## 纪律',
       '图搜找1688同款必须用 1688 MCP 的 global_image_search(platform=1688)，yunqi-data 的图搜是 Temu 库；缺数据标「—」不编造；输出=结论+数据表格+建议，附接口名与查询参数。',
       '已验证示例：「家居用品(17028714) 近28天销售额TOP」返回感应垃圾桶₽2967/4412件、垃圾袋₽190/58614件等。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：家居用品类目 · 近28天销售额TOP5',
+      date: '2026-11-08',
+      kpis: [
+        { label: '筛选类目', v: '家居用品' },
+        { label: '后台类目ID', v: '17028714' },
+        { label: '候选商品', v: '10,000+' },
+        { label: '排序口径', v: '28天销售额' }
+      ],
+      flow: [
+        '① <code>yq_dict_lookup</code> 查「家居用品」→ 后台类目 17028714（不猜编码）',
+        '② <code>yq_ozon_goods_search</code>：category=[17028714]，sort=[{soldSum28:desc}]，取 TOP5'
+      ],
+      table: {
+        head: ['#', '商品', 'SKU', '售价₽', '28天销量', '28天销售额₽', '评分', '店铺类型'],
+        rows: [
+          ['1', '感应垃圾桶带盖 15L+9L 两件装 SUNNY HOUSE', '2466748832', '2,967', '4,412', '1,181万', '4.9', '本土'],
+          ['2', '垃圾袋 35L 加厚 100只', '631000911', '190.7', '58,614', '1,063万', '4.8', '本土'],
+          ['3', '垃圾袋/垃圾袋 60L', '3076697728', '275', '32,560', '776万', '4.8', '本土'],
+          ['4', '垃圾袋 240L 100只(10卷)', '1359946589', '1,942', '4,033', '741万', '4.9', '本土'],
+          ['5', '垃圾袋 35L 带拉绳 75只(5卷)', '1727824574', '243', '27,962', '614万', '4.8', '本土']
+        ]
+      },
+      note: '数据来源：yq_dict_lookup + yq_ozon_goods_search（2026-11-08 实时调用）。延伸：下一步可对任意一款执行 1688 图搜找同款 → 知识库匹配佣金/物流 → 利润测算（联动利润技能）。'
+    }
   },
   {
     id: 'exp-ozon-mall',
@@ -1140,7 +1181,33 @@ const BASE_EXPERTS = [
       '## 输出',
       '结论+店铺对比表格（店铺ID/名称/类型/等级/开店时长/日周销量/SKU数/评分）+每店爆款TOP3+模式判断+建议，附接口名与参数。',
       '已验证示例：Rhapsody Home Shop(ID 2892839)=跨境店/Plus级/开店1年/日销8738件/1252 SKU，店内爆款为创可贴(28天卖6万件₽66)。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：标杆店铺挖掘 + 店铺爆款反查',
+      date: '2026-11-08',
+      kpis: [
+        { label: '目标店铺', v: 'Rhapsody' },
+        { label: '店铺ID', v: '2892839' },
+        { label: '日销量', v: '8,738件' },
+        { label: '店铺等级', v: 'Plus' }
+      ],
+      flow: [
+        '① <code>yq_ozon_mall_search</code>：storeType=1(跨境)，sort=[{dailySales:desc}] → 过滤 Ozon 自营聚合脏数据(name=Ozon)后取真实头部',
+        '② <code>yq_ozon_mall_detail</code>：id=2892839 → 开店时长/等级/SKU结构',
+        '③ <code>yq_ozon_goods_search</code>：sellerId=2892839，sort=[{soldSum28:desc}] → 反查店内爆款'
+      ],
+      table: {
+        head: ['#', '店内爆款(SKU)', '售价₽', '28天销量', '28天销售额₽', '评分'],
+        rows: [
+          ['1', '创可贴 100片装 (2351657298)', '66', '60,954', '359万', '4.8'],
+          ['2', '帽子 (5839705718)', '141', '27,580', '325万', '4.8'],
+          ['3', '创可贴 100片装-加宽 (3125114419)', '82', '18,470', '114万', '4.8'],
+          ['4', '花园工具挂钩 9cm 15只装 (2307782567)', '136', '7,093', '94万', '4.6'],
+          ['5', '鸡眼贴 12片装 (2146320165)', '85', '9,145', '84万', '4.8']
+        ]
+      },
+      note: '店铺画像：Rhapsody Home Shop = 跨境店 / Plus级(level 3) / 开店1年 / 日销8,738件 / 周销57,706件 / 1252 SKU / 87 SPU / 评分4.8。模式判断：1252 SKU 中月动销集中在少数链接 → 典型「铺货筛爆款」打法。数据来源：mall_search + mall_detail + goods_search 反查（2026-11-08）。'
+    }
   },
   {
     id: 'exp-ozon-market',
@@ -1166,7 +1233,35 @@ const BASE_EXPERTS = [
       '## 纪律',
       '金额看 symbol（默认₽）；趋势序列有日期空洞（非每日都有）时按可得数据点判断，注明覆盖区间；结论必须给「入场建议」（可进/谨慎/避开）+理由+数据依据；不编造品牌份额，brand_search 查不到的品牌如实说明。',
       '已验证示例：家居用品(17028714)=月销228万件/月销售额8.29亿₽/15.7万SKU/4.6万店铺/近28天浏览20.6亿次。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：家居用品类目大盘 · 容量与趋势',
+      date: '2026-11-08',
+      kpis: [
+        { label: '月销售额', v: '8.29亿₽' },
+        { label: '月销量', v: '228万件' },
+        { label: 'SKU总数', v: '15.7万' },
+        { label: '店铺总数', v: '4.67万' }
+      ],
+      flow: [
+        '① <code>yq_dict_lookup</code>：家居用品 → 后台类目 17028714（market_stat 的 key 必须用后台ID）',
+        '② <code>yq_ozon_market_stat</code>：key=17028714 → stats 大盘统计 + items 每日趋势序列'
+      ],
+      table: {
+        head: ['指标', '数值', '解读'],
+        rows: [
+          ['月销售额 monthlyPrice', '828,982,564 ₽', '市场容量大，头部类目'],
+          ['月销量 monthlySalesNum', '2,282,994 件', '客单价约 ₽363'],
+          ['SKU 总数 allSkuNum', '157,232', '供给充足，竞争充分'],
+          ['店铺总数 allMallNum', '46,652', '平均每店仅 ~3.4 SKU 动销'],
+          ['月动销 SKU monthSkuNum', '964（占0.6%）', '⚠️ 动销率极低，铺货淹没严重'],
+          ['月活跃店铺 monthMallNum', '57（占0.1%）', '流量高度集中在头部'],
+          ['近28天浏览 skuViewNum28', '20.6 亿次', '流量池巨大'],
+          ['近28天搜索 skuSearchNum28', '39.0 亿次', '搜索是第一流量入口']
+        ]
+      },
+      note: '入场结论（示例）：容量大但动销率仅 0.6% —— 新玩家靠自然流量铺货难出头，须靠选品差异化+广告抢搜索位。趋势序列 items 含 2026-08-13 ~ 11-07 每日数据（有日期空洞，按可得点判断）。数据来源：yq_dict_lookup + yq_ozon_market_stat（2026-11-08 实时调用）。'
+    }
   },
   {
     id: 'exp-cross-border',
@@ -1232,6 +1327,7 @@ function renderEGrid() {
       (x.skills && x.skills.length ? '<div class="ver">绑定技能：' + esc(x.skills.join('、')) + '</div>' : '') +
       '<div class="card-actions">' +
         '<button class="btn-solid" data-eaction="copy-sys">📋 复制人设提示词</button>' +
+        (x.demo ? '<button class="btn-plain" data-eaction="demo">📊 实测预览</button>' : '') +
         '<button class="btn-plain" data-eaction="detail">详情</button>' +
         (x.custom ? '<button class="btn-plain btn-del" data-eaction="del">删除</button>' : '') +
       '</div>' +
@@ -1538,6 +1634,21 @@ function openExpertModal(expert) {
   modal.classList.add('open');
 }
 
+function openExpertDemo(expert) {
+  const d = expert.demo;
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-title').innerHTML =
+    esc(expert.name + ' · 实测记录') + '<span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span>';
+  const kpis = '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>';
+  const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+    d.table.head.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+    d.table.rows.map(r => '<tr>' + r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+  const note = '<div class="demo-note">' + esc(d.note) + '</div>';
+  document.getElementById('modal-content').innerHTML = kpis + flow + table + note;
+  modal.classList.add('open');
+}
+
 document.getElementById('egrid').addEventListener('click', e => {
   const btn = e.target.closest('button[data-eaction]');
   if (!btn) return;
@@ -1546,6 +1657,7 @@ document.getElementById('egrid').addEventListener('click', e => {
   if (!expert) return;
   const act = btn.dataset.eaction;
   if (act === 'copy-sys') copyText(expert.sysPrompt || '');
+  if (act === 'demo') openExpertDemo(expert);
   if (act === 'detail') openExpertModal(expert);
   if (act === 'del') {
     customExperts = customExperts.filter(x => x.id !== expert.id);
