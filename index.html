@@ -1107,6 +1107,7 @@ const BASE_EXPERTS = [
     abilities: ['类目热销榜与时间窗筛新品', 'SKU/SPU 商品解析与跟卖监控', '转化率/库存/销量动态多维筛选', '佣金+国际物流利润测算（知识库）', '结构化选品报告'],
     refPrompts: ['家居用品类目近28天销售额TOP10有哪些', '近30天上架的连衣裙，找出有销量的新款', '分析 SKU 631000911 的销量趋势、价格和跟卖情况', '测算这个商品的1688分销利润（给我SKU或链接即可）'],
     skills: ['Ozon选品搜索', '竞品价格监控', '类目趋势分析', '商品详情解析', '利润测算', '选品报告生成'],
+    mcpTools: ['yq_dict_lookup', 'yq_ozon_goods_search', 'yq_ozon_goods_detail', 'yq_ozon_spu_search', 'yq_ozon_spu_detail', 'global_image_search', 'image_search', 'ali_offer_sku_prices'],
     sysPrompt: [
       '你是 Ozon 选品专家，基于 yunqi-data MCP 的商品类接口完成俄罗斯市场选品。',
       '',
@@ -1164,6 +1165,7 @@ const BASE_EXPERTS = [
     abilities: ['多维筛选找标杆店铺', '店铺详情解析（等级/开店时长/执照）', '反查店铺在售商品与爆款结构', '竞店对比与铺货/精品模式判断', '店铺销量趋势追踪'],
     refPrompts: ['找出日销量TOP10的Ozon跨境店铺', '分析店铺 2892839 的经营情况和爆款结构', '对比这两家店铺的铺货策略（给我两个店铺ID）', '家居类目有哪些值得对标的本土店铺'],
     skills: ['店铺排行分析', '商品详情解析', '竞品价格监控', '选品报告生成'],
+    mcpTools: ['yq_ozon_mall_search', 'yq_ozon_mall_detail', 'yq_ozon_goods_search'],
     sysPrompt: [
       '你是 Ozon 店铺专家，基于 yunqi-data MCP 的店铺类接口完成竞店分析与标杆挖掘。',
       '',
@@ -1173,10 +1175,12 @@ const BASE_EXPERTS = [
       '- yq_ozon_goods_search(sellerId=店铺ID)：反查店铺在售商品，sort=[{"soldSum28":"desc"}] 取店内爆款',
       '',
       '## 实测纪律（重要）',
-      '① mall_search 结果前几条可能是「Ozon 自营聚合」脏数据（name=Ozon、skuNum<100、日销虚高2.5亿），必须过滤后再排名；',
+      '① mall_search 结果前几条可能是「Ozon 自营聚合」脏数据（name=Ozon、skuNum<100、日销虚高2.5亿），必须过滤后再排名；快捷法：加 minSkuNum≥500 可自动滤掉（已实测验证）；',
       '② 按类目(categorys)筛店铺匹配的是店铺主营分类，常查不到目标类目店铺——正确姿势：先用 goods_search 按类目找热销商品→拿到 sellerId→再查店铺详情；',
       '③ monthlySales 字段在店铺接口不存在，用 dailySales/weeklySales/sales(总销量)；',
-      '④ 店铺判断维度：开店时长×销量=增长速度；SKU数×平均销量=铺货/精品模式；level=平台等级背书。',
+      '④ 开店时间筛选用 minCreateAt/maxCreateAt（格式 20261001），openVal/openUnit 组合查不出数据（已实测）；',
+      '⑤ 评分筛选参数是 minScore/maxScore（不是 score）；',
+      '⑥ 店铺判断维度：开店时长×销量=增长速度；SKU数×平均销量=铺货/精品模式；level=平台等级背书。',
       '',
       '## 输出',
       '结论+店铺对比表格（店铺ID/名称/类型/等级/开店时长/日周销量/SKU数/评分）+每店爆款TOP3+模式判断+建议，附接口名与参数。',
@@ -1219,6 +1223,7 @@ const BASE_EXPERTS = [
     abilities: ['类目容量评估（SKU/店铺/销量）', '每日趋势序列与增长判断', '品牌集中度与头部竞争分析', '价格段分布与定价区间建议', '入场可行性结论'],
     refPrompts: ['家居用品类目现在还能进吗', '分析服装类目的大盘容量和品牌集中度', '宠物用品类目近3个月的趋势是涨还是跌', '这个类目头部品牌占多少份额（给我类目名）'],
     skills: ['类目趋势分析', '选品报告生成', '店铺排行分析'],
+    mcpTools: ['yq_dict_lookup', 'yq_ozon_market_stat', 'yq_ozon_brand_search'],
     sysPrompt: [
       '你是 Ozon 大盘专家，基于 yunqi-data MCP 的大盘与品牌接口回答"该不该做"的问题。',
       '',
@@ -1232,7 +1237,9 @@ const BASE_EXPERTS = [
       '',
       '## 纪律',
       '金额看 symbol（默认₽）；趋势序列有日期空洞（非每日都有）时按可得数据点判断，注明覆盖区间；结论必须给「入场建议」（可进/谨慎/避开）+理由+数据依据；不编造品牌份额，brand_search 查不到的品牌如实说明。',
-      '已验证示例：家居用品(17028714)=月销228万件/月销售额8.29亿₽/15.7万SKU/4.6万店铺/近28天浏览20.6亿次。'
+      'brand_search 实测纪律：品牌名大小写敏感（samsung→0结果，Samsung→正常）；模糊匹配会混入杂牌（XIAOMI→返回XIAOMIMI等近似名），须按 mallsNum/skuNum/月销量 规模核对是否目标品牌；brandName 建议先试官方拼写。',
+      'market_stat 实测纪律：key=all 返回全站统计+10个价格段分布(statPrices)+每日序列；key=后台分类ID 返回该类目；月销售额看 monthlyPrice。',
+      '已验证示例：家居用品(17028714)=月销228万件/月销售额8.29亿₽/15.7万SKU/4.6万店铺/近28天浏览20.6亿次；全站(key=all)=6800万SKU/29.4万店铺/月销售额2558亿₽/月销3.2亿件。'
     ].join('\n'),
     demo: {
       title: '实测：家居用品类目大盘 · 容量与趋势',
