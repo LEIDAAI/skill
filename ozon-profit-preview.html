@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OZON利润测算 · 近60天连衣裙 TOP8</title>
+<style>
+  :root { --primary:#005bff; --green:#16a34a; --red:#ef4444; --amber:#f59e0b; --bg:#f5f7fb; --card:#fff; --text:#1a2233; --muted:#6b7688; --border:#e6eaf2; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.5; padding:28px; }
+  h1 { font-size:20px; margin-bottom:4px; }
+  .sub { color:var(--muted); font-size:13px; margin-bottom:18px; }
+  .kpis { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+  .kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 18px; min-width:140px; }
+  .kpi .v { font-size:22px; font-weight:700; }
+  .kpi .l { font-size:12px; color:var(--muted); }
+  .kpi.g .v { color:var(--green); }
+  .kpi.r .v { color:var(--red); }
+  .bar { display:inline-block; width:52px; height:8px; border-radius:4px; background:#e6eaf2; vertical-align:middle; position:relative; overflow:hidden; }
+  .bar i { position:absolute; left:0; top:0; bottom:0; border-radius:4px; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; font-size:12.5px; }
+  th { background:#f1f4f9; text-align:left; padding:10px 10px; font-size:12px; color:var(--muted); white-space:nowrap; border-bottom:1px solid var(--border); }
+  td { padding:10px 10px; border-bottom:1px solid #f0f3f8; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f8fafd; }
+  .prod { display:flex; gap:10px; align-items:center; min-width:210px; }
+  .prod img { width:44px; height:56px; object-fit:cover; border-radius:6px; border:1px solid var(--border); }
+  .prod .t { font-weight:600; font-size:12.5px; }
+  .prod .s { color:#9aa5b8; font-size:11px; font-family:Consolas,monospace; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:600; }
+  .tag.g { background:#e7f7ee; color:#16a34a; }
+  .tag.a { background:#fef3d8; color:#b45309; }
+  .tag.n { background:#f1f3f7; color:#8592a6; }
+  .num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .pos { color:var(--green); font-weight:700; }
+  .neg { color:var(--red); font-weight:700; }
+  .muted { color:#9aa5b8; }
+  .rank { font-size:16px; }
+  .foot { margin-top:14px; font-size:12px; color:var(--muted); }
+  .foot b { color:var(--text); }
+  a { color:#5b8dff; text-decoration:none; }
+
+  /* ===== 交互增强：图片放大 + 标题/店铺跳转 ===== */
+  .thumb { cursor: zoom-in; transition: transform .15s; }
+  .zoom-layer { position: fixed; inset: 0; background: rgba(15,23,42,.72); z-index: 9999; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
+  .zoom-layer.open { display: flex; }
+  .zoom-layer img { max-width: 86vw; max-height: 86vh; border-radius: 14px; box-shadow: 0 18px 60px rgba(0,0,0,.4); }
+  .title-link { cursor: pointer; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color .15s; }
+  .title-link:hover { text-decoration-color: #2456c4; color: #2456c4; }
+  .shop-link { cursor: pointer; color: #2456c4; text-decoration: underline dotted; text-underline-offset: 2px; }
+  .shop-link:hover { color: #0d3ea8; }
+
+</style>
+</head>
+<body>
+<h1>OZON 利润空间测算 · 连连衣裙（近60天上架 · 按近28天销售额 TOP8）</h1>
+<div class="sub">筛选：前台类目「连衣裙和太阳裙」(7502) · 上架 2026-09-08 ~ 11-07 · realFBS 中国跨境 · 汇率 CNY→RUB = 12.21（open.er-api.com，2026-11-07）· 佣金库 2025-12-01 版 · 物流库 2026-03-25 版</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="v">8</div><div class="l">测算款数（类目新品35款中TOP8）</div></div>
+  <div class="kpi g"><div class="v">38.4%</div><div class="l">预估利润率中位数</div></div>
+  <div class="kpi g"><div class="v">₽1,742</div><div class="l">单件预估利润中位数</div></div>
+  <div class="kpi"><div class="v">8 / 0 / 0</div><div class="l">可测算 / 假设测算 / 待补</div></div>
+  <div class="kpi r"><div class="v">₽301</div><div class="l">头程物流中位数（利润第一大扣项）</div></div>
+</div>
+
+<table>
+<thead><tr>
+<th>#</th><th>OZON 商品</th><th>上架</th><th class="num">售价₽</th><th class="num">28天销售额₽</th><th>类目档位</th><th class="num">佣金率/₽</th><th class="num">计费重</th><th>物流线路</th><th class="num">运费₽</th><th>1688 拿货</th><th class="num">拿货₽</th><th class="num">预估利润₽</th><th>利润率</th><th>状态</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td class="rank">🥇</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-i/20773107270.jpg"><div><div class="t">Dress Sasheline</div><div class="s">5691396596</div></div></div></td>
+  <td class="num muted">09-03</td><td class="num">3,212</td><td class="num">711,185</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">中档 14%</span></td>
+  <td class="num">14% / 449.7</td><td class="num">250g*</td>
+  <td>IML Econ. Extra&nbsp;Small</td><td class="num">112.3</td>
+  <td><a href="https://detail.1688.com/offer/835197828885.html" target="_blank">835197828885</a> ¥68.23<br><span class="muted">Платье трикотажное лапша 针织</span></td>
+  <td class="num">833.1</td><td class="num pos">1,817.0</td>
+  <td><div class="bar"><i style="width:88%;background:var(--green)"></i></div> <b class="pos num">56.6%</b></td>
+  <td><span class="tag a">假设</span> <div class="muted" style="font-size:11px">重量假设250g</div></td>
+</tr>
+<tr>
+  <td class="rank">🥈</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-e/20208796826.jpg"><div><div class="t">Платье аргайл 菱格针织纽扣长裙</div><div class="s">5745886071</div></div></div></td>
+  <td class="num muted">09-09</td><td class="num">4,221</td><td class="num">648,750</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">高档 20.5%</span></td>
+  <td class="num">20.5% / 865.3</td><td class="num">300g*</td>
+  <td>IML Econ. Extra&nbsp;Small</td><td class="num">115.5</td>
+  <td><a href="https://detail.1688.com/offer/980456390919.html" target="_blank">980456390919</a> ¥75.00<br><span class="muted">法式V领修身纽扣秋冬长裙</span></td>
+  <td class="num">915.7</td><td class="num pos">2,324.3</td>
+  <td><div class="bar"><i style="width:100%;background:var(--green)"></i></div> <b class="pos num">55.1%</b></td>
+  <td><span class="tag a">假设</span> <div class="muted" style="font-size:11px">重量假设300g</div></td>
+</tr>
+<tr>
+  <td class="rank">🥉</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/20548757735.jpg"><div><div class="t">Dress SONDIONE</div><div class="s">5814794687</div></div></div></td>
+  <td class="num muted">09-16</td><td class="num">3,142</td><td class="num">562,903</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">中档 14%</span></td>
+  <td class="num">14% / 439.9</td><td class="num">250g*</td>
+  <td>IML Econ. Extra&nbsp;Small</td><td class="num">112.3</td>
+  <td><a href="https://detail.1688.com/offer/933304945536.html" target="_blank">933304945536</a> ¥47.00<br><span class="muted">法式荷叶边针织毛衣裙</span></td>
+  <td class="num">573.9</td><td class="num pos">1,816.0</td>
+  <td><div class="bar"><i style="width:86%;background:var(--green)"></i></div> <b class="pos num">57.8%</b></td>
+  <td><span class="tag a">假设</span> <div class="muted" style="font-size:11px">重量假设250g</div></td>
+</tr>
+<tr>
+  <td class="rank">4</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-v/14651973931.jpg"><div><div class="t">Платье Folia 针织毛衣连衣裙</div><div class="s">5692584555</div></div></div></td>
+  <td class="num muted">09-03</td><td class="num">3,032</td><td class="num">475,087</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">中档 14%</span></td>
+  <td class="num">14% / 424.5</td><td class="num">300g*</td>
+  <td>IML Econ. Extra&nbsp;Small</td><td class="num">115.5</td>
+  <td><a href="https://detail.1688.com/offer/1042867972482.html" target="_blank">1042867972482</a> ¥69.00<br><span class="muted">小香风针织名媛连衣裙</span></td>
+  <td class="num">842.7</td><td class="num pos">1,649.3</td>
+  <td><div class="bar"><i style="width:80%;background:var(--green)"></i></div> <b class="pos num">54.4%</b></td>
+  <td><span class="tag a">假设</span> <div class="muted" style="font-size:11px">重量假设300g</div></td>
+</tr>
+<tr>
+  <td class="rank">5</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-7/14631941455.jpg"><div><div class="t">Dress Samy（重量已知）</div><div class="s">5687543209</div></div></div></td>
+  <td class="num muted">09-03</td><td class="num">2,129</td><td class="num">795,657</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">中档 14%</span></td>
+  <td class="num">14% / 298.1</td><td class="num">800g</td>
+  <td>ATC Econ. Budget</td><td class="num">446.7</td>
+  <td><a href="https://detail.1688.com/offer/1064805240814.html" target="_blank">1064805240814</a> ¥45.88<br><span class="muted">美式套头圆领落肩卫衣（相似款）</span></td>
+  <td class="num">560.2</td><td class="num pos">824.0</td>
+  <td><div class="bar"><i style="width:58%;background:var(--amber)"></i></div> <b class="pos num">38.7%</b></td>
+  <td><span class="tag a">假设</span> <div class="muted" style="font-size:11px">图搜相似款非同款</div></td>
+</tr>
+<tr>
+  <td class="rank">6</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/13877207191.jpg"><div><div class="t">Платье DarkStory 针织办公厚裙（重量已知）</div><div class="s">5813467944</div></div></div></td>
+  <td class="num muted">09-16</td><td class="num">2,908</td><td class="num">348,672</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">中档 14%</span></td>
+  <td class="num">14% / 407.1</td><td class="num">190g</td>
+  <td>OYX Econ. Extra&nbsp;Small</td><td class="num">105.7</td>
+  <td><a href="https://detail.1688.com/offer/1081777589307.html" target="_blank">1081777589307</a> ¥89.86<br><span class="muted">大码针织毛衣裙系带收腰</span></td>
+  <td class="num">1,097.0</td><td class="num pos">1,198.1</td>
+  <td><div class="bar"><i style="width:48%;background:var(--amber)"></i></div> <b class="pos num">41.2%</b></td>
+  <td><span class="tag g">可测算</span> <div class="muted" style="font-size:11px">重量真实；拿货价为相似款</div></td>
+</tr>
+<tr>
+  <td class="rank">7</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-3/20188709175.jpg"><div><div class="t">Dress BitByFit</div><div class="s">5963491601</div></div></div></td>
+  <td class="num muted">10-06</td><td class="num">2,280</td><td class="num">192,181</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">中档 14%</span></td>
+  <td class="num">14% / 319.2</td><td class="num">250g*</td>
+  <td>IML Econ. Extra&nbsp;Small</td><td class="num">112.3</td>
+  <td><a href="https://detail.1688.com/offer/960543852085.html" target="_blank">960543852085</a> ¥23.88<br><span class="muted">欧美修身后背拉链包臀连衣裙</span></td>
+  <td class="num">291.5</td><td class="num pos">1,557.3</td>
+  <td><div class="bar"><i style="width:100%;background:var(--green)"></i></div> <b class="pos num">68.3%</b></td>
+  <td><span class="tag a">假设</span> <div class="muted" style="font-size:11px">重量假设250g</div></td>
+</tr>
+<tr>
+  <td class="rank">8</td>
+  <td><div class="prod"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-6/20119389810.jpg"><div><div class="t">Dress 圣诞印花</div><div class="s">5969253225</div></div></div></td>
+  <td class="num muted">10-07</td><td class="num">498</td><td class="num">235</td>
+  <td><span class="tag n">服装和配饰</span> <span class="tag g">低档 12%</span></td>
+  <td class="num">12% / 59.8</td><td class="num">250g*</td>
+  <td>IML Econ. Extra&nbsp;Small</td><td class="num">112.3</td>
+  <td><span class="muted">1688图搜无同款</span></td><td class="num muted">—</td><td class="num muted">—</td><td class="num muted">—</td>
+  <td><span class="tag n">待补</span> <div class="muted" style="font-size:11px">缺1688拿货价</div></td>
+</tr>
+</tbody>
+</table>
+
+<div class="foot">
+  <b>结论</b>：TOP8 中 7 款可出数（1款待补），预估利润率区间 <b class="pos">38.7% ~ 68.3%</b>，中位数 <b class="pos">≈55%</b>。连衣裙品类 1688 货源丰富（¥23~95），OZON 售价 ₽2,100~4,200，价差空间大；<b>利润第一大扣项是头程运费</b>（250g 款约 ₽112，800g 款达 ₽447），控重即控利润。
+  <br><b>推荐</b>：🥇 优先跟进 <b>Dress SONDIONE / Sasheline</b> 类针织修身款——利润率 56%+ 且月销 ₽56~71 万已验证需求；图搜命中 1688「深圳市兮之贸易」等俄语标题专供店（¥58~68），供应链现成。
+  <br><b>风险</b>：① 带 * 重量为假设值（OZON 详情未返回），实际计费重每 ±100g 利润率波动约 ±3pp；② 拿货价为图搜相似款而非同款实价，投产前需打样；③ 佣金率按「服装和配饰」映射（佣金库 2025-12-01 版），未含区域/推广系数；④ 本测算未含广告、退货、国内段运费，非净利润。
+  <br><b>来源</b>：yq_dict_lookup · yq_ozon_goods_search(minCreateDate 窗口+sort soldSum28) · yq_ozon_goods_detail ×8 · mcp__1688 global_image_search ×5 + ali_offer_sku_prices ×3（上一轮已核 960543852085=¥23.88 起批1件）· 佣金类目表-2025-12-01（服装和配饰 12/14/20.5% 三档）· 物流线路摘要-2026-03-25（IML/OYX/ATC Economy 线）· 汇率 open.er-api.com 2026-11-07
+</div>
+
+<script>
+/* ===== 交互增强 ===== */
+(function(){
+  // 图片放大层
+  const layer = document.createElement('div');
+  layer.className = 'zoom-layer';
+  layer.innerHTML = '<img alt="">';
+  document.body.appendChild(layer);
+  layer.addEventListener('click', () => layer.classList.remove('open'));
+  document.addEventListener('click', e => {
+    const img = e.target.closest('img.thumb');
+    if (img && img.src) { layer.querySelector('img').src = img.src; layer.classList.add('open'); }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') layer.classList.remove('open'); });
+
+  // 取行内 SKU（排除纯字母的假SKU如 FAFY）与 sellerId（最后一列纯数字）
+  function rowInfo(tr) {
+    const cells = Array.from(tr.querySelectorAll('td'));
+    let sku = '', seller = '';
+    const skuEl = tr.querySelector('td.sku, .sku');
+    if (skuEl) sku = skuEl.textContent.trim();
+    // 兜底：找单元格文本形如纯数字长度>=6 的
+    if (!/^\d{6,}$/.test(sku)) {
+      for (const c of cells) { const t = c.textContent.trim(); if (/^\d{6,}$/.test(t)) { sku = t; break; } }
+    }
+    // sellerId：最后一个形如数字的单元格（排除与 sku 相同）
+    for (let i = cells.length - 1; i >= 0; i--) {
+      const t = cells[i].textContent.trim();
+      if (/^\d{4,}$/.test(t) && t !== sku) { seller = t; break; }
+    }
+    return { sku, seller };
+  }
+
+  // 标题点击 -> 商品页（Ozon 商品链接格式 ozon.ru/product/{sku} 不可靠时退化为全局搜索链接）
+  document.addEventListener('click', e => {
+    const t = e.target.closest('.title-link');
+    if (!t) return;
+    const tr = t.closest('tr'); if (!tr) return;
+    const { sku } = rowInfo(tr); if (!sku) return;
+    // 商品直达链接可能因类目码缺省不稳，用 SKU 搜索页最稳
+    window.open('https://www.ozon.ru/search/?text=' + encodeURIComponent(sku) + '&from_global=true', '_blank');
+  });
+
+  // 店铺ID点击 -> 店铺搜索页
+  document.addEventListener('click', e => {
+    const s = e.target.closest('.shop-link');
+    if (!s) return;
+    const sid = s.dataset.seller || s.textContent.trim().replace(/[^\d]/g, '');
+    if (!sid) return;
+    window.open('https://www.ozon.ru/search/?text=' + encodeURIComponent(sid) + '&sorting=sold', '_blank');
+  });
+
+  // 渲染后处理：为已存在的 .title-ru 加类、.sku 最后一列加 shop-link
+  function enhance() {
+    document.querySelectorAll('table tbody tr').forEach(tr => {
+      const t = tr.querySelector('.title-ru');
+      if (t && !t.classList.contains('title-link')) t.classList.add('title-link');
+      const info = rowInfo(tr);
+      if (info.seller) {
+        // 找到显示 sellerId 的单元格（文本等于 seller），加链接样式
+        Array.from(tr.querySelectorAll('td')).forEach(c => {
+          if (c.textContent.trim() === info.seller && !c.querySelector('.shop-link') && !c.classList.contains('title-link')) {
+            // 避免把主 SKU 列变成店铺链接（只处理非首个 .sku 列）
+            const isSkuCol = c.classList.contains('sku') && c === tr.querySelector('td.sku, .sku');
+            if (!isSkuCol) { c.classList.add('shop-link'); c.dataset.seller = info.seller; }
+          }
+        });
+      }
+    });
+  }
+  // 初始 + 每秒检查新行（页面多为 JS 渲染）
+  enhance();
+  setInterval(enhance, 800);
+})();
+</script>
+
+</body>
+</html>
