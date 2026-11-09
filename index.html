@@ -251,12 +251,12 @@
   </header>
 
   <div class="vtabs">
-    <button class="vtab active" id="vtab-skills" onclick="switchView('skills')"><span class="vicon">🧩</span>技能</button>
-    <button class="vtab" id="vtab-experts" onclick="switchView('experts')"><span class="vicon">🟢</span>专家</button>
+    <button class="vtab active" id="vtab-experts" onclick="switchView('experts')"><span class="vicon">🟢</span>专家</button>
+    <button class="vtab" id="vtab-skills" onclick="switchView('skills')"><span class="vicon">🧩</span>技能</button>
     <button class="vtab" id="vtab-knowledge" onclick="switchView('knowledge')"><span class="vicon">📚</span>知识库</button>
   </div>
 
-  <div id="view-skills">
+  <div id="view-skills" style="display:none">
   <div class="toolbar">
     <input id="search" class="search" placeholder="搜索技能名称 / 描述 / 触发词…">
     <div class="actions">
@@ -296,7 +296,7 @@
   <div class="grid" id="grid"></div>
   </div>
 
-  <div id="view-experts" style="display:none">
+  <div id="view-experts">
     <div class="toolbar">
       <input id="esearch" class="search" placeholder="搜索专家名称 / 简介 / 能力…">
       <div class="actions">
