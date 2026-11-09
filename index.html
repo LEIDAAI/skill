@@ -220,6 +220,11 @@
   .demo-table td { padding: 7px 9px; border-bottom: 1px solid #eef1f6; color: #2b3648; vertical-align: top; }
   .demo-table tr:hover td { background: #f8fafd; }
   /* 实测预览表格：主图悬浮放大（白卡片跟随鼠标） */
+  .kb-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .kb-tab { border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 8px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; }
+  .kb-tab.active { background: var(--accent, #2563eb); color: #fff; border-color: var(--accent, #2563eb); }
+  .kb-tab:hover { border-color: var(--accent, #2563eb); }
+  .kb-doc-body { white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.65; color: var(--text); background: #f8fafd; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; max-height: 60vh; overflow: auto; }
   .demo-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; cursor: zoom-in; background: #eef1f6; display: block; }
   #hub-img-preview { display:none; position:fixed; z-index:10000; pointer-events:none; width:300px; height:300px; padding:10px; background:#fff; border-radius:14px; box-shadow:0 10px 40px rgba(15,23,42,.28); }
   #hub-img-preview img { width:100%; height:100%; object-fit:contain; border-radius:8px; background:#f6f8fc; display:block; }
@@ -3044,6 +3049,36 @@ async function loadKbContent(filename) {
     return '（加载失败：本地打开时请把 ' + filename + ' 放在与页面同目录，或通过线上版访问）';
   }
 }
+/* 知识库文档弹窗：tab 切换各文档全文 */
+let kbModalTab = 0;
+async function openKbDocsModal(kb) {
+  const docs = kb.docs || [];
+  if (!docs.length) { toast('该知识库暂无文档'); return; }
+  kbModalTab = 0;
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-title').innerHTML = esc(kb.name) + '<span class="demo-badge">文档（' + docs.length + '）</span>';
+  const body = document.getElementById('modal-content');
+  body.innerHTML = '<div class="kb-tabs">' + docs.map((x, i) =>
+    '<button class="kb-tab' + (i === 0 ? ' active' : '') + '" data-i="' + i + '">' + esc(x.name.replace(/\.md$/, '')) + '</button>').join('') +
+  '</div><div class="kb-doc-body" id="kb-doc-body">加载中…</div>';
+  modal.classList.add('open');
+  await renderKbDoc(docs[0]);
+  body.querySelector('.kb-tabs').addEventListener('click', async e => {
+    const tab = e.target.closest('.kb-tab');
+    if (!tab) return;
+    body.querySelectorAll('.kb-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const i = parseInt(tab.dataset.i, 10);
+    await renderKbDoc(docs[i]);
+  });
+}
+async function renderKbDoc(doc) {
+  const box = document.getElementById('kb-doc-body');
+  if (!box) return;
+  box.textContent = '加载中…';
+  const t = await loadKbContent(doc.name);
+  box.textContent = t;
+}
 document.getElementById('kblist').addEventListener('click', async e => {
   const btn = e.target.closest('button[data-kaction]');
   if (!btn) return;
@@ -3061,11 +3096,7 @@ document.getElementById('kblist').addEventListener('click', async e => {
       '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】'
     ].join('\n'));
   }
-  if (act === 'docs') {
-    if (openKbId === kb.id) { openKbId = null; } else { openKbId = kb.id; }
-    renderDocGrid();
-    if (openKbId) document.getElementById('kgrid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
+  if (act === 'docs') { openKbDocsModal(kb); }
   if (act === 'del') {
     customKBs = customKBs.filter(d => d.id !== kb.id);
     localStorage.setItem(KB_LS_KEY, JSON.stringify(customKBs));
