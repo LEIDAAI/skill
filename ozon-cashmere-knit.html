@@ -78,6 +78,7 @@
   </div>
 </div>
 <script>
+const PHOTOS = {"1259934514":"https://ir.ozone.ru/s3/multimedia-a/6815173870.jpg","1417327351":"https://ir-20.ozonstatic.cn/s3/multimedia-1-k/13453125716.jpg","1718931184":"https://ir.ozone.ru/s3/multimedia-1-1/10173013309.jpg","1838495887":"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/7298093797.jpg","1851913719":"https://ir.ozone.ru/s3/multimedia-1-0/7256329164.jpg","2288019363":"https://ir-20.ozonstatic.cn/s3/multimedia-1-r/7618870035.jpg","2600535209":"https://ir-20.ozonstatic.cn/s3/multimedia-1-3/7760870319.jpg","2600537107":"https://ir-20.ozonstatic.cn/s3/multimedia-1-w/7784068424.jpg","2609700573":"https://ir-20.ozonstatic.cn/s3/multimedia-1-6/7765354122.jpg","2718736196":"https://ir.ozone.ru/s3/multimedia-1-a/8160687190.jpg","2718752869":"https://ir-20.ozonstatic.cn/s3/multimedia-1-u/8160688074.jpg","2831768811":"https://ir-20.ozonstatic.cn/s3/multimedia-1-6/7968751962.jpg","2831769004":"https://ir-20.ozonstatic.cn/s3/multimedia-1-6/14308116450.jpg","3166964402":"https://ir-20.ozonstatic.cn/s3/multimedia-1-y/8420783146.jpg","3266875941":"https://ir-20.ozonstatic.cn/s3/multimedia-1-2/15457803122.jpg","3266877222":"https://ir-20.ozonstatic.cn/s3/multimedia-1-t/20067265289.jpg","3305111539":"https://ir-20.ozonstatic.cn/s3/multimedia-1-o/20197746132.jpg","3856830864":"https://ir-20.ozonstatic.cn/s3/multimedia-1-6/11682006162.jpg","3856831192":"https://ir.ozone.ru/s3/multimedia-1-u/15108840426.jpg","3888331323":"https://ir-20.ozonstatic.cn/s3/multimedia-1-g/9121948108.jpg","4045334472":"https://ir-20.ozonstatic.cn/s3/multimedia-1-f/13449683967.jpg","5067332741":"https://ir-20.ozonstatic.cn/s3/multimedia-1-2/12835068194.jpg","4932801076":"https://ir-20.ozonstatic.cn/s3/multimedia-1-s/15297411016.jpg","5863721067":"https://ir-20.ozonstatic.cn/s3/multimedia-1-q/15385229774.jpg","5516242996":"https://ir-20.ozonstatic.cn/s3/multimedia-1-f/13449683967.jpg","5323377982":"https://ir-20.ozonstatic.cn/s3/multimedia-1-t/13280047661.jpg"};
 const D = [
 ["2831768811","跨境⚡","Свитер женский теплый зимний (女款暖冬毛衣)","Sweater",1280,2908,2712225,4.9],
 ["3856830864","本土","Свитер кофта паутинка (蛛网纱针织)","Sweater",854,1845,1242454,4.8],
@@ -110,7 +111,7 @@ const PT = {1:'<span class="pt pt-cross">跨境</span>',2:'<span class="pt pt-lo
 const ST = {'跨境⚡':1, '本土':2, '未知':0};
 document.getElementById('tb').innerHTML = D.map((r,i) => {
   return '<tr><td>'+(i+1)+'</td>'+
-  '<td><img class="thumb" loading="lazy" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-6/7968751962.jpg" onerror="this.style.opacity=0.15"></td>'+
+  '<td><img class="thumb" loading="lazy" src="'+(PHOTOS[r[0]]||'')+'" onerror="this.style.opacity=0.15"></td>'+
   '<td><span class="title-ru">'+r[3]+'</span><span class="brand">'+r[2]+'</span></td>'+
   '<td class="sku">'+r[0]+'</td>'+
   '<td class="price">'+r[4].toLocaleString()+'</td>'+
