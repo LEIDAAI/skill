@@ -393,6 +393,50 @@
 - 接口侧已知问题 3 个：yunqi ozon goods_search 偶发超时（重试即成）/ sorftime keyword_list 504 / 1688 shop_rank_list 空数据
 - 后台验收：按本矩阵重跑，对上锚点即通过
 
+## 卖家精灵专家五件套（2026-11-09 下午新增 · 24 接口全实测后搭建）
+
+> 背景：卖家精灵（sellersprite MCP）接口组评估可做 6 个专家，用户拍板先做 5 个（选品/关键词/大盘/评论/流量）。命名规范延续「数据源前缀+平台+角色」。已写入 Hub（exp-ss-amazon-*，status=built，各带实测 demo）。
+
+| 专家 | id | 接口 | 可行性结论 |
+|---|---|---|---|
+| 卖家精灵亚马逊选品专家 | exp-ss-amazon-sel | product_node / competitor_lookup / asin_detail / asin_competitor / asin_prediction / bsr_prediction / market_research_statistics | ✅ 全部可用（⚠️ product_research 的 keywords 参数无效，见坑1） |
+| 卖家精灵亚马逊关键词专家 | exp-ss-amazon-keyword | keyword_research / keyword_research_trends / keyword_miner / keyword_order / keyword_conversion / aba_monthly / aba_weekly / aba_trend | ✅ 全部可用（⚠️ month 滞后一月 / weekly 不能传 date / Acos min-max 顺序异常） |
+| 卖家精灵亚马逊大盘专家 | exp-ss-amazon-market | market_research(_statistics) + 8 分布接口 + product_node / google_trend | ✅ 全部可用（⚠️ market_research 传 nodeIdPath 返回空，单节点下钻走 statistics） |
+| 卖家精灵亚马逊评论洞察专家 | exp-ss-amazon-voc | review + asin_detail | ✅ 可用（星级/SKU/时间窗/图视频差评筛选齐全；无 AI 话题计数，与 Sorftime 版互补分工） |
+| 卖家精灵亚马逊流量专家 | exp-ss-amazon-traffic | traffic_keyword(_stat) / traffic_extend / traffic_listing(_stat) / traffic_source | ✅ 全部可用（⚠️ traffic_keyword 带 month 返回空 / extend queryType=1 空 / relations=["SP"] 空） |
+
+### 卖家精灵接口参数坑（2026-11-09 实测，人设已内置）
+
+1. **product_research 的 keywords 参数无效**：传 "water bottle" 返回全库商品（Nespresso 咖啡胶囊，total 7848 万）——商品关键词筛选一律用 competitor_lookup(keyword+matchType=3 精准)，不要用 product_research。
+2. **market_research 传 nodeIdPath 返回空**（total=0）：类目下钻用 market_research_statistics + 8 个分布接口（都支持 nodeIdPath）；market_research 只用 departmentKeyword 或纯筛选条件。
+3. **competitor_lookup 不传 matchType 默认=2 模糊匹配**，噪音大（water bottle 模糊出蛋白奶昔）；有关键词必传 matchType=3。
+4. **keyword_research 的 month 滞后一个月**：传 202610 返回 2026.09 数据，输出必须标注数据月份。
+5. **aba_research_weekly 不能传 date**：传上周六日期（20261107）反而报错「只能查询上一周」；不传 date 默认返回上一周。
+6. **keyword_conversion 的 Acos min/max 顺序异常**（min:6.78 > max:0.084），Acos 区间不可信，只引用均值。
+7. **keyword_order 的 page 从 0 开始**（其他接口从 1，不一致）。
+8. **traffic 家族**：traffic_keyword 带 month 必空（默认参数调用）；traffic_extend queryType=1（畅销变体）返回空用 0；traffic_listing relations=["SP"] 空，先 traffic_listing_stat 看 fbt/vav/bab 哪个有量再查明细。
+9. **变体级销量共享**：同 parent 变体 units 相同（父体口径），amzUnit 才是变体自营近期销量。
+10. **bsr_prediction 的 categoryId 是一级类目 code**（284507=Kitchen & Dining），传三级节点失败。
+
+### 实测锚点（2026-11-09 US 站，锚点商品=Owala B0BZYBSRNF 沿用 Sorftime 版）
+
+- competitor_lookup(water bottle 精准)：Owala FreeSip 系霸榜 TOP5，Alpine Sport 24oz 月销 18.8 万件/$659 万/毛利率 68.05%
+- asin_prediction：2026-10 月销 187,455 件；峰值 2026-08=31 万件（8 月旺季/冬季淡季 9.6 万）
+- bsr_prediction(Kitchen, BSR#1)：日销 6,842 件/月销 20.5 万件
+- keyword_research(2026.09 数据)：water bottle 月搜 185.9 万/购买率 2.09%/PPC $1.17/供需比 16.17；keyword_miner：owala 月搜 321 万（品牌词是品类词 1.9 倍）
+- 大盘(3395091)：Owala 品牌份额 25.86% 一家独大未过半；40$+ 高价段 11 款占销量 33.31%；2025-2026 年新款占 63% 销量（新品窗口大开）；中国卖家仅 13%；有 A+ 占 90%
+- review(1-2星)：头号差评主题=漏水（4/5 条，与 Sorftime 版「弹簧断裂」互补）；16oz/24oz 差评集中 32oz 少；差评池 2,254 条
+- 流量(traffic_keyword_stat)：1,343 流量词/自然 1,330/AC 79/广告 0=纯自然打法；owala 词吃 24.7% 流量；121 关联位全免费（fbt 41+vav 62+bab 12）
+
+### 与 Sorftime 版分工边界
+
+- 选品：Sorftime 主库（利润四件套直返）为主，卖家精灵版强在 competitor_lookup 关键词筛品+asin_prediction 14 个月走势+bsr_prediction 销量换算
+- 关键词：Sorftime 强在单词坑位竞争/跟卖率/CPC 趋势；卖家精灵强在 ABA 6 模式市场榜+keyword_research 四维筛选+58 个月趋势
+- 大盘：Sorftime category_report 一站式 19 维；卖家精灵 8 个分布接口更细（国籍/EBC/上架年份）
+- 评论：Sorftime 有 AI 话题计数+特征销量份额；卖家精灵有 SKU 级差评+时间窗+图视频筛选
+- 流量：Sorftime 是关键词维度（词位对比）；卖家精灵是 ASIN 维度（流量词结构/关联商品/免费付费比）——两库互验
+
+
 ## 维护约定
 
 - Hub（skill 仓库）是专家人设的**单一事实源**；后台录入后如有改动，反向同步回 Hub
