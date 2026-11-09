@@ -33,6 +33,7 @@
   .score { color: #b45309; font-weight: 600; }
   .variants { color: #7c3aed; font-weight: 600; white-space: nowrap; }
   .cat { display: inline-block; font-size: 11px; border-radius: 6px; padding: 1px 8px; background: #fdf2e9; color: #c2410c; }
+  .kids-row td { padding: 8px 14px !important; }
   .note { margin-top: 16px; font-size: 12.5px; color: #7a8699; line-height: 1.8; background: #fff; border: 1px dashed #d9e1ec; border-radius: 12px; padding: 14px 18px; }
 </style>
 </head>
@@ -51,7 +52,7 @@
 
   <table>
     <thead><tr>
-      <th>#</th><th>主图</th><th>品牌 / 商品</th><th>代表款 SKU</th><th>代表款售价₽</th><th>父体合计销量(28天)</th><th>父体合计销售额₽</th><th>变体数</th><th>品类细分</th><th>卖家</th>
+      <th>#</th><th>主图</th><th>品牌 / 商品</th><th>代表款 SKU</th><th>代表款售价₽</th><th>父体合计销量(28天)</th><th>父体合计销售额₽</th><th>变体数</th><th>品类细分</th><th>卖家</th><th>子体</th>
     </tr></thead>
     <tbody id="tb"></tbody>
   </table>
@@ -61,6 +62,33 @@
   </div>
 </div>
 <script>
+/* 子体明细（本次 119 条接口返回中已确认 SPU 的 61 条） */
+const CHILDREN = {"1757272168":[{"sku":"1868128797","price":1471,"sold":4,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-i/10321161498.jpg"},{"sku":"1932002198","price":1469,"sold":2,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-s/10322793028.jpg"},{"sku":"1868111255","price":1471,"sold":1,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-j/10321287391.jpg"},{"sku":"1977407345","price":1409,"sold":1,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-m/10322243806.jpg"}],"1783521388":[{"sku":"4533439301","price":1919,"sold":23,"score":4.8,"photo":"https://ir.ozone.ru/s3/multimedia-1-8/11815426376.jpg"}],"2164435863":[{"sku":"2829669944","price":2225,"sold":89,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-9/10924046901.jpg"},{"sku":"1594665060","price":2317,"sold":78,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-4/11105348584.jpg"},{"sku":"1594665110","price":2229,"sold":20,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-f/11643086499.jpg"},{"sku":"2039433218","price":2341,"sold":14,"score":4.9,"photo":""},{"sku":"1594665064","price":2256,"sold":10,"score":4.9,"photo":""},{"sku":"2039445836","price":2749,"sold":10,"score":4.9,"photo":""},{"sku":"1571385361","price":2087,"sold":3,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-r/7025022639.jpg"}],"2657284295":[{"sku":"4152360565","price":7607,"sold":14,"score":4.9,"photo":""},{"sku":"3474855479","price":7328,"sold":8,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-5/9104810729.jpg"},{"sku":"4152364202","price":6117,"sold":6,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-m/13570397842.jpg"},{"sku":"4152358054","price":3651,"sold":4,"score":4.8,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-k/13570552388.jpg"},{"sku":"3474876766","price":7328,"sold":3,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-t/9104841497.jpg"},{"sku":"3474874400","price":5245,"sold":1,"score":4.8,"photo":"https://ir.ozone.ru/s3/multimedia-1-o/9104835408.jpg"}],"9520302452":[{"sku":"235574581","price":1185,"sold":4,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-k/13777743620.jpg"},{"sku":"1772833796","price":1608,"sold":3,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-5/12831960605.jpg"}],"6395933287":[{"sku":"1697888996","price":1583,"sold":64,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-6/9966265458.jpg"},{"sku":"1697891459","price":1731,"sold":53,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-g/10659645124.jpg"},{"sku":"1618750990","price":2086,"sold":41,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-d/10323013405.jpg"},{"sku":"1697885069","price":1409,"sold":30,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-g/10659645124.jpg"}],"4737872867":[{"sku":"1762316826","price":3197,"sold":60,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/7201258909.jpg"},{"sku":"1864108127","price":3212,"sold":51,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-f/7342935171.jpg"},{"sku":"1864108004","price":2813,"sold":23,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-5/7342920653.jpg"}],"7776736261":[{"sku":"1801568714","price":1099,"sold":10,"score":4.9,"photo":""},{"sku":"1801568800","price":1145,"sold":4,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-7/7247726395.jpg"}],"6421364749":[{"sku":"1813827137","price":1276,"sold":5,"score":4.8,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-v/7071376315.jpg"},{"sku":"1813827059","price":1136,"sold":2,"score":4.8,"photo":"https://ir.ozone.ru/s3/multimedia-1-b/7253474843.jpg"},{"sku":"1813826774","price":1270,"sold":1,"score":4.8,"photo":"https://ir.ozone.ru/s3/multimedia-1-c/7071376332.jpg"},{"sku":"1813826831","price":1270,"sold":1,"score":4.8,"photo":"https://ir.ozone.ru/s3/multimedia-1-q/6928042850.jpg"},{"sku":"1813827213","price":1247,"sold":1,"score":4.8,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-v/7071376315.jpg"}],"9941039082":[{"sku":"2309300517","price":594,"sold":29,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-0/7627590360.jpg"},{"sku":"2121218013","price":848,"sold":2,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-6/7533217482.jpg"}],"7158711147":[{"sku":"2158204712","price":2438,"sold":12,"score":4.8,"photo":""}],"4928229701":[{"sku":"2425874631","price":2188,"sold":11,"score":4.9,"photo":""}],"6896334326":[{"sku":"3382763049","price":4587,"sold":42,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-o/9104897112.jpg"},{"sku":"3382762362","price":4498,"sold":32,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-f/9104901999.jpg"},{"sku":"3382763578","price":7328,"sold":28,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-f/9104901999.jpg"},{"sku":"3382763343","price":5776,"sold":27,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-f/9104901999.jpg"},{"sku":"3382763038","price":5556,"sold":21,"score":4.9,"photo":"https://ir-20.ozone.ru/s3/multimedia-1-o/9104897112.jpg"},{"sku":"3382762317","price":6010,"sold":20,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-9/9104919525.jpg"},{"sku":"3382763932","price":5051,"sold":19,"score":4.9,"photo":""},{"sku":"3382762338","price":5151,"sold":17,"score":4.9,"photo":""},{"sku":"3382762599","price":5051,"sold":17,"score":4.9,"photo":""},{"sku":"3382762601","price":6826,"sold":16,"score":4.9,"photo":""},{"sku":"3382762997","price":5478,"sold":15,"score":4.9,"photo":""},{"sku":"3382762614","price":5363,"sold":13,"score":4.9,"photo":""},{"sku":"3382762333","price":6826,"sold":12,"score":4.9,"photo":""},{"sku":"3382763094","price":5898,"sold":12,"score":4.9,"photo":""},{"sku":"3382762979","price":5051,"sold":11,"score":4.9,"photo":""},{"sku":"3382763384","price":5556,"sold":10,"score":4.9,"photo":""},{"sku":"3382763398","price":5898,"sold":9,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-7/9104931367.jpg"}],"4799170843":[{"sku":"3550165196","price":1932,"sold":28,"score":4.9,"photo":"https://ir.ozone.ru/s3/multimedia-1-0/11986024716.jpg"},{"sku":"3530512621","price":1477,"sold":19,"score":4.9,"photo":""}],"6800418515":[{"sku":"4059618190","price":3722,"sold":53,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-0/11065478940.jpg"},{"sku":"4213087201","price":4075,"sold":51,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-9/11065433373.jpg"},{"sku":"4059585613","price":4261,"sold":48,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-x/11065362837.jpg"},{"sku":"4059539044","price":4550,"sold":26,"score":4.9,"photo":"https://ir-20.ozonstatic.cn/s3/multimedia-1-6/11065455366.jpg"}]};
+/* 代表款SKU -> SPU 映射（用于行点击匹配） */
+const REP2SPU = {'4059618190':'6800418515','2829669944':'2164435863','3382763049':'6896334326','1697888996':'6395933287','1762316826':'4737872867','4533438411':'1783521388','1931978435':'1757272168','3550165196':'4799170843','2309300517':'9941039082','1772833812':'9520302452','1801568714':'7776736261','2425874631':'4928229701','1813827059':'6421364749','2158204712':'7158711147','2811350650':'SveTekstFamily'};
+function toggleKids(spu, btn) {
+  const row = btn.closest('tr');
+  const next = row.nextElementSibling;
+  if (next && next.classList.contains('kids-row') && next.dataset.spu === spu) {
+    next.remove(); btn.textContent = '▸ 展开'; return;
+  }
+  const kids = CHILDREN[spu];
+  if (!kids || !kids.length) { btn.textContent = '无明细'; return; }
+  const tr = document.createElement('tr');
+  tr.className = 'kids-row'; tr.dataset.spu = spu;
+  const inner = kids.map(k =>
+    '<div style="display:flex;align-items:center;gap:10px;padding:3px 0">' +
+    (k.photo ? '<img src="'+k.photo+'" style="width:34px;height:34px;border-radius:6px;object-fit:cover">' : '') +
+    '<span class="sku">'+k.sku+'</span>' +
+    '<span style="color:#47536b">₽'+k.price.toLocaleString()+'</span>' +
+    '<span style="font-weight:600;color:'+(k.sold>=10?'#c2410c':'#8592a6')+'">'+k.sold+' 件/28天</span>' +
+    (k.score ? '<span class="score">★'+k.score+'</span>' : '') +
+    '</div>').join('');
+  tr.innerHTML = '<td></td><td colspan="9" style="background:#fbfaff;border-left:3px solid #7c3aed"><div style="font-size:11.5px;color:#7c3aed;font-weight:700;margin-bottom:4px">子体明细（'+kids.length+' 个变体，按销量降序）</div>'+inner+'</td>';
+  row.after(tr);
+  btn.textContent = '▾ 收起';
+}
+
 // G: [品牌, 商品描述, 代表SKU, 代表价, 合计销量, 合计GMV, 变体数(估), 品类, 卖家(1跨境/2本土/0未知), 确认状态(true=SPU实测/false=聚类)]
 const G = [
 ["Sasheline","трикотажное длинное 针织长裙","3669503451",2533,176,441802,"1+","针织长裙",2,true],
@@ -107,7 +135,8 @@ document.getElementById('tb').innerHTML = sorted.map((r,i) => {
   '<td class="gmv">'+r[5].toLocaleString()+'</td>'+
   '<td class="variants">'+r[6]+'</td>'+
   '<td><span class="cat">'+r[7]+'</span></td>'+
-  '<td>'+PT[r[8]]+'</td></tr>';
+  '<td>'+PT[r[8]]+'</td>'+
+  '<td>'+(REP2SPU[r[2]]?'<button onclick="toggleKids(\''+REP2SPU[r[2]]+'\',this)" style="border:1px solid #7c3aed;color:#7c3aed;background:#fff;border-radius:8px;padding:3px 10px;cursor:pointer;font-size:11.5px">▸ 展开</button>':'<span style="color:#c0c8d4;font-size:11px">—</span>')+'</td></tr>';
 }).join('');
 </script>
 </body>
