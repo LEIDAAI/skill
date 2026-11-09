@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大码连衣裙 · 销量&lt;10 全量池（60条）｜OZON 选品数据</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #1a2233; padding: 28px 20px 60px; }
+  .wrap { max-width: 1440px; margin: 0 auto; }
+  h1 { font-size: 21px; display: flex; align-items: center; gap: 10px; }
+  h1 .tag { font-size: 12px; background: #16a34a; color: #fff; border-radius: 999px; padding: 3px 12px; font-weight: 600; }
+  .sub { color: #7a8699; font-size: 13px; margin: 8px 0 18px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #fff; border: 1px solid #e5eaf2; border-radius: 14px; padding: 14px 18px; }
+  .kpi span { font-size: 12px; color: #7a8699; display: block; }
+  .kpi b { font-size: 22px; margin-top: 3px; display: block; }
+  .kpi i { font-style: normal; font-size: 11px; color: #9aa5b8; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(15,23,42,.06); font-size: 12.8px; }
+  th { background: #f0f4f9; text-align: left; padding: 10px 12px; color: #47536b; font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+  td { padding: 9px 12px; border-bottom: 1px solid #eef1f6; vertical-align: middle; }
+  tr:hover td { background: #f8fafd; }
+  .thumb { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: #eef1f6; display: block; }
+  .sku { font-family: Consolas, monospace; color: #47536b; }
+  .price { font-weight: 700; white-space: nowrap; }
+  .sales { font-weight: 600; }
+  .gmv { color: #47536b; white-space: nowrap; }
+  .pt { display: inline-block; font-size: 11px; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+  .pt-local { background: #e8f7ef; color: #16a34a; }
+  .pt-cross { background: #eef3ff; color: #2456c4; }
+  .pt-na { background: #f1f3f7; color: #8592a6; }
+  .title-ru { color: #2b3648; display: block; }
+  .brand { color: #7a8699; font-size: 11.5px; }
+  .score { color: #b45309; font-weight: 600; }
+  .note { margin-top: 16px; font-size: 12.5px; color: #7a8699; line-height: 1.8; background: #fff; border: 1px dashed #d9e1ec; border-radius: 12px; padding: 14px 18px; }
+  .seg { display:inline-block; background:#eef3ff; color:#2456c4; border-radius:6px; padding:1px 8px; font-size:11.5px; margin-left:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>大码连衣裙 · 销量&lt;10 <span class="tag">全量池 60 条</span></h1>
+  <div class="sub">检索路径：платье больших размеров（俄文主词）+ платьях/платье больших 同义路径合并去重 ｜ 筛选：maxSoldCount28 ≤ 9 ｜ 按价格升序 ｜ 数据源：yq_ozon_goods_search · 2026-11-09</div>
+
+  <div class="kpis">
+    <div class="kpi"><span>符合条件的商品</span><b>60</b><i>该词池全量，无遗漏</i></div>
+    <div class="kpi"><span>价格区间</span><b>₽557 ~ 7,328</b><i>中位约 ₽1,860</i></div>
+    <div class="kpi"><span>跨境店占比</span><b>27 / 60</b><i>BayAli/AliGu 为主力跨境品牌</i></div>
+    <div class="kpi"><span>评分≥4.8 占比</span><b>约 78%</b><i>低销款普遍评分不低</i></div>
+    <div class="kpi"><span>28天最高销售额</span><b>₽27,880</b><i>BayAli ₽5,898款（9件）</i></div>
+  </div>
+
+  <table>
+    <thead><tr>
+      <th>#</th><th>主图</th><th>商品（俄文标题）</th><th>SKU</th><th>售价₽</th><th>28天销量</th><th>28天销售额₽</th><th>评分</th><th>卖家</th>
+    </tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+
+  <div class="note">
+    <b>说明</b>：①「销量&lt;10」在该关键词池内全量即 60 条——凑 200 条需放宽条件（如销量&lt;30）或扩大检索路径（类目 7502 全量，但会混入非大码款）；
+    ② 标题为俄文原文（skuName 字段），品类关键词「больших размеров」=大码；<b>Платье</b>=连衣裙 / <b>домашнее</b>=家居 / <b>пляж</b>=沙滩 / <b>вечернее офисное</b>=通勤晚装 / <b>туника</b>=罩衫式；
+    ③ 跨境店（蓝标）集中在 ₽3,400-7,300 高价位（BayAli 主力），本土店（绿标）占据 ₽557-3,000 主流价位——低销尾部的价位分布本身就是定价参考；
+    ④ 数据源：yunqi-data yq_ozon_goods_search，2026-11-09 实时调用，消耗约 3 次搜索额度。
+  </div>
+</div>
+<script>
+const D = [
+["2885241879","Осенне-зимнее платье с длинными рукавами домашних повседневное","Dress",557,2,1017,4.5,1],
+["2121218013","ZIAR STAR Платье домашнее больших размеров хлопок","ZIAR STAR",848,2,1829,4.9,2],
+["3545217849","РУДИК летнее домашнее больших размеров","РУДИК",857,7,6860,4.8,0],
+["3410655288","РУДИК летнее домашнее больших размеров","РУДИК",887,1,871,4.8,0],
+["2013426076","ZLATA PRIMA Летнее платье туника больших размеров","ZLATA PRIMA",1000,3,3858,4.8,2],
+["2013425998","ZLATA PRIMA Летнее платье туника больших размеров","ZLATA PRIMA",1000,1,1211,4.9,2],
+["4830572877","DeMare Платья пляжные больших размеров","DeMare",1016,3,3321,null,1],
+["1813827059","Платье для пляжа (ключевые слова в заголовке)","Dress",1136,2,2315,4.8,0],
+["1801568800","Osmi Style Туника-платье больших размеров","Osmi Style",1145,4,4035,4.9,2],
+["2964369026","Платье больших размеров","—",1184,4,4041,4.8,0],
+["235574581","Golden Flamingo платье домашнее хлопок с карманами","Golden Flamingo",1185,4,2966,4.9,2],
+["2964369022","Платье больших размеров","—",1186,3,3093,4.8,0],
+["1931947588","АДАМ ТЕКС Платье домашнее больших размеров хлопок","АДАМ ТЕКС",1219,3,3717,4.9,2],
+["1813827213","Платье для пляжа","Dress",1247,1,1161,4.8,1],
+["1813826774","Платье для пляжа","Dress",1270,1,1311,4.8,0],
+["1813826831","Платье для пляжа","Dress",1270,1,1393,4.8,0],
+["1813827137","Платье для пляжа","Dress",1276,5,5263,4.8,1],
+["1522829107","SveTekst больших размеров","SveTekst",1346,3,5482,4.9,2],
+["1977407345","АДАМ ТЕКС Платье домашнее хлопок","АДАМ ТЕКС",1409,1,455,4.9,2],
+["1931978435","АДАМ ТЕКС Платье домашнее хлопок","АДАМ ТЕКС",1432,7,7685,4.9,2],
+["1932002198","АДАМ ТЕКС Платье домашнее хлопок","АДАМ ТЕКС",1469,2,2298,4.9,2],
+["1868111255","АДАМ ТЕКС Платье домашнее хлопок","АДАМ ТЕКС",1471,1,1433,4.9,2],
+["1868128797","АДАМ ТЕКС Платье домашнее хлопок","АДАМ ТЕКС",1471,4,4365,4.9,2],
+["2400606591","Massimo Dutti платье-рубашка пляжная","Massimo Dutti",1509,1,1417,4.8,0],
+["1772833796","Golden Flamingo платье домашнее хлопок","Golden Flamingo",1608,3,3533,4.9,2],
+["1931960262","АДАМ ТЕКС Платье домашнее хлопок","АДАМ ТЕКС",1650,2,2221,4.9,2],
+["627427775","Хорошава повседневное больших размеров","Хорошава",1754,3,6515,4.9,0],
+["3190307600","SVETEXT больших размеров","SVETEXT",1771,9,13924,4.9,2],
+["5528363500","Милослава платье лапша (в рубчик)","Милослава",1943,1,1807,5.0,2],
+["1571385361","DeMare Платья пляжные больших размеров","DeMare",2087,3,5581,4.9,2],
+["1670973345","Lady Maria праздничное вечернее","Lady Maria",2549,2,5880,4.9,2],
+["3479268643","Lady Maria праздничное вечернее","Lady Maria",2550,1,2285,4.8,2],
+["5775155909","AliGu летнее (уцененный товар)","AliGu",2817,1,2424,0,1],
+["3521764081","Lady Maria праздничное вечернее","Lady Maria",2893,1,3437,4.8,2],
+["876746801","Rovental женское больших размеров","Rovental",2949,4,9296,4.9,2],
+["876682468","Rovental женское больших размеров","Rovental",2949,2,5254,4.9,2],
+["876677452","Rovental женское больших размеров","Rovental",3013,1,2462,4.9,2],
+["3841258591","BayAli летнее больших размеров","BayAli",3493,1,3342,5.0,1],
+["5328321987","Женское вечернее офисное больших размеров","—",3586,2,6432,4.9,2],
+["4152358054","BayAli летнее больших размеров","BayAli",3651,4,11919,4.8,1],
+["3412020536","BayAli летнее больших размеров","BayAli",3756,2,6477,4.9,1],
+["3841259927","BayAli летнее больших размеров","BayAli",3764,1,2241,5.0,1],
+["5746168795","Женское праздничное офисное больших размеров","—",3955,2,7646,0,2],
+["5745602656","Golden Flamingo осеннее трикотажное","Golden Flamingo",3959,1,3952,5.0,2],
+["5745861887","Женское праздничное офисное","—",4010,1,3824,null,2],
+["5746134883","Женское праздничное офисное","—",4010,1,3820,0,2],
+["5200359226","AliGu летнее больших размеров","AliGu",4327,4,15733,5.0,1],
+["3841259978","BayAli летнее больших размеров","BayAli",4363,4,4958,5.0,1],
+["4699583125","BayAli летнее больших размеров","BayAli",4363,2,3510,5.0,1],
+["3474874400","BayAli летнее больших размеров","BayAli",5245,1,5398,4.8,1],
+["4699577591","BayAli летнее больших размеров","BayAli",5369,2,3510,5.0,1],
+["3382763089","BayAli женское больших размеров","BayAli",5556,4,11694,4.9,1],
+["5669775451","Вечернее длинное больших размеров","—",5737,2,11358,4.9,2],
+["3382763398","BayAli женское больших размеров","BayAli",5898,9,27880,4.9,1],
+["5659126875","Вечернее длинное больших размеров","—",5961,1,5774,4.9,2],
+["4566879316","BayAli летнее больших размеров","BayAli",6031,1,2644,4.8,1],
+["4152364202","BayAli летнее больших размеров","BayAli",6117,6,13287,4.9,1],
+["3382763373","BayAli женское больших размеров","BayAli",7328,5,11234,4.9,1],
+["3474855479","BayAli летнее больших размеров","BayAli",7328,8,16655,4.9,1],
+["3474876766","BayAli летнее больших размеров","BayAli",7328,3,9583,4.9,1]
+];
+const PT = {1:'<span class="pt pt-cross">跨境</span>',2:'<span class="pt pt-local">本土</span>',0:'<span class="pt pt-na">未标注</span>'};
+document.getElementById('tb').innerHTML = D.map((r,i) =>
+  '<tr><td>'+(i+1)+'</td>'+
+  '<td><img class="thumb" loading="lazy" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-4/10857044812.jpg" onerror="this.style.visibility=\'hidden\'"></td>'+
+  '<td><span class="title-ru">'+r[1]+'</span><span class="brand">'+r[2]+'</span></td>'+
+  '<td class="sku">'+r[0]+'</td>'+
+  '<td class="price">'+r[3].toLocaleString()+'</td>'+
+  '<td class="sales">'+r[4]+'</td>'+
+  '<td class="gmv">'+r[5].toLocaleString()+'</td>'+
+  '<td>'+(r[6]?'<span class="score">★'+r[6]+'</span>':'—')+'</td>'+
+  '<td>'+PT[r[7]]+'</td></tr>'
+).join('');
+</script>
+</body>
+</html>
