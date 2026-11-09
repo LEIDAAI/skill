@@ -605,7 +605,7 @@ const BASE_SKILLS = [
     slug: '/competitor-price-monitor',
     platforms: ['ozon'],
     scenario: 'competitor',
-    status: 'plan',
+    status: 'built',
     desc: '跟踪竞品价格与销量变化，识别异常波动（降价、爆款苗头、跟卖增多）。',
     triggers: ['帮我盯一下这个竞品的价格', '对比我们和竞品的销量差距'],
     prompt: [
@@ -625,7 +625,7 @@ const BASE_SKILLS = [
     slug: '/category-trend-analysis',
     platforms: ['ozon'],
     scenario: 'category',
-    status: 'plan',
+    status: 'built',
     desc: '追踪 Ozon 类目大盘与热销榜变化，发现增量机会和价格带空缺。',
     triggers: ['Ozon 家居类目现在趋势怎么样', '哪个类目在增长'],
     prompt: [
@@ -644,7 +644,7 @@ const BASE_SKILLS = [
     slug: '/product-detail-parse',
     platforms: ['ozon'],
     scenario: 'product',
-    status: 'plan',
+    status: 'built',
     desc: '解析单个 Ozon 商品的销量、转化、跟卖、变体结构，输出结构化商品档案。',
     triggers: ['分析一下这个 Ozon 商品', '这个 SKU 卖得怎么样'],
     prompt: [
@@ -663,7 +663,7 @@ const BASE_SKILLS = [
     slug: '/shop-rank-analysis',
     platforms: ['ozon'],
     scenario: 'shop',
-    status: 'plan',
+    status: 'built',
     desc: '分析 Ozon 店铺销量排行与爆款结构，定位对标店铺。',
     triggers: ['查一下这家 Ozon 店', '找出家居类目 top seller 店铺'],
     prompt: [
@@ -682,7 +682,7 @@ const BASE_SKILLS = [
     slug: '/profit-calc',
     platforms: ['ozon'],
     scenario: 'profit',
-    status: 'plan',
+    status: 'built',
     desc: '按拿货价、物流与平台费用测算 Ozon 分销毛利与建议售价。',
     triggers: ['算一下这个产品的利润', '卖这个价格能赚多少'],
     prompt: [
@@ -701,7 +701,7 @@ const BASE_SKILLS = [
     slug: '/selection-report-gen',
     platforms: ['ozon'],
     scenario: 'report',
-    status: 'plan',
+    status: 'built',
     desc: '汇总大盘+商品+店铺多维数据，生成结构化 Ozon 选品报告。',
     triggers: ['给我出一份 Ozon 选品报告', '这个类目能不能做，出个报告'],
     prompt: [
@@ -721,7 +721,7 @@ const BASE_SKILLS = [
     name: '亚马逊竞品分析',
     platforms: ['amazon'],
     scenario: 'competitor',
-    status: 'plan',
+    status: 'built',
     desc: '用 sellersprite 数据拆解竞品 ASIN：销量、价格、评论、流量词与广告策略。',
     triggers: ['分析这个 ASIN 的竞品', '看看这条 listing 卖得怎么样'],
     prompt: [
@@ -740,7 +740,7 @@ const BASE_SKILLS = [
     name: '亚马逊关键词挖掘',
     platforms: ['amazon'],
     scenario: 'product-selection',
-    status: 'plan',
+    status: 'built',
     desc: '拓展 Listing 关键词：搜索量、竞争度、转化与出单词，辅助标题与广告投放。',
     triggers: ['帮我挖一下这个产品的关键词', '这些词哪个适合投广告'],
     prompt: [
@@ -759,7 +759,7 @@ const BASE_SKILLS = [
     name: '亚马逊销量与类目趋势',
     platforms: ['amazon'],
     scenario: 'category',
-    status: 'plan',
+    status: 'built',
     desc: '追踪类目 BSR 榜单、价格段分布与需求趋势，发现亚马逊增量机会。',
     triggers: ['这个类目最近趋势如何', '亚马逊家居类目有什么机会'],
     prompt: [
@@ -777,7 +777,7 @@ const BASE_SKILLS = [
     name: '亚马逊选品报告',
     platforms: ['amazon'],
     scenario: 'report',
-    status: 'plan',
+    status: 'built',
     desc: '汇总市场+商品+关键词数据，生成结构化亚马逊选品报告。',
     triggers: ['出一份亚马逊选品报告', '评估这个产品能不能做'],
     prompt: [
@@ -797,7 +797,7 @@ const BASE_SKILLS = [
     name: 'TEMU利润测算',
     platforms: ['temu'],
     scenario: 'profit',
-    status: 'plan',
+    status: 'built',
     desc: '按 TEMU 核价、供货价与物流费用测算半托管/全托管利润（指令式，需提供后台数据）。',
     triggers: ['算一下 TEMU 这单的利润', '这个供货价能不能做'],
     prompt: [
@@ -815,7 +815,7 @@ const BASE_SKILLS = [
     name: 'TEMU竞品调研',
     platforms: ['temu'],
     scenario: 'competitor',
-    status: 'plan',
+    status: 'built',
     desc: '调研 TEMU 站内同款价格带与销量结构（指令式：网页采集或你提供截图/数据）。',
     triggers: ['看看 TEMU 上这个产品卖多少', '调研一下 TEMU 这个类目'],
     prompt: [
@@ -1090,6 +1090,7 @@ const BASE_EXPERTS = [
     abilities: ['关键词竞争度分析', '竞品价格与销量监控', '类目趋势洞察', '分销利润测算', '一键生成选品报告'],
     refPrompts: ['帮我分析"收纳盒"关键词在1688的竞争度', '对比近30天收纳类目TOP10竞品的价格分布', '生成一份厨房收纳类目的月度选品报告'],
     skills: ['1688选品搜索', '1688竞品价格监控', '1688类目趋势分析', '1688商品详情解析', '1688店铺排行分析', '1688利润测算', '1688选品报告生成'],
+    mcpTools: ['get_category_info', 'product_search_list', 'product_info', 'product_billboard_list', 'product_trend_new_list', 'ali_offer_realtime_detail', 'ali_offer_sku_prices', 'global_image_search', 'image_search', 'shop_rank_list', 'monitor_offer_add', 'monitor_offer_list', 'monitor_shop_add', 'monitor_shop_list', 'monitor_shop_analysis'],
     sysPrompt: [
       '你是1688分销选品专家，负责基于 1688 MCP 的可验证数据完成选品决策。',
       '工作流程：先理解选品意图 → 路由到合适技能（选品搜索/竞品监控/类目趋势/商品解析/店铺分析/利润测算/报告生成）→ 调用工具取数 → 按技能输出格式整理。',
@@ -1287,12 +1288,13 @@ const BASE_EXPERTS = [
     id: 'exp-cross-border',
     name: '跨境电商选品专家',
     platforms: ['amazon', 'temu'],
-    status: 'plan',
+    status: 'built',
     desc: '亚马逊 + TEMU 双平台选品：市场调研、关键词挖掘、竞品拆解与托管利润测算。',
     greet: '你好！我是跨境电商选品专家，覆盖亚马逊（sellersprite 数据）和 TEMU（指令式调研）。可以帮你评估产品机会、挖关键词、拆竞品、算托管利润。',
     abilities: ['亚马逊市场调研与竞品拆解', '关键词挖掘与投放建议', 'TEMU 半托管/全托管利润测算', '双平台机会对比'],
     refPrompts: ['评估这个产品在亚马逊能不能做', '挖一下 wireless earbuds 的关键词并分组', '算一下这个产品 TEMU 全托管的利润'],
     skills: ['亚马逊竞品分析', '亚马逊关键词挖掘', '亚马逊销量与类目趋势', '亚马逊选品报告', 'TEMU利润测算', 'TEMU竞品调研'],
+    mcpTools: ['aba_research_monthly', 'aba_research_trend', 'aba_research_weekly', 'asin_competitor', 'asin_detail', 'asin_sales_trend', 'competitor_lookup', 'google_trend', 'keyword_conversion', 'keyword_miner', 'keyword_order', 'keyword_research', 'keyword_research_trends', 'market_brand_concentration', 'market_research', 'market_research_statistics', 'product_research', 'review', 'traffic_keyword', 'traffic_listing'],
     sysPrompt: [
       '你是跨境电商选品专家，覆盖亚马逊与 TEMU 双平台。',
       '亚马逊：用 sellersprite MCP（asin_detail/keyword_research/market_research 等），金额美刀；TEMU：暂无接口，指令式——请用户提供后台数据或授权网页采集。',
