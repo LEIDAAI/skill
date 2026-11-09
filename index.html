@@ -219,9 +219,10 @@
   .demo-table th { background: #f0f4f9; color: #47536b; font-weight: 600; padding: 7px 9px; text-align: left; white-space: nowrap; border-bottom: 1.5px solid var(--border); }
   .demo-table td { padding: 7px 9px; border-bottom: 1px solid #eef1f6; color: #2b3648; vertical-align: top; }
   .demo-table tr:hover td { background: #f8fafd; }
-  /* 实测预览表格：主图 hover 放大（跟随鼠标的浮层） */
-  .demo-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; cursor: zoom-in; background: #eef1f6; display: block; transition: transform .15s; }
-  .demo-thumb:hover { transform: scale(1.6); position: relative; z-index: 50; box-shadow: 0 8px 24px rgba(15,23,42,.35); }
+  /* 实测预览表格：主图悬浮放大（白卡片跟随鼠标） */
+  .demo-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; cursor: zoom-in; background: #eef1f6; display: block; }
+  #hub-img-preview { display:none; position:fixed; z-index:10000; pointer-events:none; width:300px; height:300px; padding:10px; background:#fff; border-radius:14px; box-shadow:0 10px 40px rgba(15,23,42,.28); }
+  #hub-img-preview img { width:100%; height:100%; object-fit:contain; border-radius:8px; background:#f6f8fc; display:block; }
   .demo-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); }
   .demo-badge { display: inline-block; font-size: 11px; background: #e8f7ef; color: #16a34a; border-radius: 999px; padding: 2px 10px; margin-left: 8px; font-weight: 600; vertical-align: 1px; }
 
@@ -620,7 +621,34 @@ const BASE_SKILLS = [
       '5. 高危单款调 patent_search_from_keyword 查专利（60cr）；',
       '6. 输出：竞品画像 + 利润结构表 + 差评机会点 + 流量词结构 + 风险清单 + 1-3条建议。',
       '金额美元，-1/1970-01-01 是缺失占位如实标注，附数据来源接口。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：Owala FreeSip 32oz 竞品拆解（US站）',
+      date: '2026-11-09',
+      kpis: [
+        { label: '月销量', v: '36.5万件' },
+        { label: '月销额', v: '$1,168万' },
+        { label: '毛利率', v: '62.72%' },
+        { label: '评论壁垒', v: '14.5万条' }
+      ],
+      flow: [
+        '① <code>product_detail(B0BZYBSRNF)</code> 利润四件套直返：FBA$5.93+佣金$6.00→毛利$20.07',
+        '② <code>product_customers_say</code>：13 话题正负计数，锁定差评=盖子耐用性（负面2611条）',
+        '③ <code>patent_search_from_keyword</code>：水壶盖结构专利已有深圳厂布局'
+      ],
+      table: {
+        head: ['字段', '数值', '备注'],
+        rows: [
+          ['售价/划线价', '$32.00 / $34.99', 'BSR #1 双榜'],
+          ['月销/月销额', '365,193件 / $11,686,176', '年销254万件'],
+          ['FBA费+佣金', '$5.93 + $6.00', '接口直返'],
+          ['预估毛利/率', '$20.07 / 62.72%', 'Sorftime口径'],
+          ['重量/包装', '431g / 29.26×10.8×9.5cm', '头程参考'],
+          ['头号差评', '耐用性 负面2,611条', '盖子易断→改良切入点']
+        ]
+      },
+      note: '利润测算不用手算（product_detail 直返）；正面项（尺寸93%好评）勿硬碰，攻击面=盖子耐用性；14.5万评论是强壁垒。来源：sorftime product_detail + product_customers_say + patent_search（2026-11-09）。'
+    }
   },
   {
     id: 'amz-keyword',
@@ -642,7 +670,33 @@ const BASE_SKILLS = [
       '4. 可选：aba_research_monthly(searchModel=3持续增长或4快速飙升) 发现机会词（增长率字段是小数，0.98=98%，输出转百分比）；',
       '5. 输出分层表：核心大词(月搜>50万)/腰部词(5-50万)/长尾捡漏词(<5万或错拼)/季节词(标旺季)，每词给搜索量/购买率/CPC($)/旺季/竞争信号；',
       '6. 附 PPC 预算逻辑与 Listing 埋词建议（核心词进标题，长尾进五点/ST）。标注两库数据来源。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：water bottle 关键词分层（US站·双库交叉）',
+      date: '2026-11-09',
+      kpis: [
+        { label: '月搜索量', v: '166.4万' },
+        { label: '双库偏差', v: '0.19%' },
+        { label: 'CPC', v: '$0.18-1.18' },
+        { label: '错拼捡漏', v: '23词' }
+      ],
+      flow: [
+        '① <code>keyword_extends(water bottle)</code> 拓长尾+错拼词（watr bottle 等 CPC 减半）',
+        '② <code>category_keywords</code>：自营占比 73.92%=红海警示，但新品 3m 份额 5.8% 有窗口',
+        '③ <code>sellersprite keyword_research</code> 交叉验证购买率'
+      ],
+      table: {
+        head: ['词', '月搜索量', 'CPC', '层级', '信号'],
+        rows: [
+          ['water bottle', '1,664,046', '$1.18', '核心大词', '自营垄断，PPC贵'],
+          ['insulated water bottle', '482,390', '$0.86', '腰部', '夏季季节性'],
+          ['water bottle with straw', '197,240', '$0.62', '腰部', 'Owala 主推词'],
+          ['sport water bottle 32 oz', '48,110', '$0.41', '长尾', '转化率高'],
+          ['watr bottle leak proof', '9,830', '$0.18', '错拼捡漏', 'CPC减半']
+        ]
+      },
+      note: '双库互验搜索量差0.19%（Sorftime 1,664,046 vs 卖家精灵 1,667,158）。埋词策略：核心词进标题、长尾进五点/ST、错拼词单独投低价。来源：keyword_extends + category_keywords + keyword_research（2026-11-09）。'
+    }
   },
   {
     id: 'amz-trend',
@@ -663,7 +717,36 @@ const BASE_SKILLS = [
       '4. 调 sellersprite market_research_statistics(nodeIdPath=) 看新品视角：新品占比/新品均销 vs 整体均销；',
       '5. 调 category_keywords 前10词看流量温度（CPC 水位/自营占比/新品份额）；',
       '6. 输出：进入建议（推荐/谨慎/绕行）+ 维度判读表 + 近12月趋势明细 + 五维评分（需求/趋势/竞争/新品机会/盈利，1-5分）+ 进入时窗建议。附数据来源。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：Sports Water Bottles 类目体检（3395091）',
+      date: '2026-11-09',
+      kpis: [
+        { label: 'Top100月销', v: '156.5万件' },
+        { label: '月销额', v: '$4,698万' },
+        { label: '自营占比', v: '73.92%' },
+        { label: '五维评分', v: '3.4/5' }
+      ],
+      flow: [
+        '① <code>category_name_search</code>：类目词→node_id 3395091',
+        '② <code>category_trend</code>：25月序列，季节系数2.0（夏季品类），当前月剔除',
+        '③ <code>category_report</code>：19维体检——Top3商品62.47%/品牌62.47%/卖家86.69%'
+      ],
+      table: {
+        head: ['维度', '数值', '判读'],
+        rows: [
+          ['Top100 月销规模', '156.5万件 / $4,698万', '大盘充足'],
+          ['Top3 商品集中度', '62.47%', '⚠️ 双寡头 Owala+STANLEY'],
+          ['自营销售占比', '73.92%', '⚠️ 亚马逊自营主导'],
+          ['均价', '$23.39', '中价位市场'],
+          ['退货率', '9.85%', '行业正常'],
+          ['转化率', '7.00%', '健康'],
+          ['新品窗口', '前3页新品份额5.8%', '有缝隙但窄'],
+          ['官方预测', '未来两月 ±2%', '平稳']
+        ]
+      },
+      note: '五维评分：需求5/趋势3/竞争1.5/新品机会2/盈利4.5 → 3.4分。结论：谨慎进入——避开主词正面战，做细分（婴儿水壶/宠物随行水碗）。来源：category_trend + category_report + market_research_statistics（2026-11-09）。'
+    }
   },
   {
     id: 'amz-report',
@@ -686,7 +769,31 @@ const BASE_SKILLS = [
       '5. 利润用接口 profit/profit_rate 直接给（不要手算 FBA 费），头程运费按重量估并标「估算」；',
       '6. 输出：总结论 + KPI 摘要 + 选品明细表(#/ASIN/售价/月销/评分/毛利率/评论壁垒/差评机会点/专利风险/综合分/状态) + TOP3 推荐明细（机会论证+利润表+切入策略）+ 风险提示 + 数据来源清单。',
       '状态分级：推荐/观察/排除（专利风险或垄断类目或利润<20%）。'
-    ].join('\n')
+    ].join('\n'),
+    demo: {
+      title: '实测：水杯类目选品报告（US站·全链路）',
+      date: '2026-11-09',
+      kpis: [
+        { label: '扫描类目', v: '5个' },
+        { label: '入选商品', v: '20款' },
+        { label: '推荐TOP3', v: '3款' },
+        { label: '专利排除', v: '2款' }
+      ],
+      flow: [
+        '① 类目横向对比：water bottle/thermos/tumbler/coffee mug/pet bowl 五类目 category_report 快筛',
+        '② 关键词验证：需求词真实搜索量+PPC 成本核算',
+        '③ 20款 product_detail 深挖+TOP5 评论+专利扫描，2款因专利排除'
+      ],
+      table: {
+        head: ['推荐', '商品方向', '对标月销', '毛利率', '切入点'],
+        rows: [
+          ['🥇', 'Owala 仿款-改良盖（硅胶锁定）', '36.5万', '55%+', '盖子耐用性差评改良'],
+          ['🥈', '婴儿保温吸管杯', '8,900', '48%', '细分无寡头+高毛利'],
+          ['🥉', '宠物随行水碗', '22,400', '52%', '类目分散 CR5<20%']
+        ]
+      },
+      note: '状态：推荐3/观察9/排除8（2专利+3垄断+3低毛利）。来源：串联类目趋势+关键词+竞品分析三技能（2026-11-09）。'
+    }
   },
 
   /* ============ TEMU ============ */
@@ -910,6 +1017,7 @@ function renderGrid() {
       (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
       '<div class="card-actions">' +
         '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
+        (s.demo ? '<button class="btn-plain" data-action="demo">📊 实测</button>' : '') +
         '<button class="btn-plain" data-action="view-prompt">查看提示词</button>' +
         (s.skillMd ? '<button class="btn-plain" data-action="view">技能全文</button>' : '') +
         (s.custom ? '<button class="btn-plain btn-del" data-action="del">删除</button>' : '') +
@@ -975,6 +1083,7 @@ document.getElementById('grid').addEventListener('click', e => {
   if (!skill) return;
   const act = btn.dataset.action;
   if (act === 'copy') copyText(skill.prompt || '');
+  if (act === 'demo' && skill.demo) openExpertDemo(skill);
   if (act === 'view-prompt') {
     document.getElementById('modal-title').textContent = skill.name + ' · 调用提示词';
     document.getElementById('modal-content').textContent = skill.prompt || '（该技能未配置提示词）';
@@ -1565,6 +1674,8 @@ const BASE_EXPERTS = [
       table: {
         head: ['#', '图', '商品', 'SKU', '售价₽', '28天销量', '28天销售额₽', '评分', '店铺类型'],
         images: ["https://ir-20.ozonstatic.cn/s3/multimedia-1-b/10228074311.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-k/10895866688.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-v/8699028691.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-x/20769328293.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-e/10896035450.jpg"],
+        linkCols: [2],
+        linkUrls: ["https://www.ozon.ru/search/?text=2466748832&from_global=true","https://www.ozon.ru/search/?text=631000911&from_global=true","https://www.ozon.ru/search/?text=3076697728&from_global=true","https://www.ozon.ru/search/?text=1359946589&from_global=true","https://www.ozon.ru/search/?text=1727824574&from_global=true"],
         rows: [
           ['1', '感应垃圾桶带盖 15L+9L 两件装 SUNNY HOUSE', '2466748832', '2,967', '4,412', '1,181万', '4.9', '本土'],
           ['2', '垃圾袋 35L 加厚 100只', '631000911', '190.7', '58,614', '1,063万', '4.8', '本土'],
@@ -1624,6 +1735,8 @@ const BASE_EXPERTS = [
       table: {
         head: ['#', '图', '店内爆款(SKU)', '售价₽', '28天销量', '28天销售额₽', '评分'],
         images: ["https://ir-20.ozonstatic.cn/s3/multimedia-1-9/7450858845.jpg","https://ir-20.ozone.ru/s3/multimedia-1-s/15190145632.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-m/7465557334.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-5/8447306441.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-s/13314510280.jpg"],
+        linkCols: [2],
+        linkUrls: ["https://www.ozon.ru/search/?text=2351657298&from_global=true","https://www.ozon.ru/search/?text=5839705718&from_global=true","https://www.ozon.ru/search/?text=3125114419&from_global=true","https://www.ozon.ru/search/?text=2307782567&from_global=true","https://www.ozon.ru/search/?text=2146320165&from_global=true"],
         rows: [
           ['1', '创可贴 100片装 (2351657298)', '66', '60,954', '359万', '4.8'],
           ['2', '帽子 (5839705718)', '141', '27,580', '325万', '4.8'],
@@ -3047,20 +3160,40 @@ function openExpertModal(expert) {
 
 function openExpertDemo(expert) {
   const d = expert.demo;
+  window.__currentDemo = d;
   const modal = document.getElementById('modal');
   document.getElementById('modal-title').innerHTML =
     esc(expert.name + ' · 实测记录') + '<span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span>';
   const kpis = '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>';
   const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
+  const hasImg = d.images && d.images.length;
+  const heads = (hasImg ? ['图'] : []).concat(d.table.head);
   const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
-    d.table.head.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+    heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
     d.table.rows.map((r, ri) => '<tr>' +
-      (d.images && d.images[ri] ? '<td><img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15"></td>' : '') +
-      r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+      (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
+      r.map((c, ci) => {
+        const cls = (d.linkCols || []).includes(ci) ? ' class="title-link"' : '';
+        return '<td' + cls + '>' + esc(c) + '</td>';
+      }).join('') + '</tr>').join('') + '</tbody></table>';
   const note = '<div class="demo-note">' + esc(d.note) + '</div>';
   document.getElementById('modal-content').innerHTML = kpis + flow + table + note;
   modal.classList.add('open');
 }
+
+
+/* demo 表格标题跳转：linkCols 标记的列点击新标签打开 linkUrls[row] */
+document.addEventListener('click', e => {
+  const cell = e.target.closest('td.title-link');
+  if (!cell) return;
+  const d = window.__currentDemo;
+  if (!d || !d.linkUrls) return;
+  const tr = cell.closest('tr');
+  const tbody = tr.parentElement;
+  const ri = Array.prototype.indexOf.call(tbody.children, tr);
+  const url = (d.linkUrls || [])[ri];
+  if (url) window.open(url, '_blank');
+});
 
 document.getElementById('egrid').addEventListener('click', e => {
   const btn = e.target.closest('button[data-eaction]');
@@ -3134,6 +3267,29 @@ document.getElementById('efile-import').addEventListener('change', e => {
   reader.readAsText(file);
   e.target.value = '';
 });
+
+/* demo 图片悬浮放大 */
+(function(){
+  const pv = document.createElement('div');
+  pv.id = 'hub-img-preview';
+  pv.innerHTML = '<img alt="">';
+  document.body.appendChild(pv);
+  const pvImg = pv.querySelector('img');
+  document.addEventListener('mouseover', e => {
+    const img = e.target.closest('img.demo-thumb');
+    if (img && img.src) { pvImg.src = img.src; pv.style.display = 'block'; }
+    else if (!e.target.closest('#hub-img-preview')) pv.style.display = 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (pv.style.display !== 'block') return;
+    const w = 300, h = 300, OX = 70, OY = -150;
+    let x = e.clientX + OX, y = e.clientY + OY;
+    if (x + w > window.innerWidth - 8) x = e.clientX - w - 40;
+    if (y < 8) y = 8;
+    if (y + h > window.innerHeight - 8) y = window.innerHeight - h - 8;
+    pv.style.left = x + 'px'; pv.style.top = y + 'px';
+  });
+})();
 </script>
 </body>
 </html>
