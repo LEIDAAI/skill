@@ -31,9 +31,9 @@
   .link-cn:hover { color: #ff6a00; text-decoration: underline; }
   .link-shop { color: #7a8699; font-size: 11.5px; text-decoration: none; cursor: pointer; display: inline-block; }
   .link-shop:hover { color: #ff6a00; text-decoration: underline; }
-  .zoom-pop { position: fixed; inset: 0; z-index: 99; background: rgba(15,23,42,.55); display: none; align-items: center; justify-content: center; cursor: zoom-out; }
-  .zoom-pop.show { display: flex; }
-  .zoom-pop img { max-width: 82vw; max-height: 88vh; border-radius: 14px; background: #fff; box-shadow: 0 18px 60px rgba(0,0,0,.35); }
+  .zoom-pop { position: fixed; z-index: 99; display: none; padding: 10px; border: 1px solid #47536b; border-radius: 10px; background: #fff; box-shadow: 0 8px 28px rgba(15,23,42,.18); pointer-events: none; }
+  .zoom-pop.show { display: block; }
+  .zoom-pop img { display: block; width: 100%; height: 100%; object-fit: contain; background: #fff; }
   .rep { color: #b45309; font-weight: 600; }
   .g7 { display: inline-block; font-size: 11px; border-radius: 999px; padding: 2px 9px; font-weight: 600; white-space: nowrap; }
   .up { background: #e8f7ef; color: #16a34a; }
@@ -67,11 +67,29 @@
   <div class="note">
     <b>选品要点</b>：① <b>量王=草编彩虹条纹款</b>（义乌纱科箱包，实力商家+深度验厂+假一赔四）：30天 7,062 件 / ¥124,927，批发 ¥17.69（1000件档）且带阶梯价，7日回落 15.6% 属放量后稳态——适合 Temu/TikTok 低价引流位；② <b>势头王=Teri 老花月牙链条包</b>（深圳易曜）：上架仅 50 天，7日增长 ↑80%，日销曲线仍在上行——明星同款赛道，适合亚马逊/TikTok 中价位，但供应商是供应链公司（贸易商），拿样时核实源头产能；③ <b>同款赛道还有 2 款</b>：寇驰款 Teri 月牙包 ¥68（24h发货，7日↑9.7%）与 Teri24 复古款 ¥79（7日↓34.5% 衰退中）——同赛道 3 款扎堆，价格战风险需评估；④ <b>价差信号</b>：仅草编款有批发/代发价差（¥17.69 vs ¥18.28），Teri 系两款批发=代发，说明代发盘未铺开、大宗批发议价空间大；⑤ <b>风险提示</b>：Teri/寇驰均为品牌擦边命名，跨境上线前建议做侵权自查（店雷达场景化技能已覆盖）。数据源：mcp__1688__cross_border_product_search_list ×2（AI搜索+模糊匹配去重），2026-11-09 实时调用。
   </div>
-  <div class="zoom-pop" id="zoom" onclick="this.classList.remove('show')"><img id="zoomImg" src="" alt=""></div>
+  <div class="zoom-pop" id="zoom" aria-hidden="true"><img id="zoomImg" alt="商品主图放大预览"></div>
 </div>
 <script>
-function zoomImg(src){ document.getElementById('zoomImg').src = src; document.getElementById('zoom').classList.add('show'); }
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') document.getElementById('zoom').classList.remove('show'); });
+const zoom = document.getElementById('zoom');
+function hideZoom(){ zoom.classList.remove('show'); zoom.setAttribute('aria-hidden', 'true'); }
+function showZoom(thumb){
+  if (!thumb.complete || !thumb.naturalWidth) return;
+  const size = Math.min(300, window.innerWidth - 24, window.innerHeight - 24);
+  const rect = thumb.getBoundingClientRect();
+  let left = rect.right + 12;
+  if (left + size > window.innerWidth - 12) left = rect.left - size - 12;
+  zoom.style.left = Math.max(12, Math.min(left, window.innerWidth - size - 12)) + 'px';
+  zoom.style.top = Math.max(12, Math.min(rect.top - (size - rect.height) / 2, window.innerHeight - size - 12)) + 'px';
+  zoom.style.width = size + 'px';
+  zoom.style.height = size + 'px';
+  document.getElementById('zoomImg').src = thumb.currentSrc || thumb.src;
+  zoom.classList.add('show');
+  zoom.setAttribute('aria-hidden', 'false');
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') hideZoom(); });
+window.addEventListener('scroll', hideZoom, true);
+window.addEventListener('resize', hideZoom);
+window.addEventListener('blur', hideZoom);
 const IMG = {
   "1086140784791":"https://cbu01.alicdn.com/img/ibank/O1CN01OQNRrkttNGC3thOC_!!2219805373888-0-cib.jpg",
   "1085573509760":"https://cbu01.alicdn.com/img/ibank/O1CN01tn5Qhn1NodaUFRmuN_!!2222667771617-0-cib.jpg",
@@ -96,7 +114,7 @@ document.getElementById('tb').innerHTML = D.map((r,i) => {
   const gTxt = (g > 0 ? '↑' : '↓') + Math.abs(g).toFixed(1) + '%';
   const offerUrl = 'https://detail.1688.com/offer/' + r[0] + '.html';
   return '<tr><td>'+(i+1)+'</td>'+
-  '<td><img class="thumb" loading="lazy" src="'+(IMG[r[0]]||'')+'" onclick="zoomImg(this.src)" onerror="this.style.opacity=0.15"></td>'+
+  '<td><img class="thumb" loading="lazy" src="'+(IMG[r[0]]||'')+'" alt="'+r[1]+'" tabindex="0" onmouseenter="showZoom(this)" onmouseleave="hideZoom()" onfocus="showZoom(this)" onblur="hideZoom()" onerror="this.style.opacity=0.15"></td>'+
   '<td><a class="link-cn" href="'+offerUrl+'" target="_blank" rel="noopener">'+r[1]+'</a><a class="link-shop" href="'+(SHOP[r[0]]||'')+'" target="_blank" rel="noopener">'+r[2]+'</a></td>'+
   '<td class="offer">'+r[0]+'</td>'+
   '<td class="price">'+r[3].toFixed(2)+'</td>'+

@@ -33,14 +33,19 @@
   .note { margin-top: 16px; font-size: 12.5px; color: #7a8699; line-height: 1.8; background: #fff; border: 1px dashed #d9e1ec; border-radius: 12px; padding: 14px 18px; }
 
   /* ===== 交互增强：图片放大 + 标题/店铺跳转 ===== */
-  .thumb { cursor: zoom-in; transition: transform .15s; }
-  .zoom-layer { position: fixed; inset: 0; background: rgba(15,23,42,.72); z-index: 9999; display: none; align-items: center; justify-content: center; cursor: zoom-out; }
-  .zoom-layer.open { display: flex; }
-  .zoom-layer img { max-width: 86vw; max-height: 86vh; border-radius: 14px; box-shadow: 0 18px 60px rgba(0,0,0,.4); }
   .title-link { cursor: pointer; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color .15s; }
   .title-link:hover { text-decoration-color: #2456c4; color: #2456c4; }
   .shop-link { cursor: pointer; color: #2456c4; text-decoration: underline dotted; text-underline-offset: 2px; }
   .shop-link:hover { color: #0d3ea8; }
+
+
+  /* 悬浮大图预览（跟随鼠标） */
+  #img-preview {
+    display:none; position:fixed; z-index:9999; pointer-events:none;
+    width:300px; height:300px; padding:10px; background:#fff;
+    border-radius:14px; box-shadow:0 10px 40px rgba(15,23,42,.28), 0 0 0 1px rgba(15,23,42,.06);
+  }
+  #img-preview img { width:100%; height:100%; object-fit:contain; border-radius:8px; background:#f6f8fc; display:block; }
 
 </style>
 </head>
@@ -119,32 +124,50 @@ document.getElementById('tb').innerHTML = clean.map((r,i) => {
 }).join('');
 </script>
 
-<script>
-/* ===== 交互增强 ===== */
-(function(){
-  // 图片放大层
-  const layer = document.createElement('div');
-  layer.className = 'zoom-layer';
-  layer.innerHTML = '<img alt="">';
-  document.body.appendChild(layer);
-  layer.addEventListener('click', () => layer.classList.remove('open'));
-  document.addEventListener('click', e => {
-    const img = e.target.closest('img.thumb');
-    if (img && img.src) { layer.querySelector('img').src = img.src; layer.classList.add('open'); }
-  });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') layer.classList.remove('open'); });
 
-  // 取行内 SKU（排除纯字母的假SKU如 FAFY）与 sellerId（最后一列纯数字）
+
+
+<script>
+/* ===== 交互增强：悬浮大图 + 标题/店铺跳转 ===== */
+(function(){
+  // 悬浮大图预览层
+  const pv = document.createElement('div');
+  pv.id = 'img-preview';
+  pv.innerHTML = '<img alt="">';
+  document.body.appendChild(pv);
+  const pvImg = pv.querySelector('img');
+  const OFFSET_X = 70, OFFSET_Y = -150;
+
+  function bindHover(box) {
+    if (box.dataset.hoverBound) return;
+    box.dataset.hoverBound = '1';
+    box.addEventListener('mouseenter', () => {
+      const img = box.querySelector('img');
+      if (!img || !img.src) return;
+      pvImg.src = img.src;
+      pv.style.display = 'block';
+    });
+    box.addEventListener('mousemove', e => {
+      const w = 300, h = 300;
+      let x = e.clientX + OFFSET_X, y = e.clientY + OFFSET_Y;
+      if (x + w > window.innerWidth - 8) x = e.clientX - w - 40;
+      if (y < 8) y = 8;
+      if (y + h > window.innerHeight - 8) y = window.innerHeight - h - 8;
+      pv.style.left = x + 'px';
+      pv.style.top = y + 'px';
+    });
+    box.addEventListener('mouseleave', () => { pv.style.display = 'none'; });
+  }
+
+  // 行信息提取
   function rowInfo(tr) {
     const cells = Array.from(tr.querySelectorAll('td'));
     let sku = '', seller = '';
     const skuEl = tr.querySelector('td.sku, .sku');
     if (skuEl) sku = skuEl.textContent.trim();
-    // 兜底：找单元格文本形如纯数字长度>=6 的
     if (!/^\d{6,}$/.test(sku)) {
       for (const c of cells) { const t = c.textContent.trim(); if (/^\d{6,}$/.test(t)) { sku = t; break; } }
     }
-    // sellerId：最后一个形如数字的单元格（排除与 sku 相同）
     for (let i = cells.length - 1; i >= 0; i--) {
       const t = cells[i].textContent.trim();
       if (/^\d{4,}$/.test(t) && t !== sku) { seller = t; break; }
@@ -152,17 +175,16 @@ document.getElementById('tb').innerHTML = clean.map((r,i) => {
     return { sku, seller };
   }
 
-  // 标题点击 -> 商品页（Ozon 商品链接格式 ozon.ru/product/{sku} 不可靠时退化为全局搜索链接）
+  // 标题点击 -> Ozon 商品搜索页（新标签）
   document.addEventListener('click', e => {
     const t = e.target.closest('.title-link');
     if (!t) return;
     const tr = t.closest('tr'); if (!tr) return;
     const { sku } = rowInfo(tr); if (!sku) return;
-    // 商品直达链接可能因类目码缺省不稳，用 SKU 搜索页最稳
     window.open('https://www.ozon.ru/search/?text=' + encodeURIComponent(sku) + '&from_global=true', '_blank');
   });
 
-  // 店铺ID点击 -> 店铺搜索页
+  // 店铺ID点击 -> Ozon 店铺搜索（新标签）
   document.addEventListener('click', e => {
     const s = e.target.closest('.shop-link');
     if (!s) return;
@@ -171,25 +193,28 @@ document.getElementById('tb').innerHTML = clean.map((r,i) => {
     window.open('https://www.ozon.ru/search/?text=' + encodeURIComponent(sid) + '&sorting=sold', '_blank');
   });
 
-  // 渲染后处理：为已存在的 .title-ru 加类、.sku 最后一列加 shop-link
+  // 增强处理：标题加类、店铺ID加类、图片容器绑定悬浮
   function enhance() {
     document.querySelectorAll('table tbody tr').forEach(tr => {
       const t = tr.querySelector('.title-ru');
       if (t && !t.classList.contains('title-link')) t.classList.add('title-link');
       const info = rowInfo(tr);
       if (info.seller) {
-        // 找到显示 sellerId 的单元格（文本等于 seller），加链接样式
         Array.from(tr.querySelectorAll('td')).forEach(c => {
-          if (c.textContent.trim() === info.seller && !c.querySelector('.shop-link') && !c.classList.contains('title-link')) {
-            // 避免把主 SKU 列变成店铺链接（只处理非首个 .sku 列）
+          if (c.textContent.trim() === info.seller && !c.querySelector('.shop-link')) {
             const isSkuCol = c.classList.contains('sku') && c === tr.querySelector('td.sku, .sku');
             if (!isSkuCol) { c.classList.add('shop-link'); c.dataset.seller = info.seller; }
           }
         });
       }
+      // 图片：给 img.thumb 或 .imgbox 绑定悬浮
+      const img = tr.querySelector('img.thumb, .imgbox, .demo-thumb');
+      if (img) {
+        const box = img.classList.contains('imgbox') ? img : img.parentElement;
+        if (box) bindHover(box);
+      }
     });
   }
-  // 初始 + 每秒检查新行（页面多为 JS 渲染）
   enhance();
   setInterval(enhance, 800);
 })();
