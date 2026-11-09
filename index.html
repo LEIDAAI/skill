@@ -219,6 +219,9 @@
   .demo-table th { background: #f0f4f9; color: #47536b; font-weight: 600; padding: 7px 9px; text-align: left; white-space: nowrap; border-bottom: 1.5px solid var(--border); }
   .demo-table td { padding: 7px 9px; border-bottom: 1px solid #eef1f6; color: #2b3648; vertical-align: top; }
   .demo-table tr:hover td { background: #f8fafd; }
+  /* 实测预览表格：主图 hover 放大（跟随鼠标的浮层） */
+  .demo-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; cursor: zoom-in; background: #eef1f6; display: block; transition: transform .15s; }
+  .demo-thumb:hover { transform: scale(1.6); position: relative; z-index: 50; box-shadow: 0 8px 24px rgba(15,23,42,.35); }
   .demo-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); }
   .demo-badge { display: inline-block; font-size: 11px; background: #e8f7ef; color: #16a34a; border-radius: 999px; padding: 2px 10px; margin-left: 8px; font-weight: 600; vertical-align: 1px; }
 
@@ -1560,7 +1563,8 @@ const BASE_EXPERTS = [
         '② <code>yq_ozon_goods_search</code>：category=[17028714]，sort=[{soldSum28:desc}]，取 TOP5'
       ],
       table: {
-        head: ['#', '商品', 'SKU', '售价₽', '28天销量', '28天销售额₽', '评分', '店铺类型'],
+        head: ['#', '图', '商品', 'SKU', '售价₽', '28天销量', '28天销售额₽', '评分', '店铺类型'],
+        images: ["https://ir-20.ozonstatic.cn/s3/multimedia-1-b/10228074311.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-k/10895866688.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-v/8699028691.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-x/20769328293.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-e/10896035450.jpg"],
         rows: [
           ['1', '感应垃圾桶带盖 15L+9L 两件装 SUNNY HOUSE', '2466748832', '2,967', '4,412', '1,181万', '4.9', '本土'],
           ['2', '垃圾袋 35L 加厚 100只', '631000911', '190.7', '58,614', '1,063万', '4.8', '本土'],
@@ -1618,7 +1622,8 @@ const BASE_EXPERTS = [
         '③ <code>yq_ozon_goods_search</code>：sellerId=2892839，sort=[{soldSum28:desc}] → 反查店内爆款'
       ],
       table: {
-        head: ['#', '店内爆款(SKU)', '售价₽', '28天销量', '28天销售额₽', '评分'],
+        head: ['#', '图', '店内爆款(SKU)', '售价₽', '28天销量', '28天销售额₽', '评分'],
+        images: ["https://ir-20.ozonstatic.cn/s3/multimedia-1-9/7450858845.jpg","https://ir-20.ozone.ru/s3/multimedia-1-s/15190145632.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-m/7465557334.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-5/8447306441.jpg","https://ir-20.ozonstatic.cn/s3/multimedia-1-s/13314510280.jpg"],
         rows: [
           ['1', '创可贴 100片装 (2351657298)', '66', '60,954', '359万', '4.8'],
           ['2', '帽子 (5839705718)', '141', '27,580', '325万', '4.8'],
@@ -1674,6 +1679,7 @@ const BASE_EXPERTS = [
       ],
       table: {
         head: ['指标', '数值', '解读'],
+        images: [],
         rows: [
           ['月销售额 monthlyPrice', '828,982,564 ₽', '市场容量大，头部类目'],
           ['月销量 monthlySalesNum', '2,282,994 件', '客单价约 ₽363'],
@@ -3048,7 +3054,9 @@ function openExpertDemo(expert) {
   const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
   const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
     d.table.head.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
-    d.table.rows.map(r => '<tr>' + r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+    d.table.rows.map((r, ri) => '<tr>' +
+      (d.images && d.images[ri] ? '<td><img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15"></td>' : '') +
+      r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
   const note = '<div class="demo-note">' + esc(d.note) + '</div>';
   document.getElementById('modal-content').innerHTML = kpis + flow + table + note;
   modal.classList.add('open');
