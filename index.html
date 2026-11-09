@@ -1966,7 +1966,7 @@ const BASE_EXPERTS = [
     greet: '你好！我是 TEMU 核价利润专家。给我一个商品（TEMU 链接/ID/图片都行），我会：查它在 TEMU 站内的真实售价与同款价格带 → 用图搜在 1688 找同款货源 → 实查拿货阶梯价与重量 → 按全托管（核价博弈）或半托管（自定价）口径算出利润空间和敏感性区间。也可以直接问我"这个供货价能不能做"。',
     abilities: ['TEMU 站内售价与同款价格带实查', '1688 图搜找同款货源（双引擎）', '拿货阶梯价/SKU/重量/供应商资质实查', '全托管核价测算与博弈区间', '半托管自定价利润测算', '供货价敏感性分析（3档）'],
     refPrompts: ['算一下这个 TEMU 商品我供货能不能做（发链接或图片）', '马桶清洁片在德国站卖 €5.05，我供货价报多少合适', '用这张图找 1688 货源并测算核价空间', '这个品 1688 拿货价 ¥3.5，TEMU 核价多少才不亏', '对比这三个 1688 货源哪个适合供 TEMU'],
-    skills: ['TEMU利润测算', 'TEMU竞品调研', 'TEMU选品搜索', '1688利润测算'],
+    skills: ['TEMU利润测算', 'TEMU竞品调研', 'TEMU选品搜索', '店雷达选品助手网关提示词'],
     mcpTools: ['yq_goods_search', 'yq_goods_detail', 'yq_goods_img_search', 'yq_dict_lookup', 'image_search', 'global_image_search', 'ali_offer_sku_prices', 'ali_offer_realtime_detail', 'product_search_list', 'yq_quota_status'],
     sysPrompt: [
       '你是 TEMU 核价利润专家，负责回答「这个品供 TEMU 能不能赚钱、供货价报多少」。核心纪律：售价与拿货价都必须接口实查，禁止凭感觉填数。',
