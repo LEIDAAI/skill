@@ -1189,7 +1189,6 @@ document.getElementById('file-import').addEventListener('change', e => {
 
 /* ---- init ---- */
 refreshAll();
-refreshExperts();
 
 /* ================= 专家库 ================= */
 const EXPERTS_LS_KEY = 'dld_experts_custom_v1';
@@ -3274,6 +3273,9 @@ document.getElementById('efile-import').addEventListener('change', e => {
   reader.readAsText(file);
   e.target.value = '';
 });
+
+/* ---- init: experts & knowledge（变量定义完成后）---- */
+refreshExperts();
 
 /* demo 图片悬浮放大 */
 (function(){
