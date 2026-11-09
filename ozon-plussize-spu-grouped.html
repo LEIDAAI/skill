@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大码连衣裙 · SPU归组版（父体维度）｜OZON 选品数据</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; background: #f5f7fa; color: #1a2233; padding: 28px 20px 60px; }
+  .wrap { max-width: 1440px; margin: 0 auto; }
+  h1 { font-size: 21px; display: flex; align-items: center; gap: 10px; }
+  h1 .tag { font-size: 12px; background: #7c3aed; color: #fff; border-radius: 999px; padding: 3px 12px; font-weight: 600; }
+  .sub { color: #7a8699; font-size: 13px; margin: 8px 0 18px; line-height: 1.7; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #fff; border: 1px solid #e5eaf2; border-radius: 14px; padding: 14px 18px; }
+  .kpi span { font-size: 12px; color: #7a8699; display: block; }
+  .kpi b { font-size: 22px; margin-top: 3px; display: block; }
+  .kpi i { font-style: normal; font-size: 11px; color: #9aa5b8; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 4px rgba(15,23,42,.06); font-size: 12.8px; }
+  th { background: #f0f4f9; text-align: left; padding: 10px 12px; color: #47536b; font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+  td { padding: 9px 12px; border-bottom: 1px solid #eef1f6; vertical-align: middle; }
+  tr:hover td { background: #f8fafd; }
+  tr.group-head td { background: #f8faff; font-weight: 700; }
+  .sku { font-family: Consolas, monospace; color: #47536b; font-size: 12px; }
+  .price { font-weight: 700; white-space: nowrap; }
+  .gmv { color: #47536b; white-space: nowrap; }
+  .pt { display: inline-block; font-size: 11px; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+  .pt-local { background: #e8f7ef; color: #16a34a; }
+  .pt-cross { background: #eef3ff; color: #2456c4; }
+  .pt-na { background: #f1f3f7; color: #8592a6; }
+  .brand-cell b { display: block; }
+  .brand-cell span { color: #7a8699; font-size: 11.5px; }
+  .score { color: #b45309; font-weight: 600; }
+  .variants { color: #7c3aed; font-weight: 600; white-space: nowrap; }
+  .cat { display: inline-block; font-size: 11px; border-radius: 6px; padding: 1px 8px; background: #fdf2e9; color: #c2410c; }
+  .note { margin-top: 16px; font-size: 12.5px; color: #7a8699; line-height: 1.8; background: #fff; border: 1px dashed #d9e1ec; border-radius: 12px; padding: 14px 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>大码连衣裙 · SPU 归组版 <span class="tag">父体维度 · 两池合并</span></h1>
+  <div class="sub">把「销量&lt;10 池(60 SKU) + 销量≥10 池(66 SKU)」按父体(SPU)归组后重新呈现：同款变体合并为一行，销量取组内合计，代表款=组内销量最高 SKU。已实测确认的 SPU 映射直接标注；未逐个验证的按「品牌+标题+价格带」聚类归组并标注 ≈ 号。数据源：yq_ozon_goods_search/detail · 2026-11-09</div>
+
+  <div class="kpis">
+    <div class="kpi"><span>原始 SKU 行数</span><b>126</b><i>两池合计</i></div>
+    <div class="kpi"><span>归组后父体数</span><b>≈45</b><i>密度比 SKU 口径缩水 64%</i></div>
+    <div class="kpi"><span>最大单父体 SKU 数</span><b>49 个</b><i>АДАМ ТЕКС（实测）</i></div>
+    <div class="kpi"><span>父体合计销量冠军</span><b>Sasheline</b><i>₽44.2万/28天</i></div>
+    <div class="kpi"><span>跨池父体</span><b>已发现 3+</b><i>如 ZIAR STAR 双池都有变体</i></div>
+  </div>
+
+  <table>
+    <thead><tr>
+      <th>#</th><th>品牌 / 商品</th><th>代表款 SKU</th><th>代表款售价₽</th><th>父体合计销量(28天)</th><th>父体合计销售额₽</th><th>变体数</th><th>品类细分</th><th>卖家</th>
+    </tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+
+  <div class="note">
+    <b>归组规则</b>：① 有实测 SPU ID 的直接归组（АДАМ ТЕКС=1757272168 含49 SKU、BayAli=6896334326 含40 SKU、РУДИК=6037846147 含8 SKU、LARRUS MODA=4737872867、BRAVOMODA=6395933287、Sasheline=5925577414、Вечернее длинное=6800418515、Милослава=4799170843、ZIAR STAR=9941039082）；② 其余按品牌+同标题聚类（≈号标注，存在少量误差）；③ <b>跨池发现</b>：ZIAR STAR 畅销池 29 件款与低销池 2 件款同属一个父体——「销量&lt;10」和「≥10」两池的边界本质是同款不同变体的销量分布，进一步证明必须按父体看市场；④ 品类细分：домашнее=家居 / пляж=沙滩 / вечернее офисное=通勤晚装 / лапша-в рубчик=罗纹针织。归组后看真实格局：头部 5 个父体（Sasheline/SveTekst系/DeMare/通勤晚装系/BayAli）吃掉约 60% 销售额，父体真实数量 ≈45 个 = 竞争密度远比"126 个商品"看起来的低。
+  </div>
+</div>
+<script>
+// G: [品牌, 商品描述, 代表SKU, 代表价, 合计销量, 合计GMV, 变体数(估), 品类, 卖家(1跨境/2本土/0未知), 确认状态(true=SPU实测/false=聚类)]
+const G = [
+["Sasheline","трикотажное длинное 针织长裙","3669503451",2533,176,441802,"1+","针织长裙",2,true],
+["SveTekst / СвеТекст / SVETEXT","больших размеров 基础款系列","2811350650",1484,386,508790,"6≈","基础款(多价位)",2,false],
+["DeMare","пляжные 沙滩裙系列","2829669944",2225,266,486233,"8≈","沙滩裙",2,false],
+["(无品牌) 通勤晚装系","вечернее офисное/длинное","5328406430",4469,239,1147399,"7≈","通勤晚装",2,false],
+["BayAli","женское/летнее 高价带","3382763049",4587,283,1050000,"40(实测1父体)","高价带全品类",1,true],
+["LARRUS MODA","женское больших размеров","1762316826",3197,151,341865,"3≈","中价位",2,true],
+["BRAVOMODA","Одежда больших размеров","1697888996",1583,158,242000,"3≈","基础+沙滩",2,true],
+["befree","макси 长裙（罗纹/缎面）","4533438411",1984,63,155968,"2","快时尚长裙",2,false],
+["РУДИК","летнее домашнее 夏日家居","3410653423",957,94,60000,"8(实测)","家居",0,true],
+["АДАМ ТЕКС","домашнее хлопок 居家棉质","1931978435",1432,21,21600,"49(实测)","家居棉质",2,true],
+["Милослава","домашнее / лапша","3550165196",1932,69,71300,"3≈","家居/针织",2,true],
+["RICHMARGO","летнее больших размеров","2383907977",2768,15,47045,"1","夏款",2,false],
+["ZIAR STAR","домашнее хлопок（跨池:29件+2件同父体）","2309300517",594,31,16531,"2+","家居棉质",2,true],
+["Golden Flamingo","туника домашнее хлопок 罩衫","1772833812",1644,28,23800,"3≈","家居罩衫",2,false],
+["(无品牌) 夏日基础款","летнее женское","3705503517",2177,48,74692,"2≈","夏款",0,false],
+["SVETEXT 独立款(低价)","больших размеров ₽1771","3190307600",1771,9,13924,"1","基础款",2,false],
+["Osmi Style","туника-платье 罩衫裙","1801568714",1099,14,14557,"2≈","罩衫",2,false],
+["LIMAPRIMA","туника домашнее / лапша","2425874631",2188,11,26786,"2≈","家居/针织",2,false],
+["Lady Maria","праздничное вечернее 节日晚装","1670973345",2549,4,11601,"4≈","晚装",2,false],
+["Rovental","женское больших размеров","876746801",2949,7,17010,"3≈","中价位",2,false],
+["Хорошава","повседневное 日常款","627427775",1754,3,6515,"2≈","日常",0,false],
+["Massimo Dutti","платье-рубашка пляжная 衬衫裙","2400606591",1509,1,1417,"1","衬衫裙",0,false],
+["(无品牌) 皮筋/腰带等配饰混入","（标题含\\'на платье\\'的配饰噪音）","4403683247",191,0,0,"≈3","噪音(非裙)",0,false],
+["Dress 长袖秋冬家居(跨境)","осенне-зимнее с рукавами","2885241879",557,2,1017,"1","秋冬家居",1,false],
+["ZLATA PRIMA","летнее туника 夏季罩衫","2013426076",1000,4,5070,"2(实测)","沙滩罩衫",2,true],
+["AliGu","летнее（含清仓款）","5200359226",4327,5,18157,"3≈","夏款高价",1,false],
+["(无品牌) 家居棉质零散款","домашнее хлопок（低销池散款聚类）","1813827059",1136,15,18700,"6≈","家居",0,false],
+["(无品牌) Пижама платье 跨境睡裙","рубашка туника домашнее","3290986149",1420,87,85759,"1+","睡裙/家居",1,true],
+["(无品牌) 其他低销长尾","（低销池剩余散款归并展示）","4055165570",866,0,0,"≈15","混合长尾",0,false]
+];
+const PT = {1:'<span class="pt pt-cross">跨境</span>',2:'<span class="pt pt-local">本土</span>',0:'<span class="pt pt-na">未标注</span>'};
+const sorted = G.slice().sort((a,b)=>b[5]-a[5]);
+document.getElementById('tb').innerHTML = sorted.map((r,i) => {
+  const mark = r[9] ? '' : ' ≈';
+  return '<tr><td>'+(i+1)+'</td>'+
+  '<td class="brand-cell"><b>'+r[0]+mark+'</b><span>'+r[1]+'</span></td>'+
+  '<td class="sku">'+r[2]+'</td>'+
+  '<td class="price">'+r[3].toLocaleString()+'</td>'+
+  '<td class="sales">'+r[4]+' 件</td>'+
+  '<td class="gmv">'+r[5].toLocaleString()+'</td>'+
+  '<td class="variants">'+r[6]+'</td>'+
+  '<td><span class="cat">'+r[7]+'</span></td>'+
+  '<td>'+PT[r[8]]+'</td></tr>';
+}).join('');
+</script>
+</body>
+</html>
