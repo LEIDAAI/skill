@@ -359,6 +359,40 @@
 - 3 个新坑已固化进专家人设（minSkuNum 滤脏数据 / 开店日期格式 / 品牌大小写）
 - 后台验收时：按本矩阵逐条在后台专家里重跑，结果对上锚点即通过
 
+---
+
+## 全专家对话内实测验收矩阵（2026-11-09 晚间 · 全部 19 专家）
+
+> 测试方式：每个专家抽 1~2 条代表性参考提示词，在对话内以真实 MCP 接口跑通，验证「人设→工具链→输出」闭环。
+
+| 专家 | 实测提示词 | 主接口 | 结果 | 复测发现/修正 |
+|---|---|---|---|---|
+| Ozon选品 | 家居类目28天销售额TOP | yq_ozon_goods_search | ✅ | 首调超时重试即成；数据与 11-08 锚点一致（感应垃圾桶₽2967/4412件居首），goods_search 免费版可稳定复现 |
+| Ozon店铺 | 日销TOP跨境店铺(minSkuNum=500) | yq_ozon_mall_search | ✅ | minSkuNum≥500 滤脏数据再次验证有效；Rhapsody 8738件/日仍居首 |
+| Ozon大盘 | 家居类目大盘(17028714) | yq_ozon_market_stat | ✅ | ⚠️ 新发现：items 序列日期空洞加剧（87天仅60点）；**mallsNum 10月底起断崖失真（2万→583）**，人设已写明近期勿引用该字段 |
+| Ozon大盘(品牌) | Samsung 品牌查询 | yq_ozon_brand_search | ✅ | orderByColumn=monthSales 正常；749店/月销10.86万件 |
+| TEMU选品 | 美国站半托 storage box | yq_goods_search | ✅ | 保鲜盒套装 $8.98/日销838 居首，regions+半托+标题组合稳定 |
+| TEMU核价 | （本日下午已全链路实测） | 5接口联动 | ✅ | 见专家五锚点 |
+| TEMU店铺 | 全托家居日销TOP+明星店核验 | yq_mall_search | ✅ | ⚠️ 新发现：**mall_star 作筛选参数会被忽略**（_note 报字段不存在），正确姿势=日销榜取头部后用返回的 star_seller_time 字段核验（实测头部5店全部在榜明星店）；opened_at 两接口有7天差（20220901 vs 20220908），表述用「2022年9月初」 |
+| TEMU大盘 | 家居类目下钻+玩具品牌榜 | yq_market_semi + brand_search | ✅ | optId 下钻稳定；brand_search+opt_ids=[204] 组合正常，SANRIO 居首 |
+| 亚马逊选品 | Sports Water Bottles 类目报告 | sorftime category_report | ✅ | Top100 月销155.2万件/$4664万（与 11-09 早间锚点156.5万/$4698万差<1%，口径稳定）；自营占73.91%、Owala 36.93%+STANLEY 16.44% 双寡头格局不变；退货率9.85%/转化率7.0%/平均上架1158天 |
+| 亚马逊店铺 | 类目中国卖家筛选 | sorftime seller_search | ✅ | 18 个 CN 卖家，RAYMYLO Direct 头部（$57.1万/月、top3集中度100%）；is_chinese_seller=1+node_id 组合稳定 |
+| 亚马逊选品(新品) | water bottle 2026新品+月销5000+ | sorftime product_search | ✅ | STANLEY IceFlow 2.0（2026-01上架）月销5.1万件/$179万居首；**buybox_seller=Amazon 占比高**是重要信号；混入少量非水杯品（Boppy哺乳枕），按 sub_category 过滤 |
+| 亚马逊关键词 | water bottle 关键词详情 | sorftime keyword_detail | ✅ | ⚠️ keyword_list 热词榜 504 超时（重试1次仍失败，属接口侧问题）；keyword_detail 稳定：月搜166.4万/CPC $1.05/首页100坑位(52自然+13广告)/hijack 26%——跟卖率高企是水杯类目特征 |
+| 亚马逊评论洞察 | Owala 差评100条+HP联名款 customers_say | sorftime product_reviews + customers_say | ✅ | 差评五主题归纳再次验证（弹簧断裂/吸管脱落/漏水/杯架不兼容/质保踢皮球）；HP联名款正面话题：quality 240提及/负面仅7——正面壁垒数据可交叉使用 |
+| 1688选品 | 收纳盒30天销售额降序 | product_search_list | ✅ | 与 11-09 早间锚点一致（台球杆盒¥125/1万件居首）；⚠️ 「收纳盒」仍混入注塑机（¥83.6万），levelName 二次过滤纪律有效 |
+| 1688榜单 | 收纳品类月榜 | product_billboard_list | ✅ | ⚠️ 新发现：keyWord+sortField 组合返回0（去掉 sortField 即命中10000条）——榜单接口 keyWord 与自定义排序可能冲突，空结果先去排序参数重试；品类月榜 TOP=大容量收纳箱¥5.01/13488件/复购64.6% |
+| 1688新品 | 收纳盒新品 | product_trend_new_list | ✅ | ⚠️ 新发现：**MCP schema 要求 titleTags 必填**，只传关键词报校验错，显式传 ["289794"] 即可；命中仿藤编手提箱15万件（老锚点同款，稳定） |
+| 1688监控 | 加监控+监控池查看 | monitor_offer_add/list | ✅ | ⚠️ 参数格式：offer_add 收**链接或ID**（顶层 offerId 字段，不是 req 对象）；新加监控当天数据为 null（T+1同步）再次验证；监控池历史商品数据正常回填 |
+| 1688店铺 | 店铺榜查询 | shop_rank_list | ❌ | 五榜仍返回空（comprehensive/cross_border 均试），与早间结论一致：服务端暂无数据，降级路径（搜索反查+monitor_shop_analysis）仍有效 |
+
+### 汇总
+
+- 19 专家实测：**18 通过 / 1 接口侧不可用**（1688店铺榜，已有降级路径兜底）
+- 新增人设修正 4 处：Ozon大盘（mallsNum 失真）/ TEMU店铺（mall_star 筛选无效→字段核验法）/ 1688榜单（keyWord+sortField 冲突）/ 1688新品（titleTags schema 必填）
+- 接口侧已知问题 3 个：yunqi ozon goods_search 偶发超时（重试即成）/ sorftime keyword_list 504 / 1688 shop_rank_list 空数据
+- 后台验收：按本矩阵重跑，对上锚点即通过
+
 ## 维护约定
 
 - Hub（skill 仓库）是专家人设的**单一事实源**；后台录入后如有改动，反向同步回 Hub
