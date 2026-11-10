@@ -3236,8 +3236,7 @@ function renderWsLeft() {
     ((e.refPrompts || []).length ? '<div class="ws-sec">参考提示词（点击复制）</div>' + e.refPrompts.map(p =>
       '<button class="ws-prompt" onclick="copyText(this.dataset.p);this.dataset.tip=\'1\'" data-p="' + esc(p) + '" title="点击复制">💬 ' + esc(p) + '</button>').join('') : '') +
     '<div class="ws-sec">操作</div>' +
-    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.sysPrompt);toast(\'人设提示词已复制\')">📋 复制人设提示词</button>' +
-    ((e.demo || e.demoShop || e.demoMarket) ? '<button class="btn-plain" style="width:100%;margin-top:8px;justify-content:center" onclick="setWsTab(\'demo\')">📊 查看实测</button>' : '');
+    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.sysPrompt);toast(\'人设提示词已复制\')">📋 复制人设提示词</button>';
 }
 function renderWsBody() {
   const right = document.getElementById('ws-right');
