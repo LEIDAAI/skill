@@ -206,6 +206,39 @@
   }
   .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
 
+  /* ===== 专家工作台（全屏三栏）===== */
+  .ws-mask { position: fixed; inset: 0; background: rgba(15,23,42,.45); z-index: 90; display: none; }
+  .ws-mask.open { display: block; }
+  .ws { position: fixed; inset: 3vh 3vw; background: #fff; border-radius: 16px; z-index: 91; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,.25); }
+  .ws.open { display: flex; }
+  .ws-head { display: flex; align-items: center; gap: 12px; padding: 14px 22px; border-bottom: 1px solid var(--border); flex: none; }
+  .ws-head h3 { font-size: 17px; margin: 0; }
+  .ws-tabs { display: flex; gap: 6px; margin-left: 18px; }
+  .ws-tab { border: 1px solid #d8dee8; background: #fff; color: #47536b; border-radius: 999px; padding: 5px 14px; font-size: 12.5px; cursor: pointer; }
+  .ws-tab.on { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .ws-close { margin-left: auto; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
+  .ws-body { flex: 1; display: flex; min-height: 0; }
+  .ws-left { flex: 0 0 300px; border-right: 1px solid var(--border); overflow: auto; padding: 18px; background: #f8fafc; }
+  .ws-mid { flex: 0 0 360px; border-right: 1px solid var(--border); overflow: auto; padding: 18px; }
+  .ws-right { flex: 1; overflow: auto; padding: 18px; background: #fbfcfe; }
+  .ws-sec { font-size: 12px; font-weight: 700; color: #7c8db5; margin: 14px 0 8px; letter-spacing: .5px; }
+  .ws-sec:first-child { margin-top: 0; }
+  .ws-desc { font-size: 13px; line-height: 1.7; color: #2b3648; }
+  .ws-abil { display: inline-block; font-size: 11.5px; color: #3a6df0; background: #eef3ff; border-radius: 999px; padding: 2px 10px; margin: 2px 4px 2px 0; }
+  .ws-prompt { display: block; width: 100%; text-align: left; border: 1px solid #e2e8f0; background: #fff; border-radius: 10px; padding: 9px 12px; font-size: 12.5px; color: #2b3648; cursor: pointer; margin-bottom: 6px; line-height: 1.5; }
+  .ws-prompt:hover { border-color: #2563eb; background: #f0f6ff; }
+  .ws-skill { border: 1px solid #e2e8f0; background: #fff; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+  .ws-skill:hover { border-color: #93c5fd; box-shadow: 0 4px 14px rgba(37,99,235,.08); }
+  .ws-skill.on { border-color: #2563eb; background: #f0f6ff; }
+  .ws-skill b { font-size: 13.5px; color: #1c1c1c; }
+  .ws-skill i { display: block; font-style: normal; font-size: 12px; color: #8592a6; margin-top: 4px; line-height: 1.55; }
+  .ws-skill .ws-tools { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .ws-tool { font-size: 10.5px; font-family: Consolas, monospace; background: #f1f5f9; color: #475569; border-radius: 5px; padding: 1px 7px; }
+  .ws-right h4 { margin: 0 0 10px; font-size: 14px; color: #1c1c1c; }
+  .ws-code { white-space: pre-wrap; word-break: break-word; font-size: 12.5px; line-height: 1.7; font-family: Consolas, 'Microsoft YaHei', monospace; color: #2b3648; background: #f6f8fb; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; max-height: calc(100% - 40px); overflow: auto; }
+  @media (max-width: 1100px) { .ws-left { flex-basis: 240px; } .ws-mid { flex-basis: 300px; } }
+  @media (max-width: 860px) { .ws { inset: 2vh 2vw; } .ws-body { flex-direction: column; } .ws-left, .ws-mid { flex: none; border-right: 0; border-bottom: 1px solid var(--border); max-height: 32vh; } }
+
   /* ===== 实测预览（demo modal）===== */
   .demo-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
   .demo-kpi { background: #f6f9fc; border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; }
@@ -404,6 +437,20 @@
       <button class="modal-close" id="modal-close">✕</button>
     </div>
     <div class="modal-body"><pre id="modal-content"></pre></div>
+  </div>
+</div>
+
+<div class="ws-mask" id="ws-mask"></div>
+<div class="ws" id="ws">
+  <div class="ws-head">
+    <h3 id="ws-title">专家工作台</h3>
+    <div class="ws-tabs" id="ws-tabs"></div>
+    <button class="ws-close" id="ws-close" title="关闭">✕</button>
+  </div>
+  <div class="ws-body">
+    <aside class="ws-left" id="ws-left"></aside>
+    <section class="ws-mid" id="ws-mid"></section>
+    <section class="ws-right" id="ws-right"></section>
   </div>
 </div>
 
@@ -3156,6 +3203,88 @@ document.getElementById('eptabs').addEventListener('click', e => {
 });
 document.getElementById('esearch').addEventListener('input', e => { curExpertSearch = e.target.value; renderEGrid(); });
 
+/* ===================== 专家工作台 ===================== */
+let wsExpert = null, wsTab = 'prompt', wsSkillIdx = -1;
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function openWorkbench(expert, tab) {
+  wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = -1;
+  document.getElementById('ws-title').innerHTML = esc(expert.name) +
+    ' <span class="demo-badge">' + esc((expert.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
+    (expert.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
+  renderWsTabs(); renderWsLeft(); renderWsBody();
+  document.getElementById('ws-mask').classList.add('open');
+  document.getElementById('ws').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeWorkbench() {
+  document.getElementById('ws-mask').classList.remove('open');
+  document.getElementById('ws').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderWsTabs() {
+  const tabs = [['prompt', '提示词'], ['skill', '技能 (' + (wsExpert.skills || []).length + ')'], ['demo', '实测']];
+  if (!wsExpert.demo && !wsExpert.demoShop && !wsExpert.demoMarket) tabs.pop();
+  document.getElementById('ws-tabs').innerHTML = tabs.map(t =>
+    '<button class="ws-tab' + (wsTab === t[0] ? ' on' : '') + '" onclick="setWsTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
+}
+function setWsTab(t) { wsTab = t; if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0; renderWsTabs(); renderWsBody(); }
+function renderWsLeft() {
+  const e = wsExpert;
+  document.getElementById('ws-left').innerHTML =
+    '<div class="ws-sec">专家简介</div><div class="ws-desc">' + esc(e.desc || '—') + '</div>' +
+    ((e.abilities || []).length ? '<div class="ws-sec">核心能力</div>' + e.abilities.map(a => '<span class="ws-abil">' + esc(a) + '</span>').join('') : '') +
+    ((e.refPrompts || []).length ? '<div class="ws-sec">参考提示词（点击复制）</div>' + e.refPrompts.map(p =>
+      '<button class="ws-prompt" onclick="copyText(this.dataset.p);this.dataset.tip=\'1\'" data-p="' + esc(p) + '" title="点击复制">💬 ' + esc(p) + '</button>').join('') : '') +
+    '<div class="ws-sec">操作</div>' +
+    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.sysPrompt);toast(\'人设提示词已复制\')">📋 复制人设提示词</button>' +
+    ((e.demo || e.demoShop || e.demoMarket) ? '<button class="btn-plain" style="width:100%;margin-top:8px;justify-content:center" onclick="setWsTab(\'demo\')">📊 查看实测</button>' : '');
+}
+function renderWsBody() {
+  const right = document.getElementById('ws-right');
+  if (wsTab === 'prompt') {
+    document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">技能路由速览</div>' +
+      '<div class="ws-desc" style="font-size:12px;color:#8592a6">切换到「技能」标签查看每个技能的完整指令；此页展示的是专家人设全文（含路由表与纪律）。</div>';
+    right.innerHTML = '<h4>人设 System Prompt（复制到对话开头即可让助手变身该专家）</h4><div class="ws-code">' + esc(wsExpert.sysPrompt || '—') + '</div>';
+    return;
+  }
+  if (wsTab === 'skill') {
+    const skills = (wsExpert.skills || []).map(name => allSkills().find(s => s.name === name)).filter(Boolean);
+    if (wsSkillIdx >= skills.length) wsSkillIdx = 0;
+    document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">绑定技能（点击查看指令）</div>' +
+      (skills.length ? skills.map((s, i) =>
+        '<div class="ws-skill' + (i === wsSkillIdx ? ' on' : '') + '" onclick="wsSkillIdx=' + i + ';renderWsBody()">' +
+        '<b>⚡ ' + esc(s.name) + '</b><i>' + esc(s.desc || '') + '</i>' +
+        ((s.tools || []).length ? '<div class="ws-tools">' + s.tools.map(t => '<span class="ws-tool">' + esc(t) + '</span>').join('') + '</div>' : '') +
+        '</div>').join('') : '<div class="ws-desc">该专家暂无已建技能，芯片为灰色表示待建。</div>');
+    const cur = skills[wsSkillIdx];
+    right.innerHTML = cur
+      ? '<h4>⚡ ' + esc(cur.name) + ' · 调用指令</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>'
+      : '<h4>技能指令</h4><div class="ws-code">—</div>';
+    return;
+  }
+  /* demo tab：复用 openExpertDemo 的渲染逻辑但渲染进 ws-right */
+  const which = wsDemoWhich || 'main';
+  const d = which === 'shop' ? (wsExpert.demoShop || wsExpert.demo) : which === 'market' ? (wsExpert.demoMarket || wsExpert.demo) : (wsExpert.demo || wsExpert.demoShop || wsExpert.demoMarket);
+  if (!d) { right.innerHTML = '<div class="ws-desc">暂无实测数据</div>'; return; }
+  const tabBtns = (wsExpert.demoShop || wsExpert.demoMarket)
+    ? '<div class="demo-switch">' +
+      '<button class="ds-btn' + (which === 'main' ? ' on' : '') + '" onclick="wsDemoWhich=\'main\';renderWsBody()">选品实测</button>' +
+      (wsExpert.demoShop ? '<button class="ds-btn' + (which === 'shop' ? ' on' : '') + '" onclick="wsDemoWhich=\'shop\';renderWsBody()">店铺实测</button>' : '') +
+      (wsExpert.demoMarket ? '<button class="ds-btn' + (which === 'market' ? ' on' : '') + '" onclick="wsDemoWhich=\'market\';renderWsBody()">大盘实测</button>' : '') +
+      '</div>' : '';
+  const hasImg = d.images && d.images.length;
+  const heads = (hasImg ? ['图'] : []).concat(d.table.head);
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+    heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+    d.table.rows.map((r, ri) => '<tr>' +
+      (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
+      r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+  right.innerHTML = '<h4>实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' + tabBtns +
+    '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
+    '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
+    table + '<div class="demo-note">' + esc(d.note) + '</div>';
+}
+let wsDemoWhich = 'main';
 function openExpertModal(expert) {
   const modal = document.getElementById('modal');
   document.getElementById('modal-title').textContent = expert.name + ' · 专家配置';
@@ -3226,6 +3355,9 @@ document.addEventListener('click', e => {
 });
 
 
+document.getElementById('ws-close').addEventListener('click', closeWorkbench);
+document.getElementById('ws-mask').addEventListener('click', closeWorkbench);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ws').classList.contains('open')) closeWorkbench(); });
 document.getElementById('egrid').addEventListener('click', e => {
   const chip = e.target.closest('.eskill-chip[data-eskill]');
   if (!chip) return;
@@ -3239,6 +3371,9 @@ document.getElementById('egrid').addEventListener('click', e => {
   document.getElementById('modal').classList.add('open');
 });
 
+document.getElementById('ws-close').addEventListener('click', closeWorkbench);
+document.getElementById('ws-mask').addEventListener('click', closeWorkbench);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ws').classList.contains('open')) closeWorkbench(); });
 document.getElementById('egrid').addEventListener('click', e => {
   const btn = e.target.closest('button[data-eaction]');
   if (!btn) return;
@@ -3248,7 +3383,7 @@ document.getElementById('egrid').addEventListener('click', e => {
   const act = btn.dataset.eaction;
   if (act === 'copy-sys') copyText(expert.sysPrompt || '');
   if (act === 'demo') openExpertDemo(expert);
-  if (act === 'detail') openExpertModal(expert);
+  if (act === 'detail') openWorkbench(expert, 'prompt');
   if (act === 'del') {
     customExperts = customExperts.filter(x => x.id !== expert.id);
     localStorage.setItem(EXPERTS_LS_KEY, JSON.stringify(customExperts));
