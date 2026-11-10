@@ -3431,6 +3431,10 @@ async function renderKbWsDoc() {
   const kb = wsKb;
   const doc = (kb.docs || [])[wsKbDocIdx];
   if (!doc) { right.innerHTML = '<div class="ws-desc">暂无文档</div>'; return; }
+  /* 同步中栏选中高亮 */
+  const midEl = document.getElementById('ws-mid');
+  const cards = midEl.querySelectorAll('.ws-skill');
+  cards.forEach((c, i) => c.classList.toggle('on', i === wsKbDocIdx));
   right.innerHTML = '<h4>📄 ' + esc(doc.name) + ' <span class="demo-badge">' + esc(doc.size || '') + '</span></h4><div class="ws-code">加载中…</div>';
   let t;
   try {
