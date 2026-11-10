@@ -3204,7 +3204,7 @@ document.getElementById('eptabs').addEventListener('click', e => {
 document.getElementById('esearch').addEventListener('input', e => { curExpertSearch = e.target.value; renderEGrid(); });
 
 /* ===================== 专家工作台 ===================== */
-let wsExpert = null, wsTab = 'prompt', wsSkillIdx = -1;
+let wsExpert = null, wsTab = 'prompt', wsSkillIdx = -1, wsSkillView = 'prompt';
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function openWorkbench(expert, tab) {
   wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = -1;
@@ -3227,7 +3227,7 @@ function renderWsTabs() {
   document.getElementById('ws-tabs').innerHTML = tabs.map(t =>
     '<button class="ws-tab' + (wsTab === t[0] ? ' on' : '') + '" onclick="setWsTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
 }
-function setWsTab(t) { wsTab = t; if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0; renderWsTabs(); renderWsBody(); }
+function setWsTab(t) { wsTab = t; wsSkillView = 'prompt'; if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0; renderWsTabs(); renderWsBody(); }
 function renderWsLeft() {
   const e = wsExpert;
   document.getElementById('ws-left').innerHTML =
@@ -3252,14 +3252,32 @@ function renderWsBody() {
     if (wsSkillIdx >= skills.length) wsSkillIdx = 0;
     document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">绑定技能（点击查看指令）</div>' +
       (skills.length ? skills.map((s, i) =>
-        '<div class="ws-skill' + (i === wsSkillIdx ? ' on' : '') + '" onclick="wsSkillIdx=' + i + ';renderWsBody()">' +
+        '<div class="ws-skill' + (i === wsSkillIdx ? ' on' : '') + '" onclick="wsSkillIdx=' + i + ';wsSkillView=\'prompt\';renderWsBody()">' +
         '<b>⚡ ' + esc(s.name) + '</b><i>' + esc(s.desc || '') + '</i>' +
         ((s.tools || []).length ? '<div class="ws-tools">' + s.tools.map(t => '<span class="ws-tool">' + esc(t) + '</span>').join('') + '</div>' : '') +
         '</div>').join('') : '<div class="ws-desc">该专家暂无已建技能，芯片为灰色表示待建。</div>');
     const cur = skills[wsSkillIdx];
-    right.innerHTML = cur
-      ? '<h4>⚡ ' + esc(cur.name) + ' · 调用指令</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>'
-      : '<h4>技能指令</h4><div class="ws-code">—</div>';
+    if (!cur) { right.innerHTML = '<h4>技能指令</h4><div class="ws-code">—</div>'; return; }
+    const subTabs = '<div class="demo-switch" style="margin-bottom:12px">' +
+      '<button class="ds-btn' + (wsSkillView === 'prompt' ? ' on' : '') + '" onclick="wsSkillView=\'prompt\';renderWsBody()">提示词</button>' +
+      (cur.demo ? '<button class="ds-btn' + (wsSkillView === 'demo' ? ' on' : '') + '" onclick="wsSkillView=\'demo\';renderWsBody()">实测</button>' : '') +
+      '</div>';
+    if (wsSkillView === 'demo' && cur.demo) {
+      const d = cur.demo;
+      const hasImg = d.images && d.images.length;
+      const heads = (hasImg ? ['图'] : []).concat(d.table.head);
+      const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+        heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+        d.table.rows.map((r, ri) => '<tr>' +
+          (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
+          r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+      right.innerHTML = '<h4>📊 ' + esc(cur.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
+        '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
+        '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
+        table + '<div class="demo-note">' + esc(d.note) + '</div>';
+    } else {
+      right.innerHTML = '<h4>⚡ ' + esc(cur.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>';
+    }
     return;
   }
   /* demo tab：复用 openExpertDemo 的渲染逻辑但渲染进 ws-right */
