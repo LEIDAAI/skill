@@ -1110,8 +1110,7 @@ function renderGrid() {
       (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
       '<div class="card-actions">' +
         '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
-        (s.demo ? '<button class="btn-plain" data-action="demo">📊 实测</button>' : '') +
-        '<button class="btn-plain" data-action="view-prompt">查看提示词</button>' +
+        '<button class="btn-plain" data-action="workbench">🔍 工作台</button>' +
         (s.skillMd ? '<button class="btn-plain" data-action="view">技能全文</button>' : '') +
         (s.custom ? '<button class="btn-plain btn-del" data-action="del">删除</button>' : '') +
       '</div>' +
@@ -1177,6 +1176,7 @@ document.getElementById('grid').addEventListener('click', e => {
   const act = btn.dataset.action;
   if (act === 'copy') copyText(skill.prompt || '');
   if (act === 'demo' && skill.demo) openExpertDemo(skill);
+  if (act === 'workbench') { wsOpenGeneric('skill', skill, 'prompt'); return; }
   if (act === 'view-prompt') {
     document.getElementById('modal-title').textContent = skill.name + ' · 调用提示词';
     document.getElementById('modal-content').textContent = skill.prompt || '（该技能未配置提示词）';
@@ -3154,7 +3154,7 @@ document.getElementById('kblist').addEventListener('click', async e => {
       '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】',
     ].join('\n'));
   }
-  if (act === 'docs') { openKbDocsModal(kb); }
+  if (act === 'docs') { wsOpenGeneric('kb', kb); }
   if (act === 'del') {
     customKBs = customKBs.filter(d => d.id !== kb.id);
     localStorage.setItem(KB_LS_KEY, JSON.stringify(customKBs));
@@ -3328,6 +3328,120 @@ function renderWsBody() {
     table + '<div class="demo-note">' + esc(d.note) + '</div>';
 }
 let wsDemoWhich = 'main';
+/* ===================== 技能/知识库 工作台 ===================== */
+let wsMode = 'expert'; // 'expert' | 'skill' | 'kb'
+let wsKb = null, wsKbDocIdx = -1, wsKbDocCache = {};
+function wsOpenGeneric(mode, obj, tab) {
+  wsMode = mode;
+  if (mode === 'skill') { wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt'; setWsTabGeneric(tab || 'prompt'); }
+  else if (mode === 'kb') { wsKb = obj; wsKbDocIdx = obj.docs && obj.docs.length ? 0 : -1; renderKbWs(); }
+  document.getElementById('ws-mask').classList.add('open');
+  document.getElementById('ws').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function setWsTabGeneric(t) {
+  /* 技能工作台只有两个视图：prompt(默认) / demo(实测) */
+  wsTab = t;
+  renderSkillWs();
+}
+function closeWorkbenchGeneric() {
+  document.getElementById('ws-mask').classList.remove('open');
+  document.getElementById('ws').classList.remove('open');
+  document.body.style.overflow = '';
+}
+/* 技能工作台渲染 */
+function renderSkillWs() {
+  const s = wsExpert;
+  document.getElementById('ws-title').innerHTML = '⚡ ' + esc(s.name) +
+    ' <span class="demo-badge">' + esc((s.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
+    (s.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
+  document.getElementById('ws-tabs').innerHTML =
+    '<button class="ws-tab' + (wsTab === 'prompt' ? ' on' : '') + '" onclick="setWsTabGeneric(\'prompt\')">提示词</button>' +
+    (s.demo ? '<button class="ws-tab' + (wsTab === 'demo' ? ' on' : '') + '" onclick="setWsTabGeneric(\'demo\')">实测</button>' : '');
+  /* 左栏：信息 */
+  document.getElementById('ws-left').innerHTML =
+    '<div class="ws-sec">技能简介</div><div class="ws-desc">' + esc(s.desc || '—') + '</div>' +
+    ((s.triggers || []).length ? '<div class="ws-sec">触发示例（点击复制）</div>' + s.triggers.map(t =>
+      '<button class="ws-prompt" data-p="' + esc(t) + '" onclick="copyText(this.dataset.p)" title="点击复制">💬 ' + esc(t) + '</button>').join('') : '') +
+    ((s.tools || []).length ? '<div class="ws-sec">内置工具</div><div>' + s.tools.map(t => '<span class="ws-tool" style="font-size:11.5px;padding:3px 9px;margin:2px 3px 2px 0;display:inline-block">' + esc(t) + '</span>').join('') + '</div>' : '') +
+    (s.version ? '<div class="ws-sec">版本</div><div class="ws-desc">v' + esc(s.version) + ' · ' + esc(s.author || '') + '</div>' : '') +
+    '<div class="ws-sec">操作</div>' +
+    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>';
+  /* 中栏：执行步骤 + 输出说明 */
+  document.getElementById('ws-mid').innerHTML =
+    ((s.steps || []).length ? '<div class="ws-sec">执行步骤</div>' + s.steps.map((st, i) =>
+      '<div class="ws-desc" style="padding:7px 10px;background:#f6f8fb;border-radius:8px;margin-bottom:6px;font-size:12.5px"><b style="color:#2563eb">' + (i + 1) + '.</b> ' + esc(st) + '</div>').join('') : '') +
+    (s.scenario ? '<div class="ws-sec">适用场景</div><span class="ws-abil">' + esc(s.scenario) + '</span>' : '') +
+    (s.outputExample ? '<div class="ws-sec">输出示例</div><div class="ws-code" style="max-height:280px">' + esc(s.outputExample) + '</div>' : '');
+  /* 右栏：提示词或实测 */
+  const right = document.getElementById('ws-right');
+  if (wsTab === 'demo' && s.demo) {
+    const d = s.demo;
+    const hasImg = d.images && d.images.length;
+    const heads = (hasImg ? ['图'] : []).concat(d.table.head);
+    const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+      heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
+      d.table.rows.map((r, ri) => '<tr>' +
+        (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
+        r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+    right.innerHTML = '<h4>📊 ' + esc(s.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
+      '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
+      '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
+      table + '<div class="demo-note">' + esc(d.note) + '</div>';
+  } else {
+    right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
+  }
+}
+/* 知识库工作台渲染 */
+async function renderKbWs() {
+  const kb = wsKb;
+  document.getElementById('ws-title').innerHTML = '📚 ' + esc(kb.name) +
+    ' <span class="demo-badge">' + esc((kb.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
+    '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">' + ((kb.docs || []).length) + ' 篇文档</span>';
+  document.getElementById('ws-tabs').innerHTML = '<span class="ws-desc" style="font-size:12px;color:#8592a6;padding:4px 6px">点中间文档查看全文 · 点提示词卡片复制使用指令</span>';
+  /* 左栏：库信息 */
+  document.getElementById('ws-left').innerHTML =
+    '<div class="ws-sec">知识库简介</div><div class="ws-desc">' + esc(kb.desc || '—') + '</div>' +
+    (kb.usage ? '<div class="ws-sec">使用方式</div><div class="ws-desc">' + esc(kb.usage) + '</div>' : '') +
+    (kb.scope ? '<div class="ws-sec">范围约束</div><div class="ws-desc">' + esc(kb.scope) + '</div>' : '') +
+    '<div class="ws-sec">操作</div>' +
+    '<button class="btn-solid" style="width:100%" onclick="copyKbUsage()">📋 复制使用指令</button>' +
+    (kb.source ? '<button class="btn-plain" style="width:100%;margin-top:8px;justify-content:center" onclick="window.open(\'' + esc(kb.source) + '\',\'_blank\')">🌐 打开原文库</button>' : '');
+  /* 中栏：文档列表 */
+  document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">文档清单（点击阅读）</div>' +
+    (kb.docs || []).map((x, i) =>
+      '<div class="ws-skill' + (i === wsKbDocIdx ? ' on' : '') + '" onclick="wsKbDocIdx=' + i + ';renderKbWsDoc()">' +
+      '<b>📄 ' + esc(x.name) + '</b><i>' + esc(x.desc || '') + '</i>' +
+      '<div class="ws-tools"><span class="ws-tool">' + esc(x.size || '') + '</span>' + (x.version ? '<span class="ws-tool">' + esc(x.version) + '</span>' : '') + '</div>' +
+      '</div>').join('');
+  /* 右栏：文档全文 */
+  await renderKbWsDoc();
+  window.wsKbUsageText = [
+    '请基于「' + kb.name + '」知识库回答我的问题。',
+    '知识库说明：' + (kb.desc || '').slice(0, 200),
+    '使用方式：' + (kb.usage || ''),
+    '范围约束：' + (kb.scope || ''),
+    '',
+    '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】'
+  ].join('\n');
+}
+function copyKbUsage() { copyText(window.wsKbUsageText || ''); toast('使用指令已复制'); }
+async function renderKbWsDoc() {
+  const right = document.getElementById('ws-right');
+  const kb = wsKb;
+  const doc = (kb.docs || [])[wsKbDocIdx];
+  if (!doc) { right.innerHTML = '<div class="ws-desc">暂无文档</div>'; return; }
+  right.innerHTML = '<h4>📄 ' + esc(doc.name) + ' <span class="demo-badge">' + esc(doc.size || '') + '</span></h4><div class="ws-code">加载中…</div>';
+  let t;
+  try {
+    const r = await fetch(doc.name, { cache: 'no-cache' });
+    if (!r.ok) throw new Error();
+    t = await r.text();
+  } catch (e) {
+    t = '（加载失败：请通过线上版访问，或把 ' + doc.name + ' 放在与页面同目录）';
+  }
+  right.innerHTML = '<h4>📄 ' + esc(doc.name) + ' <span class="demo-badge">' + esc(doc.size || '') + '</span>' + (doc.version ? ' <span class="demo-badge">' + esc(doc.version) + '</span>' : '') + '</h4><div class="ws-code">' + esc(t) + '</div>';
+}
 function openExpertModal(expert) {
   const modal = document.getElementById('modal');
   document.getElementById('modal-title').textContent = expert.name + ' · 专家配置';
@@ -3398,7 +3512,9 @@ document.addEventListener('click', e => {
 });
 
 
-document.getElementById('ws-close').addEventListener('click', closeWorkbench);
+document.getElementById('ws-close').addEventListener('click', closeWorkbenchGeneric);
+document.getElementById('ws-mask').addEventListener('click', closeWorkbenchGeneric);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ws').classList.contains('open') && wsMode !== 'expert') closeWorkbenchGeneric(); });
 document.getElementById('ws-mask').addEventListener('click', closeWorkbench);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ws').classList.contains('open')) closeWorkbench(); });
 document.getElementById('egrid').addEventListener('click', e => {
@@ -3414,7 +3530,9 @@ document.getElementById('egrid').addEventListener('click', e => {
   document.getElementById('modal').classList.add('open');
 });
 
-document.getElementById('ws-close').addEventListener('click', closeWorkbench);
+document.getElementById('ws-close').addEventListener('click', closeWorkbenchGeneric);
+document.getElementById('ws-mask').addEventListener('click', closeWorkbenchGeneric);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ws').classList.contains('open') && wsMode !== 'expert') closeWorkbenchGeneric(); });
 document.getElementById('ws-mask').addEventListener('click', closeWorkbench);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.getElementById('ws').classList.contains('open')) closeWorkbench(); });
 document.getElementById('egrid').addEventListener('click', e => {
