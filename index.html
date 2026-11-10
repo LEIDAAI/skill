@@ -235,6 +235,8 @@
   .ws-skill .ws-tools { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
   .ws-tool { font-size: 10.5px; font-family: Consolas, monospace; background: #f1f5f9; color: #475569; border-radius: 5px; padding: 1px 7px; }
   .ws-right h4 { margin: 0 0 10px; font-size: 14px; color: #1c1c1c; }
+  .ws-ver-item.sel { background: #eef3ff; border-left: 3px solid #2563eb !important; }
+  .ws-ver-item:hover { background: #f4f8ff; }
   .ws-ver-item { padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: 11.5px; line-height: 1.5; }
   .ws-code { white-space: pre-wrap; word-break: break-word; font-size: 12.5px; line-height: 1.7; font-family: Consolas, 'Microsoft YaHei', monospace; color: #2b3648; background: #f6f8fb; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; max-height: calc(100% - 40px); overflow: auto; }
   @media (max-width: 1100px) { .ws-left { flex-basis: 240px; } .ws-mid { flex-basis: 300px; } }
@@ -3253,21 +3255,50 @@ async function loadVersions() {
   } catch (e) { _versionsCache = { entries: [] }; }
   return _versionsCache;
 }
-function renderWsVersions(targetPrefix) {
+let _wsVerList = [];
+async function renderWsVersions(targetPrefix) {
   const boxId = 'ws-ver-' + Math.random().toString(36).slice(2, 8);
+  window.__wsVerBoxId = boxId;
   setTimeout(async () => {
     const box = document.getElementById(boxId);
     if (!box) return;
     const v = await loadVersions();
     const list = (v.entries || []).filter(e => e.target.startsWith(targetPrefix)).slice(-8).reverse();
-    box.innerHTML = list.length ? list.map(e =>
-      '<div style="padding:6px 0;border-bottom:1px dashed var(--border);font-size:11.5px;line-height:1.5">' +
+    _wsVerList = list;
+    box.innerHTML = list.length ? list.map((e, i) =>
+      '<div class="ws-ver-item' + (window.__wsVerSel === e.ts + '|' + e.action ? ' sel' : '') + '" ' +
+      'style="cursor:pointer;padding:6px 8px;border-bottom:1px dashed var(--border);font-size:11.5px;line-height:1.5;border-radius:6px" ' +
+      'onclick="wsShowVersion(' + i + ')" title="点击查看该版本快照">' +
       '<b style="color:#2563eb;font-family:Consolas,monospace">' + esc(e.ts) + '</b> ' +
       '<span style="color:#8592a6">[' + esc(e.action) + ']</span> ' +
-      '<span style="color:#2b3648">' + esc(e.summary) + '</span></div>').join('')
+      '<span style="color:#2b3648">' + esc(e.summary) + '</span>' +
+      (e.snapshots ? '<span style="color:#008a37;font-size:10.5px"> · 📸有快照</span>' : '') + '</div>').join('')
       : '<div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">暂无记录</div>';
   }, 0);
   return '<div id="' + boxId + '"><div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">加载中…</div></div>';
+}
+async function wsShowVersion(i) {
+  const e = _wsVerList[i];
+  if (!e) return;
+  window.__wsVerSel = e.ts + '|' + e.action;
+  /* 重渲染左栏版本列表高亮 */
+  renderWsVersions(e.target.split(':')[0] === 'expert' ? 'expert:' + wsExpert.id : e.target.split(':')[0] === 'skill' ? 'skill:' + wsExpert.id : 'kb:' + (wsKb ? wsKb.id : ''));
+  /* 右侧显示快照 */
+  const right = document.getElementById('ws-right');
+  const snap = e.snapshots;
+  if (!snap) {
+    right.innerHTML = '<h4>版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + '</h4><div class="ws-code">该记录没有内容快照（早期记录仅摘要）。完整历史可查 git 仓库：git log。</div>';
+    return;
+  }
+  let htmlOut = '<h4>📸 版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + ' <span class="demo-badge">版本快照</span></h4>';
+  if (snap.prompt) htmlOut += '<div class="demo-sec">该版本提示词</div><div class="ws-code" style="max-height:40vh">' + esc(snap.prompt) + '</div>';
+  if (snap.demo) {
+    let demoObj = null;
+    try { demoObj = (typeof snap.demo === 'string') ? JSON.parse(snap.demo.replace(/\n/g, ' ')) : snap.demo; } catch (err) { demoObj = null; }
+    htmlOut += '<div class="demo-sec">该版本实测</div><div class="ws-code" style="max-height:40vh">' + esc(typeof snap.demo === 'string' ? snap.demo.slice(0, 2000) : JSON.stringify(snap.demo, null, 2).slice(0, 2000)) + '</div>';
+  }
+  if (snap.note) htmlOut += '<div class="demo-note">' + esc(snap.note) + '</div>';
+  right.innerHTML = htmlOut;
 }
 function closeWorkbench() {
   document.getElementById('ws-mask').classList.remove('open');
