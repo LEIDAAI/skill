@@ -1,0 +1,29 @@
+{
+  "note": "变更版本记录（追加式）。格式见 entries。git 仓库本身也是全量历史，此文件只是人类可读摘要。",
+  "entries": [
+    {
+      "ts": "2026-11-10 17:20:00",
+      "target": "system",
+      "action": "init",
+      "summary": "版本记录机制启用"
+    },
+    {
+      "ts": "2026-11-10 17:20:00",
+      "target": "expert:exp-ozon-sel",
+      "action": "merge",
+      "summary": "三专家合并为单一OZON选品专家，7技能路由"
+    },
+    {
+      "ts": "2026-11-10 17:20:00",
+      "target": "skill:selection-search",
+      "action": "demo",
+      "summary": "补收纳类目实测demo（4763款跨境候选）"
+    },
+    {
+      "ts": "2026-11-10 17:20:00",
+      "target": "kb:ozon-fee-logistics",
+      "action": "ui",
+      "summary": "知识库改工作台三栏视图"
+    }
+  ]
+}

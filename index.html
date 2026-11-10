@@ -235,6 +235,7 @@
   .ws-skill .ws-tools { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
   .ws-tool { font-size: 10.5px; font-family: Consolas, monospace; background: #f1f5f9; color: #475569; border-radius: 5px; padding: 1px 7px; }
   .ws-right h4 { margin: 0 0 10px; font-size: 14px; color: #1c1c1c; }
+  .ws-ver-item { padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: 11.5px; line-height: 1.5; }
   .ws-code { white-space: pre-wrap; word-break: break-word; font-size: 12.5px; line-height: 1.7; font-family: Consolas, 'Microsoft YaHei', monospace; color: #2b3648; background: #f6f8fb; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; max-height: calc(100% - 40px); overflow: auto; }
   @media (max-width: 1100px) { .ws-left { flex-basis: 240px; } .ws-mid { flex-basis: 300px; } }
   @media (max-width: 860px) { .ws { inset: 2vh 2vw; } .ws-body { flex-direction: column; } .ws-left, .ws-mid { flex: none; border-right: 0; border-bottom: 1px solid var(--border); max-height: 32vh; } }
@@ -3242,6 +3243,32 @@ function openWorkbench(expert, tab) {
   document.getElementById('ws').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+let _versionsCache = null;
+async function loadVersions() {
+  if (_versionsCache) return _versionsCache;
+  try {
+    const r = await fetch('versions.json', { cache: 'no-cache' });
+    if (!r.ok) throw new Error();
+    _versionsCache = await r.json();
+  } catch (e) { _versionsCache = { entries: [] }; }
+  return _versionsCache;
+}
+function renderWsVersions(targetPrefix) {
+  const boxId = 'ws-ver-' + Math.random().toString(36).slice(2, 8);
+  setTimeout(async () => {
+    const box = document.getElementById(boxId);
+    if (!box) return;
+    const v = await loadVersions();
+    const list = (v.entries || []).filter(e => e.target.startsWith(targetPrefix)).slice(-8).reverse();
+    box.innerHTML = list.length ? list.map(e =>
+      '<div style="padding:6px 0;border-bottom:1px dashed var(--border);font-size:11.5px;line-height:1.5">' +
+      '<b style="color:#2563eb;font-family:Consolas,monospace">' + esc(e.ts) + '</b> ' +
+      '<span style="color:#8592a6">[' + esc(e.action) + ']</span> ' +
+      '<span style="color:#2b3648">' + esc(e.summary) + '</span></div>').join('')
+      : '<div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">暂无记录</div>';
+  }, 0);
+  return '<div id="' + boxId + '"><div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">加载中…</div></div>';
+}
 function closeWorkbench() {
   document.getElementById('ws-mask').classList.remove('open');
   document.getElementById('ws').classList.remove('open');
@@ -3262,7 +3289,8 @@ function renderWsLeft() {
     ((e.refPrompts || []).length ? '<div class="ws-sec">参考提示词（点击复制）</div>' + e.refPrompts.map(p =>
       '<button class="ws-prompt" onclick="copyText(this.dataset.p);this.dataset.tip=\'1\'" data-p="' + esc(p) + '" title="点击复制">💬 ' + esc(p) + '</button>').join('') : '') +
     '<div class="ws-sec">操作</div>' +
-    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.sysPrompt);toast(\'人设提示词已复制\')">📋 复制人设提示词</button>';
+    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.sysPrompt);toast(\'人设提示词已复制\')">📋 复制人设提示词</button>' +
+    '<div class="ws-sec">版本记录</div>' + renderWsVersions('expert:' + wsExpert.id);
 }
 function renderWsBody() {
   const right = document.getElementById('ws-right');
@@ -3366,7 +3394,8 @@ function renderSkillWs() {
     ((s.tools || []).length ? '<div class="ws-sec">内置工具</div><div>' + s.tools.map(t => '<span class="ws-tool" style="font-size:11.5px;padding:3px 9px;margin:2px 3px 2px 0;display:inline-block">' + esc(t) + '</span>').join('') + '</div>' : '') +
     (s.version ? '<div class="ws-sec">版本</div><div class="ws-desc">v' + esc(s.version) + ' · ' + esc(s.author || '') + '</div>' : '') +
     '<div class="ws-sec">操作</div>' +
-    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>';
+    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>' +
+    '<div class="ws-sec">版本记录</div>' + renderWsVersions('skill:' + wsExpert.id);
   /* 中栏：执行步骤 + 输出说明 */
   document.getElementById('ws-mid').innerHTML =
     ((s.steps || []).length ? '<div class="ws-sec">执行步骤</div>' + s.steps.map((st, i) =>
@@ -3406,7 +3435,8 @@ async function renderKbWs() {
     (kb.scope ? '<div class="ws-sec">范围约束</div><div class="ws-desc">' + esc(kb.scope) + '</div>' : '') +
     '<div class="ws-sec">操作</div>' +
     '<button class="btn-solid" style="width:100%" onclick="copyKbUsage()">📋 复制使用指令</button>' +
-    (kb.source ? '<button class="btn-plain" style="width:100%;margin-top:8px;justify-content:center" onclick="window.open(\'' + esc(kb.source) + '\',\'_blank\')">🌐 打开原文库</button>' : '');
+    (kb.source ? '<button class="btn-plain" style="width:100%;margin-top:8px;justify-content:center" onclick="window.open(\'' + esc(kb.source) + '\',\'_blank\')">🌐 打开原文库</button>' : '') +
+    '<div class="ws-sec">版本记录</div>' + renderWsVersions('kb:' + wsKb.id);
   /* 中栏：文档列表 */
   document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">文档清单（点击阅读）</div>' +
     (kb.docs || []).map((x, i) =>
