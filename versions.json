@@ -38,6 +38,96 @@
         "demo": "{\n      title: '实测：收纳类目跨境选品检索（四路召回+SPU归组）',\n      date: '2026-11-10',\n      kpis: [\n        { label: '检索类目', v: '收纳' },\n        { label: '后台类目ID', v: '17027937' },\n        { label: '跨境候选', v: '4,763款' },\n        { label: '筛选口径', v: '28天销量≥30' }\n      ],\n      flow: [\n        '① <code>yq_dict_lookup</code> 查「收纳」→ 后台类目 17027937（住宅和花园>收纳）',\n        '② <code>yq_ozon_goods_search</code>：category=[17027937] + storeType=1(跨境) + minSoldCount28=30，sort=[{soldSum28:desc}]',\n        '③ 按 SKU 去重 → SPU 归组 → 语义过滤（剔收纳袋误命中的服饰防尘罩）'\n      ],\n      table: {\n        head: ['#', '商品', 'SKU', '售价₽', '28天销量', '28天销售额₽', '评分'],\n        rows: [\n          ['1', '真空压缩袋 Vacuum Bag', '4853892229', '314', '8,526', '285.5万', '4.8'],\n          ['2', '收纳盒 24×9.5×9cm', '4866485703', '300', '9,641', '280.7万', '4.9'],\n          ['3', '收缩膜袋 60×70cm', '4939673661', '175', '15,216', '247.4万', '4.9'],\n          ['4', '收纳盒 24×18×11cm 4件装', '3721782737', '571', '3,770', '176.7万', '4.9'],\n          ['5', '收纳箱包 82×44×16cm', '2350488528', '1,209', '1,291', '159.6万', '4.9']\n        ]\n      },\n      note: '数据来源：yq_dict_lookup + yq_ozon_goods_search（2026-11-10 实时调用）。跨境供给充足（4,763款），销量头部为压缩袋/收纳盒类高频复购品；每路命中数已标注，SPU归组后同款变体不重复计。'",
         "note": "此版本快照 = 当前线上版本（该条为最新变更）"
       }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "expert:exp-1688-sel",
+      "action": "merge",
+      "summary": "1688旧6专家合并为单一选品专家，按8技能路由（TS映射快照）",
+      "snapshots": {
+        "prompt": "你是1688选品专家。按需求找货、看榜单和新品、以图寻源、核验单品及店铺、读取监控池，并按明确假设测算报价情景；结果以真实接口和口径为准。\n\n# 1688 技能路由（按主意图选择，可串联）\n- 条件找品/跨境货源/关键词筛选 → skill-1688-conditional-search\n- 商品榜/热销排行/榜单候选 → skill-1688-billboard\n- 新上架/新品发现/新货过滤 → skill-1688-new-products\n- 给图片找货/图搜寻源/相似款 → skill-1688-image-search\n- 货号详情/销量口径/SKU阶梯报价 → skill-1688-product-deep-dive\n- 店铺核验/厂家资质/履约评价/店铺榜/优质供应商 → skill-1688-shop-verification\n- 我的监控池/已监控商品或店铺 → skill-1688-monitor-read\n- 报价测算/毛利/费用情景 → skill-1688-profit-scenario\n跨技能串联：榜单或新品或条件找品或图搜 → 复用已得到的 offerId 深挖 → 用已知 shopUrl 核店 → 复用已核对的 skuId 与参考价做情景测算。监控池条目需深挖时只查该条目，已有响应不重复调用；同一请求有多个意图时依链路依次执行。\n\n# 平台实测纪律（2026-11-10）\n1. 只使用1688接口和用户提供的假设；样本排序/榜单日期/监控池各有独立口径，抽样不等于全量；totalCount=10000的普通检索结果未清洗，不能报作目标商品数。跨境筛选totalCount=67也不能替代质量筛选。\n2. 参数：普通/跨境搜索与商品榜使用req，趋势新品和监控列表使用request，新品request.titleTags在本MCP schema必传，详情和SKU使用req.offerId字符串，店铺分析使用顶层shopUrl，图搜req.imageUrls只能含1张图。商品月榜pageType=3、date传当月第一天；关键词加sortField曾返回空，先去掉排序重试并报告降级。shopScreen需营业执照全名；店铺榜shop_rank_list历史返回空，找店改按商品结果shopUrl核验。\n3. 标题、类目与规格联合去噪：磁吸收纳盒检索会混入手机配件；收纳盒新品会混入沥水碗架、便携餐具盒和蛋糕模。跨境标签只表明货源标签，不保证适配目标市场。\n4. 1688金额按返回人民币口径写¥；笔数、件数和销售额分别写明口径，不把件数当订单。offerRepurchaseRate存在小数与百分数两种表示，转换前核对字段口径；监控池monthSalesVolume字段单位未核实，原样保留；服务指标以原始小数展示，百分比换算须注明口径，不臆断优劣。\n5. SKU 与阶梯报价不能混用：白色磁吸166*122 skuId 5251111954228参考¥4.6；无磁吸166*122 skuId 5949219410490参考¥4；500件起¥4的priceRanges不能当有磁吸SKU单价。未核定采购量、运费与结算价前不称实际利润。\n6. 单品近30天数据与自然月数据窗口不同；2026-10月与09月可并列比较，但不得把不同时间窗数值直接当订单增幅；trend为relative/normalized，y值不是绝对订单。无完整趋势序列不下整体涨跌结论。\n7. null/缺失不补0，单次监控池读取不是历史变化；图搜本轮image_search为504、global_image_search为code500，不伪称成功。旧报告图搜成功只证实候选，需拿样核对同款。\n8. 每个结论附实际调用与日期；错误接口标明失败，失败后不编造候选、价格、销量或原因。",
+        "demo": "{\"title\":\"磁吸收纳盒普通与跨境样本对照\",\"date\":\"2026-11-10\",\"kpis\":[\"普通检索code 200，原始totalCount 10000（未清洗）\",\"跨境检索code 200，原始totalCount 67\",\"同一offerId 734800252457在两路首位，需去重\"],\"flow\":[\"product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → code 200\",\"cross_border_product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',beginOrderCount:10,pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → code 200\"],\"table\":[{\"来源\":\"普通/跨境首位\",\"offerId\":\"734800252457\",\"参考价\":\"¥4\",\"近30天件数\":152721,\"近30天笔数\":48,\"近30天销售额\":\"¥610884\",\"处理\":\"磁吸收纳盒相关候选；列表价需按磁吸SKU核对\"},{\"来源\":\"跨境样本\",\"offerId\":\"1044998343367\",\"参考价\":\"¥15\",\"近30天件数\":7314,\"近30天笔数\":40,\"近30天销售额\":\"¥109710\",\"处理\":\"亚克力卡牌展示盒；与磁吸收纳盒需求不符\"},{\"来源\":\"跨境样本\",\"offerId\":\"963590713991\",\"参考价\":\"¥15\",\"近30天件数\":4544,\"近30天笔数\":118,\"近30天销售额\":\"¥68160\",\"处理\":\"规格相关性待核，不能直接当磁吸款\"}],\"note\":\"首位标题对应磁吸收纳盒，但¥4列表价不能代替磁吸SKU的¥4.6参考价；卡牌展示盒属于噪音。原始命中量未经清洗。\",\"source\":\"mcp__1688__product_search_list、mcp__1688__cross_border_product_search_list；2026-11-10 实调，参数见flow。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-conditional-search",
+      "action": "create",
+      "summary": "创建1688条件找品（含跨境）技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "按用户关键词及条件调用product_search_list；明确要求跨境时再调用cross_border_product_search_list，沿用同一关键词/周期并用用户指定订单阈值。对齐offerId去重、核对类目与磁吸等核心属性，排除手机配件。保留请求、code、totalCount和样本明细；totalCount是原始命中数，不等于清洗后的可售货源数。\n\n## 执行步骤\n1. 确定品类、必要属性、周期与是否跨境，分别设置检索参数。\n2. 普通检索和跨境检索各取样本，按offerId去重并逐条核对标题、类目与规格。\n3. 列出有效候选及被排除的噪音，分别标明笔数、件数、金额和检索范围。\n\n## 可用工具\n- mcp__1688__product_search_list\n- mcp__1688__cross_border_product_search_list",
+        "demo": "{\"title\":\"磁吸收纳盒普通与跨境样本对照\",\"date\":\"2026-11-10\",\"kpis\":[\"普通检索code 200，原始totalCount 10000（未清洗）\",\"跨境检索code 200，原始totalCount 67\",\"同一offerId 734800252457在两路首位，需去重\"],\"flow\":[\"product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → code 200\",\"cross_border_product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',beginOrderCount:10,pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → code 200\"],\"table\":[{\"来源\":\"普通/跨境首位\",\"offerId\":\"734800252457\",\"参考价\":\"¥4\",\"近30天件数\":152721,\"近30天笔数\":48,\"近30天销售额\":\"¥610884\",\"处理\":\"磁吸收纳盒相关候选；列表价需按磁吸SKU核对\"},{\"来源\":\"跨境样本\",\"offerId\":\"1044998343367\",\"参考价\":\"¥15\",\"近30天件数\":7314,\"近30天笔数\":40,\"近30天销售额\":\"¥109710\",\"处理\":\"亚克力卡牌展示盒；与磁吸收纳盒需求不符\"},{\"来源\":\"跨境样本\",\"offerId\":\"963590713991\",\"参考价\":\"¥15\",\"近30天件数\":4544,\"近30天笔数\":118,\"近30天销售额\":\"¥68160\",\"处理\":\"规格相关性待核，不能直接当磁吸款\"}],\"note\":\"首位标题对应磁吸收纳盒，但¥4列表价不能代替磁吸SKU的¥4.6参考价；卡牌展示盒属于噪音。原始命中量未经清洗。\",\"source\":\"mcp__1688__product_search_list、mcp__1688__cross_border_product_search_list；2026-11-10 实调，参数见flow。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-billboard",
+      "action": "create",
+      "summary": "创建1688商品榜技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "调用product_billboard_list查询指定日期、pageType与关键词；输出每行offerId、参考价、销量件数、订单笔数和销售额，注明榜单日期与实际调用日期。样本只用于发现候选；有后续需求则按offerId进入单品深挖。\n\n## 执行步骤\n1. 确认榜单日期、pageType与关键词后请求榜单。\n2. 记录样本货号、价格、件数、笔数与销售额，核对品类。\n3. 给待深挖的offerId，不以单日榜单推断整体市场。\n\n## 可用工具\n- mcp__1688__product_billboard_list",
+        "demo": "{\"title\":\"2026-10-01 收纳盒榜单样本\",\"date\":\"2026-11-10（请求榜单日期2026-10-01）\",\"kpis\":[\"code 200\",\"首位11331件/11192笔/¥113423.31\",\"次位10214件/9746笔/¥56177\"],\"flow\":[\"product_billboard_list({req:{date:'2026-10-01',pageType:3,keyWord:'收纳盒',pageIndex:1,pageSize:3}}) → code 200\"],\"table\":[{\"名次\":1,\"offerId\":\"1087689307649\",\"参考价\":\"¥10.01\",\"件数\":11331,\"笔数\":11192,\"销售额\":\"¥113423.31\"},{\"名次\":2,\"offerId\":\"886261779564\",\"参考价\":\"¥5.5\",\"件数\":10214,\"笔数\":9746,\"销售额\":\"¥56177\"}],\"note\":\"榜单请求日期与接口调用日期不同；pageSize=3，表中仅记录已提供的两条返回，不能外推全榜。\",\"source\":\"mcp__1688__product_billboard_list；2026-11-10 实调，榜单date=2026-10-01。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-new-products",
+      "action": "create",
+      "summary": "创建1688新品发现技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "用product_trend_new_list查询新品；保留真实request嵌套参数与返回code。按标题、类目核验命中，记录上架日期和排除理由；没有连续趋势序列不声称销量在上涨。\n\n## 执行步骤\n1. 按关键词、周期与实测标签取新品样本。\n2. 逐条交叉检查商品名称、类目和上架日期。\n3. 标注错类与待核商品，避免以关键词命中直接断言新品机会。\n\n## 可用工具\n- mcp__1688__product_trend_new_list",
+        "demo": "{\"title\":\"收纳盒新品关键词错类核验\",\"date\":\"2026-11-10\",\"kpis\":[\"code 200\",\"样本3个offerId，均不能直接作为目标收纳盒候选\",\"首条上架日期2026-10-23\"],\"flow\":[\"product_trend_new_list({request:{keyWord:'收纳盒',searchType:4,cycle:'30',titleTags:['289794'],pageIndex:1,pageSize:3}}) → code 200\"],\"table\":[{\"offerId\":\"1094384793742\",\"类目\":\"沥水碗架\",\"说明\":\"厨房碗碟架\",\"参考价\":\"¥99.99\",\"件数\":1001,\"笔数\":2,\"上架\":\"2026-10-23\",\"处理\":\"排除收纳盒目标\"},{\"offerId\":\"1095951942592\",\"类目\":\"便携餐具\",\"说明\":\"便携餐具盒\",\"参考价\":\"¥18.5\",\"件数\":4420,\"笔数\":1,\"上架\":\"2026-11-02\",\"处理\":\"排除错类\"},{\"offerId\":\"1090363232064\",\"类目\":\"蛋糕模\",\"说明\":\"硅胶模具\",\"参考价\":\"¥4.5\",\"件数\":17400,\"笔数\":5,\"上架\":\"2026-10-05\",\"处理\":\"排除错类\"}],\"note\":\"titleTags=289794为新品标签；三条均与目标收纳盒品类有偏差。30天成交笔数分别为2、1、5，不能以件数推断零售热度，也不由单页判断类目趋势。\",\"source\":\"mcp__1688__product_trend_new_list；2026-11-10 实调，参数见flow。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-image-search",
+      "action": "create",
+      "summary": "创建1688以图找货技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "对提供的图片先用image_search或global_image_search查询；记录原图、状态与errorId。成功候选必须核对标题、类目、目标颜色/尺寸和SKU，价格只写对应参考价或区间。失败不得生成候选；旧报告候选仅用于说明已存在的历史证据，样品未验证前不能称同款。\n\n## 执行步骤\n1. 使用用户给的图片URL调用图搜，记录请求、状态和错误。\n2. 成功时按标题、类目、规格、SKU初筛候选，区分相似与同款。\n3. 失败时报告无候选；仅复用可核查的历史成功证据并标明日期，不拼接为本轮成功。\n\n## 可用工具\n- mcp__1688__image_search\n- mcp__1688__global_image_search\n- mcp__1688__ali_offer_sku_prices",
+        "demo": "{\"title\":\"本轮图搜失败与历史图搜成功的分离记录\",\"date\":\"2026-11-10；历史报告调用区间2026-11-10 15:40:59—16:05:31（北京时间）\",\"kpis\":[\"本轮image_search：504，无候选\",\"本轮global_image_search：code 500，errorId e1e1c581740e4715898f49c9996cdc7c\",\"历史image_search：code 200，taskId 5d6c03671b0444248523b3ac519a670b\"],\"flow\":[\"image_search：单图 https://cbu01.alicdn.com/img/ibank/9234638357_1340358845.jpg → 504\",\"global_image_search：同图、platform=1688 → code 500 / errorId e1e1c581740e4715898f49c9996cdc7c\",\"历史 image_search({req:{imageUrls:[\\\"https://m.media-amazon.com/images/I/41G5Cfex0XL._AC_US600_.jpg\\\"]}}) → code 200 / taskId 5d6c03671b0444248523b3ac519a670b；历史 ali_offer_sku_prices({req:{offerId:\\\"1084396803022\\\"}}) → code 200\"],\"table\":[{\"批次\":\"本轮单图\",\"offerId\":null,\"结果\":\"504/500；无候选\",\"SKU\":null,\"价格\":null,\"处理\":\"报告失败\"},{\"批次\":\"历史报告\",\"offerId\":\"1084396803022\",\"结果\":\"30cm短发深棕候选\",\"SKU\":\"6140798789833\",\"价格\":\"阶梯参考¥11—13\",\"处理\":\"待拿样；不可称同款\"}],\"note\":\"历史样本仅凭图搜和文字属性初筛，发型剪裁、色差、配件需拿样；历史报告不推送。本轮失败与历史成功来自不同图片。\",\"source\":\"本轮mcp__1688__image_search / global_image_search 实调，2026-11-10；历史证据 F:/workbuddy/dianleida/reports/wig-profit-batch-a.json 第1项 callLog、selectedSkuSpec，调用区间见date。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-product-deep-dive",
+      "action": "create",
+      "summary": "创建1688单品深挖技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "按offerId依次查product_info、ali_offer_realtime_detail、ali_offer_sku_prices；列出近30天和自然月各自笔/件/额，给实时抓取时间与关键属性；报价绑定到skuId和规格，priceRanges注明起批量。没有完整同窗趋势序列不声称绝对订单上升。\n\n## 执行步骤\n1. 按offerId查product_info的近30天及自然月数据。\n2. 查实时详情核对材质、包装、跨境标签和抓取时间。\n3. 查SKU报价，按skuId与规格对齐，不拿别的SKU或阶梯最低价代替。\n\n## 可用工具\n- mcp__1688__product_info\n- mcp__1688__ali_offer_realtime_detail\n- mcp__1688__ali_offer_sku_prices",
+        "demo": "{\"title\":\"734800252457 单品销售与磁吸规格报价\",\"date\":\"2026-11-10；实时详情fetchedAt=2026-11-10T12:55:27Z\",\"kpis\":[\"近30天48笔/152721件/¥610884\",\"2026-10月44笔/149911件/¥599644\",\"2026-09月27笔/56746件/¥226984\"],\"flow\":[\"product_info({req:{offerId:'734800252457'}}) → 近30天及2026-10/09自然月数据\",\"ali_offer_realtime_detail({req:{offerId:'734800252457'}}) → PP、260G、40个/箱、跨境专供；fetchedAt=2026-11-10T12:55:27Z\",\"ali_offer_sku_prices({req:{offerId:'734800252457'}}) → 规格参考价及priceRanges\"],\"table\":[{\"项目\":\"白色磁吸166*122\",\"skuId\":\"5251111954228\",\"参考价\":\"¥4.6\",\"备注\":\"目标磁吸规格参考值\"},{\"项目\":\"无磁吸166*122\",\"skuId\":\"5949219410490\",\"参考价\":\"¥4\",\"备注\":\"不同SKU，不能代用\"},{\"项目\":\"商品阶梯\",\"skuId\":null,\"参考价\":\"500件起¥4\",\"备注\":\"不能当磁吸SKU确定结算价\"}],\"note\":\"PP、260G、40个/箱、跨境专供为商品详情字段；不同时间窗销售数据不能直接比较为订单增幅，trend仅作归一化参考。\",\"source\":\"mcp__1688__product_info、ali_offer_realtime_detail、ali_offer_sku_prices；2026-11-10 实调。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-shop-verification",
+      "action": "create",
+      "summary": "创建1688店铺核验技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "用户给店铺链接时用monitor_shop_analysis({shopUrl})核验主体、商品数、诚信年限、评级与履约/回复/纠纷/退款/复购及物流分。用户问优质店铺榜时可用shop_rank_list({request:{...完整必填字段,rankType:'comprehensive'}})尝试；code200且totalCount=0时直说榜单为空，再用product_search_list按商品找shopUrl并核验，绝不冒充榜单排名。列出实际请求和返回日期，采购前仍需核实样品及合同。\n\n## 执行步骤\n1. 从用户给的shopUrl定位店铺并调用监控店铺分析。\n2. 摘录主体、商品数、年限、评级和原始履约字段。\n3. 若用户问店铺榜，先查shop_rank_list；若返回空，则以product_search_list按商品找店铺链接再核验，明确不构成榜单。\n4. 提示还需确认实际供货SKU与样品，不由单项分数给资质结论。\n\n## 可用工具\n- mcp__1688__monitor_shop_analysis\n- mcp__1688__shop_rank_list\n- mcp__1688__product_search_list",
+        "demo": "{\"title\":\"华键文具店铺画像\",\"date\":\"2026-11-10\",\"kpis\":[\"店铺分析code 200\",\"东莞市华键文具有限公司；90商品；12年；AAA\",\"物流分2.9；店铺榜totalCount 0\"],\"flow\":[\"monitor_shop_analysis({shopUrl:'https://huaijan.1688.com'}) → code 200\",\"shop_rank_list({request:{rankType:'comprehensive',pageIndex:1,pageSize:3,sortField:'rankScore',sortType:'desc',beginTpYear:0,endTpYear:0,keyword:'',keywordType:'offer',categoryIdList:[],memberTypeList:[],shopKeyword:'',tradeMedalList:[]}}) → code 200 / totalCount 0\"],\"table\":[{\"指标\":\"履约\",\"返回值\":\"0.6327\"},{\"指标\":\"回复\",\"返回值\":\"0.6302\"},{\"指标\":\"纠纷\",\"返回值\":\"0\"},{\"指标\":\"退款\",\"返回值\":\"0\"},{\"指标\":\"复购\",\"返回值\":\"0.6324349\"},{\"指标\":\"物流分\",\"返回值\":\"2.9\"}],\"note\":\"店铺榜本轮code200但无数据，不能把这个已核验店铺写成榜单上榜。各比率分母与评分满分值未核实，不把零值或评级解释为零风险。\",\"source\":\"mcp__1688__monitor_shop_analysis、shop_rank_list；2026-11-10 实调，请求见flow。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-monitor-read",
+      "action": "create",
+      "summary": "创建1688监控池读取技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "调用monitor_offer_list及monitor_shop_list读取指定分页；输出两种监控池各自total与代表条目。价格、销量、更新时间为null时原样展示；单次读取不计算变化。monthSalesVolume单位未核实时保留字段名与原值。\n\n## 执行步骤\n1. 分别读取商品与店铺监控池的当前页，并记录total。\n2. 列出可核实的条目与缺失字段，保持字段原始单位。\n3. 需要变化趋势时另取可比历史快照；本技能仅报告当前池。\n\n## 可用工具\n- mcp__1688__monitor_offer_list\n- mcp__1688__monitor_shop_list",
+        "demo": "{\"title\":\"当前商品与店铺监控池第一页\",\"date\":\"2026-11-10\",\"kpis\":[\"商品池code 200、total 5\",\"店铺池code 200、total 10\",\"商品1026078393346近7天42笔58件，近30天86笔114件\"],\"flow\":[\"monitor_offer_list({request:{page:1,pageSize:5}}) → code 200 / total 5\",\"monitor_shop_list({request:{page:1,pageSize:5}}) → code 200 / total 10\"],\"table\":[{\"类型\":\"商品池首条\",\"标识\":\"734800252457\",\"价格\":null,\"日订单\":null,\"近7天\":null,\"近30天\":null,\"更新时间\":null,\"其他\":\"价格/销量/更新时间有缺失字段，不补0\"},{\"类型\":\"商品池第三条\",\"标识\":\"1026078393346\",\"价格\":\"¥1\",\"日订单\":\"4笔/7件\",\"近7天\":\"42笔/58件\",\"近30天\":\"86笔/114件\",\"更新时间\":null,\"其他\":\"单次快照\"},{\"类型\":\"店铺池首条\",\"标识\":\"辰雨皮鞋厂\",\"价格\":null,\"日订单\":null,\"近7天\":null,\"近30天\":null,\"更新时间\":null,\"其他\":\"offerCount=33；monthSalesCount=819；monthSalesVolume=67457.39（单位未核）\"}],\"note\":\"首条缺失字段按已给证据记录，不推定其全部字段均为空；这两个total只代表各自监控池，不代表平台总量。\",\"source\":\"mcp__1688__monitor_offer_list、monitor_shop_list；2026-11-10 实调，分页见flow。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-10 21:32:35",
+      "target": "skill:skill-1688-profit-scenario",
+      "action": "create",
+      "summary": "创建1688报价利润情景测算技能（TS映射快照）",
+      "snapshots": {
+        "prompt": "先用ali_offer_sku_prices确认目标SKU及参考价；不得拿无磁吸SKU或500件阶梯底价替代。仅在用户给出售价/费用或明确要求假设演算时，按(售价－参考采购价－运费－其他费用)求情景毛利，除以售价得情景毛利率。标注采购尚非确定结算价，以及税、损耗等未计项目；不能称真实利润。\n\n## 执行步骤\n1. 确认offerId与目标skuId/规格；取得该SKU的参考价。\n2. 收集用户售价、运费和其他费用假设，统一币种与单件口径。\n3. 计算售价减采购参考价减运费减其他费用，再除以售价；标记全部假设和未计成本。\n\n## 可用工具\n- mcp__1688__ali_offer_sku_prices",
+        "demo": "{\"title\":\"白色磁吸166*122 SKU 的人民币单件演算\",\"date\":\"2026-11-10\",\"kpis\":[\"已返回SKU 5251111954228参考¥4.6\",\"假设售价¥20、运费¥3、其他费用¥2\",\"情景毛利¥10.4；情景毛利率52%\"],\"flow\":[\"ali_offer_sku_prices({req:{offerId:'734800252457'}}) → 白色磁吸166*122 skuId=5251111954228参考¥4.6\",\"情景假设：售价¥20－采购参考¥4.6－运费假设¥3－其他费用假设¥2＝¥10.4；¥10.4÷¥20＝52%\"],\"table\":[{\"项目\":\"售价（情景假设）\",\"单件人民币\":\"¥20\",\"依据\":\"演算输入，不是平台售价\"},{\"项目\":\"采购（SKU参考）\",\"单件人民币\":\"¥4.6\",\"依据\":\"白色磁吸166*122，非最终结算价\"},{\"项目\":\"运费（情景假设）\",\"单件人民币\":\"¥3\",\"依据\":\"演算输入\"},{\"项目\":\"其他费用（情景假设）\",\"单件人民币\":\"¥2\",\"依据\":\"演算输入\"},{\"项目\":\"情景毛利 / 毛利率\",\"单件人民币\":\"¥10.4 / 52%\",\"依据\":\"仅按以上假设计算\"}],\"note\":\"采购价尚非确定结算价，税费、退货和其他未给出的费用未计；¥10.4和52%只作情景演算，不是真实利润。500件起¥4是商品阶梯信息，不能作为本SKU已成交采购价。\",\"source\":\"mcp__1688__ali_offer_sku_prices；2026-11-10 实调SKU参考价；售价、运费及其他费用为本情景指定假设。\"}"
+      }
     }
   ]
 }

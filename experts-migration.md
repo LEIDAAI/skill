@@ -441,3 +441,44 @@
 
 - Hub（skill 仓库）是专家人设的**单一事实源**；后台录入后如有改动，反向同步回 Hub
 - 每次对话内新增实测/修改专家，完成后 git commit + push 本仓库
+
+---
+
+## 2026-11-10 增量：1688 单专家、八技能路由（覆盖旧六专家方案）
+
+> 上文历史清单和 2026-11-09 实测矩阵保留作历史记录；其中 1688 旧六专家的配置方案已由本节的 `exp-1688-sel` 单专家路由覆盖。后台录入 1688 时以本节及当前 TS 映射为准，不再按旧六专家建档。本次将与映射、导航页、版本记录一同提交推送。
+
+- **专家**：`exp-1688-sel`，1688选品专家；平台 `1688`，状态 `built`。开场白、简介、能力与参考话术取 `skill/1688-expert-skill-map.ts` 的 `a1688Expert`；绑定以下八个技能。`skill/versions.json` 新增 `expert:exp-1688-sel` 的 `merge` 快照和八条 `skill:<id>` 的 `create` 快照，均保留原历史条目。
+- **对应关系**：TS 导出 `a1688Expert` / `a1688Skills` / `a1688ExpertSkillIds`；导航页 `skill/index.html` 末尾模块通过 `import ... from './1688-expert-skill-map.js'` 加载浏览器 JS。每条技能的页面 `prompt` 是 `instructions`、空行、`## 执行步骤` 与从 1 编号的 `steps`、空行、`## 可用工具` 与逐行 `- ` 前缀的 `tools` 按 `\n` 拼接；专家 `sysPrompt` 是 `你是` + `name` + `。` + `desc`，再以两个换行连接 `routing`、`disciplines`。页面显示版 demo 会将原始 `kpis` 转成 `{label,v}`、`table` 转成 `{head,rows}` 并把 `source` 附到 `note`；版本快照的 `demo` 存的是 TS 原始 `JSON.stringify(skill.demo)` 全量数据，专家 demo 对应首技能原始 demo，保留 `title/date/kpis/flow/table/note/source`，没有用显示版代替原始证据。
+- **同步校验**：浏览器 JS 已按字节同步 TS，页面从 JS 导入；版本快照的人设提示词、各技能调用提示词和原始 demo 均与映射一致。更新 TS 后需同步 JS、核对两者哈希及页面实际渲染，再追加版本记录并推送。店铺榜 `shop_rank_list` 空结果和商品搜索降级、新品三条错类样本的返回数值以本次映射为准。
+
+| 入口意图 | 技能 ID | 后台场景 | 工具（`mcp__1688__` 前缀） |
+|---|---|---|---|
+| 条件找品、跨境筛选 | `skill-1688-conditional-search` | product-selection | `product_search_list`, `cross_border_product_search_list` |
+| 商品榜 | `skill-1688-billboard` | product-selection | `product_billboard_list` |
+| 新品发现 | `skill-1688-new-products` | product-selection | `product_trend_new_list` |
+| 以图找货 | `skill-1688-image-search` | product-selection | `image_search`, `global_image_search`, `ali_offer_sku_prices` |
+| 单品深挖 | `skill-1688-product-deep-dive` | product | `product_info`, `ali_offer_realtime_detail`, `ali_offer_sku_prices` |
+| 店铺核验、店铺榜空时降级 | `skill-1688-shop-verification` | shop | `monitor_shop_analysis`, `shop_rank_list`, `product_search_list` |
+| 监控池读取 | `skill-1688-monitor-read` | competitor | `monitor_offer_list`, `monitor_shop_list` |
+| 报价利润情景 | `skill-1688-profit-scenario` | profit | `ali_offer_sku_prices` |
+
+**后台 MCP 白名单（八技能去重并集，13 个）**：绑定 1688 MCP，逐项勾选以下工具；单技能只开放其表内所列工具。页面适配的 `mcpTools` 会去掉 `mcp__1688__` 前缀，后台按实际工具全名绑定。
+
+```text
+mcp__1688__product_search_list
+mcp__1688__cross_border_product_search_list
+mcp__1688__product_billboard_list
+mcp__1688__product_trend_new_list
+mcp__1688__image_search
+mcp__1688__global_image_search
+mcp__1688__ali_offer_sku_prices
+mcp__1688__product_info
+mcp__1688__ali_offer_realtime_detail
+mcp__1688__monitor_shop_analysis
+mcp__1688__shop_rank_list
+mcp__1688__monitor_offer_list
+mcp__1688__monitor_shop_list
+```
+
+**2026-11-10 实测边界与验收**：普通磁吸收纳盒检索原始 `totalCount=10000` 未清洗，跨境 `totalCount=67` 也需逐条去噪；商品榜请求 `date=2026-10-01` 与调用日不同；新品样本的沥水碗架、餐具盒、蛋糕模均属错类。单品 `734800252457` 近30天 48 笔 / 152721 件 / ¥610884；白色磁吸 166*122 的 `skuId=5251111954228` 参考 ¥4.6，不能借用无磁吸 ¥4 或 500 件起阶梯价。店铺 `https://huaijan.1688.com` 核验见店铺分析；本轮店铺榜 `shop_rank_list` 返回 `code=200,totalCount=0`，降级按商品找店铺链接再核验，不得写成榜单上榜。商品监控池 `total=5`、店铺池 `total=10` 属一次分页快照，缺失字段留 `null`，`monthSalesVolume` 单位未核实。图搜本轮 `image_search` 返回 504，`global_image_search` 返回 code 500，无本轮候选；同日历史报告 `reports/wig-profit-batch-a.json` 的成功图搜仅有待拿样候选，与本轮图片和结果分开记录。利润例中 ¥20 售价、¥3 运费、¥2 其他费用为指定假设，配 ¥4.6 SKU 参考价得情景毛利 ¥10.4、毛利率 52%；采购结算价及税损未核，绝非真实利润。验收时按各技能 demo 的 `flow/source/date` 回看请求与口径，不把上文 2026-11-09 旧数字混入本次 demo。
