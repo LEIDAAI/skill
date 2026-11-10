@@ -2842,7 +2842,7 @@ function renderEGrid() {
         x.skills.map(sn => {
           const known = allSkills().some(s => s.name === sn);
           return known
-            ? '<button class="eskill-chip" data-eskill="' + esc(sn) + '" title="点击查看该技能">⚡ ' + esc(sn) + '</button>'
+            ? '<button class="eskill-chip" data-eskill="' + esc(sn) + '" title="点击预览调用指令">⚡ ' + esc(sn) + '</button>'
             : '<span class="eskill-chip dim" title="技能待建">⚡ ' + esc(sn) + '</span>';
         }).join('') + '</div>' : '') +
       '<div class="card-actions">' +
@@ -3230,13 +3230,13 @@ document.getElementById('egrid').addEventListener('click', e => {
   const chip = e.target.closest('.eskill-chip[data-eskill]');
   if (!chip) return;
   const name = chip.dataset.eskill;
-  switchView('skills');
-  setTimeout(() => {
-    const box = document.getElementById('search');
-    if (box) { box.value = name; box.dispatchEvent(new Event('input')); box.focus(); }
-    const target = document.querySelector('#grid .card h3');
-    if (target) target.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 60);
+  const skill = allSkills().find(s => s.name === name);
+  if (!skill) return;
+  document.getElementById('modal-title').innerHTML =
+    esc('⚡ ' + skill.name + ' · 调用指令') +
+    '<span class="demo-badge">' + esc(skill.platforms.join('/')) + '</span>';
+  document.getElementById('modal-content').textContent = skill.prompt || '（该技能未配置提示词）';
+  document.getElementById('modal').classList.add('open');
 });
 
 document.getElementById('egrid').addEventListener('click', e => {
