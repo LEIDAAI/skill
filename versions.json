@@ -128,6 +128,88 @@
         "prompt": "先用ali_offer_sku_prices确认目标SKU及参考价；不得拿无磁吸SKU或500件阶梯底价替代。仅在用户给出售价/费用或明确要求假设演算时，按(售价－参考采购价－运费－其他费用)求情景毛利，除以售价得情景毛利率。标注采购尚非确定结算价，以及税、损耗等未计项目；不能称真实利润。\n\n## 执行步骤\n1. 确认offerId与目标skuId/规格；取得该SKU的参考价。\n2. 收集用户售价、运费和其他费用假设，统一币种与单件口径。\n3. 计算售价减采购参考价减运费减其他费用，再除以售价；标记全部假设和未计成本。\n\n## 可用工具\n- mcp__1688__ali_offer_sku_prices",
         "demo": "{\"title\":\"白色磁吸166*122 SKU 的人民币单件演算\",\"date\":\"2026-11-10\",\"kpis\":[\"已返回SKU 5251111954228参考¥4.6\",\"假设售价¥20、运费¥3、其他费用¥2\",\"情景毛利¥10.4；情景毛利率52%\"],\"flow\":[\"ali_offer_sku_prices({req:{offerId:'734800252457'}}) → 白色磁吸166*122 skuId=5251111954228参考¥4.6\",\"情景假设：售价¥20－采购参考¥4.6－运费假设¥3－其他费用假设¥2＝¥10.4；¥10.4÷¥20＝52%\"],\"table\":[{\"项目\":\"售价（情景假设）\",\"单件人民币\":\"¥20\",\"依据\":\"演算输入，不是平台售价\"},{\"项目\":\"采购（SKU参考）\",\"单件人民币\":\"¥4.6\",\"依据\":\"白色磁吸166*122，非最终结算价\"},{\"项目\":\"运费（情景假设）\",\"单件人民币\":\"¥3\",\"依据\":\"演算输入\"},{\"项目\":\"其他费用（情景假设）\",\"单件人民币\":\"¥2\",\"依据\":\"演算输入\"},{\"项目\":\"情景毛利 / 毛利率\",\"单件人民币\":\"¥10.4 / 52%\",\"依据\":\"仅按以上假设计算\"}],\"note\":\"采购价尚非确定结算价，税费、退货和其他未给出的费用未计；¥10.4和52%只作情景演算，不是真实利润。500件起¥4是商品阶梯信息，不能作为本SKU已成交采购价。\",\"source\":\"mcp__1688__ali_offer_sku_prices；2026-11-10 实调SKU参考价；售价、运费及其他费用为本情景指定假设。\"}"
       }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "expert:exp-amazon-sel",
+      "action": "merge",
+      "summary": "五专家合并为单一Sorftime亚马逊选品专家，7技能路由（竞品/关键词/类目体检/商品解析评论/利润/搜索/报告），13条实测纪律+串联规则+表格交互规范写入人设"
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-selection-search",
+      "action": "create",
+      "summary": "亚马逊选品搜索技能（60款mahjong bag父体归组实测）",
+      "snapshots": {
+        "prompt": "搜索亚马逊商品并父体归组出表（详见 amazon-expert-skill-map.ts instructions）",
+        "demo": "{\"title\":\"近60天麻将包新品\",\"date\":\"2026-11-09\",\"kpis\":[\"60子体/60父体\",\"销冠Lamdo $67,656/月\"],\"source\":\"product_search×3页\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-competitor",
+      "action": "create",
+      "summary": "亚马逊竞品分析技能（STANLEY利润拆解+佣金缺失坑）",
+      "snapshots": {
+        "prompt": "竞品ASIN深拆：利润四件套直读+流量词+差评机会",
+        "demo": "{\"title\":\"STANLEY竞品拆解\",\"date\":\"2026-11-09\",\"kpis\":[\"月销12.7万件/$585.8万\",\"platform_fee=0毛利虚高已入纪律\"],\"source\":\"product_detail+customers_say+traffic_keyword\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-keyword",
+      "action": "create",
+      "summary": "亚马逊关键词挖掘技能（热词榜分层+坑位竞争+跟卖率）",
+      "snapshots": {
+        "prompt": "关键词挖掘：长尾/热词榜/单词体检/CPC趋势",
+        "demo": "{\"title\":\"water bottle+stanley cup词体检\",\"date\":\"2026-11-09\",\"kpis\":[\"stanley cup跟卖率40.63%\",\"CPC三年$2.15→$1.05(美元本体)\"],\"source\":\"keyword_list+detail+trend+competitor_product_keywords\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-category-trend",
+      "action": "create",
+      "summary": "亚马逊类目体检技能（19维+官方预测+五维评分）",
+      "snapshots": {
+        "prompt": "类目大盘体检，当前月未完月剔除",
+        "demo": "{\"title\":\"water bottle+Thermoses双类目\",\"date\":\"2026-11-09\",\"kpis\":[\"Top100月销156.5万件\",\"季节系数2.0\",\"官方预测1月-13.88%\"],\"source\":\"category_name_search+report+trend+keywords\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-product-parse",
+      "action": "create",
+      "summary": "亚马逊商品解析与评论洞察技能（差评归纳+特征份额+跨变体漂移坑）",
+      "snapshots": {
+        "prompt": "单品深挖+评论差评归纳（部件×场景）",
+        "demo": "{\"title\":\"Owala差评挖掘\",\"date\":\"2026-11-09\",\"kpis\":[\"100条差评5大主题\",\"保温=超配卖点62.4%销量\",\"新品B0HPB52XGN零评论如实返回\"],\"source\":\"product_reviews+customers_say+similar_product_feature\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-profit-calc",
+      "action": "create",
+      "summary": "亚马逊利润测算技能（四件套直读+15%自估兜底）",
+      "snapshots": {
+        "prompt": "利润四件套接口直读，禁止手拼费用",
+        "demo": "{\"title\":\"Owala利润直读\",\"date\":\"2026-11-09\",\"kpis\":[\"FBA$5.93+佣金$6\",\"毛利$20.07/62.72%\"],\"source\":\"product_detail(B0BZYBSRNF)\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "skill:skill-amazon-report-gen",
+      "action": "create",
+      "summary": "亚马逊选品报告技能（终点站串联全链路）",
+      "snapshots": {
+        "prompt": "串联类目体检→候选→深挖→利润→风控出报告",
+        "demo": "{\"title\":\"五专家实跑主链路\",\"date\":\"2026-11-09\",\"kpis\":[\"7路由全部跑通\",\"配额29670cr消耗约100cr\"],\"source\":\"全技能串联+patent_search\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:59:24",
+      "target": "system",
+      "action": "create",
+      "summary": "新增 amazon-routing-acceptance.md 路由验收报告（7路由验收矩阵+逐条调用证据）"
     }
   ]
 }
