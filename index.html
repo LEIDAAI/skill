@@ -225,6 +225,10 @@
   .kb-tab.active { background: var(--accent, #2563eb); color: #fff; border-color: var(--accent, #2563eb); }
   .kb-tab:hover { border-color: var(--accent, #2563eb); }
   .kb-doc-body { white-space: pre-wrap; word-break: break-word; font-size: 13px; line-height: 1.65; color: var(--text); background: #f8fafd; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; max-height: 60vh; overflow: auto; }
+  .demo-switch { display: flex; gap: 6px; margin-bottom: 12px; }
+  .ds-btn { border: 1px solid #d8dee8; background: #fff; color: #47536b; border-radius: 8px; padding: 5px 12px; font-size: 12px; cursor: pointer; }
+  .ds-btn.on { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .ds-btn:hover:not(.on) { border-color: #2563eb; color: #2563eb; }
   .demo-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; cursor: zoom-in; background: #eef1f6; display: block; }
   #hub-img-preview { display:none; position:fixed; z-index:10000; pointer-events:none; width:300px; height:300px; padding:10px; background:#fff; border-radius:14px; box-shadow:0 10px 40px rgba(15,23,42,.28); }
   #hub-img-preview img { width:100%; height:100%; object-fit:contain; border-radius:8px; background:#f6f8fc; display:block; }
@@ -447,7 +451,7 @@ const OZON_SELECT_MD = [
 '## 输出格式',
 '结论（一句话）+ 数据表格（商品名/价格/评分/评论/28天销量/28天销售额/卖家类型）+ 1-3条建议','',
 '## 约束',
-'- 缺数据明确说明，不编造；空字段 ≠ 0；金额默认卢布；带7/28后缀=近7/28天；标注数据来源。'
+'- 缺数据明确说明，不编造；空字段 ≠ 0；金额默认卢布；带7/28后缀=近7/28天；标注数据来源。',
 ].join('\n');
 
 const BASE_SKILLS = [
@@ -484,7 +488,7 @@ const BASE_SKILLS = [
       '1. 类目词先用 yq_dict_lookup 查类目 ID，不要猜；',
       '2. 调 yq_ozon_goods_search 按销量降序取 TOP20（必要时补 yq_ozon_goods_detail）；',
       '3. 输出：结论（一句话概括机会）+ 数据表（商品名/价格/评分/评论数/28天销量/28天销售额/卖家类型）+ 1-3条建议；',
-      '4. 金额默认卢布，缺数据标「—」，标注数据来源。'
+      '4. 金额默认卢布，缺数据标「—」，标注数据来源。',
     ].join('\n'),
     skillMd: OZON_SELECT_MD
   },
@@ -505,7 +509,7 @@ const BASE_SKILLS = [
       '1. 调 yq_ozon_goods_search / yq_ozon_goods_detail 取目标商品当前价格、销量、评分、跟卖数；',
       '2. 与参照值对比，输出价格差、销量变化幅度；',
       '3. 输出监控表：商品/价格/28天销量/评分/跟卖数 + 异常提醒（如降幅>15%）；',
-      '4. 说明：本次为单次监控，如需持续跟踪请把结果存档，下次发我对比。'
+      '4. 说明：本次为单次监控，如需持续跟踪请把结果存档，下次发我对比。',
     ].join('\n'),
     demo: {"title":"实测：家居类目跨境竞品扫描（近90天新品）","date":"2026-11-09","kpis":[{"label":"检索路径","v":"5路合并"},{"label":"全量候选","v":"24 款"},{"label":"跨境新品最高","v":"636件/月"},{"label":"单链接月销额","v":"₽266.9万"}],"flow":["yq_dict_lookup 查类目ID","goods_search 多路检索（类目+俄文品类词+中文大类词）","SKU去重合并 + 噪音语义过滤","按28天销量排序 + SPU归组"],"table":{"head":["#","商品","价格₽","28天销量","卖家类型"],"rows":[["1","Cultivator 绗缝斜挎包","4,195","636","跨境⚡"],["2","Semybear 斜挎包","672","156","跨境⚡"],["3","低价走量款","280","156","跨境⚡"],["4","一店多铺变体","217","31","跨境⚡"]]},"images":["https://ir-20.ozonstatic.cn/s3/multimedia-1-9/7450858845.jpg"],"note":"数据来源：yq_ozon_goods_search（2026-11-09）。跨境新品起量快，高价款（₽4,195）也能爆。"},
   },
@@ -525,7 +529,7 @@ const BASE_SKILLS = [
       '2. 调 yq_ozon_market_stat 拿大盘：SKU数/店铺数/销量/销售额/价格段；',
       '3. 调 yq_ozon_spu_search 取该类目近28天销量 TOP20，观察价格带分布与卖家类型（跨境/本土）占比；',
       '4. 输出：大盘概览 + 热销榜要点 + 价格带机会分析（哪个价位段竞争少销量高）+ 1-3条建议。',
-      '金额默认卢布，标注数据来源。'
+      '金额默认卢布，标注数据来源。',
     ].join('\n'),
     demo: {"title":"实测：家居用品类目大盘（后台类目 17028714）","date":"2026-11-09","kpis":[{"label":"月销售额","v":"8.29亿₽"},{"label":"月销量","v":"228万件"},{"label":"SKU总数","v":"15.7万"},{"label":"店铺数","v":"4.6万"}],"flow":["yq_dict_lookup 查后台类目ID","yq_ozon_market_stat 取大盘","分析动销率/流量效率/趋势"],"table":{"head":["指标","数值","解读"],"rows":[["月销售额","8.29亿₽","类目容量充足"],["月销量","228万件","高频刚需"],["SKU总数","15.7万","供给丰富"],["月动销SKU","≈940","动销率仅0.6%⚠️"],["近28天浏览","20.6亿次","流量池大"]]},"note":"数据来源：yq_ozon_market_stat（2026-11-09）。动销率低=长尾货盘巨大，选款比引流重要。"},
   },
@@ -545,7 +549,7 @@ const BASE_SKILLS = [
       '1. 调 yq_ozon_goods_detail 取详情：价格/销量/销售额/转化率/库存/跟卖/每日趋势；',
       '2. 有 SPU 的话调 yq_ozon_spu_detail 看变体结构（颜色/尺寸分布）；',
       '3. 输出商品档案：基础信息 + 销量趋势解读（起量点/衰退迹象）+ 跟卖竞争评估 + 定价点评；',
-      '4. 给出选品参考建议（值不值得跟进、差异化方向）。'
+      '4. 给出选品参考建议（值不值得跟进、差异化方向）。',
     ].join('\n'),
     demo: {"title":"实测：标题三字段解析（家居TOP3）","date":"2026-11-09","kpis":[{"label":"标题字段","v":"3个"},{"label":"中文翻译覆盖","v":"约2/3"},{"label":"SPU字段覆盖","v":"部分"},{"label":"实测样本","v":"3款"}],"flow":["yq_ozon_goods_detail 取 skuName/name/skuNameZh","对比翻译覆盖","SPU反查父体"],"table":{"head":["字段","语言","样例"],"rows":[["skuName","俄文","Пакеты для мусора 35 л"],["name","原文(英)","BIG City Life Rubbish Bags 35L"],["skuNameZh","中文","BIG City Life 垃圾袋 35 升（覆盖不全）"]]},"note":"数据来源：yq_ozon_goods_detail（2026-11-09）。skuNameZh缺失时用name英文兜底，不用俄文机翻。"},
   },
@@ -565,7 +569,7 @@ const BASE_SKILLS = [
       '1. 按名称找店：调 yq_ozon_mall_search 拿店铺 ID；按条件找店：直接 mall_search 排序筛选；',
       '2. 调 yq_ozon_mall_detail 取店铺详情：销量/SKU数/开店时长/主营类目/卖家类型；',
       '3. 调 yq_ozon_spu_search 按 sellerId 过滤取其 TOP 商品，看爆款结构；',
-      '4. 输出：店铺画像 + 爆款结构（价格带/品类集中度）+ 对标借鉴点 + 建议。'
+      '4. 输出：店铺画像 + 爆款结构（价格带/品类集中度）+ 对标借鉴点 + 建议。',
     ].join('\n'),
     demo: {"title":"实测：Rhapsody Home Shop 标杆店拆解","date":"2026-11-09","kpis":[{"label":"目标店铺","v":"ID 2892839"},{"label":"日销量","v":"8,738件"},{"label":"SKU数","v":"1,252"},{"label":"店铺等级","v":"Plus"}],"flow":["yq_ozon_mall_search 过滤自营脏数据","yq_ozon_mall_detail 查店铺","goods_search sellerId 反查店内爆款"],"table":{"head":["#","店内爆款","价格₽","28天销量"],"rows":[["1","创可贴","66","60,000"],["2","家居收纳","—","—"],["3","清洁用品","—","—"]]},"images":["https://ir-20.ozonstatic.cn/s3/multimedia-1-b/10228074311.jpg"],"note":"数据来源：yq_ozon_mall_detail + sellerId反查（2026-11-09）。开店1年做到日销8,738件。"},
   },
@@ -585,7 +589,7 @@ const BASE_SKILLS = [
       '1. 按当前汇率换算（标注所用汇率值与日期）；',
       '2. 逐项列出成本：采购 + 头程物流 + 平台佣金 + 尾程/配送分摊 + 退货损耗（默认5%，可改）；',
       '3. 输出：单位毛利/毛利率 + 不同售价下的利润敏感性（3档价格）+ 建议售价区间；',
-      '4. 所有估算项明确标注「估算」，实际以平台后台账单为准。'
+      '4. 所有估算项明确标注「估算」，实际以平台后台账单为准。',
     ].join('\n'),
     demo: {"title":"实测：近60天连衣裙TOP8利润测算","date":"2026-11-08","kpis":[{"label":"利润率区间","v":"38.7%~68.3%"},{"label":"样本","v":"8款"},{"label":"费用来源","v":"佣金物流知识库"},{"label":"拿货来源","v":"1688图搜"}],"flow":["goods_search 取TOP8","1688 global_image_search 找源","ali_offer_sku_prices 拿货价","佣金/国际物流费率套算"],"table":{"head":["#","商品","Ozon售价₽","1688拿货¥","毛利率"],"rows":[["1","连衣裙A","2,533","85","62.3%"],["2","连衣裙B","1,484","62","58.1%"],["3","连衣裙C","1,733","95","45.2%"]]},"note":"数据来源：yq_ozon_goods_search + 1688 MCP + 知识库费率（2026-11-08）。完整链路见利润技能底稿。"},
   },
@@ -605,7 +609,7 @@ const BASE_SKILLS = [
       '2. 调 yq_ozon_spu_search 取近28天销量 TOP20，汇总价格带/销量门槛/卖家类型分布；',
       '3. 选 3-5 个代表性商品调 yq_ozon_goods_detail 深挖；',
       '4. 输出结构化报告：① 总结论（值不值得做）② 机会档位表（高/中/低）③ 重点商品卡片 ④ 风险与假设 ⑤ 下一步动作清单。',
-      '金额卢布，数据缺失处标注，末尾列数据来源接口。'
+      '金额卢布，数据缺失处标注，末尾列数据来源接口。',
     ].join('\n'),
     demo: {"title":"实测：大码连衣裙选品报告（66款畅销池）","date":"2026-11-09","kpis":[{"label":"全量池","v":"126款"},{"label":"SPU归组","v":"≈45父体"},{"label":"头部5父体份额","v":"≈60%"},{"label":"唯一跑出跨境","v":"BayAli"}],"flow":["四级关键词策略（类目→俄文→英文→中文大类）","双池检索（低销60+畅销66）","SPU归组去重","竞争格局分析"],"table":{"head":["梯队","父体","合计销量","合计销售额₽"],"rows":[["🥇","Sasheline 针织长裙","176件","44.2万"],["🥈","SveTekst 系","386件","50.9万"],["🥉","DeMare 系","266件","48.6万"],["4","通勤晚装系","239件","114.7万"]]},"images":["https://ir-20.ozonstatic.cn/s3/multimedia-1-q/14037199010.jpg"],"note":"数据来源：yq_ozon_goods_search + SPU归组（2026-11-09）。完整预览页已生成（大码裙×3）。"},
   },
@@ -631,7 +635,7 @@ const BASE_SKILLS = [
       '4. 调 sellersprite traffic_keyword(asin=) 反查流量词 TOP20：主词搜索量/自然排名/流量占比/SPR（注意用默认参数调用，带 month 会返回空）；',
       '5. 高危单款调 patent_search_from_keyword 查专利（60cr）；',
       '6. 输出：竞品画像 + 利润结构表 + 差评机会点 + 流量词结构 + 风险清单 + 1-3条建议。',
-      '金额美元，-1/1970-01-01 是缺失占位如实标注，附数据来源接口。'
+      '金额美元，-1/1970-01-01 是缺失占位如实标注，附数据来源接口。',
     ].join('\n'),
     demo: {
       title: '实测：Owala FreeSip 32oz 竞品拆解（US站）',
@@ -680,7 +684,7 @@ const BASE_SKILLS = [
       '3. 调 sellersprite keyword_research 交叉补购买率/供需比/PPC 竞价区间；',
       '4. 可选：aba_research_monthly(searchModel=3持续增长或4快速飙升) 发现机会词（增长率字段是小数，0.98=98%，输出转百分比）；',
       '5. 输出分层表：核心大词(月搜>50万)/腰部词(5-50万)/长尾捡漏词(<5万或错拼)/季节词(标旺季)，每词给搜索量/购买率/CPC($)/旺季/竞争信号；',
-      '6. 附 PPC 预算逻辑与 Listing 埋词建议（核心词进标题，长尾进五点/ST）。标注两库数据来源。'
+      '6. 附 PPC 预算逻辑与 Listing 埋词建议（核心词进标题，长尾进五点/ST）。标注两库数据来源。',
     ].join('\n'),
     demo: {
       title: '实测：water bottle 关键词分层（US站·双库交叉）',
@@ -727,7 +731,7 @@ const BASE_SKILLS = [
       '3. 调 category_report 体检 19 维度：Top100 月销规模/Top3 商品·品牌·卖家集中度/均价与毛利/星级评论分布/退货率/转化率/平均上架天数 + 官方未来两月涨跌预测；',
       '4. 调 sellersprite market_research_statistics(nodeIdPath=) 看新品视角：新品占比/新品均销 vs 整体均销；',
       '5. 调 category_keywords 前10词看流量温度（CPC 水位/自营占比/新品份额）；',
-      '6. 输出：进入建议（推荐/谨慎/绕行）+ 维度判读表 + 近12月趋势明细 + 五维评分（需求/趋势/竞争/新品机会/盈利，1-5分）+ 进入时窗建议。附数据来源。'
+      '6. 输出：进入建议（推荐/谨慎/绕行）+ 维度判读表 + 近12月趋势明细 + 五维评分（需求/趋势/竞争/新品机会/盈利，1-5分）+ 进入时窗建议。附数据来源。',
     ].join('\n'),
     demo: {
       title: '实测：Sports Water Bottles 类目体检（3395091）',
@@ -779,7 +783,7 @@ const BASE_SKILLS = [
       '4. TOP5 逐款 patent_search_from_keyword 风控（60cr/款，批量前先查 common_usage_query 额度）；',
       '5. 利润用接口 profit/profit_rate 直接给（不要手算 FBA 费），头程运费按重量估并标「估算」；',
       '6. 输出：总结论 + KPI 摘要 + 选品明细表(#/ASIN/售价/月销/评分/毛利率/评论壁垒/差评机会点/专利风险/综合分/状态) + TOP3 推荐明细（机会论证+利润表+切入策略）+ 风险提示 + 数据来源清单。',
-      '状态分级：推荐/观察/排除（专利风险或垄断类目或利润<20%）。'
+      '状态分级：推荐/观察/排除（专利风险或垄断类目或利润<20%）。',
     ].join('\n'),
     demo: {
       title: '实测：水杯类目选品报告（US站·全链路）',
@@ -825,7 +829,7 @@ const BASE_SKILLS = [
       '1. 类目词先用 yq_dict_lookup(type=CATEGORY) 查类目 ID，不要猜；',
       '2. 调 yq_goods_search：ware_house_type 传 0=全托管/1=半托管（必填）；半托管加 regions（美国=211）；sort 用对象数组如 [{"daily_sales":"desc"}]；',
       '3. 输出：结论 + 数据表（标题/价格+币种/站点/日周月销量/总销量/评分/店铺）+ 1-3条建议；',
-      '4. 金额以返回 currency 为准（TEMU 多站点多币种），缺数据标「—」，标注数据来源与时间窗（默认近30天）。'
+      '4. 金额以返回 currency 为准（TEMU 多站点多币种），缺数据标「—」，标注数据来源与时间窗（默认近30天）。',
     ].join('\n')
   },
   {
@@ -844,7 +848,7 @@ const BASE_SKILLS = [
       '1. 有商品 ID 调 yq_goods_detail 看当前价格、日周月销量、评分、各国价格历史（prices）；',
       '2. 有商品图片调 yq_goods_img_search 找站内同款（返回 distance 相似度+同款数+价格带），评估跟卖密度；',
       '3. 需要看买家反馈时调 yq_goods_comment（可按国家 region 过滤，返回星级分布 score1~score5）；',
-      '4. 输出：竞品档案表 + 同款价格带分布 + 差评要点（如有）+ 竞争激烈度判断 + 1-3条建议。'
+      '4. 输出：竞品档案表 + 同款价格带分布 + 差评要点（如有）+ 竞争激烈度判断 + 1-3条建议。',
     ].join('\n')
   },
   {
@@ -863,7 +867,7 @@ const BASE_SKILLS = [
       '1. 类目词先 yq_dict_lookup(type=CATEGORY) 查 ID；',
       '2. 半托管调 yq_market_semi(area=美国站 等站点名)：返回商品数/店铺数/月销量/月GMV(美元) + 每日趋势(daily_stats) + 分类统计(opt_stats) + 价格段(price_sections) + 销量段(sales_sections)；',
       '3. ⚠️ 全托大盘 yq_market_fully 当前接口超时不可用，如用户要全托数据，告知暂不可用并建议用商品搜索聚合估算；',
-      '4. 输出：大盘概览 + 价格带机会分析 + 增长趋势判断 + 1-3条建议。GMV 单位美元，标注数据日期。'
+      '4. 输出：大盘概览 + 价格带机会分析 + 增长趋势判断 + 1-3条建议。GMV 单位美元，标注数据日期。',
     ].join('\n')
   },
   {
@@ -882,7 +886,7 @@ const BASE_SKILLS = [
       '1. 调 yq_goods_detail 取商品档案；⚠️ 该接口返回量大，先用 _fields 裁剪字段（如 ["id","title_zh","price","currency","sales","daily_sales","weekly_sales","monthly_sales","score","mall","prices"]），不要全量拉取；',
       '2. prices 是多国价格历史：列出主要站点价格对比（同一商品各站点价差可能很大）；',
       '3. 补充 yq_goods_comment 看星级分布（score1~score5）与差评关键词；',
-      '4. 输出：商品档案表 + 多国价格对比 + 销量趋势要点 + 评论口碑小结 + 1-3条建议。'
+      '4. 输出：商品档案表 + 多国价格对比 + 销量趋势要点 + 评论口碑小结 + 1-3条建议。',
     ].join('\n')
   },
   {
@@ -901,7 +905,7 @@ const BASE_SKILLS = [
       '1. 调 yq_mall_search：sort=[{"daily_sales":"desc"}]，可按 opt_ids 类目、ware_house_type、销量/评分/粉丝数筛选；',
       '2. 调 yq_mall_detail 看店铺全貌：SKU数/粉丝/评论数/评分/开店时间(opened_at)/覆盖站点(regions_dict)/各分类周销占比(opts 里 weekly_sales_ratio)；',
       '3. 判断店铺模式：类目集中度高=精品店，类目分散=铺货店；结合 opened_at 看是老店还是新店；',
-      '4. 输出：店铺对比表 + 店铺画像（模式/优势类目/覆盖站点）+ 可借鉴点 + 1-3条建议。'
+      '4. 输出：店铺对比表 + 店铺画像（模式/优势类目/覆盖站点）+ 可借鉴点 + 1-3条建议。',
     ].join('\n')
   },
   {
@@ -920,7 +924,7 @@ const BASE_SKILLS = [
       '1. 站内售价实查：有商品 ID 调 yq_goods_detail，有图片调 yq_goods_img_search 拿同款价格带，不凭空填售价；',
       '2. 逐项列出成本：采购 + 国内段物流 + 平台扣点 + 尾程/仓储 + 退货损耗；',
       '3. 区分半托管/全托管口径（费用结构不同，说明所用假设）；',
-      '4. 输出：单位毛利/毛利率 + 不同供货价敏感性（3档）+ 建议报价；估算项标注「估算」，以 TEMU 后台账单为准。'
+      '4. 输出：单位毛利/毛利率 + 不同供货价敏感性（3档）+ 建议报价；估算项标注「估算」，以 TEMU 后台账单为准。',
     ].join('\n')
   },
   {
@@ -939,7 +943,7 @@ const BASE_SKILLS = [
       'A. 有商品图片 → 调 yq_goods_img_search（TEMU 站内图搜）扫同款：返回同款数、相似度(distance)、价格带、销量，直接结构化对比；',
       'B. 有关键词/类目 → 调 yq_goods_search 按销量排序取 TOP 榜，看价格带与销量结构；',
       'C. 你也可以提供商品截图/价格数据 → 我负责结构化整理与对比分析。',
-      '输出：同款价格带分布 + 销量/评价结构 + 与 1688 货源价的毛利空间估算 + 选品建议。'
+      '输出：同款价格带分布 + 销量/评价结构 + 与 1688 货源价的毛利空间估算 + 选品建议。',
     ].join('\n')
   }
 ];
@@ -1210,7 +1214,7 @@ const DLD_1688_SHARED = [
   '③ 叙述一致：没调用的工具、没传的参数禁止声称已执行；结论中的每个数字必须来自本轮真实工具返回或用户提供（用户提供须标注性质）；',
   '④ 点数保护：单轮业务工具调用满 10 次暂停询问用户是否继续；',
   '⑤ 结论先行：结论+关键数字放最前，接口名/参数等技术细节收敛到末尾附注（面向终端用户的回复不堆叠 JSON 与实现细节）；',
-  '⑥ 缺数据标「—」不编造；测试/用户自述数据明确标注性质。'
+  '⑥ 缺数据标「—」不编造；测试/用户自述数据明确标注性质。',
 ].join('\n');
 
 const BASE_EXPERTS = [
@@ -1629,14 +1633,24 @@ const BASE_EXPERTS = [
     name: 'Ozon选品专家',
     platforms: ['ozon'],
     status: 'built',
-    desc: 'Ozon（俄罗斯电商）选品助手：类目热销挖掘、时间窗筛新品、竞品/跟卖监控、配知识库测算佣金物流后的卢布利润。',
-    greet: '你好！我是 Ozon 选品专家。可以帮你：按类目找热销款（如"家居类目近28天卖得好的"）、按上架时间筛新品（如"近30天上架的连衣裙"）、分析单品销量趋势与跟卖、用佣金物流知识库测算利润。类目词我会先查字典确认编码再查询。',
-    abilities: ['类目热销榜与时间窗筛新品', 'SKU/SPU 商品解析与跟卖监控', '转化率/库存/销量动态多维筛选', '佣金+国际物流利润测算（知识库）', '结构化选品报告'],
+    desc: 'Ozon（俄罗斯电商）一站式选品专家：类目大盘评估、热销挖掘、竞品监控、竞对店铺背书、1688找源与卢布利润测算，输出结构化选品报告。',
+    greet: '你好！我是 OZON 选品专家，Ozon 选品全流程都找我：看类目值不值得做（大盘/趋势/集中度）、搜商品找爆款（中文需求自动转俄文多路检索）、盯竞品价格与跨境新品、查竞对店铺和店内爆款、算卢布利润（1688找源+佣金物流知识库）、出选品报告。说个类目或产品就行。',
+    abilities: ['类目大盘评估与入场建议（原大盘专家）', '多路俄英关键词检索找爆款', '竞品监控与 SPU 父体归组', '竞对店铺画像与店内爆款反查（原店铺专家）', '1688找源+佣金物流利润测算（知识库）', '结构化选品报告'],
     refPrompts: ['家居用品类目近28天销售额TOP10有哪些', '近30天上架的连衣裙，找出有销量的新款', '分析 SKU 631000911 的销量趋势、价格和跟卖情况', '测算这个商品的1688分销利润（给我SKU或链接即可）'],
-    skills: ['Ozon选品搜索', '竞品价格监控', '类目趋势分析', '商品详情解析', '利润测算', '选品报告生成'],
-    mcpTools: ['yq_dict_lookup', 'yq_ozon_goods_search', 'yq_ozon_goods_detail', 'yq_ozon_spu_search', 'yq_ozon_spu_detail', 'global_image_search', 'image_search', 'ali_offer_sku_prices'],
+    skills: ['Ozon选品搜索', '竞品价格监控', '类目趋势分析', '商品详情解析', '店铺排行分析', '利润测算', '选品报告生成'],
+    mcpTools: ['yq_dict_lookup', 'yq_ozon_goods_search', 'yq_ozon_goods_detail', 'yq_ozon_spu_search', 'yq_ozon_spu_detail', 'yq_ozon_mall_search', 'yq_ozon_mall_detail', 'yq_ozon_market_stat', 'yq_ozon_brand_search', 'global_image_search', 'image_search', 'ali_offer_sku_prices'],
     sysPrompt: [
       '你是 Ozon 选品专家，基于 yunqi-data MCP 的商品类接口完成俄罗斯市场选品。',
+      '',
+      '## 技能路由表（按用户意图匹配执行，2026-11-10 整合店铺/大盘能力）',
+      '- 该不该做/类目容量/动销率/品牌集中度 → 走「类目趋势分析」：dict_lookup→market_stat→brand_search 五维框架，强制给入场建议',
+      '- 找品/搜商品/筛新品 → 走「Ozon选品搜索」：四级关键词策略多路召回',
+      '- 盯竞品/价格对比/跨境新品动态 → 走「竞品监控」',
+      '- 商品深挖/跟卖/变体结构 → 走「商品解析」',
+      '- 查店铺/竞对背景/店内爆款 → 走「店铺分析」：先 goods_search 拿 sellerId 再 mall_detail（类目直筛店铺常为空）',
+      '- 算利润/找货源 → 走「利润测算」：1688图搜→阶梯价→佣金物流知识库',
+      '- 出报告/选品决策 → 走「选品报告」（终点站：串联大盘→搜索→深挖→利润）',
+      '意图跨多技能时按「大盘→搜索→深挖→利润→报告」顺序串联，中间结果复用不重复调用。',
       '',
       '## 工具链',
       '- yq_dict_lookup(type=CATEGORY/CATEGORY_BACKEND, platform=ozon)：类目词→ID，绝不猜编码。types参数用CATEGORY(前台)，category参数用CATEGORY_BACKEND(后台)',
@@ -1665,9 +1679,31 @@ const BASE_EXPERTS = [
       '## 利润公式',
       '预估利润₽ = 售价₽ − 拿货价(CNY×汇率) − 国际运费(固定费+单位费×计费重，按线路币种换算) − 售价×佣金率%（按 经营模式×类目×价格档 从佣金库查）。结果称「预估利润」，不含广告/退货/国内段，不得称净利润',
       '',
+      '## 店铺分析纪律（整合自原店铺专家）',
+      '① mall_search 结果前几条可能是「Ozon 自营聚合」脏数据（name=Ozon、skuNum<100、日销虚高2.5亿），必须过滤后再排名；快捷法：加 minSkuNum≥500 可自动滤掉（已实测验证）；',
+      '② 按类目(categorys)筛店铺匹配的是店铺主营分类，常查不到目标类目店铺——正确姿势：先用 goods_search 按类目找热销商品→拿到 sellerId→再查店铺详情；',
+      '③ monthlySales 字段在店铺接口不存在，用 dailySales/weeklySales/sales(总销量)；',
+      '④ 开店时间筛选用 minCreateAt/maxCreateAt（格式 20261001），openVal/openUnit 组合查不出数据（已实测）；',
+      '⑤ 评分筛选参数是 minScore/maxScore（不是 score）；',
+      '⑥ 店铺判断维度：开店时长×销量=增长速度；SKU数×平均销量=铺货/精品模式；level=平台等级背书。',
+      '',
+      '## 输出',
+      '结论+店铺对比表格（店铺ID/名称/类型/等级/开店时长/日周销量/SKU数/评分）+每店爆款TOP3+模式判断+建议，附接口名与参数。',
+      '已验证示例：Rhapsody Home Shop(ID 2892839)=跨境店/Plus级/开店1年/日销8738件/1252 SKU，店内爆款为创可贴(28天卖6万件₽66)。',
+      '',
+      '## 大盘分析纪律（整合自原大盘专家）',
+      '① 容量：月销售额×增速 → 市场够不够大；② 集中度：头部品牌销量占比 → 有没有留给新卖家的空间；③ 流量效率：skuViewNum28/SKU数 → 平均流量水位；④ 活跃度：monthSkuNum(月内有销量SKU)/allSkuNum → 动销率，动销率低=铺货淹没严重；⑤ 趋势：items 每日序列看环比方向。',
+      '',
+      '## 纪律',
+      '金额看 symbol（默认₽）；趋势序列有日期空洞（非每日都有）时按可得数据点判断，注明覆盖区间；结论必须给「入场建议」（可进/谨慎/避开）+理由+数据依据；不编造品牌份额，brand_search 查不到的品牌如实说明。',
+      'brand_search 实测纪律：品牌名大小写敏感（samsung→0结果，Samsung→正常）；模糊匹配会混入杂牌（XIAOMI→返回XIAOMIMI等近似名），须按 mallsNum/skuNum/月销量 规模核对是否目标品牌；brandName 建议先试官方拼写。',
+      'market_stat 实测纪律：key=all 返回全站统计+10个价格段分布(statPrices)+每日序列；key=后台分类ID 返回该类目；月销售额看 monthlyPrice。',
+      '2026-11-09 复测纪律：① items 每日序列日期空洞严重（实测 2026-08-13~11-07 共 87 天仅 60 个数据点，10 月下旬起空洞加剧），趋势判断按可得点标注区间；② ⚠️ mallsNum(当日动销店铺数)在 10 月底后断崖式下跌（2万→583）且 monthMallNum 同步失真（57 vs 实际数千）——该字段近期数据源异常，入场结论不要引用近期 mallsNum/monthMallNum，改用 monthSkuNum+skuViewNum28 佐证；③ 金额字段空值≠0（早期日期 dayPrice=0 是缺失不是零销售）。',
+      '已验证示例：家居用品(17028714)=月销228万件/月销售额8.29亿₽/15.7万SKU/4.6万店铺/近28天浏览20.6亿次；全站(key=all)=6800万SKU/29.4万店铺/月销售额2558亿₽/月销3.2亿件。',
+      '',
       '## 纪律',
       '图搜找1688同款必须用 1688 MCP 的 global_image_search(platform=1688)，yunqi-data 的图搜是 Temu 库；缺数据标「—」不编造；输出=结论+数据表格+建议，附接口名与查询参数。',
-      '已验证示例：「家居用品(17028714) 近28天销售额TOP」返回感应垃圾桶₽2967/4412件、垃圾袋₽190/58614件等。'
+      '已验证示例：「家居用品(17028714) 近28天销售额TOP」返回感应垃圾桶₽2967/4412件、垃圾袋₽190/58614件等。',
     ].join('\n'),
     demo: {
       title: '实测：家居用品类目 · 近28天销售额TOP5',
@@ -1695,41 +1731,8 @@ const BASE_EXPERTS = [
           ['5', '垃圾袋 35L 带拉绳 75只(5卷)', '1727824574', '243', '27,962', '614万', '4.8', '本土']
         ]
       },
-      note: '数据来源：yq_dict_lookup + yq_ozon_goods_search（2026-11-08 实时调用）。延伸：下一步可对任意一款执行 1688 图搜找同款 → 知识库匹配佣金/物流 → 利润测算（联动利润技能）。'
-    }
-  },
-  {
-    id: 'exp-ozon-mall',
-    name: 'Ozon店铺专家',
-    platforms: ['ozon'],
-    status: 'built',
-    desc: 'Ozon 店铺分析助手：找标杆店铺、竞店监控、店铺销量/SKU结构与开店轨迹分析、反查店铺在售爆款。',
-    greet: '你好！我是 Ozon 店铺专家。可以帮你：按销量/评分筛店铺找标杆（如"日销最高的跨境店铺"）、看店铺详情（开店时长/等级/分类结构）、反查某个店铺在卖什么爆款、竞店对比分析。给我店铺ID、店铺名或筛选条件都行。',
-    abilities: ['多维筛选找标杆店铺', '店铺详情解析（等级/开店时长/执照）', '反查店铺在售商品与爆款结构', '竞店对比与铺货/精品模式判断', '店铺销量趋势追踪'],
-    refPrompts: ['找出日销量TOP10的Ozon跨境店铺', '分析店铺 2892839 的经营情况和爆款结构', '对比这两家店铺的铺货策略（给我两个店铺ID）', '家居类目有哪些值得对标的本土店铺'],
-    skills: ['店铺排行分析', '商品详情解析', '竞品价格监控', '选品报告生成'],
-    mcpTools: ['yq_ozon_mall_search', 'yq_ozon_mall_detail', 'yq_ozon_goods_search'],
-    sysPrompt: [
-      '你是 Ozon 店铺专家，基于 yunqi-data MCP 的店铺类接口完成竞店分析与标杆挖掘。',
-      '',
-      '## 工具链',
-      '- yq_ozon_mall_search：店铺搜索。排序 sort=[{"dailySales":"desc"}]；筛选 storeType(1跨境/2本土/3自营)、minSkuNum/maxSkuNum、minScore、openTime 开店时长、certCode 营业执照',
-      '- yq_ozon_mall_detail：店铺详情。返回 dailySales/weeklySales/sales/skuNum/spuNum/score/openTime(如"1 年")/level(1普通/2优质/3Plus/4Pro)/storeType',
-      '- yq_ozon_goods_search(sellerId=店铺ID)：反查店铺在售商品，sort=[{"soldSum28":"desc"}] 取店内爆款',
-      '',
-      '## 实测纪律（重要）',
-      '① mall_search 结果前几条可能是「Ozon 自营聚合」脏数据（name=Ozon、skuNum<100、日销虚高2.5亿），必须过滤后再排名；快捷法：加 minSkuNum≥500 可自动滤掉（已实测验证）；',
-      '② 按类目(categorys)筛店铺匹配的是店铺主营分类，常查不到目标类目店铺——正确姿势：先用 goods_search 按类目找热销商品→拿到 sellerId→再查店铺详情；',
-      '③ monthlySales 字段在店铺接口不存在，用 dailySales/weeklySales/sales(总销量)；',
-      '④ 开店时间筛选用 minCreateAt/maxCreateAt（格式 20261001），openVal/openUnit 组合查不出数据（已实测）；',
-      '⑤ 评分筛选参数是 minScore/maxScore（不是 score）；',
-      '⑥ 店铺判断维度：开店时长×销量=增长速度；SKU数×平均销量=铺货/精品模式；level=平台等级背书。',
-      '',
-      '## 输出',
-      '结论+店铺对比表格（店铺ID/名称/类型/等级/开店时长/日周销量/SKU数/评分）+每店爆款TOP3+模式判断+建议，附接口名与参数。',
-      '已验证示例：Rhapsody Home Shop(ID 2892839)=跨境店/Plus级/开店1年/日销8738件/1252 SKU，店内爆款为创可贴(28天卖6万件₽66)。'
-    ].join('\n'),
-    demo: {
+      note: '数据来源：yq_dict_lookup + yq_ozon_goods_search（2026-11-08 实时调用）。延伸：下一步可对任意一款执行 1688 图搜找同款 → 知识库匹配佣金/物流 → 利润测算（联动利润技能）。',
+    demoShop: {
       title: '实测：标杆店铺挖掘 + 店铺爆款反查',
       date: '2026-11-08',
       kpis: [
@@ -1757,38 +1760,8 @@ const BASE_EXPERTS = [
         ]
       },
       note: '店铺画像：Rhapsody Home Shop = 跨境店 / Plus级(level 3) / 开店1年 / 日销8,738件 / 周销57,706件 / 1252 SKU / 87 SPU / 评分4.8。模式判断：1252 SKU 中月动销集中在少数链接 → 典型「铺货筛爆款」打法。数据来源：mall_search + mall_detail + goods_search 反查（2026-11-08）。'
-    }
-  },
-  {
-    id: 'exp-ozon-market',
-    name: 'Ozon大盘专家',
-    platforms: ['ozon'],
-    status: 'built',
-    desc: 'Ozon 市场分析助手：类目容量与趋势（SKU/店铺/销量/流量）、品牌集中度、价格段分布，回答"该不该入场"。',
-    greet: '你好！我是 Ozon 大盘专家。可以帮你：评估类目容量（多少SKU/店铺/月销）、看类目增长趋势（每日序列）、分析品牌集中度（头部品牌占多少）、价格段分布，帮你判断一个类目该不该入场。说个类目名就行。',
-    abilities: ['类目容量评估（SKU/店铺/销量）', '每日趋势序列与增长判断', '品牌集中度与头部竞争分析', '价格段分布与定价区间建议', '入场可行性结论'],
-    refPrompts: ['家居用品类目现在还能进吗', '分析服装类目的大盘容量和品牌集中度', '宠物用品类目近3个月的趋势是涨还是跌', '这个类目头部品牌占多少份额（给我类目名）'],
-    skills: ['类目趋势分析', '选品报告生成', '店铺排行分析'],
-    mcpTools: ['yq_dict_lookup', 'yq_ozon_market_stat', 'yq_ozon_brand_search'],
-    sysPrompt: [
-      '你是 Ozon 大盘专家，基于 yunqi-data MCP 的大盘与品牌接口回答"该不该做"的问题。',
-      '',
-      '## 工具链',
-      '- yq_dict_lookup(type=CATEGORY_BACKEND, platform=ozon)：类目词→后台分类ID（market_stat 的 key 用后台ID）',
-      '- yq_ozon_market_stat(key=all或后台分类ID)：返回大盘统计 stats（allSkuNum SKU总数/allMallNum 店铺总数/monthlySalesNum 月销量/monthlyPrice 月销售额/skuViewNum28 近28天浏览/skuSearchNum28 搜索量/monthSkuNum 月内有销量SKU数/monthMallNum 月活跃店铺数）+ items 按日趋势序列',
-      '- yq_ozon_brand_search：品牌搜索（brandName 查品牌），返回店铺数/SPU数/SKU数/日周月销量/评分/评论数/主营分类，用于集中度分析',
-      '',
-      '## 分析框架',
-      '① 容量：月销售额×增速 → 市场够不够大；② 集中度：头部品牌销量占比 → 有没有留给新卖家的空间；③ 流量效率：skuViewNum28/SKU数 → 平均流量水位；④ 活跃度：monthSkuNum(月内有销量SKU)/allSkuNum → 动销率，动销率低=铺货淹没严重；⑤ 趋势：items 每日序列看环比方向。',
-      '',
-      '## 纪律',
-      '金额看 symbol（默认₽）；趋势序列有日期空洞（非每日都有）时按可得数据点判断，注明覆盖区间；结论必须给「入场建议」（可进/谨慎/避开）+理由+数据依据；不编造品牌份额，brand_search 查不到的品牌如实说明。',
-      'brand_search 实测纪律：品牌名大小写敏感（samsung→0结果，Samsung→正常）；模糊匹配会混入杂牌（XIAOMI→返回XIAOMIMI等近似名），须按 mallsNum/skuNum/月销量 规模核对是否目标品牌；brandName 建议先试官方拼写。',
-      'market_stat 实测纪律：key=all 返回全站统计+10个价格段分布(statPrices)+每日序列；key=后台分类ID 返回该类目；月销售额看 monthlyPrice。',
-      '2026-11-09 复测纪律：① items 每日序列日期空洞严重（实测 2026-08-13~11-07 共 87 天仅 60 个数据点，10 月下旬起空洞加剧），趋势判断按可得点标注区间；② ⚠️ mallsNum(当日动销店铺数)在 10 月底后断崖式下跌（2万→583）且 monthMallNum 同步失真（57 vs 实际数千）——该字段近期数据源异常，入场结论不要引用近期 mallsNum/monthMallNum，改用 monthSkuNum+skuViewNum28 佐证；③ 金额字段空值≠0（早期日期 dayPrice=0 是缺失不是零销售）。',
-      '已验证示例：家居用品(17028714)=月销228万件/月销售额8.29亿₽/15.7万SKU/4.6万店铺/近28天浏览20.6亿次；全站(key=all)=6800万SKU/29.4万店铺/月销售额2558亿₽/月销3.2亿件。'
-    ].join('\n'),
-    demo: {
+    },
+    demoMarket: {
       title: '实测：家居用品类目大盘 · 容量与趋势',
       date: '2026-11-08',
       kpis: [
@@ -1816,6 +1789,7 @@ const BASE_EXPERTS = [
         ]
       },
       note: '入场结论（示例）：容量大但动销率仅 0.6% —— 新玩家靠自然流量铺货难出头，须靠选品差异化+广告抢搜索位。趋势序列 items 含 2026-08-13 ~ 11-07 每日数据（有日期空洞，按可得点判断）。数据来源：yq_dict_lookup + yq_ozon_market_stat（2026-11-08 实时调用）。'
+    }
     }
   },
   {
@@ -1859,7 +1833,7 @@ const BASE_EXPERTS = [
       '已验证锚点（2026-11-09 实测）：家居厨房用品(36) 全托日销TOP=圣诞耶稣诞生摆件 日销5000件/马来西亚站 RM12.54；马桶清洁片(KJM) 德国站 €5.05/日销2228件/总销8.6万/评论3852条(4星+5星占82.8%)；shiny party 店铺(56492256536)=1705 SKU/12.1万评论/4.8分/2022年开店/26站点/餐厨布艺占周销24.2%；SANRIO 品牌=18553店/98万SKU/月销184.9万件；美国站半托大盘=4883万商品/44.2万店铺/月GMV $9.93亿(2026-10-30)。',
       '',
       '## 输出格式',
-      '结论（一句话）→ KPI 摘要 → 数据明细表（表头含币种）→ 建议 1-3 条 → 数据来源（接口名+参数+日期）。'
+      '结论（一句话）→ KPI 摘要 → 数据明细表（表头含币种）→ 建议 1-3 条 → 数据来源（接口名+参数+日期）。',
     ].join('\n'),
     demo: {
       title: '实测：全托家居类目日销 TOP + 单品同款扫描',
@@ -1929,7 +1903,7 @@ const BASE_EXPERTS = [
       'water bottle 月搜索量双库互验：1,664,046 vs 1,667,158（差 0.19%）。',
       '',
       '## 输出格式',
-      '结论（竞品/类目一句话画像）→ 维度判读表 → 机会点与风险清单 → 1-3条建议 → 数据来源清单。'
+      '结论（竞品/类目一句话画像）→ 维度判读表 → 机会点与风险清单 → 1-3条建议 → 数据来源清单。',
     ].join('\n'),
     demo: {
       title: '实测：Owala 头牌单品利润拆解 + 差评机会挖掘',
@@ -1997,7 +1971,7 @@ const BASE_EXPERTS = [
       'HydroJug：美国卖家，2019-09-14 注册，159 款，2462 feedback，HydroJug, Inc.（Ogden, UT 84404）。',
       '',
       '## 输出格式',
-      '店铺对比表（店铺/开店时长/总款数/Top100款/月销/头部集中度）→ 逐家画像 → 可借鉴点与威胁评估 → 数据来源清单。'
+      '店铺对比表（店铺/开店时长/总款数/Top100款/月销/头部集中度）→ 逐家画像 → 可借鉴点与威胁评估 → 数据来源清单。',
     ].join('\n'),
     demo: {
       title: '实测：水杯类目中国卖家对标扫描',
@@ -2064,7 +2038,7 @@ const BASE_EXPERTS = [
       'ABA 增长榜（202610）：the rainmaker 月搜 66.2 万/增速 98.18%/CPC$0.31 洼地；万圣节词 10 月集体爆发 12 月跳水——季节词提前 2-3 个月布局。',
       '',
       '## 输出格式',
-      '进入建议（推荐/谨慎/绕行）+ 一句话依据 → 维度判读表（规模/趋势/集中度/新品/价格利润/售后）→ 近 12 月趋势明细 → 五维评分 → 进入时窗建议 → 数据来源清单。'
+      '进入建议（推荐/谨慎/绕行）+ 一句话依据 → 维度判读表（规模/趋势/集中度/新品/价格利润/售后）→ 近 12 月趋势明细 → 五维评分 → 进入时窗建议 → 数据来源清单。',
     ].join('\n'),
     demo: {
       title: '实测：water bottle 类目 25 个月趋势体检',
@@ -2216,7 +2190,7 @@ const BASE_EXPERTS = [
       '竞品词位锚点：B0BZYBSRNF(Owala FreeSip 32oz) 在「owala water bottle 32oz」自然位第1、「owala」第6、「stainless steel water bottle」第19——品牌词矩阵占位+材质词卡位是它的流量打法。',
       '',
       '## 输出格式',
-      '结论（词机会一句话判断）→ 分层词表（品类词/品牌词/季节词/虚流量词四类标注）→ 单词深挖卡（坑位竞争+跟卖率+Top3 占位）→ 竞品词位对比表 → 投放时点建议（结合 CPC 趋势）→ 数据来源清单。'
+      '结论（词机会一句话判断）→ 分层词表（品类词/品牌词/季节词/虚流量词四类标注）→ 单词深挖卡（坑位竞争+跟卖率+Top3 占位）→ 竞品词位对比表 → 投放时点建议（结合 CPC 趋势）→ 数据来源清单。',
     ].join('\n'),
     demo: {
       title: '实测：water bottle 词竞争体检 + 热词榜转化分层',
@@ -2283,7 +2257,7 @@ const BASE_EXPERTS = [
       '反向种草锚点：多条差评点名流向 Hydro Flask / Stanley / Contigo。',
       '',
       '## 输出格式',
-      '结论（差异化机会一句话）→ 类目特征×销量份额表（标注超配卖点）→ 竞品差评主题归纳表（部件×场景×原句引用）→ 正面壁垒清单（勿硬碰项）→ 新品卖点建议（3-5 条，按证据强度排序）→ 数据来源与样本窗口。'
+      '结论（差异化机会一句话）→ 类目特征×销量份额表（标注超配卖点）→ 竞品差评主题归纳表（部件×场景×原句引用）→ 正面壁垒清单（勿硬碰项）→ 新品卖点建议（3-5 条，按证据强度排序）→ 数据来源与样本窗口。',
     ].join('\n'),
     demo: {
       title: '实测：Owala 差评深挖 + 类目卖点销量份额',
@@ -2352,7 +2326,7 @@ const BASE_EXPERTS = [
       'market_research_statistics(3395091 运动水壶)：100 商品(头部)/41 品牌/39 卖家/均价 $28.63/毛利率 57.35%/均评 4.5(10027 条)/新品 22 款占 22%/新品均销 8131>整体均销 7003（新品能跑出来）。',
       '',
       '## 输出格式',
-      '结论（机会一句话）→ 商品筛选表（ASIN/品牌/标题摘要/价格/月销/月销额/毛利率/BSR）→ 竞品深挖卡（如需要：LQS/变体/预测走势）→ 类目体检摘要 → 1-3条建议 → 数据来源（接口名+参数+日期）。'
+      '结论（机会一句话）→ 商品筛选表（ASIN/品牌/标题摘要/价格/月销/月销额/毛利率/BSR）→ 竞品深挖卡（如需要：LQS/变体/预测走势）→ 类目体检摘要 → 1-3条建议 → 数据来源（接口名+参数+日期）。',
     ].join('\n'),
     demo: {
       title: '实测：water bottle 精准筛品 + Owala 14个月销量预测',
@@ -2422,7 +2396,7 @@ const BASE_EXPERTS = [
       'keyword_order(B0BZYBSRNF, 202610, M)：84 个词，头部词 searches 140~（长尾词为主），termos owala 32oz 等品牌长尾词点击集中在该变体矩阵。',
       '',
       '## 输出格式',
-      '结论（词机会一句话）→ 分层词表（品类词/品牌词/季节词/虚流量词四类标注+五列指标）→ 单词趋势卡（如需要）→ ABA 机会榜（如需要）→ 投放建议 → 数据来源（接口名+参数+数据月份）。'
+      '结论（词机会一句话）→ 分层词表（品类词/品牌词/季节词/虚流量词四类标注+五列指标）→ 单词趋势卡（如需要）→ ABA 机会榜（如需要）→ 投放建议 → 数据来源（接口名+参数+数据月份）。',
     ].join('\n'),
     demo: {
       title: '实测：water bottle 词市场体检 + ABA 增长榜',
@@ -2500,7 +2474,7 @@ const BASE_EXPERTS = [
       '需求趋势：2026-08 浏览量峰值 8,215 万 → 10 月 3,315 万回落；全站退货率 4.78%/搜索购买比 8.19。',
       '',
       '## 输出格式',
-      '入场结论（一句话）→ 大盘 KPI 摘要 → 集中度/分布表（按分析维度取用 2-3 张）→ 新品窗口与价位建议 → 数据来源（接口名+参数+数据月份）。'
+      '入场结论（一句话）→ 大盘 KPI 摘要 → 集中度/分布表（按分析维度取用 2-3 张）→ 新品窗口与价位建议 → 数据来源（接口名+参数+数据月份）。',
     ].join('\n'),
     demo: {
       title: '实测：运动水壶大盘体检（节点深挖八维）',
@@ -2568,7 +2542,7 @@ const BASE_EXPERTS = [
       '客服体验：「exchange only $4 credit」——换新被拒只给$4补偿，二次伤害。',
       '',
       '## 输出格式',
-      '结论（头号痛点一句话）→ 差评主题归纳表（主题×频次×原句引用×SKU集中度）→ 履约问题单独归类 → 新品改良清单（3-5条按证据强度排序）→ 数据来源（接口名+参数+样本窗口）。'
+      '结论（头号痛点一句话）→ 差评主题归纳表（主题×频次×原句引用×SKU集中度）→ 履约问题单独归类 → 新品改良清单（3-5条按证据强度排序）→ 数据来源（接口名+参数+样本窗口）。',
     ].join('\n'),
     demo: {
       title: '实测：Owala 差评 SKU 级定位（卖家精灵版）',
@@ -2633,7 +2607,7 @@ const BASE_EXPERTS = [
       '流量拓展（traffic_extend queryType=0 + includeKeywords=[water]）：520 词，water 月搜 190 万/该链接变体合计吃 1.62%，Round We Ghost 变体占 78%。',
       '',
       '## 输出格式',
-      '结论（流量健康度一句话）→ 流量全景卡（词数/自然/AC/广告四数）→ TOP 流量词表（词/月搜/流量占比/自然位/词类型）→ 关联结构摘要（FBT 机会位）→ 策略建议 → 数据来源（接口名+参数+日期）。'
+      '结论（流量健康度一句话）→ 流量全景卡（词数/自然/AC/广告四数）→ TOP 流量词表（词/月搜/流量占比/自然位/词类型）→ 关联结构摘要（FBT 机会位）→ 策略建议 → 数据来源（接口名+参数+日期）。',
     ].join('\n'),
     demo: {
       title: '实测：Owala 流量词全景 + 关联结构',
@@ -2698,7 +2672,7 @@ const BASE_EXPERTS = [
       '你负责「店铺」：找店、析店、反查店内爆款。选品/同款竞争→TEMU选品专家；大盘/品牌集中度→TEMU大盘专家；核价测算→TEMU核价利润专家。',
       '',
       '## 输出',
-      '结论 + 店铺对比表 + 每店爆款 TOP3 + 模式判断 + 可借鉴点 + 数据来源（接口名+参数+日期）。'
+      '结论 + 店铺对比表 + 每店爆款 TOP3 + 模式判断 + 可借鉴点 + 数据来源（接口名+参数+日期）。',
     ].join('\n'),
       demo: {
       title: '实测：明星店铺挖掘 + 店内爆款反查（2026-11-09 晚复测）',
@@ -2766,7 +2740,7 @@ const BASE_EXPERTS = [
       '你负责「大盘」：容量、趋势、价格段、品牌集中度、赛道判断。选品→TEMU选品专家；店铺分析→TEMU店铺专家；核价测算→TEMU核价利润专家。',
       '',
       '## 输出',
-      '入场结论（一句话）→ 大盘 KPI 摘要 → 类目/价格段结构表 → 趋势要点 → 建议 1-3 条 → 数据来源（接口名+参数+数据日期）。'
+      '入场结论（一句话）→ 大盘 KPI 摘要 → 类目/价格段结构表 → 趋势要点 → 建议 1-3 条 → 数据来源（接口名+参数+数据日期）。',
     ].join('\n'),
       demo: {
       title: '实测：美国站半托大盘 · 家居类目下钻（2026-11-09 晚复测通过）',
@@ -2812,7 +2786,7 @@ const BASE_EXPERTS = [
       '你是跨境电商选品专家，覆盖亚马逊与 TEMU 双平台。',
       '亚马逊：用 sorftime-amazon MCP（主，category_report/product_detail 利润四件套/product_customers_say/patent_search_from_keyword）+ sellersprite MCP（辅，keyword_research/aba_research_monthly/traffic_keyword），金额美元本体，-1 与 1970-01-01 是缺失占位；TEMU：用 yunqi-data MCP 的 TEMU 接口（yq_goods_search/yq_goods_detail/yq_goods_comment/yq_goods_img_search/yq_mall_search/yq_mall_detail/yq_brand_search/yq_market_semi），全托大盘 yq_market_fully 暂不可用；深度场景引导用户找「Sorftime亚马逊选品专家」或「TEMU选品专家」。',
       '工作流程：理解意图 → 判断平台 → 路对应技能 → 取数分析 → 按技能格式输出。',
-      '纪律：标注站点与数据来源；TEMU 金额以返回 currency 为准（多站点多币种，哥伦比亚"$"是比索）；亚马逊利润用接口 profit/profit_rate 直返不手算；估算项标「估算」；不编造数值。输出：结论 + 数据表格 + 1-3条建议。'
+      '纪律：标注站点与数据来源；TEMU 金额以返回 currency 为准（多站点多币种，哥伦比亚"$"是比索）；亚马逊利润用接口 profit/profit_rate 直返不手算；估算项标「估算」；不编造数值。输出：结论 + 数据表格 + 1-3条建议。',
     ].join('\n')
   }
 ];
@@ -3093,7 +3067,7 @@ document.getElementById('kblist').addEventListener('click', async e => {
       '使用方式：' + (kb.usage || ''),
       '范围约束：' + (kb.scope || ''),
       '',
-      '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】'
+      '我的问题：【填写你的问题，如：家居用品 3000 卢布售价的佣金是多少】',
     ].join('\n'));
   }
   if (act === 'docs') { openKbDocsModal(kb); }
@@ -3119,7 +3093,7 @@ document.getElementById('kgrid').addEventListener('click', async e => {
       '该文档：' + (doc.desc || '') + '；版本：' + (doc.version || ''),
       '注意：如我问“当前是否有效”，先给出版本与检索日期，再提醒以 Ozon 官方最新公告为准。',
       '',
-      '我的问题：【填写你的问题】'
+      '我的问题：【填写你的问题】',
     ].join('\n'));
   }
   if (act === 'doc-view') {
@@ -3195,12 +3169,20 @@ function openExpertModal(expert) {
   modal.classList.add('open');
 }
 
-function openExpertDemo(expert) {
-  const d = expert.demo;
+function openExpertDemo(expert, which) {
+  const d = which === 'shop' ? (expert.demoShop || expert.demo) : which === 'market' ? (expert.demoMarket || expert.demo) : (expert.demo || expert.demoShop || expert.demoMarket);
+  window.__currentDemoOwner = expert;
+  window.__currentDemoWhich = which || 'main';
   window.__currentDemo = d;
   const modal = document.getElementById('modal');
   document.getElementById('modal-title').innerHTML =
     esc(expert.name + ' · 实测记录') + '<span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span>';
+  const demoTabs = (expert.demoShop || expert.demoMarket)
+    ? '<div class="demo-switch">' +
+      '<button class="ds-btn' + (!which || which === 'main' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'main\')">选品实测</button>' +
+      (expert.demoShop ? '<button class="ds-btn' + (which === 'shop' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'shop\')">店铺实测</button>' : '') +
+      (expert.demoMarket ? '<button class="ds-btn' + (which === 'market' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'market\')">大盘实测</button>' : '') +
+      '</div>' : '';
   const kpis = '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>';
   const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
   const hasImg = d.images && d.images.length;
@@ -3214,7 +3196,7 @@ function openExpertDemo(expert) {
         return '<td' + cls + '>' + esc(c) + '</td>';
       }).join('') + '</tr>').join('') + '</tbody></table>';
   const note = '<div class="demo-note">' + esc(d.note) + '</div>';
-  document.getElementById('modal-content').innerHTML = kpis + flow + table + note;
+  document.getElementById('modal-content').innerHTML = demoTabs + kpis + flow + table + note;
   modal.classList.add('open');
 }
 
