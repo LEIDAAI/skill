@@ -260,6 +260,86 @@
         "prompt": "三步：①traffic_keyword_stat看全景；②traffic_keyword只传asin+marketplace+order/page/size(带month/returnFields必空)；③total=0时降级traffic_extend(asinList,queryType=0,includeKeywords=词根)按父体变体池查关联流量份额。trafficPercentage=该词分给此ASIN的流量占比非内部占比。输出流量词表+打法判断。\n\n## 执行步骤\n1. stat全景统计\n2. keyword默认参数查明细(禁传month)\n3. 空结果降级extend变体池查询并说明\n4. 输出流量词表+打法判断+数据来源",
         "demo": "{\"title\":\"流量词反查：正例+坑复现+降级路径\",\"date\":\"2026-11-10\",\"kpis\":[\"正例B0H45MC3T2=2词\",\"坑复现B0HFJPW8PL带month=0\",\"降级extend=539词\",\"mahjong set变体池吃40.6%\"],\"flow\":[\"traffic_keyword(B0HFJPW8PL,带month) → total=0(坑复现)\",\"traffic_keyword(B0HFJPW8PL,默认参数) → 仍total=0\",\"traffic_keyword(B0H45MC3T2,默认参数) → 2词正常\",\"traffic_extend(asinList=[B0HFJPW8PL],queryType=0,includeKeywords=[mahjong]) → 539词\"],\"table\":{\"head\":[\"ASIN\",\"方式\",\"流量词\",\"关键数据\"],\"rows\":[[\"B0H45MC3T2\",\"keyword默认\",\"mahjong racks\",\"吃89.1%流量/自然位#27\"],[\"B0H45MC3T2\",\"keyword默认\",\"american mahjong\",\"吃10.9%流量\"],[\"B0HFJPW8PL父体池\",\"extend降级\",\"mahjong set\",\"池吃40.6%，B0H113JGS6单变体吃86.3%\"]]},\"note\":\"B0HFJPW8PL(麻将包90天表TOP1父体代表)ASIN级查询无流量词覆盖(新品词覆盖少)降级extend按父体池查得539词——降级路径有效。Majolicia变体矩阵垄断mahjong set 40.6%流量大词暂避。数据来源：traffic_keyword+traffic_extend 2026-11-10 实时调用。\"}"
       }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "expert:exp-temu-sel",
+      "action": "merge",
+      "summary": "TEMU旧4专家合并为单一选品专家，7技能路由（temu-expert-skill-map.ts）；核价/店铺/大盘并入为分支；12条实测纪律写入人设",
+      "snapshots": {
+        "prompt": "你是 TEMU 选品专家（yunqi-data TEMU 接口 + 1688 MCP）。路由：找品→skill-selection-search；竞品/图搜→skill-competitor-monitor；单品→skill-product-parse；店铺→skill-shop-analysis；大盘→skill-category-trend；利润/核价→skill-profit-calc；报告→skill-report-gen。串联顺序「大盘→搜索→深挖→利润→报告」。12条实测纪律：goods_search必传五参；goods_detail裁剪；币种三元组（哥伦比亚$=比索）；sales≥10万空≠没销量；market_fully降级聚合；mall_star筛选无效用star_seller_time核验；1688图搜必须1688 MCP；关键词类目收窄；一次调用禁止重复；成品表前相关性核查；反编造三条；中位数保留小数+≤5条摘要。托管模式与站点未指定先追问。",
+        "demo": "{\"title\":\"TEMU合并验收：7路由全通过\",\"date\":\"2026-11-11\",\"kpis\":[\"search 57→52款\",\"图搜distance 0.203\",\"评论基线allCount=1\",\"45店铺批量\",\"美国站家居$1.46亿\",\"核价五接口\",\"报告表格交付\"],\"flow\":[\"每路由真实接口调用，证据见temu-routing-acceptance.md\"],\"note\":\"7路由通过；market_fully走降级路径。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-selection-search",
+      "action": "create",
+      "summary": "创建TEMU选品搜索技能（麻将包60天实测demo）",
+      "snapshots": {
+        "prompt": "搜索TEMU商品：托管模式【全托/半托/都要】| 站点【211美国/76德国】| 类目【dict_lookup拿ID】| issued_date时间窗 | min_monthly_sales门槛。必传from/size/fuzzy/ware_house_type/sold_out；一次调用出结果；输出KPI+表格+≤5条摘要；全托披露站点不可验证。",
+        "demo": "{\"title\":\"实测：近60天跨境麻将包（全托+半托·美国211）\",\"date\":\"2026-11-09\",\"kpis\":[\"候选→成品 57→52款\",\"全托/半托 10/42\",\"价格 $4.60~29.31\",\"月销合计≈2180件\"],\"flow\":[\"追问确认托管与站点\",\"yq_dict_lookup：箱包=731\",\"yq_goods_search×2：issued_date 20260910~1109+min_monthly_sales=10 → 57款\",\"相关性核查剔除5款 → 52款\"],\"table\":[{\"#\":1,\"商品\":\"8个麻将垫收纳管\",\"价格\":\"$21.48\",\"月销\":311,\"模式\":\"半托\",\"店铺\":\"GlobalGoodsss\"},{\"#\":2,\"商品\":\"透明PU/PVC拉链收纳包\",\"价格\":\"$6.21\",\"月销\":192,\"模式\":\"半托\",\"店铺\":\"Wu Dii\"},{\"#\":3,\"商品\":\"麻将主题托特包\",\"价格\":\"$4.89\",\"月销\":179,\"模式\":\"全托(标签美国)\",\"店铺\":\"Aazhong\"}],\"note\":\"麻将包=美式麻将爱好者周边；76%新品美国标签；透明PVC包唯一双模式在跑。数据来源：yq_goods_search×2+yq_mall_search店铺反查（2026-11-09）。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-competitor-monitor",
+      "action": "create",
+      "summary": "创建TEMU竞品监控技能（原竞品调研并入；图搜demo）",
+      "snapshots": {
+        "prompt": "监控TEMU竞品：有图走yq_goods_img_search（distance<0.25基本同款+价格带统计）；有ID走goods_detail基准+goods_search扫新品。输出竞品画像+同款分布+竞争判断；1688找源走profit-calc不可混图搜。",
+        "demo": "{\"title\":\"实测：麻将垫收纳管主图反扫站内同款\",\"date\":\"2026-11-11\",\"kpis\":[\"命中1同款\",\"distance 0.203\",\"对方销量130件\"],\"flow\":[\"yq_goods_img_search(image=[TOP1主图URL],_want=3) → 1同款 distance=0.203 sales=130\"],\"table\":[{\"同款\":\"麻将垫收纳管(另店)\",\"distance\":0.203,\"销量\":130,\"判断\":\"基本同款已跟进\"}],\"note\":\"distance越小越像；img_search的_fields只认少数列。数据来源：yq_goods_img_search（2026-11-11）。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-product-parse",
+      "action": "create",
+      "summary": "创建TEMU商品解析技能（评论星级分布demo）",
+      "snapshots": {
+        "prompt": "解析TEMU商品：goods_detail必须_fields裁剪（9万字符）；goods_comment拿星级分布（region=211美区过滤）；输出单品画像+多国价格prices+趋势+口碑；缺失不补零。",
+        "demo": "{\"title\":\"实测：TOP1麻将垫收纳管评论基线\",\"date\":\"2026-11-11\",\"kpis\":[\"商品607217457663910\",\"评论总数1条\",\"5星×1\",\"上架34天\"],\"flow\":[\"yq_goods_comment(id=607217457663910,_fields=[allCount,score1..score5]) → allCount=1 score5=1\"],\"table\":[{\"星级\":\"5星\",\"数量\":1},{\"星级\":\"1~4星\",\"数量\":\"0（缺失=无，不补零）\"}],\"note\":\"月销311 vs 评论1：TEMU新品评论沉淀慢，评分不可作筛选依据。数据来源：yq_goods_comment（2026-11-11）。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-shop-analysis",
+      "action": "create",
+      "summary": "创建TEMU店铺分析技能（45店铺批量+明星店核验demo）",
+      "snapshots": {
+        "prompt": "分析TEMU店铺：yq_mall_search排序+pre_order筛Y2店；明星店=mall_star筛选无效→star_seller_time返回字段核验；mall_detail画像+opts类目占比；mall_ids反查爆款；批量取店名ids=[]一次拿全。",
+        "demo": "{\"title\":\"实测：麻将包店铺批量反查+标杆对照\",\"date\":\"2026-11-11\",\"kpis\":[\"45家店铺一次反查\",\"shiny party日销9134\",\"GlobalGoodsss单爆款店\"],\"flow\":[\"yq_mall_search(ids=[45个mall_id],_fields=[id,name]) → 44店名\",\"对照：shiny party 1705SKU/12.1万评论 vs GlobalGoodsss 87SKU/月销869\"],\"table\":[{\"店铺\":\"shiny party\",\"SKU\":1705,\"评论\":120921,\"日销\":9134,\"判断\":\"明星老店·节日礼品聚焦\"},{\"店铺\":\"GlobalGoodsss\",\"SKU\":87,\"评论\":16,\"日销\":46,\"判断\":\"新品单爆款店·TOP1贡献36%\"}],\"note\":\"单爆款集中度=311/869≈36%。数据来源：yq_mall_search（2026-11-11）。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-category-trend",
+      "action": "create",
+      "summary": "创建TEMU类目大盘技能（美国站家居下钻复测demo）",
+      "snapshots": {
+        "prompt": "分析TEMU类目大盘：yq_market_semi(area,optId)下钻六步（容量→趋势→类目结构→价格洼地→销量结构→品牌集中度）；brand_search用orderByColumn+_fields显式；全托market_fully不可用降级goods_search聚合；GMV美元；强制入场建议。",
+        "demo": "{\"title\":\"实测：美国站半托家居类目下钻（复测）\",\"date\":\"2026-11-11（数据日期2026-11-07）\",\"kpis\":[\"892.2万商品/19.41万店\",\"月销2602万件\",\"月GMV $1.46亿\",\"客单价≈$5.6\"],\"flow\":[\"yq_market_semi(area=美国站,optId=36) → stats+opt_stats(31个二级类目)\"],\"table\":[{\"维度\":\"商品数/店铺数\",\"数值\":\"892.2万/19.41万\"},{\"维度\":\"月销量/月GMV\",\"数值\":\"2602万件/$1.46亿\"},{\"维度\":\"动销店铺\",\"数值\":\"89091（45.9%）\"},{\"维度\":\"零销量商品\",\"数值\":\"639.8万（71.7%）\"},{\"维度\":\"价格洼地\",\"数值\":\"10-15$段 GMV $7.06亿\"}],\"note\":\"与11-09锚点（$1.51亿/2629.7万件）同量级口径稳定；数据日期11-07非当日须标注。数据来源：yq_market_semi（2026-11-11）。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-profit-calc",
+      "action": "create",
+      "summary": "创建TEMU利润测算技能（核价五接口demo，原核价专家并入）",
+      "snapshots": {
+        "prompt": "测算TEMU供货利润：售价实查禁止估；1688找源必须1688 MCP（image_search主/global辅偶发500）；ali_offer_sku_prices阶梯价；realtime_detail核资质（跨境专供>下游含temu）；全托=底线+倒推核价区间；半托=逐项成本+敏感性；估算项标注。",
+        "demo": "{\"title\":\"实测：德国站马桶清洁片供货核价全链路\",\"date\":\"2026-11-09\",\"kpis\":[\"TEMU售价€5.05德国站\",\"1688拿货¥2.5~3.5阶梯\",\"参考重65g/10片\",\"核价结论✅有空间\"],\"flow\":[\"yq_goods_detail(裁剪)：€5.05/日销2228\",\"image_search(1688)：3精准货源officialScore 0.74~0.80\",\"ali_offer_sku_prices：3件¥3.5/100件¥3.0/200件¥2.5\",\"ali_offer_realtime_detail：跨境专供+下游含temu\",\"测算：底线¥9.5/30片 vs 核价区间¥15.6~23.4 → 有空间\"],\"table\":[{\"测算项\":\"TEMU站内零售\",\"数值\":\"€5.05≈¥39\",\"口径\":\"接口实查汇率7.75标注\"},{\"测算项\":\"1688拿货万件级\",\"数值\":\"¥7.5/30片\",\"口径\":\"阶梯价实查≥200件档\"},{\"测算项\":\"全托供货价底线\",\"数值\":\"≈¥9.0~9.5/30片\",\"口径\":\"拿货+头程估+5%备损\"},{\"测算项\":\"倒推核价区间\",\"数值\":\"¥15.6~23.4\",\"口径\":\"零售40%~60%经验估算\"}],\"note\":\"1688详情页主要下游平台含temu=强信号。数据来源：yunqi+1688 MCP五接口联动（2026-11-09）。\"}"
+      }
+    },
+    {
+      "ts": "2026-11-11 00:55:27",
+      "target": "skill:skill-report-gen",
+      "action": "create",
+      "summary": "创建TEMU选品报告技能（终点站，麻将包决策报告demo）",
+      "snapshots": {
+        "prompt": "生成TEMU选品报告：串联大盘→候选（先追问托管/站点）→深挖→利润。输出：结论+口径披露/档位表/商品卡/风险/行动清单；数据来源+日期；反编造三条贯穿。",
+        "demo": "{\"title\":\"实测：麻将包选品决策报告\",\"date\":\"2026-11-09\",\"kpis\":[\"成品52款（57剔5）\",\"月销合计≈2180件\",\"美国标签约3/4\"],\"flow\":[\"追问→全托+半托/美国211\",\"检索+相关性核查→52款\",\"三条产品线观察\",\"出表格reports/temu-mahjong-bag-60d-us211-v2.html\"],\"table\":[{\"产品线\":\"麻将印花时尚包\",\"代表款\":\"托特包Aazhong\",\"价格\":\"$4.89\",\"月销\":179},{\"产品线\":\"透明PVC收纳包\",\"代表款\":\"Wu Dii款\",\"价格\":\"$6.21\",\"月销\":192},{\"产品线\":\"麻将垫收纳管\",\"代表款\":\"GlobalGoodsss 8件装\",\"价格\":\"$21.48\",\"月销\":311}],\"note\":\"小众高粘性爱好者品类（美式麻将），圣诞礼物季驱动；月销200~320即细分头部；结论仅基于52款样本。\"}"
+      }
     }
   ]
 }
