@@ -3207,7 +3207,7 @@ document.getElementById('esearch').addEventListener('input', e => { curExpertSea
 let wsExpert = null, wsTab = 'prompt', wsSkillIdx = -1, wsSkillView = 'prompt';
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function openWorkbench(expert, tab) {
-  wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = -1;
+  wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = (wsTab === 'skill' && (expert.skills || []).length) ? 0 : -1; wsSkillView = 'prompt';
   document.getElementById('ws-title').innerHTML = esc(expert.name) +
     ' <span class="demo-badge">' + esc((expert.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
     (expert.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
@@ -3271,12 +3271,12 @@ function renderWsBody() {
         d.table.rows.map((r, ri) => '<tr>' +
           (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
           r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
-      right.innerHTML = '<h4>📊 ' + esc(cur.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
+      right.innerHTML = subTabs + '<h4>📊 ' + esc(cur.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
         '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
         '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
         table + '<div class="demo-note">' + esc(d.note) + '</div>';
     } else {
-      right.innerHTML = '<h4>⚡ ' + esc(cur.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>';
+      right.innerHTML = subTabs + '<h4>⚡ ' + esc(cur.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>';
     }
     return;
   }
