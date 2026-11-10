@@ -313,7 +313,7 @@
       <button class="btn btn-add" id="btn-add">＋ 添加技能</button>
       <button class="btn btn-mini" id="btn-export" title="导出自定义技能为 JSON">导出</button>
       <button class="btn btn-mini" id="btn-import" title="从 JSON 导入自定义技能">导入</button>
-      <input type="file" id="file-import" accept=".json" style="display:none">
+      <input type="file" id="file-import" accept=".json,.zip" style="display:none">
     </div>
   </div>
 
@@ -1104,7 +1104,7 @@ function renderGrid() {
         '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span></div>' +
         '<span class="badge ' + (built ? 'badge-built' : 'badge-plan') + '">' + (built ? '✓ 已建成' : '待建 · 指令可用') + '</span>' +
       '</div>' +
-      '<h3>' + esc(s.name) + '</h3>' +
+      '<h3>' + (s.isZip ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 7px;margin-right:6px;vertical-align:2px">📦包</span>' : '') + esc(s.name) + '</h3>' +
       (s.slug || s.version ? '<div class="card-sub">' +
         (s.slug ? '<span class="slug">' + esc(s.slug) + '</span>' : '') +
         (s.version ? '<span>' + esc(s.version) + '</span>' : '') +
@@ -1192,7 +1192,8 @@ document.getElementById('grid').addEventListener('click', e => {
   }
   if (act === 'del') {
     customSkills = customSkills.filter(s => s.id !== skill.id);
-    localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
+    try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); }
+      catch (se) { /* 存储超限：把 zip 技能的文件内容剔除再存 */ customSkills.forEach(sk => { if (sk.isZip) { sk.zipData = {}; sk.zipFiles = (sk.zipFiles||[]).map(f => ({...f, truncated: true})); } }); try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); toast('⚠️ 本地存储超限，已保留技能元信息但文件内容需重新导入查看'); } catch (e2) {} }
     refreshAll(); toast('已删除');
   }
 });
@@ -1262,6 +1263,8 @@ document.getElementById('btn-import').addEventListener('click', () => document.g
 document.getElementById('file-import').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
+  if (file.name.toLowerCase().endsWith('.zip')) { importSkillZip(file); e.target.value = ''; return; }
+  /* 原有 JSON 逻辑保持 */
   const reader = new FileReader();
   reader.onload = () => {
     try {
@@ -1280,6 +1283,84 @@ document.getElementById('file-import').addEventListener('change', e => {
 /* ---- init ---- */
 refreshAll();
 
+/* ================= 技能包(.zip)导入 ================= */
+async function importSkillZip(file) {
+  try {
+    if (typeof fflate === 'undefined') { await loadFflate(); }
+    const buf = new Uint8Array(await file.arrayBuffer());
+    const files = fflate.unzipSync(buf);
+    const readText = name => { const u = files[name]; return u ? new TextDecoder().decode(u) : null; };
+    const manifestRaw = readText('manifest.yaml');
+    const skillMd = readText('SKILL.md');
+    if (!manifestRaw && !skillMd) { toast('压缩包里没有 manifest.yaml 或 SKILL.md'); return; }
+    const man = manifestRaw ? parseSimpleYaml(manifestRaw) : {};
+    // frontmatter description
+    let fmDesc = '';
+    if (skillMd) {
+      const fm = skillMd.match(/^---\n[\s\S]*?\n---/);
+      if (fm) { const dm = fm[0].match(/description:\s*"([^"]+)"/) || fm[0].match(/description:\s*(.+)/); if (dm) fmDesc = dm[1]; }
+    }
+    const name = man.display_name || man.name || file.name.replace(/\.zip$/i, '');
+    const id = 'zip-' + (man.slug || man.name || Date.now());
+    if (allSkills().some(s => s.id === id)) { toast('该技能包已导入过（' + name + '）'); return; }
+    const fileList = Object.keys(files).filter(n => !n.endsWith('/'));
+    const platforms = [];
+    const depStr = JSON.stringify(man.dependencies || {});
+    if (/1688|dld/i.test(depStr + name)) platforms.push('1688');
+    if (/ozon/i.test(depStr + name)) platforms.push('ozon');
+    if (/amazon|亚马逊/i.test(depStr + name)) platforms.push('amazon');
+    if (/temu/i.test(depStr + name)) platforms.push('temu');
+    const skill = {
+      id, custom: true, isZip: true,
+      name, desc: man.description || fmDesc || '',
+      platforms: platforms.length ? platforms : ['ozon'],
+      scenario: 'product-selection',
+      status: 'built',
+      version: man.version || '1.0.0',
+      author: (man.author && man.author.name) || 'zip-import',
+      prompt: skillMd || ('（包内无 SKILL.md）'),
+      skillMd: skillMd || undefined,
+      zipFiles: fileList.map(n => ({ name: n, size: files[n].length })),
+      zipData: Object.fromEntries(fileList.map(n => [n, new TextDecoder().decode(files[n]).slice(0, 200000)]))
+    };
+    customSkills.push(skill);
+    localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
+    refreshAll();
+    toast('✓ 技能包已导入：' + name + '（' + fileList.length + ' 个文件）');
+  } catch (err) { toast('zip 解析失败：' + err.message); }
+}
+let _fflateLoading = null;
+function loadFflate() {
+  if (_fflateLoading) return _fflateLoading;
+  _fflateLoading = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/fflate/0.8.2/fflate.min.js';
+    sc.onload = res; sc.onerror = () => rej(new Error('fflate 加载失败（需联网）'));
+    document.head.appendChild(sc);
+  });
+  return _fflateLoading;
+}
+function parseSimpleYaml(text) {
+  const out = {};
+  let curKey = null;
+  text.split('\n').forEach(line => {
+    if (!line.trim() || line.trim().startsWith('#')) return;
+    const m = line.match(/^(\w+):\s*(.*)$/);
+    if (m && !line.startsWith(' ')) {
+      curKey = m[1];
+      const v = m[2].trim().replace(/^["']|["']$/g, '');
+      out[curKey] = v === '' ? {} : v;
+      return;
+    }
+    if (curKey && line.startsWith('  ') && out[curKey] && typeof out[curKey] === 'object') {
+      const m2 = line.trim().match(/^-\s*(\w+):\s*(.*)$/);
+      const m3 = line.trim().match(/^(\w+):\s*(.*)$/);
+      if (m2) out[curKey][m2[1]] = m2[2].trim().replace(/^["']|["']$/g, '');
+      else if (m3 && out[curKey][m3[1]] === undefined) out[curKey][m3[1]] = m3[2].trim().replace(/^["']|["']$/g, '');
+    }
+  });
+  return out;
+}
 /* ================= 专家库 ================= */
 const EXPERTS_LS_KEY = 'dld_experts_custom_v1';
 let customExperts = [];
@@ -3431,6 +3512,11 @@ function renderSkillWs() {
   document.getElementById('ws-mid').innerHTML =
     ((s.steps || []).length ? '<div class="ws-sec">执行步骤</div>' + s.steps.map((st, i) =>
       '<div class="ws-desc" style="padding:7px 10px;background:#f6f8fb;border-radius:8px;margin-bottom:6px;font-size:12.5px"><b style="color:#2563eb">' + (i + 1) + '.</b> ' + esc(st) + '</div>').join('') : '') +
+    ((s.zipFiles || []).length ? '<div class="ws-sec">📦 包内文件（' + s.zipFiles.length + '，点击查看）</div>' +
+      s.zipFiles.map((f, i) =>
+        '<div class="ws-skill' + (window.__wsZipSel === f.name ? ' on' : '') + '" onclick="wsShowZipFile(' + i + ')">' +
+        '<b style="font-family:Consolas,monospace;font-size:12px">' + esc(f.name) + '</b>' +
+        '<div class="ws-tools"><span class="ws-tool">' + (f.size > 1024 ? (f.size / 1024).toFixed(1) + 'KB' : f.size + 'B') + '</span></div></div>').join('') : '') +
     (s.scenario ? '<div class="ws-sec">适用场景</div><span class="ws-abil">' + esc(s.scenario) + '</span>' : '') +
     (s.outputExample ? '<div class="ws-sec">输出示例</div><div class="ws-code" style="max-height:280px">' + esc(s.outputExample) + '</div>' : '');
   /* 右栏：提示词或实测 */
@@ -3451,6 +3537,22 @@ function renderSkillWs() {
   } else {
     right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
   }
+}
+let __wsZipSel = null;
+function wsShowZipFile(i) {
+  const s = wsExpert;
+  const f = (s.zipFiles || [])[i];
+  if (!f) return;
+  __wsZipSel = f.name;
+  renderSkillWs();
+  const right = document.getElementById('ws-right');
+  const content = (s.zipData || {})[f.name] || '（文件内容为空或为二进制）';
+  const isHtml = /\.html?$/i.test(f.name);
+  const isMd = /\.md$/i.test(f.name) || f.name === 'SKILL.md';
+  right.innerHTML = '<h4>📦 ' + esc(f.name) + ' <span class="demo-badge">' + (f.size > 1024 ? (f.size / 1024).toFixed(1) + 'KB' : f.size + 'B') + '</span></h4>' +
+    '<div class="ws-code">' + esc(content) + '</div>' +
+    (isHtml ? '<div class="demo-note">HTML 文件：内容已转义显示。可在浏览器直接打开查看渲染效果。</div>' : '') +
+    (isMd ? '<div class="demo-note">Markdown 文件。</div>' : '');
 }
 /* 知识库工作台渲染 */
 async function renderKbWs() {
