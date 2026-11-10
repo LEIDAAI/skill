@@ -229,6 +229,11 @@
   .ds-btn { border: 1px solid #d8dee8; background: #fff; color: #47536b; border-radius: 8px; padding: 5px 12px; font-size: 12px; cursor: pointer; }
   .ds-btn.on { background: #2563eb; color: #fff; border-color: #2563eb; }
   .ds-btn:hover:not(.on) { border-color: #2563eb; color: #2563eb; }
+  .eskill-wrap { margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+  .eskill-label { font-size: 11px; color: #8592a6; margin-right: 2px; }
+  .eskill-chip { display: inline-flex; align-items: center; gap: 3px; border: 1px solid #dbeafe; background: #f0f6ff; color: #1d4ed8; border-radius: 999px; padding: 2px 10px; font-size: 11.5px; cursor: pointer; transition: background .15s, border-color .15s; }
+  .eskill-chip:hover { background: #dbeafe; border-color: #93c5fd; }
+  .eskill-chip.dim { background: #f4f5f7; color: #9aa3b2; border-color: #e5e8ee; cursor: default; }
   .demo-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; cursor: zoom-in; background: #eef1f6; display: block; }
   #hub-img-preview { display:none; position:fixed; z-index:10000; pointer-events:none; width:300px; height:300px; padding:10px; background:#fff; border-radius:14px; box-shadow:0 10px 40px rgba(15,23,42,.28); }
   #hub-img-preview img { width:100%; height:100%; object-fit:contain; border-radius:8px; background:#f6f8fc; display:block; }
@@ -2833,7 +2838,13 @@ function renderEGrid() {
       '<h3>' + esc(x.name) + '</h3>' +
       '<div class="desc">' + esc(x.desc || '') + '</div>' +
       (abil ? '<div style="margin-top:2px">' + abil + '</div>' : '') +
-      (x.skills && x.skills.length ? '<div class="ver">绑定技能：' + esc(x.skills.join('、')) + '</div>' : '') +
+      (x.skills && x.skills.length ? '<div class="eskill-wrap"><span class="eskill-label">绑定技能 ' + x.skills.length + '</span>' +
+        x.skills.map(sn => {
+          const known = allSkills().some(s => s.name === sn);
+          return known
+            ? '<button class="eskill-chip" data-eskill="' + esc(sn) + '" title="点击查看该技能">⚡ ' + esc(sn) + '</button>'
+            : '<span class="eskill-chip dim" title="技能待建">⚡ ' + esc(sn) + '</span>';
+        }).join('') + '</div>' : '') +
       '<div class="card-actions">' +
         '<button class="btn-solid" data-eaction="copy-sys">📋 复制提示词</button>' +
         (x.demo ? '<button class="btn-plain" data-eaction="demo">📊 实测</button>' : '') +
@@ -3212,6 +3223,20 @@ document.addEventListener('click', e => {
   const ri = Array.prototype.indexOf.call(tbody.children, tr);
   const url = (d.linkUrls || [])[ri];
   if (url) window.open(url, '_blank');
+});
+
+
+document.getElementById('egrid').addEventListener('click', e => {
+  const chip = e.target.closest('.eskill-chip[data-eskill]');
+  if (!chip) return;
+  const name = chip.dataset.eskill;
+  switchView('skills');
+  setTimeout(() => {
+    const box = document.getElementById('search');
+    if (box) { box.value = name; box.dispatchEvent(new Event('input')); box.focus(); }
+    const target = document.querySelector('#grid .card h3');
+    if (target) target.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 60);
 });
 
 document.getElementById('egrid').addEventListener('click', e => {
