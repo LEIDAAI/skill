@@ -48,7 +48,7 @@ export const a1688Expert = {
   disciplines: `# 平台实测纪律（2026-11-10至2026-11-11；两轮数据不可混为同一时点）
 1. 只使用1688接口和用户提供的假设；样本排序/榜单日期/监控池各有独立口径，抽样不等于全量；totalCount是原始查询命中数，不是筛后目标商品数。上一轮普通检索10000/跨境67与本轮普通7250/跨境4条件和调用时间不同，不作占比比较。
 2. 参数：普通/跨境搜索与商品榜使用req，趋势新品和监控列表使用request，新品request.titleTags在本MCP schema必传，详情和SKU使用req.offerId字符串，店铺分析使用顶层shopUrl，图搜req.imageUrls只能含1张图。beginOfferCreateTime/endOfferCreateTime为yyyy-MM-dd，cycle为字符串'7'/'30'；商品月榜pageType=3、date为当月第一天，周榜pageType=2且date为对应周日。关键词与sortField组合在2026-11-11月榜复测成功；遇空先查关键词精确匹配、日期和门槛，仅排查排序影响时移除排序复查，不能把空归咎于排序。beginOrderCount为周期笔数、beginSaleCount为周期件数，不能用累计字段beginOrdersCount/beginSalesCount替换。shopScreen需营业执照全名；店铺榜shop_rank_list历史返回空，找店改按商品结果shopUrl核验。
-3. 标题、levelName类目与规格联合去噪：磁吸收纳盒可能混入手机配件、厨房置物架，桌面收纳盒可能混入笔筒、纸巾盒、饭盒；只有核实目标用途后才纳入候选。跨境标签只表明货源标签，不保证适配目标市场。code 200且total=0/list=[]是当前条件下正常空结果，先核查精确词searchType=3及硬条件；只有用户同意才扩大范围，不能称额度或数据源故障。本轮未验证额度和整体数据源故障。
+3. 标题、levelName类目、主图、规格与详情联合去噪：磁吸收纳盒可能混入手机配件、厨房置物架；麻将包可能是女士腋下包、主题小袋或实际能装牌架的套装。化妆包类目也可能包含真实麻将牌袋，不能仅凭类目剔除。仅有MAHJ印字、无尺寸和牌具结构证据时标待核；小骰子袋或实际展示化妆品的款不得称整套麻将牌包。跨境标签不保证目标市场适配。code 200且total=0/list=[]是当前条件下正常空结果；504是接口超时，不归零或编造候选。
 4. 1688金额按返回人民币口径写¥；orderCount是周期笔数、saleQuantity是周期件数、salesVolume是预估销售额，不把大量件数当大量订单。列表price、quantityPrices及SKU priceRanges是不同报价层，展示价不等于该采购量的实际结算价。offerRepurchaseRate存在小数与百分数两种表示，转换前核对口径；监控池monthSalesVolume单位未核实，原样保留；服务指标以原始小数展示，不臆断优劣。
 5. SKU 与阶梯报价不能混用：白色磁吸166*122 skuId 5251111954228参考¥4.6；无磁吸166*122 skuId 5949219410490参考¥4；500件起¥4的priceRanges不能当有磁吸SKU单价。未核定采购量、运费与结算价前不称实际利润。
 6. 单品近30天数据与自然月数据窗口不同；2026-10月与09月可并列比较，但不得把不同时间窗数值直接当订单增幅；trend为relative/normalized，y值不是绝对订单。无完整趋势序列不下整体涨跌结论。
