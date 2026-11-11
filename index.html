@@ -3945,7 +3945,9 @@ document.getElementById('esearch').addEventListener('input', e => { curExpertSea
 let wsExpert = null, wsTab = 'prompt', wsSkillIdx = -1, wsSkillView = 'prompt';
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function openWorkbench(expert, tab) {
-  wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = (wsTab === 'skill' && (expert.skills || []).length) ? 0 : -1; wsSkillView = 'prompt';
+  wsMode = 'expert'; wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = (wsTab === 'skill' && (expert.skills || []).length) ? 0 : -1; wsSkillView = 'prompt';
+  window.__wsVerSel = null;
+  _wsAutoLatestVersion = wsTab === 'prompt';
   document.getElementById('ws-title').innerHTML = esc(expert.name) +
     ' <span class="demo-badge">' + esc((expert.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
     (expert.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
@@ -3981,7 +3983,7 @@ function appendVersion(target, action, summary) {
   return _versionsCache;
 }
 let _wsVerList = [];
-let _wsAutoLatestSkillVersion = false;
+let _wsAutoLatestVersion = false;
 function renderWsVersions(targetPrefix) {
   const boxId = 'ws-ver-' + Math.random().toString(36).slice(2, 8);
   window.__wsVerBoxId = boxId;
@@ -3993,9 +3995,10 @@ function renderWsVersions(targetPrefix) {
     const list = (v.entries || []).filter(e => e.target === targetPrefix)
       .sort((a, b) => String(b.ts).localeCompare(String(a.ts))).slice(0, 8);
     _wsVerList = list;
-    const selectLatest = _wsAutoLatestSkillVersion && wsMode === 'skill' && targetPrefix === 'skill:' + wsExpert.id;
+    const activeTarget = wsMode === 'kb' ? 'kb:' + wsKb.id : wsMode + ':' + wsExpert.id;
+    const selectLatest = _wsAutoLatestVersion && targetPrefix === activeTarget;
     if (selectLatest) {
-      _wsAutoLatestSkillVersion = false;
+      _wsAutoLatestVersion = false;
       if (list.length) window.__wsVerSel = list[0].ts + '|' + list[0].action;
     }
     box.innerHTML = list.length ? list.map((e, i) =>
@@ -4023,8 +4026,18 @@ function wsRenderVersionContent(e) {
   /* 右侧显示所选版本的快照 */
   const right = document.getElementById('ws-right');
   const snap = e.snapshots;
-  if (!snap) {
-    right.innerHTML = '<h4>版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + '</h4><div class="ws-code">该记录没有内容快照（早期记录仅摘要）。完整历史可查 git 仓库：git log。</div>';
+  if (!snap || !(snap.prompt || snap.skillMd || snap.demo)) {
+    const notice = '<h4>版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + '</h4>' +
+      '<div class="demo-note">该版本记录只有摘要，没有保存当时的内容。下方展示的是当前内容，不能代表该历史版本。</div>';
+    if (wsMode === 'kb') {
+      const doc = (wsKb.docs || [])[wsKbDocIdx];
+      right.innerHTML = notice + '<div class="ws-code">' + (doc ? '正在读取当前文档…' : '暂无文档') + '</div>';
+      if (doc) fetch(doc.name, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(); return r.text(); })
+        .then(text => { if (window.__wsVerSel === e.ts + '|' + e.action) right.innerHTML = notice + '<div class="demo-sec">当前文档：' + esc(doc.name) + '</div><div class="ws-code">' + esc(text) + '</div>'; })
+        .catch(() => { if (window.__wsVerSel === e.ts + '|' + e.action) right.innerHTML = notice + '<div class="ws-code">当前文档加载失败</div>'; });
+    } else {
+      right.innerHTML = notice + '<div class="ws-code">' + esc(wsMode === 'expert' ? wsExpert.sysPrompt || '暂无人设内容' : wsExpert.prompt || '暂无技能内容') + '</div>';
+    }
     return;
   }
   let htmlOut = '<h4>📸 版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + ' <span class="demo-badge">版本快照</span></h4>';
@@ -4049,7 +4062,7 @@ function renderWsTabs() {
   document.getElementById('ws-tabs').innerHTML = tabs.map(t =>
     '<button class="ws-tab' + (wsTab === t[0] ? ' on' : '') + '" onclick="setWsTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
 }
-function setWsTab(t) { wsTab = t; wsSkillView = 'prompt'; if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0; renderWsTabs(); renderWsBody(); }
+function setWsTab(t) { wsTab = t; wsSkillView = 'prompt'; window.__wsVerSel = null; if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0; renderWsTabs(); renderWsBody(); }
 function renderWsLeft() {
   const e = wsExpert;
   document.getElementById('ws-left').innerHTML =
@@ -4135,18 +4148,18 @@ function wsOpenGeneric(mode, obj, tab) {
   if (mode === 'skill') {
     wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
     window.__wsVerSel = null;
-    _wsAutoLatestSkillVersion = !isA1688Skill(obj) && (!tab || tab === 'prompt');
+    _wsAutoLatestVersion = !tab || tab === 'prompt';
     wsTab = tab || 'prompt';
     setWsTabGeneric(wsTab);
   }
-  else if (mode === 'kb') { wsKb = obj; wsKbDocIdx = obj.docs && obj.docs.length ? 0 : -1; renderKbWs(); }
+  else if (mode === 'kb') { wsKb = obj; wsKbDocIdx = obj.docs && obj.docs.length ? 0 : -1; window.__wsVerSel = null; _wsAutoLatestVersion = true; renderKbWs(); }
   document.getElementById('ws-mask').classList.add('open');
   document.getElementById('ws').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function setWsTabGeneric(t) {
   /* 切换视图后展示该视图内容，下次打开工作台再默认选最新版本。 */
-  if (wsTab !== t) { window.__wsVerSel = null; _wsAutoLatestSkillVersion = false; }
+  if (wsTab !== t) { window.__wsVerSel = null; _wsAutoLatestVersion = false; }
   wsTab = t;
   renderSkillWs();
 }
@@ -4347,6 +4360,8 @@ async function renderKbWsDoc() {
   const midEl = document.getElementById('ws-mid');
   const cards = midEl.querySelectorAll('.ws-skill');
   cards.forEach((c, i) => c.classList.toggle('on', i === wsKbDocIdx));
+  const selected = _wsVerList.find(e => window.__wsVerSel === e.ts + '|' + e.action && e.target === 'kb:' + kb.id);
+  if (selected) { wsRenderVersionContent(selected); return; }
   right.innerHTML = '<h4>📄 ' + esc(doc.name) + ' <span class="demo-badge">' + esc(doc.size || '') + '</span></h4><div class="ws-code">加载中…</div>';
   let t;
   try {
@@ -4356,6 +4371,7 @@ async function renderKbWsDoc() {
   } catch (e) {
     t = '（加载失败：请通过线上版访问，或把 ' + doc.name + ' 放在与页面同目录）';
   }
+  if (window.__wsVerSel || wsKb !== kb || wsKbDocIdx !== (kb.docs || []).indexOf(doc)) return;
   right.innerHTML = '<h4>📄 ' + esc(doc.name) + ' <span class="demo-badge">' + esc(doc.size || '') + '</span>' + (doc.version ? ' <span class="demo-badge">' + esc(doc.version) + '</span>' : '') + '</h4><div class="ws-code">' + esc(t) + '</div>';
 }
 function openExpertModal(expert) {

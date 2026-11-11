@@ -24,7 +24,7 @@
     },
     {
       "ts": "2026-11-10 17:20:00",
-      "target": "kb:ozon-fee-logistics",
+      "target": "kb:kb-ozon-fee-logistics",
       "action": "ui",
       "summary": "知识库改工作台三栏视图"
     },
