@@ -370,6 +370,12 @@
       "target": "expert:exp-ss-amazon-keyword-v2",
       "action": "create",
       "summary": "卖家精灵亚马逊关键词专家v2上线（4技能路由）"
+    },
+    {
+      "ts": "2026-11-11 10:29:25",
+      "target": "skill:zip-dld-sales-surge-new",
+      "action": "create",
+      "summary": "用户zip导入的「近30天销量飙升新爆款」固化为内置技能（11文件含SKILL.md/模板/脚本）"
     }
   ]
 }
