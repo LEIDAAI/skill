@@ -1349,8 +1349,8 @@ let hubSyncToken = '';
 let hubSyncQueue = Promise.resolve();
 function allSkills() {
   const byId = new Map(BASE_SKILLS.map(s => [s.id, s]));
-  sharedSkills.forEach(s => byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })));
-  customSkills.forEach(s => { if (!byId.has(s.id) || skillSyncStates.has(s.id)) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
+  sharedSkills.forEach(s => { if (!isA1688Skill(s)) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
+  customSkills.forEach(s => { if (!isA1688Skill(s) && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
   return [...byId.values()].sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
 }
 function setSyncLabel(text, detail) {
@@ -1602,7 +1602,15 @@ document.getElementById('grid').addEventListener('click', e => {
   const skill = allSkills().find(s => s.id === card.dataset.id);
   if (!skill) return;
   const act = btn.dataset.action;
-  if (act === 'copy') copyText(skill.prompt || '');
+  if (act === 'copy') {
+    if (!isA1688Skill(skill)) copyText(skill.prompt || '');
+    else if (!a1688DefinitionsReady) toast('1688 技能内容正在加载，请稍后再复制');
+    else loadA1688SkillDocument(skill).then(text => {
+      if (text) copyText(skill.prompt);
+      else toast('1688 技能全文加载失败，暂不能复制');
+    });
+    return;
+  }
   if (act === 'archive' && skill.archiveBase64) {
     const bytes = Uint8Array.from(atob(skill.archiveBase64), c => c.charCodeAt(0));
     const url = URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }));
@@ -3559,7 +3567,7 @@ const BASE_EXPERTS = [
 // 已合并的平台只展示当前专家；历史定义留作版本参考，不再混入导航。
 const ACTIVE_EXPERT_SKILLS = {
   'exp-ozon-sel': null,
-  'exp-1688-sel-v2': ['skill-1688-conditional-search', 'skill-1688-billboard', 'skill-1688-new-products', 'skill-1688-image-search', 'skill-1688-product-deep-dive', 'skill-1688-shop-verification', 'skill-1688-monitor-read', 'skill-1688-profit-scenario'],
+  'exp-1688-sel': ['skill-1688-conditional-search', 'skill-1688-billboard', 'skill-1688-new-products', 'skill-1688-image-search', 'skill-1688-product-deep-dive', 'skill-1688-shop-verification', 'skill-1688-monitor-read', 'skill-1688-profit-scenario'],
   'exp-temu-sel-v2': ['skill-selection-search', 'skill-competitor-monitor', 'skill-product-parse', 'skill-shop-analysis', 'skill-category-trend', 'skill-profit-calc', 'skill-report-gen'],
   'exp-amazon-sel-v2': ['skill-amazon-selection-search', 'skill-amazon-competitor', 'skill-amazon-keyword', 'skill-amazon-category-trend', 'skill-amazon-product-parse', 'skill-amazon-profit-calc', 'skill-amazon-report-gen'],
   'exp-ss-amazon-keyword-v2': ['skill-ss-kw-mine', 'skill-ss-kw-conversion', 'skill-ss-kw-trend', 'skill-ss-kw-traffic']
@@ -4092,7 +4100,7 @@ function renderWsBody() {
         '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
         table + '<div class="demo-note">' + esc(d.note) + '</div>';
     } else {
-      right.innerHTML = subTabs + '<h4>⚡ ' + esc(cur.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>';
+      right.innerHTML = subTabs + '<h4>⚡ ' + esc(cur.name) + (isA1688Skill(cur) ? ' · 完整执行规范（SKILL.md）' : ' · 调用提示词') + '</h4><div class="ws-code">' + esc(isA1688Skill(cur) && !cur.skillMd ? '正在读取完整技能文档…' : cur.prompt || '（未配置）') + '</div>';
     }
     return;
   }
@@ -4127,7 +4135,7 @@ function wsOpenGeneric(mode, obj, tab) {
   if (mode === 'skill') {
     wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
     window.__wsVerSel = null;
-    _wsAutoLatestSkillVersion = !tab || tab === 'prompt';
+    _wsAutoLatestSkillVersion = !isA1688Skill(obj) && (!tab || tab === 'prompt');
     wsTab = tab || 'prompt';
     setWsTabGeneric(wsTab);
   }
@@ -4147,9 +4155,88 @@ function closeWorkbenchGeneric() {
   document.getElementById('ws').classList.remove('open');
   document.body.style.overflow = '';
 }
+/* 1688 的映射和 SKILL.md 是线上调用指令的事实源，避免内嵌卡片随其他平台更新回退。 */
+let a1688DefinitionsReady = false;
+let a1688DefinitionsError = '';
+const a1688DocumentRequests = new Map();
+function isA1688Skill(skill) { return /^skill-1688-/.test(skill && skill.id || ''); }
+function formatA1688Demo(demo, pending) {
+  const table = demo.table || [];
+  const head = [...new Set(table.flatMap(row => Object.keys(row)))];
+  return {
+    title: demo.title,
+    date: demo.date,
+    kpis: (demo.kpis || []).map((value, index) => ({ label: '指标 ' + (index + 1), v: value })),
+    flow: demo.flow || [],
+    table: { head, rows: table.map(row => head.map(key => row[key] == null ? '—' : row[key])) },
+    note: (demo.note || '') + (pending ? ' 本轮三类触发待验；此处仅展示历史单路径证据。' : ''),
+    source: demo.source || ''
+  };
+}
+async function loadA1688SkillDocument(skill) {
+  if (skill.skillMd) return skill.skillMd;
+  if (a1688DocumentRequests.has(skill.id)) return a1688DocumentRequests.get(skill.id);
+  const request = fetch('./1688-skills/' + encodeURIComponent(skill.id) + '/SKILL.md', { cache: 'no-cache' })
+    .then(response => {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      return response.text();
+    }).then(text => {
+      if (!text.includes('# 1688')) throw new Error('技能文档内容不完整');
+      skill.skillMd = text;
+      skill.prompt = text.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '').trim();
+      skill.a1688DocumentError = '';
+      refreshAll();
+      if (wsExpert && wsExpert.id === skill.id && wsTab === 'prompt' && !window.__wsVerSel) renderSkillWs();
+      if (wsExpert && wsMode === 'expert' && wsTab === 'skill' && wsExpert.skillIds && wsExpert.skillIds[wsSkillIdx] === skill.id) renderWsBody();
+      return text;
+    }).catch(error => {
+      skill.a1688DocumentError = String(error.message || error);
+      if (wsExpert && wsExpert.id === skill.id && wsTab === 'prompt') renderSkillWs();
+      return null;
+    }).finally(() => a1688DocumentRequests.delete(skill.id));
+  a1688DocumentRequests.set(skill.id, request);
+  return request;
+}
+async function loadA1688Definitions() {
+  try {
+    const { a1688Expert, a1688Skills } = await import('./1688-expert-skill-map.js');
+    a1688Skills.forEach((definition, index) => {
+      const skill = BASE_SKILLS.find(item => item.id === definition.id);
+      if (!skill) return;
+      Object.assign(skill, {
+        name: definition.name, desc: definition.desc, triggers: definition.triggers,
+        tools: definition.tools, steps: definition.steps, prompt: definition.instructions,
+        demo: formatA1688Demo(definition.demo, index >= 3)
+      });
+    });
+    const expert = BASE_EXPERTS.find(item => item.id === a1688Expert.id);
+    if (expert) Object.assign(expert, {
+      name: a1688Expert.name, desc: a1688Expert.desc, greet: a1688Expert.greet,
+      abilities: a1688Expert.capabilities, refPrompts: a1688Expert.refPrompts,
+      skills: a1688Skills.map(skill => skill.name),
+      mcpTools: [...new Set(a1688Skills.flatMap(skill => skill.tools))],
+      sysPrompt: '你是' + a1688Expert.name + '。' + a1688Expert.desc + '\n\n' + a1688Expert.routing + '\n\n' + a1688Expert.disciplines
+    });
+    a1688DefinitionsReady = true;
+    a1688Skills.forEach(definition => {
+      const skill = BASE_SKILLS.find(item => item.id === definition.id);
+      if (skill) loadA1688SkillDocument(skill);
+    });
+    refreshAll(); refreshExperts();
+    if (wsExpert && wsExpert.id === a1688Expert.id && wsMode === 'expert') {
+      wsExpert = allExperts().find(item => item.id === a1688Expert.id);
+      renderWsLeft(); renderWsBody();
+    } else if (isA1688Skill(wsExpert)) renderSkillWs();
+  } catch (error) {
+    a1688DefinitionsError = String(error.message || error);
+    console.error('1688 映射加载失败:', error);
+    if (isA1688Skill(wsExpert)) renderSkillWs();
+  }
+}
 /* 技能工作台渲染 */
 function renderSkillWs() {
   const s = wsExpert;
+  if (isA1688Skill(s) && a1688DefinitionsReady && !s.skillMd && !s.a1688DocumentError && !a1688DocumentRequests.has(s.id)) loadA1688SkillDocument(s);
   document.getElementById('ws-title').innerHTML = '⚡ ' + esc(s.name) +
     ' <span class="demo-badge">' + esc((s.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
     (s.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
@@ -4164,7 +4251,7 @@ function renderSkillWs() {
     ((s.tools || []).length ? '<div class="ws-sec">内置工具</div><div>' + s.tools.map(t => '<span class="ws-tool" style="font-size:11.5px;padding:3px 9px;margin:2px 3px 2px 0;display:inline-block">' + esc(t) + '</span>').join('') + '</div>' : '') +
     (s.version ? '<div class="ws-sec">版本</div><div class="ws-desc">v' + esc(s.version) + ' · ' + esc(s.author || '') + '</div>' : '') +
     '<div class="ws-sec">操作</div>' +
-    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>' +
+    '<button class="btn-solid" style="width:100%"' + (isA1688Skill(s) && !s.skillMd ? ' disabled title="等待完整技能文档加载"' : '') + ' onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>' +
     '<div class="ws-sec">版本记录</div>' + renderWsVersions('skill:' + wsExpert.id);
   /* 中栏：执行步骤 + 输出说明 */
   document.getElementById('ws-mid').innerHTML =
@@ -4179,7 +4266,9 @@ function renderSkillWs() {
     (s.outputExample ? '<div class="ws-sec">输出示例</div><div class="ws-code" style="max-height:280px">' + esc(s.outputExample) + '</div>' : '');
   /* 右栏：提示词或实测 */
   const right = document.getElementById('ws-right');
-  if (wsTab === 'demo' && s.demo) {
+  if (isA1688Skill(s) && !a1688DefinitionsReady) {
+    right.innerHTML = '<h4>1688 技能内容</h4><div class="ws-code">' + esc(a1688DefinitionsError ? '映射加载失败：' + a1688DefinitionsError + '。请刷新页面后重试。' : '正在读取完整的 1688 技能映射…') + '</div>';
+  } else if (wsTab === 'demo' && s.demo) {
     const d = s.demo;
     const hasImg = d.images && d.images.length;
     const heads = (hasImg ? ['图'] : []).concat(d.table.head);
@@ -4192,8 +4281,10 @@ function renderSkillWs() {
       '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
       '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
       table + '<div class="demo-note">' + esc(d.note) + '</div>';
+  } else if (isA1688Skill(s) && !s.skillMd) {
+    right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 完整执行规范</h4><div class="ws-code">' + esc(s.a1688DocumentError ? 'SKILL.md 加载失败：' + s.a1688DocumentError + '。请刷新页面后重试。' : '正在读取 SKILL.md 的参数、执行步骤、实测和降级规则…') + '</div>';
   } else {
-    right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
+    right.innerHTML = '<h4>⚡ ' + esc(s.name) + (isA1688Skill(s) ? ' · 完整执行规范（SKILL.md）' : ' · 调用提示词') + '</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
   }
 }
 let __wsZipSel = null;
@@ -4460,6 +4551,7 @@ initializeHubSync();
     pv.style.left = x + 'px'; pv.style.top = y + 'px';
   });
 })();
+loadA1688Definitions();
 </script>
 </body>
 </html>
