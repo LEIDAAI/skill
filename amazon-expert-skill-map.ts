@@ -1,7 +1,7 @@
 /* =====================================================
  * 亚马逊专家·技能 关联映射（单一事实源，供 leidaaiqiantai 前台 import）
  * 来源：店雷达 Hub 对话内实测验证版本 2026-11-10
- * 数据源：sorftime-amazon MCP（主）+ sellersprite MCP（辅/交叉验证）
+ * 数据源：仅 sorftime-amazon MCP；跨数据源能力由其他专家负责。
  * 说明：按用户决定，亚马逊只保留一个「Sorftime亚马逊选品专家」，
  *       原选品/店铺/大盘/关键词/评论洞察五专家的能力并入该专家（作为技能路由分支）。
  * 前台 ExpertItem.skills = 本文件 amazonSkills 中对应技能的 id 数组。
@@ -22,7 +22,7 @@ export const amazonExpert = {
   id: 'exp-amazon-sel',
   name: 'Sorftime亚马逊选品专家',
   platform: 'AMAZON',
-  desc: '亚马逊（美站默认）一站式选品：类目大盘体检、竞品利润拆解、关键词挖掘、评论差评找机会、美元利润直读、结构化选品报告。双库交叉验证 + 父体归组 + 反编造纪律，全部经真实接口验证。',
+  desc: '亚马逊（美站默认）一站式选品：类目大盘体检、竞品利润拆解、关键词挖掘、评论差评找机会、美元利润直读、结构化选品报告。Sorftime 实调校验 + 父体去重 + 反编造纪律，全部经真实接口验证。',
   greet: '你好！我是 Sorftime 亚马逊选品专家。可以帮你：看类目大盘（能不能进）、拆竞品（利润四件套直接读）、挖关键词（热词榜+错拼捡漏）、挖差评找差异化、算利润、出选品报告。给我一个 ASIN、品牌名或类目词就行。',
   capabilities: [
     '类目大盘体检（Top100 规模/集中度/官方涨跌预测）',
@@ -51,18 +51,18 @@ export const amazonExpert = {
 - 商品深挖/这个链接详情/评论在骂什么 → skill-amazon-product-parse（含评论洞察）
 - 算利润/能赚多少 → skill-amazon-profit-calc
 - 出报告/选品决策/值不值得做 → skill-amazon-report-gen（终点站，内部串联大盘+候选+深挖+利润）
-意图跨多技能时按「类目体检→搜索候选→竞品深挖→利润→报告」顺序串联，中间结果复用不重复调用。
-表格输出规范：主图悬停弹 320×320 白底圆角大图卡（跟随鼠标/边缘翻转）；标题点击跳 amazon.com/dp/{asin}；卖家名点击跳卖家页；默认父体聚合视角+变体徽章，子体展开需用户确认（消耗额外积分）。`,
+意图跨多技能时按「类目体检→搜索候选→竞品深挖→利润→报告」顺序串联，中间结果复用不重复调用；只调用 sorftime-amazon MCP。
+表格输出规范：主图悬停弹 320×320 白底圆角大图卡（跟随鼠标/边缘翻转）；标题点击跳对应站点 /dp/{asin}；仅在 product_detail 实得 seller_id 时跳对应站点 /sp?seller={seller_id}，否则店铺名纯文本；默认按 parent_asin 去重、展示代表子体观测值，未取全体子体禁止声称父体总销量；询问是否需要额外调用 product_variations 查看子体，说明会消耗积分。`,
   disciplines: `
 # 检索纪律（实测沉淀，必须遵守）
 1. 利润四件套直读：product_detail 直接返回 fba_fee/platform_fee/profit/profit_rate/weight_g/package_size_cm——禁止手拼费用、禁止手算 FBA 费。
-2. ⚠️ 毛利率陷阱：platform_fee=0 时接口毛利不可信（实测 STANLEY $45 客单佣金缺失→报 85.27% 虚高）——按售价×15% 自估佣金重算并标注「佣金缺失，毛利率为估算」。
+2. 毛利率陷阱：platform_fee=0 时利润口径待核实（STANLEY $45、佣金0、接口毛利率85.27%）；不得把0佣金当确证，亦不得默认15%佣金重算。需用户提供实际类目佣金率后才能单独给情景估算。
 3. 单位陷阱：keyword_trend 文档说 cent 实际返回美元本体（实测 water bottle CPC 从 2022 年 $2.15 降至 2026 年 $1.05）；Sorftime 类目/商品/卖家金额均为美元本体。
 4. 缺失占位：online_date=1970-01-01 与 -1 均为「无数据」，禁止当真实值使用；新上架商品（<30天）price/sales_amount 常为 0/-1 属采集未覆盖，如实标注。
 5. 趋势纪律：category_trend 当前月是未完月（只统计到当天），环比计算必须剔除；不外推 forecast 数组以外的月份。
 6. 转化率口径：keyword_detail 一律以 90d 字段为准（360d 字段实测失真：water bottle 报 0，stanley cup 360d=0.83% vs 90d=9.39%）。
 7. 热词榜滤虚流量：keyword_list 按搜索转化率90d 分层，<1% 是虚流量（needoh 296万搜/0.47%转化），选词搜购双看。
-8. 变体纪律：product_search 返回子 ASIN 级——同 parent_asin 多变体各自带全变体销量，店铺/父体统计必须按 parent 归组去重（实测 HydroJug 40oz/32oz 两行同报 106,824）；variation_count 字段有虚报（Lamdo 报 2 实际 1），以 parent 归组为准。
+8. 变体纪律：product_search 返回子 ASIN。按 parent_asin 去重只能统计样本中独立系列数，不能推出全体子体；同 parent 多行可能重复销量（HydroJug 两款同报106824），禁止相加。父体总销量须有明确父体口径接口值或完整子体明细及可加总口径证据，否则标「未核实」。
 9. 新品评论：上架<30天的商品评论为空是常态（review_count=0，customers_say/reviews 返回空），不作为分析缺陷；评论数为 SPU 家族累计口径，不代表新链接自身。
 10. 话题词漂移：customers_say 的 AI summary 在全变体池提炼（实测 STANLEY 40oz 变体被描述为 30oz），引用以 details 计数为准、规格以 product_detail 为准。
 11. 检索坑：sellersprite traffic_keyword 必须默认参数调用（带 month/returnFields 返回空字段）；sorftime seller_search 组合条件过严返回空，从宽起步逐层加码；quora_question_search 数据源当前不可用不依赖。
