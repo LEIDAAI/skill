@@ -20,6 +20,10 @@ agent_created: true
 - 边界：`product_trend_new_list({request:{keyWord:'桌面收纳盒',searchType:4,titleTags:['289794'],cycle:'7',beginOfferCreateTime:'2026-11-04',endOfferCreateTime:'2026-11-11',beginPrice:3,endPrice:30,beginOrderCount:1,pageIndex:1,pageSize:3}})` → `code 200,total 326`。`1098691501379` 纸巾盒错类；`1095996431491` 化妆品盒1186件/3笔、展示¥4.5（用途待核）；`1098194653641` PP盒407件/3笔、展示¥5.5，但1—49件阶梯¥6.9。不同周期样本不直接推断趋势。
 - 正常空：`product_trend_new_list({request:{keyWord:'不存在的桌面收纳盒型号ZXQ999999',searchType:3,titleTags:['289794']}})`（仅已知显式参数）→ `code 200,total 0,list=[]`；只说明当前精确词与标签下没有结果。
 
+## 多条件组合补测（2026-11-11）
+
+- “找11月4—11日上架、7天至少1笔、¥10—80的跨境麻将包新品，按上架倒序”→ `product_trend_new_list({request:{keyWord:'跨境麻将包',searchType:4,titleTags:['289794'],cycle:'7',beginOfferCreateTime:'2026-11-04',endOfferCreateTime:'2026-11-11',beginPrice:10,endPrice:80,beginOrderCount:1,pageIndex:1,pageSize:5,sortField:'offerCreateTime',sortType:'desc'}})` → `code 200,total 15`。第一页5条中，`1097674918061` 三件套可结合旧主图详情保留为牌具收纳候选；`1097588418053` 是女士单肩包需排除；`1096744379448`/`1098719433945`/`1097177574983` 牌具容量待核。前述三件套返回 `totalSalesCount:2`、近7天2件/1笔，与搜索接口未返回累计件数字段的局限不同，应逐字段区分。`trend` 在商品上架前仍有归一化非零值，不能按那些点解释为真实销量；此轮未查所有新品标签。
+
 ## 分类与降级
 
 - `code 200,total 0,list=[]`：记**正常条件空**，检查精确词、标签、时间窗口和价格/笔数门槛；需要扩大条件时先获用户同意，保留原查询。非空而错类是**过滤问题**，不把 `total` 算作有效新品数。
