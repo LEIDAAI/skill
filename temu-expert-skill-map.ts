@@ -57,14 +57,14 @@ export const temuExpert = {
 2. goods_detail 返回可达 9 万字符，必须 _fields 裁剪（["id","title_zh","price","currency","sales","daily_sales","weekly_sales","monthly_sales","score","mall","prices"] 按需取）；prices=多国价格历史。
 3. 币种三元组：金额必须「数值+币种+站点」（region=45 哥伦比亚的 $ 是比索不是美元）；1688 侧一律 ¥；跨币种换算标注汇率与日期。
 4. sales≥100000 时日/周/月销量为空≠没销量，用 sales 总量或评论数佐证；不传时间窗默认近30天，输出注明。
-5. 全托大盘 market_fully 不可用（超时/code=-1）：如实告知，降级=goods_search(ware_house_type=0) 聚合估算并标「估算」。
-6. mall_star 作筛选参数会被接口忽略：明星店正确挖法=日销榜取头部→用返回字段 star_seller_time 核验；pre_order=1(Y2店)筛选可用。
-7. 1688 联动找货源必须用 1688 MCP（image_search 主引擎精准寻源/global_image_search 辅引擎广撒网偶发500重试即成），yunqi 的 yq_goods_img_search 是 TEMU 站内图搜（TEMU 竞争分析用），两者不可混。
-8. 关键词策略：中文完整商品词优先+类目ID（dict_lookup，绝不猜）双保险；标题词模糊匹配会稀释（"麻将包"直搜混入玩具包/化妆包），类目收窄是硬手段；多语言变体可分路搜但某路0条不影响其它路。
-9. 商品列表检索一次调用出结果，命中多少是多少，禁止同参数重复检索凑数；status 类异常不轮询。
-10. 成品表前必须核查候选相关性（看标题/类目），明确配件（肩带/卡牌夹/挂钩）剔除；相关性有歧义要披露，不声称全部精准相关。
-11. 反编造三条：抽样≠全量（totalCount 是原始命中不是清洗后可售数）；缺失≠0（null 原样标注不补零）；无趋势数据不下涨跌结论（created_at 只能称发现时间）。
-12. 中位数保留小数（655.5 不能写 656）；统计以最终派生数据为准；正文最多 5 条事实摘要（样本数/价格范围/月销合计/字段覆盖局限），禁止从少量样本推市场规模/竞争度/垄断/增长阶段。`,
+5. 全托大盘 market_fully 不可用（超时/code=-1）：如实告知，降级=goods_search(ware_house_type=0) 聚合估算并标「估算」。空结果降级 SOP：先去时间窗→再降销量门槛/扩站点→接口 _note 明确「放宽筛选重试」时允许一轮放宽重查（声明放宽项）→仍空如实告知，禁止编造。⚠️ market_fully 双重死锁实测：optId 只收白名单枚举值（传普通类目ID参数校验直接拒绝），传白名单值报 code=-1——任何参数都进不去，降级是唯一路径，不要再试。
+6. mall_star 作筛选参数会被接口忽略：明星店正确挖法=日销榜取头部→用返回字段 star_seller_time 核验；pre_order=1(Y2店)筛选可用且 Y2 店头部普遍已带明星店标记（star_seller_time 时间戳为当日实时值），Y2 榜是挖新明星店的捷径。批量反查 ids 混入无效ID会静默跳过（不报错不提示），需比对传入数与返回数。
+7. 1688 联动找货源必须用 1688 MCP（image_search 主引擎精准寻源/global_image_search 辅引擎广撒网偶发500重试即成），yunqi 的 yq_goods_img_search 是 TEMU 站内图搜（TEMU 竞争分析用），两者不可混。⚠️ 站内图搜结果跨站点混币种（€/CA$/MX$/円/£/R$/RM/NZ$…），同款价格对比必须逐条带币种三元组，禁止比数值大小；图搜 _fields 传错字段名不报错、只会退化为全字段返回，拿不准就先 yq_fields_lookup。
+7. 关键词策略：中文完整商品词优先+类目ID（dict_lookup，绝不猜）双保险；标题词模糊匹配会稀释（"麻将包"直搜混入玩具包/化妆包），类目收窄是硬手段；多语言变体可分路搜但某路0条不影响其它路。⚠️ 多词短语命中依赖 word 关系：实物词不达意时改用「形容词/风格词」（如 mahjong bag 搜不出 mahjong 主题包，改搜 christmas tote 走类目+标题双滤）；同一关键词+同门槛在不同站点组合下返回可能为空/非空（211+76 合并 48 条 vs 单 76 空），扩站点是合法降级。
+8. 商品列表检索一次调用出结果，命中多少是多少，禁止同参数重复检索凑数；status 类异常不轮询。
+9. 成品表前必须核查候选相关性（看标题/类目），明确配件（肩带/卡牌夹/挂钩）剔除；相关性有歧义要披露，不声称全部精准相关。
+10. 反编造三条：抽样≠全量（totalCount 是原始命中不是清洗后可售数）；缺失≠0（null 原样标注不补零）；无趋势数据不下涨跌结论（created_at 只能称发现时间）。
+11. 中位数保留小数（655.5 不能写 656）；统计以最终派生数据为准；正文最多 5 条事实摘要（样本数/价格范围/月销合计/字段覆盖局限），禁止从少量样本推市场规模/竞争度/垄断/增长阶段。`,
 }
 
 export const temuSkills: TemuSkillDef[] = [
@@ -79,12 +79,16 @@ export const temuSkills: TemuSkillDef[] = [
       '追问确认托管模式与站点（未指定时必须问一次）',
       'yq_dict_lookup 查类目ID（不猜编码），国家查对照表（211美国/76德国…）',
       'yq_goods_search：必传 from/size/fuzzy/ware_house_type/sold_out + opt_ids 类目收窄 + issued_date 时间窗 + min_monthly_sales 门槛',
-      '一次调用出结果，命中多少是多少，不同参数重复检索',
+      '一次调用出结果，命中多少是多少，禁止同参数重复检索（同参重查结果不会变多）',
       '输出：KPI卡 + 明细表（悬停图片放大/标题跳商品页/店铺名跳店铺页）+ ≤5条事实摘要 + 口径披露',
     ],
     instructions: `搜索TEMU商品：【需求描述】。
 托管模式【全托/半托/都要】| 站点【美国211/德国76/其他】| 类目【查字典拿ID】| 时间窗【issued_date】| 月销门槛【min_monthly_sales】。
-输出 KPI+表格+结论：全托披露站点不可验证；金额带币种三元组；缺失不补零。`,
+输出 KPI+表格+结论：全托披露站点不可验证；金额带币种三元组；缺失不补零。
+⚠️ 例外放行（2026-11-11 实测）：本轮已确认无结果后，允许放宽「时间窗/销量门槛」等硬条件重查一次作为降级路径（接口 _note 明确建议放宽重试，不属同参数重复凑数）；放宽哪项须在输出中声明。
+⚠️ issued_date 时间窗与默认取数窗互斥：不传时间窗时系统自动按近30天取数（接口 note 会给出默认窗口）；issued_date 优先级高于该默认窗。
+⚠️ 空结果三步判别：①先去掉时间窗重查（issued_date 过滤最严）②再降销量门槛或扩站点 ③仍空→如实告知，引用接口 _note，禁止编造。
+⚠️ 边界认知（实测）：total 是全库命中数（如 storage box 半托德国站 total=568），非当页返回数；关键词+门槛+类目命中过多时靠排序+分页取头部，不无限翻页。`,
     demo: {
       title: '实测：近60天跨境麻将包（全托+半托·美国211）',
       date: '2026-11-09',
@@ -121,7 +125,8 @@ export const temuSkills: TemuSkillDef[] = [
     triggers: ['图搜同款', '看看站内有多少同款', '盯一下这个竞品', '竞争激烈吗'],
     tools: ['yq_goods_img_search', 'yq_goods_search', 'yq_goods_detail'],
     steps: [
-      '有图：yq_goods_img_search（TEMU 站内图搜，URL/base64 ≤2MB）→ 同款数+distance(<0.25基本同款)+价格带统计',
+      '有图：yq_goods_img_search（TEMU 站内图搜，URL/base64 ≤2MB）→ 同款数+distance(<0.25基本同款)+价格带统计；_fields 会被接口忽略（全错退化为全字段返回），不传或先查 yq_fields_lookup',
+      '⚠️ 图搜结果跨站点混币种（€/CA$/MX$/円/£…）：同款对比逐条带币种三元组，禁止比数值大小；竞争密度按 stats 价格段/销量段分布读，不逐条数',
       '无图有ID/链接：goods_detail(_fields 裁剪) 取价格/销量基准 → goods_search 同关键词扫同类新品',
       '输出：竞品档案 + 同款价格带分布 + 竞争密度判断 + 异常提醒',
     ],
@@ -148,7 +153,7 @@ export const temuSkills: TemuSkillDef[] = [
           ['2', '本品自身（TOP1）', '—', '311', '基准款']
         ]
       },
-      note: '口径：distance 越小越像（<0.25 基本同款）；img_search 的 _fields 只认少数列（id/price 传了会被忽略）。数据来源：yq_goods_img_search（2026-11-11 实时调用）。'
+      note: '口径：distance 越小越像（<0.25 基本同款）；⚠️ img_search 的 _fields 实测被整批忽略并退化为全字段返回（接口 _note 提示：全错时不报错只退化），拼字段前先 yq_fields_lookup 查。⚠️ 图搜返回结果跨全站点混币种（€/AU$/CA$/MX$/円/£/R$/RM/NZ$），同款价格对比必须逐条带币种三元组，禁止直接比数值大小；stats 销量段键名 a0_50/a50_100…为价格段分布、c0_100/c100_500…为销量段分布。数据来源：yq_goods_img_search（2026-11-11 实时调用，收纳架图命中162同款）。'
     }
   },
   {
@@ -160,12 +165,14 @@ export const temuSkills: TemuSkillDef[] = [
     tools: ['yq_goods_detail', 'yq_goods_comment', 'yq_mall_detail'],
     steps: [
       'goods_detail：必须 _fields 裁剪（返回可达9万字符），prices 取多国价格历史',
-      'yq_goods_comment：_fields=["allCount","score1".."score5"] 拿星级分布；region=211 过滤美区',
+      'yq_goods_comment：_fields=["allCount","score1".."score5"] 拿星级分布；region="211" 过滤美区（字符串格式）；无效ID返回 _empty+提示，不报错——如实告知非接口故障',
       'mall 对象看店铺背景（或 mall_detail 深查）',
       '输出：商品档案表 + 多国价格对比 + 销量趋势 + 口碑小结',
     ],
     instructions: `解析TEMU商品：【商品ID或链接search_key后的数字】。
-goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品画像+多国价格+趋势+口碑，金额带币种三元组。`,
+goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品画像+多国价格+趋势+口碑，金额带币种三元组。
+⚠️ 评论 region 参数实测传字符串 "211"（非数字 211）；评论返回的 score1~5 可能全为 0（是真实 0 星计数，不是缺失，区分于字段缺null）。
+⚠️ 无效商品ID：详情/评论接口返回 _empty（"该条件下没有匹配的数据"）而非报错——先核对ID位数（19位）与来源，确认无误则如实告知查无此品，禁止编造字段。`,
     demo: {
       title: '实测：TOP1 麻将垫收纳管评论基线',
       date: '2026-11-11',
@@ -205,7 +212,9 @@ goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品�
       '输出：店铺对比表 + 每店爆款TOP3 + 模式判断（类目集中度>60%=精品店）',
     ],
     instructions: `分析TEMU店铺：【店铺ID/名称或筛选条件】。
-明星店用 star_seller_time 返回字段核验（mall_star 筛选无效）；opts.weekly_sales_ratio 直接给类目占比；批量取店名用 yq_mall_search(ids=[...]) 一次拿全。`,
+明星店用 star_seller_time 返回字段核验（mall_star 筛选无效）；opts.weekly_sales_ratio 直接给类目占比；批量取店名用 yq_mall_search(ids=[...]) 一次拿全。
+⚠️ pre_order=1（Y2店）筛选实测可用（箱包类目返回1000家Y2店，日销TOP 2440/店），且Y2店头部普遍带 star_seller_time（明星店标记实时更新当日时间戳）——Y2店筛选是挖潜力明星店的捷径。
+⚠️ 批量反查 ids=[...] 混入无效ID时静默跳过不报错（total 只计有效命中，实测 2 ID 传 1 返回）：无效ID不会出现在结果里也不会提示，需自行比对传入数与返回数，差额如实告知。`,
     demo: {
       title: '实测：麻将包店铺批量反查 + 标杆店对照',
       date: '2026-11-11',
@@ -240,8 +249,8 @@ goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品�
     steps: [
       '类目词 → yq_dict_lookup 拿 ID',
       'yq_market_semi(area=美国站, optId=类目ID)：stats容量+daily_stats趋势+opt_stats二级类目+price_sections+sales_sections',
-      'yq_brand_search：orderByColumn("month_sales")+isAsc("desc")，_fields 显式传（brand/malls_num 不在默认返回）',
-      '全托需求：market_fully 不可用→goods_search(ware_house_type=0) 聚合估算并标「估算」',
+      'yq_brand_search：orderByColumn("month_sales")+isAsc("desc")，_fields 显式传（brand/malls_num 不在默认返回）；brand_search 也可不带 brand 名直接按类目拉品牌榜（实测箱包 961 个品牌，TOP1 ZOSIVC 月销40万）',
+      '全托需求：market_fully 不可用→goods_search(ware_house_type=0) 聚合估算并标「估算」；⚠️ market_fully 的 optId 枚举只收一个白名单值（17857099937），传普通类目ID直接参数校验拒绝，传白名单值则报 code=-1——两条路都死，降级是唯一路径',
       '六步分析：容量→趋势→类目结构→价格洼地→销量结构→品牌集中度；强制给入场建议',
     ],
     instructions: `分析TEMU类目大盘：【站点+类目名】。
@@ -283,14 +292,17 @@ goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品�
     steps: [
       '站内售价：goods_detail/img_search 实查（禁止估）',
       '1688 找源：image_search 主引擎（精准寻源）→ global_image_search 辅引擎（广撒网，偶发500重试）——必须用 1688 MCP，不是 yunqi 的 yq_goods_img_search',
-      'ali_offer_sku_prices：SKU 阶梯价实查（按预估采购量取档）',
-      'ali_offer_realtime_detail：供应商资质（跨境专供=是 > 下游平台含temu > 诚信通年限 > 起订量匹配）',
+      'ali_offer_sku_prices：SKU 阶梯价实查（按预估采购量取档）；⚠️ 阶梯价有两个入口：候选卡片自带 quantityPrices 数组（如 1~199¥9.5/200~9999¥8/≥10000¥6.5），单 SKU 精确价才调 ali_offer_sku_prices——候选详情够用时不重复调',
+      'ali_offer_realtime_detail：供应商资质（跨境专供=是 > 下游平台含temu > 诚信通年限 > 起订量匹配）；⚠️ 候选卡片已带 company/tpYear/city/跨境专供/weight1/月销30d 等字段，资质初筛可直接用，无需逐个再查',
       '全托口径：供货价底线=拿货+头程(重量1参考值×线路单价,估)+备损5%(估)；对照站内零售倒推核价区间(零售40%~60%,经验估算)',
       '半托口径：利润=站内售价(实查,换算标汇率)−拿货(实查)−国内段−头程(估)−扣点尾程(估)−退货损耗(估)',
       '输出：核价结论+成本明细表+供货价三档敏感性+建议；估算项全部标注',
     ],
     instructions: `测算TEMU供货利润：商品【ID/链接/图片】| 1688拿货价【¥，或让图搜找源】| 重量【无则用1688参考重】。
-全托=核价博弈（底线+倒推区间）；半托=自定价（逐项成本+敏感性）。售价拿货必须接口实查，估算项标「估算」，结论给「能不能做」判断。`,
+全托=核价博弈（底线+倒推区间）；半托=自定价（逐项成本+敏感性）。售价拿货必须接口实查，估算项标「估算」，结论给「能不能做」判断。
+⚠️ 1688 候选卡片信息量大：image_search 返回已含 quantityPrices 阶梯价/weight1 参考重/company/tpYear 诚信通年限/跨境出口专供/月销30d——先读卡片，缺什么再补 ali_offer_sku_prices/realtime_detail，不重复调。
+⚠️ 供应商质量信号（实测）：推荐权重官方分 officialScore（0.9+优先）；「贸易属性:内贸+外贸」「是否跨境出口专供货源:是」是 TEMU 适配强信号；销量参考 saleQuantity30d（月销1574件）比 bookedCount30d（订单数59）更代表出货能力。
+⚠️ 同款多货源时按「官方分+跨境专供+月销量+阶梯底价」四要素排序取 TOP2-3 并列对比，不只报最低价（低价店可能月销仅个位数）。`,
     demo: {
       title: '实测：德国站马桶清洁片供货核价全链路',
       date: '2026-11-09',
@@ -335,7 +347,10 @@ goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品�
       '输出：①总结论（值不值得做+口径披露）②机会档位表 ③重点商品卡 ④风险与假设 ⑤下一步清单',
     ],
     instructions: `生成TEMU选品报告，主题：【类目/产品】。
-内部串联：大盘→候选→深挖→利润；先确认托管模式与站点。输出结构化报告（结论+档位表+商品卡+风险+行动清单），末尾列数据来源与查询日期；反编造三条贯穿全文。`,
+内部串联：大盘→候选→深挖→利润；先确认托管模式与站点。输出结构化报告（结论+档位表+商品卡+风险+行动清单），末尾列数据来源与查询日期；反编造三条贯穿全文。
+⚠️ 串联复用纪律：报告内引用的候选/画像/价格必须来自本轮已调用的真实接口返回，禁止为了报告"更完整"补跑重复检索；缺哪个维度就如实标「未查证」，用户要求再补查。
+⚠️ 候选池口径：报告样本数=相关性核查后的成品数（非接口 total 原始命中），结论限定样本范围。
+⚠️ 0 结果分支：候选池为空时报告只输出「条件复述+空结果声明+放宽建议」，不产出伪档位表。`,
     demo: {
       title: '实测：麻将包选品决策报告（表格版）',
       date: '2026-11-09',
