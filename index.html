@@ -3663,8 +3663,24 @@ const BASE_EXPERTS = [
   },
 ];
 
+// 已合并的平台只展示当前专家；历史定义留作版本参考，不再混入导航。
+const ACTIVE_EXPERT_SKILLS = {
+  'exp-ozon-sel': null,
+  'exp-1688-sel-v2': ['skill-1688-conditional-search', 'skill-1688-billboard', 'skill-1688-new-products', 'skill-1688-image-search', 'skill-1688-product-deep-dive', 'skill-1688-shop-verification', 'skill-1688-monitor-read', 'skill-1688-profit-scenario'],
+  'exp-temu-sel-v2': ['skill-selection-search', 'skill-competitor-monitor', 'skill-product-parse', 'skill-shop-analysis', 'skill-category-trend', 'skill-profit-calc', 'skill-report-gen'],
+  'exp-amazon-sel-v2': ['skill-amazon-selection-search', 'skill-amazon-competitor', 'skill-amazon-keyword', 'skill-amazon-category-trend', 'skill-amazon-product-parse', 'skill-amazon-profit-calc', 'skill-amazon-report-gen'],
+  'exp-ss-amazon-keyword-v2': ['skill-ss-kw-mine', 'skill-ss-kw-conversion', 'skill-ss-kw-trend', 'skill-ss-kw-traffic']
+};
 function allExperts() {
-  return BASE_EXPERTS.concat(customExperts).sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
+  const activeIds = new Set(Object.keys(ACTIVE_EXPERT_SKILLS));
+  const retiredIds = new Set(BASE_EXPERTS.filter(e => !activeIds.has(e.id)).map(e => e.id));
+  const byId = new Map();
+  BASE_EXPERTS.filter(e => activeIds.has(e.id)).concat(customExperts.filter(e => !retiredIds.has(e.id) && !activeIds.has(e.id))).forEach(e => {
+    const skillIds = ACTIVE_EXPERT_SKILLS[e.id];
+    const skills = skillIds ? skillIds.map(id => allSkills().find(s => s.id === id)).filter(Boolean).map(s => s.name) : e.skills;
+    byId.set(e.id, Object.assign({}, e, { skills, skillIds, status: activeIds.has(e.id) ? 'built' : e.status }));
+  });
+  return Array.from(byId.values()).sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
 }
 function renderEPtabs() {
   const box = document.getElementById('eptabs');
@@ -3706,10 +3722,11 @@ function renderEGrid() {
       '<div class="desc">' + esc(x.desc || '') + '</div>' +
       (abil ? '<div style="margin-top:2px">' + abil + '</div>' : '') +
       (x.skills && x.skills.length ? '<div class="eskill-wrap"><span class="eskill-label">绑定技能 ' + x.skills.length + '</span>' +
-        x.skills.map(sn => {
-          const known = allSkills().some(s => s.name === sn);
+        x.skills.map((sn, idx) => {
+          const skillId = (x.skillIds || [])[idx];
+          const known = allSkills().some(s => skillId ? s.id === skillId : s.name === sn);
           return known
-            ? '<button class="eskill-chip" data-eskill="' + esc(sn) + '" title="点击预览调用指令">⚡ ' + esc(sn) + '</button>'
+            ? '<button class="eskill-chip" data-eskill="' + esc(sn) + '" data-skill-id="' + esc(skillId || '') + '" title="点击预览调用指令">⚡ ' + esc(sn) + '</button>'
             : '<span class="eskill-chip dim" title="技能待建">⚡ ' + esc(sn) + '</span>';
         }).join('') + '</div>' : '') +
       '<div class="card-actions">' +
@@ -4139,7 +4156,9 @@ function renderWsBody() {
     return;
   }
   if (wsTab === 'skill') {
-    const skills = (wsExpert.skills || []).map(name => allSkills().find(s => s.name === name)).filter(Boolean);
+    const skills = wsExpert.skillIds
+      ? wsExpert.skillIds.map(id => allSkills().find(s => s.id === id)).filter(Boolean)
+      : (wsExpert.skills || []).map(name => allSkills().find(s => s.name === name)).filter(Boolean);
     if (wsSkillIdx >= skills.length) wsSkillIdx = 0;
     document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">绑定技能（点击查看指令）</div>' +
       (skills.length ? skills.map((s, i) =>
@@ -4414,7 +4433,8 @@ document.getElementById('egrid').addEventListener('click', e => {
   const chip = e.target.closest('.eskill-chip[data-eskill]');
   if (!chip) return;
   const name = chip.dataset.eskill;
-  const skill = allSkills().find(s => s.name === name);
+  const skillId = chip.dataset.skillId;
+  const skill = allSkills().find(s => skillId ? s.id === skillId : s.name === name);
   if (!skill) return;
   document.getElementById('modal-title').innerHTML =
     esc('⚡ ' + skill.name + ' · 调用指令') +
