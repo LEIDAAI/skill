@@ -1751,7 +1751,10 @@ document.getElementById('btn-select-export').addEventListener('click', () => {
 });
 
 /* ---- init ---- */
-refreshAll();
+try { refreshAll(); } catch (e) { console.error('技能初始化失败:', e); }
+window.addEventListener('error', ev => {
+  try { toast('⚠️ 页面脚本异常：' + (ev.message || '').slice(0, 80) + '（建议 Ctrl+Shift+R 强刷）'); } catch (e2) {}
+});
 
 /* ================= 技能包(.zip)导入 ================= */
 /* zip 导入向导：选平台+场景+确认后落库 */
