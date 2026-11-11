@@ -317,6 +317,8 @@
       <button class="btn btn-mini" id="btn-export" title="导出自定义技能为 JSON">导出</button>
       <button class="btn btn-mini" id="btn-import" title="从 JSON 导入自定义技能">导入</button>
       <button class="btn btn-mini" id="btn-select-export" title="勾选多个技能批量导出">勾选导出</button>
+      <button class="btn btn-mini" id="btn-git-sync" title="上传后自动同步到技能仓库；点击检查连接或重试">Git 同步：检查中</button>
+      <a class="btn btn-mini" href="http://127.0.0.1:17643/" target="_blank" rel="noopener" title="本机服务运行时可直接在此上传">本机上传入口</a>
       <input type="file" id="file-import" accept=".json,.zip" style="display:none">
     </div>
   </div>
@@ -1449,10 +1451,95 @@ let curPlatform = 'all';
 let curScenario = 'all';
 let curSearch = '';
 
+let sharedSkills = [];
+let hubSyncRevision = 0;
+const skillSyncStates = new Map();
+const hubSyncBase = 'http://127.0.0.1:17643';
+let hubSyncToken = '';
+let hubSyncQueue = Promise.resolve();
 function allSkills() {
-  const merged = BASE_SKILLS.concat(customSkills.map(s => Object.assign({ platforms: ['ozon'] }, s)));
-  return merged.sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
+  const byId = new Map(BASE_SKILLS.map(s => [s.id, s]));
+  sharedSkills.forEach(s => byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })));
+  customSkills.forEach(s => { if (!byId.has(s.id) || skillSyncStates.has(s.id)) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
+  return [...byId.values()].sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
 }
+function setSyncLabel(text, detail) {
+  const button = document.getElementById('btn-git-sync');
+  button.textContent = text;
+  button.title = detail || text;
+}
+function persistCustomSkills() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); return true; }
+  catch (error) { toast('本地缓存空间不足，请保持页面打开并完成 Git 同步'); return false; }
+}
+async function connectHubSync() {
+  const response = await fetch(hubSyncBase + '/health', { signal: AbortSignal.timeout(4000), cache: 'no-store' });
+  if (!response.ok) throw new Error('本机同步服务连接失败');
+  const result = await response.json();
+  if (!result.ok || result.repo !== 'LEIDAAI/skill' || !result.token) throw new Error('同步服务校验失败');
+  hubSyncToken = result.token;
+  setSyncLabel('Git 同步：已连接', '上传技能后自动提交到 LEIDAAI/skill；本机服务需保持运行');
+  return result;
+}
+function queueSkillSync(skills) {
+  if (!skills.length) return Promise.resolve();
+  const payload = JSON.parse(JSON.stringify(skills));
+  if (payload.length > 50 || new Blob([JSON.stringify({ skills: payload })]).size > 8 * 1024 * 1024) {
+    payload.forEach(s => skillSyncStates.set(s.id, { status: 'failed', message: '每批最多 50 个技能，总内容不能超过 8MB' }));
+    setSyncLabel('Git 同步：内容超限'); refreshAll(); toast('本批同步超过 50 项或 8MB，请减少技能数量或精简技能包');
+    return Promise.resolve();
+  }
+  payload.forEach(s => skillSyncStates.set(s.id, { status: 'pending', message: '等待同步' }));
+  refreshAll();
+  hubSyncQueue = hubSyncQueue.catch(() => {}).then(async () => {
+    payload.forEach(s => skillSyncStates.set(s.id, { status: 'syncing', message: '正在提交 Git' }));
+    setSyncLabel('Git 同步：提交中'); refreshAll();
+    try {
+      await connectHubSync();
+      setSyncLabel('Git 同步：提交中');
+      const response = await fetch(hubSyncBase + '/api/skills', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Hub-Sync-Token': hubSyncToken },
+        body: JSON.stringify({ skills: payload }), signal: AbortSignal.timeout(360000)
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || result.message || '同步未完成');
+      hubSyncRevision++;
+      sharedSkills = result.skills;
+      payload.forEach(s => skillSyncStates.delete(s.id));
+      const ids = new Set(payload.map(s => s.id));
+      customSkills = customSkills.filter(s => !ids.has(s.id)); persistCustomSkills();
+      setSyncLabel('Git 同步：已同步', result.url || '技能已写入仓库，线上发布稍后生效');
+      refreshAll(); toast(result.unchanged ? '技能已在仓库，无需重复提交' : '已同步到 Git，线上页面发布后自动可见');
+      if (result.warning) toast(result.warning);
+    } catch (error) {
+      const detail = error.message || '连接失败';
+      payload.forEach(s => skillSyncStates.set(s.id, { status: 'failed', message: detail }));
+      setSyncLabel('Git 同步：待重试', '请保持本机同步服务运行；浏览器提示本地网络权限时请选择允许。' + detail);
+      refreshAll(); toast('尚未同步 Git，已保留当前技能；启动本机服务后点击重试');
+    }
+  });
+  return hubSyncQueue;
+}
+async function initializeHubSync() {
+  const revision = hubSyncRevision;
+  try {
+    const url = new URL('./imported-skills.json', location.href);
+    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(12000) });
+    if (response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data) && revision === hubSyncRevision) sharedSkills = data;
+    }
+  } catch (error) { /* 内置技能仍可正常查看 */ }
+  refreshAll();
+  try { await connectHubSync(); }
+  catch (error) { setSyncLabel('Git 同步：未连接', '启动本机同步服务后，上传的技能会自动提交 Git；可使用本机上传入口'); }
+}
+document.getElementById('btn-git-sync').addEventListener('click', async () => {
+  const pending = customSkills.filter(s => !['syncing', 'pending'].includes((skillSyncStates.get(s.id) || {}).status));
+  if (pending.length) { await queueSkillSync(pending); return; }
+  try { await connectHubSync(); toast('本机服务已连接，新上传技能会自动同步 Git'); }
+  catch (error) { setSyncLabel('Git 同步：未连接'); toast('请先启动本机同步服务，或使用本机上传入口'); }
+});
 function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -1511,6 +1598,8 @@ function renderGrid() {
       const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
       return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
     }).join('');
+    const sync = skillSyncStates.get(s.id);
+    const syncNote = sync ? '<div style="font-size:12px;margin:8px 0;color:#9a6700" title="' + esc(sync.message) + '">' + (sync.status === 'failed' ? 'Git 同步失败，可重试' : 'Git 正在同步…') + '</div>' : s.repositorySkill ? '<div style="font-size:12px;margin:8px 0;color:#15803d">已同步 Git · 全平台可见</div>' : '';
     const selCb = selectExportMode ? '<label class="sel-cb" title="选择导出"><input type="checkbox" data-selid="' + esc(s.id) + '"' + (selectedExportIds.has(s.id) ? ' checked' : '') + '></label>' : '';
     return '<div class="card" data-id="' + esc(s.id) + '">' + selCb +
       '<div class="card-head">' +
@@ -1524,11 +1613,12 @@ function renderGrid() {
       '</div>' : '') +
       '<div class="desc">' + esc(s.desc || '') + '</div>' +
       (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
-      '<div class="card-actions">' +
+      syncNote + '<div class="card-actions">' +
         '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
         '<button class="btn-plain" data-action="workbench">🔍 工作台</button>' +
-        (s.isZip ? '<button class="btn-plain" data-action="promote" title="把导入的技能固化为内置数据，推送到git后全平台可见">⬆ 沉淀</button>' : '') +
+        (s.custom ? '<button class="btn-plain" data-action="promote" title="提交到技能仓库，其他电脑可见">' + (sync && sync.status === 'failed' ? '重试 Git 同步' : '同步 Git') + '</button>' : '') +
         (s.skillMd ? '<button class="btn-plain" data-action="view">技能全文</button>' : '') +
+        (s.archiveBase64 ? '<button class="btn-plain" data-action="archive">下载原始包</button>' : '') +
         (s.custom ? '<button class="btn-plain btn-del" data-action="del">删除</button>' : '') +
       '</div>' +
     '</div>';
@@ -1623,6 +1713,13 @@ document.getElementById('grid').addEventListener('click', e => {
   if (!skill) return;
   const act = btn.dataset.action;
   if (act === 'copy') copyText(skill.prompt || '');
+  if (act === 'archive' && skill.archiveBase64) {
+    const bytes = Uint8Array.from(atob(skill.archiveBase64), c => c.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }));
+    const link = document.createElement('a'); link.href = url; link.download = skill.archiveName || skill.id + '.zip'; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return;
+  }
   if (act === 'demo' && skill.demo) openExpertDemo(skill);
   if (act === 'workbench') { wsOpenGeneric('skill', skill, 'prompt'); return; }
   if (act === 'view-prompt') {
@@ -1636,21 +1733,8 @@ document.getElementById('grid').addEventListener('click', e => {
     document.getElementById('modal').classList.add('open');
   }
   if (act === 'promote') {
-    const payload = {
-      id: skill.id, name: skill.name, slug: '/' + skill.id,
-      platforms: skill.platforms, scenario: skill.scenario, status: 'built',
-      desc: skill.desc, triggers: skill.triggers || [],
-      prompt: skill.prompt, version: skill.version, author: skill.author,
-      zipFiles: skill.zipFiles, isZip: true,
-      demo: skill.demo || undefined
-    };
-    const json = JSON.stringify(payload, null, 2);
-    document.getElementById('modal-title').textContent = '⬆ 沉淀技能到导航页';
-    document.getElementById('modal-content').textContent =
-      '把下面这段 JSON 发给导航页维护会话（或追加到 ozon-skill-hub.html 的 BASE_SKILLS 数组），推送 git 后全平台永久可见。\n\n' + json;
-    document.getElementById('modal').classList.add('open');
-    copyText(json);
-    toast('✓ 固化 JSON 已复制到剪贴板，发给维护会话即可');
+    if (!['pending', 'syncing'].includes((skillSyncStates.get(skill.id) || {}).status)) queueSkillSync([skill]);
+    return;
   }
   if (act === 'del') {
     customSkills = customSkills.filter(s => s.id !== skill.id);
@@ -1706,7 +1790,8 @@ document.getElementById('btn-save').addEventListener('click', () => {
     prompt: document.getElementById('f-prompt').value.trim()
   };
   customSkills.push(skill);
-  localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
+  persistCustomSkills();
+  queueSkillSync([skill]);
   ['f-name','f-slug','f-desc','f-prompt'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-built').checked = false;
   closeFormModal();
@@ -1732,10 +1817,23 @@ document.getElementById('file-import').addEventListener('change', e => {
     try {
       const arr = JSON.parse(reader.result);
       if (!Array.isArray(arr)) throw new Error();
-      const ids = new Set(customSkills.map(s => s.id));
-      arr.forEach(s => { if (s && s.name && !ids.has(s.id)) { s.custom = true; if (!s.platforms) s.platforms = ['ozon']; customSkills.push(s); } });
-      localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
-      refreshAll(); toast('✓ 导入完成');
+      if (arr.length > 50) throw new Error('每批最多导入 50 个技能');
+      const ids = new Set(allSkills().map(s => s.id));
+      const imported = [];
+      arr.forEach(s => {
+        if (!s || typeof s.name !== 'string' || !s.name.trim()) throw new Error('技能缺少名称');
+        if (!s.id) s.id = 'c-' + Date.now() + '-' + imported.length;
+        if (ids.has(s.id)) return;
+        if (!/^[A-Za-z0-9_.-]{1,128}$/.test(s.id)) throw new Error('技能 ID 格式不合法');
+        if (!s.platforms) s.platforms = ['ozon'];
+        if (!s.scenario) s.scenario = 'product-selection';
+        if (s.prompt === undefined) s.prompt = s.skillMd || '';
+        if (!Array.isArray(s.platforms) || !s.platforms.length || s.platforms.some(k => !PLATFORMS[k]) || !SCENARIOS[s.scenario] || typeof s.prompt !== 'string') throw new Error('技能平台、场景或提示词格式不合法');
+        s.custom = true; ids.add(s.id); imported.push(s);
+      });
+      customSkills.push(...imported); persistCustomSkills();
+      refreshAll(); toast(imported.length ? '已导入，正在同步 Git' : '这些技能已存在，无需重复导入');
+      queueSkillSync(imported);
     } catch (err) { toast('文件格式不对，需要导出的 JSON'); }
   };
   reader.readAsText(file);
@@ -1802,11 +1900,8 @@ function openZipImportWizard() {
     sk.platforms = picked;
     sk.scenario = scSel.value;
     customSkills.push(sk);
-    try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); }
-    catch (se) {
-      customSkills.forEach(x => { if (x.isZip) { x.zipData = {}; } });
-      try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); toast('⚠️ 本地存储超限，文件内容未缓存（重新导入可查看）'); } catch (e2) {}
-    }
+    persistCustomSkills();
+    queueSkillSync([sk]);
     document.getElementById('form-modal').classList.remove('open');
     window.__pendingZipSkill = null;
     refreshAll();
@@ -1817,9 +1912,15 @@ function openZipImportWizard() {
 }
 async function importSkillZip(file) {
   try {
+    if (file.size > 5 * 1024 * 1024) throw new Error('技能 ZIP 文件不能超过 5MB');
     if (typeof fflate === 'undefined') { await loadFflate(); }
     const buf = new Uint8Array(await file.arrayBuffer());
-    const files = fflate.unzipSync(buf);
+    let unpacked = 0;
+    const files = fflate.unzipSync(buf, { filter: entry => {
+      unpacked += entry.originalSize;
+      if (unpacked > 6 * 1024 * 1024) throw new Error('技能解压内容不能超过 6MB');
+      return true;
+    } });
     const readText = name => { const u = files[name]; return u ? new TextDecoder().decode(u) : null; };
     const manifestRaw = readText('manifest.yaml');
     const skillMd = readText('SKILL.md');
@@ -1832,7 +1933,7 @@ async function importSkillZip(file) {
       if (fm) { const dm = fm[0].match(/description:\s*"([^"]+)"/) || fm[0].match(/description:\s*(.+)/); if (dm) fmDesc = dm[1]; }
     }
     const name = man.display_name || man.name || file.name.replace(/\.zip$/i, '');
-    const id = 'zip-' + (man.slug || man.name || Date.now());
+    const id = 'zip-' + String(man.slug || man.name || Date.now()).replace(/[^A-Za-z0-9_.-]/g, '-').slice(0, 120);
     if (allSkills().some(s => s.id === id)) { toast('该技能包已导入过（' + name + '）'); return; }
     const fileList = Object.keys(files).filter(n => !n.endsWith('/'));
     const platforms = [];
@@ -1841,8 +1942,11 @@ async function importSkillZip(file) {
     if (/ozon/i.test(depStr + name)) platforms.push('ozon');
     if (/amazon|亚马逊/i.test(depStr + name)) platforms.push('amazon');
     if (/temu/i.test(depStr + name)) platforms.push('temu');
+    let binary = '';
+    for (let i = 0; i < buf.length; i += 32768) binary += String.fromCharCode(...buf.subarray(i, i + 32768));
     window.__pendingZipSkill = {
       id, custom: true, isZip: true,
+      archiveBase64: btoa(binary), archiveName: file.name,
       name, desc: man.description || fmDesc || '',
       platforms: platforms,
       scenario: 'product-selection',
@@ -1858,13 +1962,17 @@ async function importSkillZip(file) {
         fileList.forEach(n => {
           if (BIN.test(n)) out[n] = '（二进制文件，内容未嵌入）';
           else {
-            try { out[n] = new TextDecoder('utf-8', { fatal: false }).decode(files[n]).slice(0, 200000); }
+            try { out[n] = new TextDecoder('utf-8', { fatal: false }).decode(files[n]); }
             catch (e2) { out[n] = '（解码失败）'; }
           }
         });
         return out;
       })()
     };
+    if (new Blob([JSON.stringify({ skills: [window.__pendingZipSkill] })]).size > 8 * 1024 * 1024) {
+      window.__pendingZipSkill = null;
+      throw new Error('技能包展开后的同步内容超过 8MB，请精简模板或附件后重新上传');
+    }
     openZipImportWizard();
   } catch (err) { toast('zip 解析失败：' + (err.message || err)); }
 }
@@ -4395,6 +4503,7 @@ document.getElementById('efile-import').addEventListener('change', e => {
 
 /* ---- init: experts & knowledge（变量定义完成后）---- */
 refreshExperts();
+initializeHubSync();
 
 /* demo 图片悬浮放大 */
 (function(){

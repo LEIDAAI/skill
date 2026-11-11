@@ -382,6 +382,12 @@
       "target": "system",
       "action": "ui",
       "summary": "修复 ZIP 内 HTML 模板结束标签截断主脚本导致页面损坏；脚本及初始化验证通过"
+    },
+    {
+      "ts": "2026-11-11T04:24:32.930Z",
+      "target": "system",
+      "action": "ui",
+      "summary": "技能导入默认同步 Git：本机鉴权服务、共享技能清单、原始ZIP归档、同步状态与重试；同ID冲突保护"
     }
   ]
 }
