@@ -61,7 +61,8 @@ export const ssKeywordExpert = {
 7. 【流量词反查口径】traffic_keyword 的 trafficPercentage 是"该词分给此 ASIN 的流量占比"（0.89=吃掉该词 89% 流量），不是 ASIN 内部占比；traffic_keyword_stat 与 traffic_keyword 的 keywords 计数可能不同（B0H45MC3T2 stat=6 词 vs keyword 明细=2 词，stat 是历史累计、keyword 是当前月覆盖），两口径都要标注；查不到词的 ASIN 如实说明"无流量词覆盖记录"，改用 traffic_extend 按父体变体池查关联流量份额。
 8. 【生僻词全链路空结果 SOP】对明显无收录的词（如乱码 zxqfwv）：keyword_miner total=0、keyword_conversion total=0、keyword_research_trends 全 0 序列、aba_research_trend 无覆盖——四个接口一致空=该词不在卖家精灵词库，如实告知"该词无收录数据"，建议换近似词，禁止换参数重试超 2 次。
 9. 【空结果判型 SOP】先分清四种：① 参数错（如 wordCountMax 无效）→ 查 total 是否与无筛选相同，相同=参数被忽略，换正确字段名；② 接口本身空（生僻词/新词）→ 四接口对照确认后如实记录"当前数据不可取"；③ 套餐/额度 → 用 secret_no_remaining 查；④ 数据源异常 → 换同族接口（如 keyword_research_trends 交叉验证 aba_research_trend）对照。
-10. 【单轮纪律】单轮业务调用满 10 次暂停汇报；零结果最多两轮改策略，禁止重复同参数检索。`,
+10. 【competitor_lookup 无总销量下限参数】用户带"销量>1/N"门槛做新品/上架时间窗筛选时：接口没有"总销量下限"服务端参数（minSaleCount 系列是周期销量口径，且按 available_date 排序的查询里不生效）——正确姿势=available_date 降序取数后客户端按 units 过滤，并在结果注明"已过滤 X 条 units≤N"；过滤比例>30% 时提示用户改用 total_units 降序路径。2026-11-11 验收：mahjong bag 40 条→窗口内 40/40→销量>1 过滤剩 37 条（过滤 7.5%），相关性 40/40 无噪音。
+11. 【单轮纪律】单轮业务调用满 10 次暂停汇报；零结果最多两轮改策略，禁止重复同参数检索。`,
 }
 
 export const ssKeywordSkills: SSKeywordSkillDef[] = [

@@ -58,7 +58,18 @@
 - `keyword_order`（ASIN 转化词反查）与 traffic_keyword 功能重叠（都是 ASIN→词），归入 traffic 技能备用工具，本轮未重复验收。
 - 商标查询（trademark_*）、google_trend 不属于关键词工作流，未纳入本专家。
 
+## 五点五、对话内验收：用户口径复现「近90天上架+销量>1+麻将包」（2026-11-11）
+
+用户要求直接在对话里按真实业务口径跑一遍，验证结果准确性与商品匹配度：
+
+- 查询：competitor_lookup(keyword="mahjong bag", matchType=3 精准, order=available_date desc, size=40)
+- 窗口校验：40/40 条上架日期落在 2026-10-05 ~ 11-06（90 天窗内）✅
+- 相关性校验：40/40 条标题全为 mahjong 主题（麻将收纳包/带包套装/个性化化妆包），零跨类目噪音 ✅（matchType=3 精准匹配有效）
+- 销量>1 校验：37/40 满足，**3 条 units=1 被客户端过滤**（B0H9YFGJC3/B0HHD6Z9LF/B0HDSL9Z3D）⚠️
+- **暴露缺口**：competitor_lookup 无"总销量下限"服务端参数——"销量>1/N"门槛必须客户端按 units 过滤并注明过滤数；过滤比例>30% 时改走 total_units 降序路径。已写入专家纪律第 10 条。
+- 窗口内销量 TOP：B0H45MC3T2（TIASUSAN 紫色160牌套装，$139.79/326 件/$45,572）、B0HN82JBCT（CraksNCo 33.8寸加大包，231 件）、B0HG73R13B（AC 徽章牌袋，248 件）。
+
 ## 六、同步记录
 
-- 推送文件：`ss-amazon-keyword-map.ts`（本报告）+ `versions.json` 追加 2 条
-- 提交：见 git log（feat: 卖家精灵亚马逊关键词专家 4 技能映射 + 路由验收报告）
+- 2026-11-11 晚追加：纪律第 10 条（competitor_lookup 销量门槛客户端过滤）+ 本节验收记录，versions.json 同步追加
+- 首次推送：`ss-amazon-keyword-map.ts`（本报告）+ `versions.json`；后续变更见 versions.json 各条目与 git log

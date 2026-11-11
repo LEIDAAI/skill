@@ -13,10 +13,10 @@
 | yq_ozon_mall_search | ✅ 正常 | ⚠️ 前几条是 name="Ozon" 自营聚合脏数据，必须过滤 |
 | yq_ozon_mall_detail | ✅ 正常 | openTime/level/storeType 字段有效 |
 | yq_ozon_goods_detail | ✅ 正常 | 字段名驼峰（soldCount/soldSum/symbol）；⚠️ yq_fields_lookup 的 defaultFields 是误导性旧名 |
-| yq_ozon_goods_search | ❌ 返回空 | 连官方示例参数 `types:["10502"]` 都空 |
+| yq_ozon_goods_search | ✅ 本次可返回（2026-11-11 晚） | 已知 SKU 631000911 返回 1 条；`skuName="сумка"`+近90天上架+近28天销量≥2 返回 1087 条；早间曾空，按当次调用判断 |
 | yq_ozon_spu_search | ❌ 返回空 | 官方示例参数 `category:["17028922"]` 也空 |
 
-> ⚠️ 结论：**商品搜索类接口（goods_search/spu_search）当前取不到数据，但大盘/品牌/店铺/详情接口正常**。依赖搜索接口的技能（选品搜索、竞品监控、利润测算）当前无法拿真实商品，只能做参数与降级验证；等搜索数据恢复再补真实结果。
+> 接口状态以当次实调为准。`goods_search` 早间出现整体空结果、晚间已能返回商品；`spu_search` 尚未复测，保留早间状态，勿将早间故障写成永久不可用。
 
 ## 二、字段命名（两个接口都是驼峰，但"日周月销量"名不同）
 
@@ -55,6 +55,7 @@
 - 类目参数：查前台 CATEGORY → 传 `types`；查后台 CATEGORY_BACKEND → 传 `category`。
 - mall_search 脏数据过滤：`name="Ozon"` 或 `skuNum<100` 或日销虚高（如 2.5 亿）的聚合行剔除后再看真实店铺。
 - goods_detail 跟卖：`otherCount`=跟卖数，`others`=跟卖卖家列表（含 sellerName/goodsPrice/goodsUrl）；`storeType` 1=跨境 2=本土 3=自营。
+- 「麻将包」90天上架/近28天销量>1 实测：`skuName="сумка маджонг"` 无硬筛有 3 条（1 收纳包、2 牌具套装），加日期后 0，加销量后 0；`skuName="стеганая сумка"` 加双硬筛 1 条却是化妆包，须排除；`skuName="сумка"` 同硬筛 1087 条仅说明接口可用，不是麻将包的有效命中。搜索/详情的定向 `_fields` 对收纳包 SKU 5129545150 均未返回 createDate/soldCount28，缺字段不可推断达到条件。
 
 ## 五、已验证锚点（可复用的对账数据）
 

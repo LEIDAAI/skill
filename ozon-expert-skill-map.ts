@@ -60,7 +60,8 @@ export const ozonExpert = {
 8. 反编造三条：抽样≠全量、缺失不补0、无趋势数据不下涨跌结论。单轮业务调用满10次暂停汇报；零结果最多两轮改策略，禁止重复同参数检索。
 9. 字段命名（2026-11-11 实测）：两接口销量字段都是驼峰，但"日周月销量"名不同——搜索接口 dailySales/weeklySales/monthSales，详情接口 soldCount/soldCount7/soldCount28 + soldSum/soldSum7/soldSum28；币种都是 symbol（无 currency 字段）。⚠️ yq_fields_lookup 的 defaultFields 里 daily_sales/currency 是误导旧名，传 _fields 会静默忽略，别照抄。
 10. 类目参数对照：前台类目查 CATEGORY → 传 types；后台类目查 CATEGORY_BACKEND → 传 category；上架时间窗用 minCreateDate（≠minCreateTime 数据发现时间），格式 yyyy-MM-dd；详情接口上架日期字段是 createDate，跟卖字段 otherCount(数量)+others(卖家列表)。
-11. 接口可用性（2026-11-11）：goods_search/spu_search 当前返回空（连官方示例参数都空），market_stat/mall_search/mall_detail/brand_search/goods_detail 正常。搜索类取不到数据时如实告知并走降级，不硬凑；先用 market_stat(key="all") 验证大盘是否正常。`,
+11. 接口可用性（2026-11-11）：goods_search 早间曾返回空，晚间已可返回商品；spu_search 尚未复测。按当次结果判断健康状态，已知 SKU 631000911 可作搜索对照；无相关合格商品时不拿泛词结果凑数。
+12. 「麻将包」实测：绗缝手袋与麻将牌收纳包分路检索；俄文组合词即使命中标题也可能是化妆包或麻将套装。近90天+近28天销量>1时，收纳包 0 条、绗缝词 1 条为化妆包误命中，最终有效 0；定向查询未返回 createDate/soldCount28，不能宣称逐条核验上架与销量。`,
 }
 
 export const ozonSkills: OzonSkillDef[] = [
@@ -79,7 +80,7 @@ export const ozonSkills: OzonSkillDef[] = [
       '输出：KPI卡 + 主图明细表（悬浮放大/标题跳转）+ 结论',
     ],
     instructions: `搜索OZON商品：【需求描述】。
-要求：先确认歧义再检索；类目词先查字典拿ID；俄文品类词多路搜索合并去重；按28天销量排序；输出 KPI+表格+结论，标注各路命中数与数据来源。`,
+要求：歧义商品（如麻将包）先确认商品类型，已明确是麻将牌收纳包时只检索该类型；类目词先查字典拿ID；俄文品类词多路搜索合并去重，用户硬条件不放宽；未指明周期的销量门槛按近28天口径明确标出；搜索接口未返回的上架/销量字段不可推断逐条达标；剔除化妆包、牌具套装等误命中后，按真实可得指标排序，输出 KPI+表格+结论，标注各路命中数与数据来源。`,
   },
   {
     id: 'skill-competitor-monitor',

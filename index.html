@@ -508,17 +508,17 @@ const OZON_SELECT_MD = `# Ozon选品搜索
 ## 输入与口径
 - 必需：商品关键词或类目名称（至少一项）；仅有 SKU/链接则先提取 ID 核验详情。
 - 可选：价格区间（₽）、近7天/28天最低销量、评分 minScore、卖家类型 storeType（1跨境/2本土/3自营）、上架时间 minCreateDate/maxCreateDate、返回数量 size（默认20，最大500）。
-- 先确定 SKU（具体规格）还是 SPU（父款）口径；已有可用商品结果直接复用。用户给出的硬条件原样保留，不擅自放宽。
+- 先确定 SKU（具体规格）还是 SPU（父款）口径；歧义词如「麻将包」先区分绗缝手袋与麻将牌收纳包，用户明确是装麻将牌的包后只检索麻将牌收纳包，不再扩到手袋/化妆包。销量大于1若未指定周期，明确按近28天销量≥2执行；已有可用结果直接复用，硬条件不放宽。
 
 ## 执行步骤
 1. 解析筛选条件和排序依据；类目名称先调 yq_dict_lookup(platform="ozon")：前台 CATEGORY ID 给 types 数组，后台 CATEGORY_BACKEND ID 给 category 数组。记录类目名称、体系及 ID，不能猜或交叉误传。
 2. SKU 用 yq_ozon_goods_search，父款用 yq_ozon_spu_search；sort 可用 [{"dailySales":"desc"}]（日销）或 [{"soldSum28":"desc"}]（近28天销售额，历史实测有效）。近30天上架须用 minCreateDate/maxCreateDate、yyyy-MM-dd，不能拿 minCreateTime 数据发现时间替代。
 3. 中文词优先 skuNameZh（分词 AND 匹配，需要语义复核），俄文或英文词用 skuName。只有用户目标允许时才追加其他语言/类目路径；逐路记录参数与命中数，按 SKU 去重、按需按 SPU 归组，不把多路 total 相加当独立商品数。
 4. 对接口不支持的筛选条件在返回后逐条过滤，并在输出中说明。需要跟卖、库存、每日序列时用真实 SKU/SPU ID 调 goods_detail/spu_detail；goods_detail 实际字段用 soldCount/soldCount28/soldSum28/symbol 等驼峰名，不照抄字段字典旧 defaultFields。
-5. 对照标题、类目和图片剔除配件及跨类目误命中；相关性不确定单列待核。按本次真实可得指标排序，保留原始 ID、查询参数和来源。
+5. 对照标题、类目和图片剔除配件及跨类目误命中；绗缝手袋剔化妆包/工具包，麻将收纳包剔牌具套装，词面命中不等于商品类型正确。若 createDate/soldCount28 未返回，不宣称逐条核验上架/销量；相关性不确定单列待核。按真实可得指标排序并保留 ID、参数和来源。
 
 ## 空结果与异常处理
-- total=0 时先核对类目体系与参数；必要时用已知有效参数核验接口健康。按需查 yq_quota_status，再用 yq_ozon_market_stat(key="all") 核对大盘。大盘有数不代表商品搜索有数。
+- total=0 时先核对类目体系与参数；无硬筛的精准词有结果、加日期或销量后为0，只能说明没有已证实的合格候选，诊断候选不可冒充结果。必要时用已知 SKU 核验搜索接口健康，按需查 yq_quota_status 或 market_stat；大盘有数不代表商品搜索有数。
 - 2026-11-11 实测 goods_search/spu_search 空；这是历史状态，不应假定永久不可用。若本次搜索仍空，明确告知无可用商品候选，列出已核验参数；不得用大盘指标冒充 TOP 商品或反复同义重查。
 - 单轮业务调用满10次暂停汇报，零结果最多两轮调整策略；不得放宽用户硬条件来凑样本。
 
@@ -567,9 +567,9 @@ const BASE_SKILLS = [
       '要求：',
       '1. 类目词先用 yq_dict_lookup 查类目 ID，不要猜；',
       '2. 按 SKU 调 goods_search 或按父款调 spu_search；明确排序指标与硬条件，必要时以真实 ID 补 goods_detail；',
-      '3. 多路召回须记录参数与命中数，SKU 去重、SPU 归组，核验标题/类目/图片并排除配件；',
+      '3. 歧义商品先确认类型；若已明确是麻将牌收纳包只检索该类型，多路召回记录参数与命中数；SKU 去重、SPU 归组，核验标题/类目/图片并排除化妆包、牌具套装等误命中；',
       '4. 输出查询口径、样本数和按实得指标排序的明细表（商品链接/价格与币种/评分/评论/28天销量与销售额/店铺类型），缺失标「—」；',
-      '5. 如搜索接口空，核对类目体系与接口健康后如实说明，不拿大盘冒充商品榜；建议只基于已返回样本，标注接口与查询日期。',
+      '5. 用户未指明销量周期时说明按近28天口径；若接口缺上架日期/销量字段，不声称逐条核验。空结果核对接口健康后如实说明，不拿大盘或泛词候选冒充目标商品。',
     ].join('\n'),
     demo: {
       title: '实测：收纳类目跨境选品检索（四路召回+SPU归组）',
@@ -2393,7 +2393,8 @@ const BASE_EXPERTS = [
       '## 指标口径',
       'dailySales=日/weeklySales=周/monthSales=月，带7/28后缀=近7/28天；金额以返回 symbol 为准（Ozon默认卢布₽）；字段为空≠0；weight常缺失（三级策略：真实值→1688候选参考重→类目假设标*）；volume是展示估算值不可反推重量',
       '字段命名（2026-11-11 实测）：两接口销量字段都是驼峰，但日周月销量名不同——搜索 dailySales/weeklySales/monthSales，详情 soldCount/soldCount7/soldCount28+soldSum系列；币种都是 symbol（无currency）。⚠️ yq_fields_lookup 的 defaultFields 里 daily_sales/currency 是误导旧名，传 _fields 会静默忽略，别照抄。详情接口跟卖字段 otherCount+others，上架日期 createDate。',
-      '接口可用性（2026-11-11 实测）：goods_search/spu_search 当前返回空（连官方示例参数都空），market_stat/mall_search/mall_detail/brand_search/goods_detail 正常。搜索类取不到数据时如实告知并走降级，不硬凑、不反复同义重查；先 market_stat(key="all") 验证大盘是否正常再下结论。',
+      '接口可用性（2026-11-11 实测）：goods_search 早间空、晚间可返回商品；spu_search 晚间未复测。用已知 SKU 验证当次搜索健康，不能依据旧故障永久判断接口不可用。',
+      '麻将包回归：绗缝手袋与麻将牌收纳包须分义；90天上架+近28天销量>1条件下，收纳包0条，绗缝词返回1条化妆包要剔除；缺 createDate/soldCount28 时不得宣称逐条核验达标，不拿泛词候选凑数。',
       '标题三字段：skuName=俄文（买家所见）/ name=原始标题（多为英文）/ skuNameZh=数据商中文翻译（覆盖不全，本土店俄文标题常回退原文）。输出表格用 skuNameZh 优先、缺失时用 name 英文标题并截断；对俄文标题不要机翻充数',
       '',
       '## 利润公式',
