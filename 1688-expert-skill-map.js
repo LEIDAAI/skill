@@ -35,7 +35,7 @@ export const a1688Expert = {
     '读一下我监控池里的商品和店铺',
     '售价20元、运费3元、费用2元，用白色磁吸166*122的4.6元参考价算情景毛利',
   ],
-  routing: `# 1688 技能路由（按主意图选择，可串联）
+  routing: `# 1688 技能路由（按主意图选择，可串联；前三条已完成2026-11-11三类触发实测，其余五条待本轮同标准复测）
 - 条件找品/跨境货源/关键词筛选 → skill-1688-conditional-search
 - 商品榜/热销排行/榜单候选 → skill-1688-billboard
 - 新上架/新品发现/新货过滤 → skill-1688-new-products
@@ -44,12 +44,12 @@ export const a1688Expert = {
 - 店铺核验/厂家资质/履约评价/店铺榜/优质供应商 → skill-1688-shop-verification
 - 我的监控池/已监控商品或店铺 → skill-1688-monitor-read
 - 报价测算/毛利/费用情景 → skill-1688-profit-scenario
-跨技能串联：榜单或新品或条件找品或图搜 → 复用已得到的 offerId 深挖 → 用已知 shopUrl 核店 → 复用已核对的 skuId 与参考价做情景测算。监控池条目需深挖时只查该条目，已有响应不重复调用；同一请求有多个意图时依链路依次执行。`,
-  disciplines: `# 平台实测纪律（2026-11-10）
-1. 只使用1688接口和用户提供的假设；样本排序/榜单日期/监控池各有独立口径，抽样不等于全量；totalCount=10000的普通检索结果未清洗，不能报作目标商品数。跨境筛选totalCount=67也不能替代质量筛选。
-2. 参数：普通/跨境搜索与商品榜使用req，趋势新品和监控列表使用request，新品request.titleTags在本MCP schema必传，详情和SKU使用req.offerId字符串，店铺分析使用顶层shopUrl，图搜req.imageUrls只能含1张图。商品月榜pageType=3、date传当月第一天；关键词加sortField曾返回空，先去掉排序重试并报告降级。shopScreen需营业执照全名；店铺榜shop_rank_list历史返回空，找店改按商品结果shopUrl核验。
-3. 标题、类目与规格联合去噪：磁吸收纳盒检索会混入手机配件；收纳盒新品会混入沥水碗架、便携餐具盒和蛋糕模。跨境标签只表明货源标签，不保证适配目标市场。
-4. 1688金额按返回人民币口径写¥；笔数、件数和销售额分别写明口径，不把件数当订单。offerRepurchaseRate存在小数与百分数两种表示，转换前核对字段口径；监控池monthSalesVolume字段单位未核实，原样保留；服务指标以原始小数展示，百分比换算须注明口径，不臆断优劣。
+跨技能串联：榜单或新品或条件找品或图搜 → 复用已得到的 offerId 深挖 → 用已知 shopUrl 核店 → 复用已核对的 skuId 与参考价做情景测算。监控池条目需深挖时只查该条目，已有响应不重复调用；同一请求有多个意图时依链路依次执行。搜索空列表先检查精确词、日期和硬门槛；仅经用户允许扩大条件并明确新检索范围。单轮业务调用满10次停调汇报，剩余触发留待下轮验证。`,
+  disciplines: `# 平台实测纪律（2026-11-10至2026-11-11；两轮数据不可混为同一时点）
+1. 只使用1688接口和用户提供的假设；样本排序/榜单日期/监控池各有独立口径，抽样不等于全量；totalCount是原始查询命中数，不是筛后目标商品数。上一轮普通检索10000/跨境67与本轮普通7250/跨境4条件和调用时间不同，不作占比比较。
+2. 参数：普通/跨境搜索与商品榜使用req，趋势新品和监控列表使用request，新品request.titleTags在本MCP schema必传，详情和SKU使用req.offerId字符串，店铺分析使用顶层shopUrl，图搜req.imageUrls只能含1张图。beginOfferCreateTime/endOfferCreateTime为yyyy-MM-dd，cycle为字符串'7'/'30'；商品月榜pageType=3、date为当月第一天，周榜pageType=2且date为对应周日。关键词与sortField组合在2026-11-11月榜复测成功；遇空先查关键词精确匹配、日期和门槛，仅排查排序影响时移除排序复查，不能把空归咎于排序。beginOrderCount为周期笔数、beginSaleCount为周期件数，不能用累计字段beginOrdersCount/beginSalesCount替换。shopScreen需营业执照全名；店铺榜shop_rank_list历史返回空，找店改按商品结果shopUrl核验。
+3. 标题、levelName类目与规格联合去噪：磁吸收纳盒可能混入手机配件、厨房置物架，桌面收纳盒可能混入笔筒、纸巾盒、饭盒；只有核实目标用途后才纳入候选。跨境标签只表明货源标签，不保证适配目标市场。code 200且total=0/list=[]是当前条件下正常空结果，先核查精确词searchType=3及硬条件；只有用户同意才扩大范围，不能称额度或数据源故障。本轮未验证额度和整体数据源故障。
+4. 1688金额按返回人民币口径写¥；orderCount是周期笔数、saleQuantity是周期件数、salesVolume是预估销售额，不把大量件数当大量订单。列表price、quantityPrices及SKU priceRanges是不同报价层，展示价不等于该采购量的实际结算价。offerRepurchaseRate存在小数与百分数两种表示，转换前核对口径；监控池monthSalesVolume单位未核实，原样保留；服务指标以原始小数展示，不臆断优劣。
 5. SKU 与阶梯报价不能混用：白色磁吸166*122 skuId 5251111954228参考¥4.6；无磁吸166*122 skuId 5949219410490参考¥4；500件起¥4的priceRanges不能当有磁吸SKU单价。未核定采购量、运费与结算价前不称实际利润。
 6. 单品近30天数据与自然月数据窗口不同；2026-10月与09月可并列比较，但不得把不同时间窗数值直接当订单增幅；trend为relative/normalized，y值不是绝对订单。无完整趋势序列不下整体涨跌结论。
 7. null/缺失不补0，单次监控池读取不是历史变化；图搜本轮image_search为504、global_image_search为code500，不伪称成功。旧报告图搜成功只证实候选，需拿样核对同款。
@@ -70,22 +70,24 @@ export const a1688Skills = [
       '普通检索和跨境检索各取样本，按offerId去重并逐条核对标题、类目与规格。',
       '列出有效候选及被排除的噪音，分别标明笔数、件数、金额和检索范围。',
     ],
-    instructions: `按用户关键词及条件调用product_search_list；明确要求跨境时再调用cross_border_product_search_list，沿用同一关键词/周期并用用户指定订单阈值。对齐offerId去重、核对类目与磁吸等核心属性，排除手机配件。保留请求、code、totalCount和样本明细；totalCount是原始命中数，不等于清洗后的可售货源数。`,
+    instructions: `典型：product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}})。明确要求跨境时调用cross_border_product_search_list，参数仍嵌套req，填keyWord/searchType/cycle/pageIndex/pageSize及用户指定的硬条件，不自动把两路totalCount相减。边界：时间beginOfferCreateTime/endOfferCreateTime用yyyy-MM-dd；cycle取'7'或'30'，7天件数排序saleCount7d/desc；beginPrice/endPrice为价格区间；beginOrderCount为周期订单笔数，beginSaleCount为周期件数，累计门槛beginOrdersCount/beginSalesCount不能混用。只传用户指定的硬门槛，跨境标签不保证目标市场适配。结果按offerId去重，逐条比对标题、levelName与必需属性；totalCount是原始命中，表内标注剔除/待核；列表price与quantityPrices、SKU priceRanges不得等同采购成交价。异常：code=200且totalCount=0/list=[]，先核对searchType=3的精确词和条件；仅用户允许时改变检索范围并显式披露。非200/超时记录接口与错误，若有可靠响应才用作对照；未查额度不能断言额度耗尽。输出实际req、调用日期、筛后候选数及笔/件/预估额，缺失不补0。`,
     demo: {
-      title: '磁吸收纳盒普通与跨境样本对照',
-      date: '2026-11-10',
-      kpis: ['普通检索code 200，原始totalCount 10000（未清洗）', '跨境检索code 200，原始totalCount 67', '同一offerId 734800252457在两路首位，需去重'],
+      title: '磁吸收纳盒：典型、边界与精确词空结果',
+      date: '2026-11-11',
+      kpis: ['普通code 200，原始totalCount 7250', '跨境7天边界code 200，原始totalCount 4', '精确不存在型号code 200，totalCount 0'],
       flow: [
-        "product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → code 200",
-        "cross_border_product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',beginOrderCount:10,pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → code 200",
+        "product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}}) → 200/7250",
+        "cross_border_product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'7',beginOfferCreateTime:'2026-10-01',endOfferCreateTime:'2026-11-11',beginPrice:4,endPrice:30,beginOrderCount:1,pageIndex:1,pageSize:3,sortField:'saleCount7d',sortType:'desc'}}) → 200/4",
+        "product_search_list({req:{keyWord:'磁吸收纳盒不存在型号ZXQ999999',searchType:3}}) → 200/0/list[]（已知请求字段）",
       ],
       table: [
-        {来源: '普通/跨境首位', offerId: '734800252457', 参考价: '¥4', 近30天件数: 152721, 近30天笔数: 48, 近30天销售额: '¥610884', 处理: '磁吸收纳盒相关候选；列表价需按磁吸SKU核对'},
-        {来源: '跨境样本', offerId: '1044998343367', 参考价: '¥15', 近30天件数: 7314, 近30天笔数: 40, 近30天销售额: '¥109710', 处理: '亚克力卡牌展示盒；与磁吸收纳盒需求不符'},
-        {来源: '跨境样本', offerId: '963590713991', 参考价: '¥15', 近30天件数: 4544, 近30天笔数: 118, 近30天销售额: '¥68160', 处理: '规格相关性待核，不能直接当磁吸款'},
+        {来源: '普通30天', offerId: '734800252457', 展示价: '¥4，起批500件', 件数: 153361, 笔数: 49, 预估销售额: '¥613444', 处理: '相关候选，SKU报价另核'},
+        {来源: '跨境7天', offerId: '1094593493154', 展示价: '¥22', 件数: 30, 笔数: 1, 处理: '路由器收纳盒；200~299件阶梯¥23，用途另核'},
+        {来源: '跨境7天', offerId: '1089752534193', 件数: 5, 笔数: 1, 处理: '磁吸鞋盒；用途另核'},
+        {来源: '跨境7天', offerId: '1099157688469', 展示价: '¥14对应≥10000件阶梯', 件数: 4, 笔数: 1, 处理: '磁吸药盒；用途另核'},
       ],
-      note: '首位标题对应磁吸收纳盒，但¥4列表价不能代替磁吸SKU的¥4.6参考价；卡牌展示盒属于噪音。原始命中量未经清洗。',
-      source: 'mcp__1688__product_search_list、mcp__1688__cross_border_product_search_list；2026-11-10 实调，参数见flow。',
+      note: '三路条件和窗口不同，不计算跨境占比；厨房置物架等语义噪音需剔除。正常空列表不能称接口故障；展示价不是指定采购量的结算价。',
+      source: 'mcp__1688__product_search_list（2次）、cross_border_product_search_list（1次）；2026-11-11实调，参数见flow。',
     },
   },
   {
@@ -100,18 +102,25 @@ export const a1688Skills = [
       '记录样本货号、价格、件数、笔数与销售额，核对品类。',
       '给待深挖的offerId，不以单日榜单推断整体市场。',
     ],
-    instructions: `调用product_billboard_list查询指定日期、pageType与关键词；输出每行offerId、参考价、销量件数、订单笔数和销售额，注明榜单日期与实际调用日期。样本只用于发现候选；有后续需求则按offerId进入单品深挖。`,
+    instructions: `调用product_billboard_list({req:{date:'2026-10-01',pageType:3,keyWord:'收纳盒',pageIndex:1,pageSize:3}})取月榜；月榜date为yyyy-MM-01，周榜pageType:2且date取相应周日yyyy-MM-dd。按需传beginPrice/endPrice和周期笔数门槛beginOrderCount，累计beginOrdersCount不可混用。排序可指定sortField:'saleVolume30d',sortType:'desc'；2026-11-11关键词+排序复测正常，不能把空结果直接归咎排序。榜单记录date、查询日期、实际req、code、totalCount及样本逐行的offerId、levelName、price、saleQuantity件、orderCount笔、salesVolume预估额；按用户用途剔除保鲜盒等错类，原始totalCount不是筛后数。code=200且totalCount=0/list=[]先核查精确词searchType:3及日期门槛；变更范围需用户允许并注明。非200/超时如实报错，未核额度不推断额度问题；样本不外推全榜，缺失不补0，无序列不判趋势。`,
     demo: {
-      title: '2026-10-01 收纳盒榜单样本',
-      date: '2026-11-10（请求榜单日期2026-10-01）',
-      kpis: ['code 200', '首位11331件/11192笔/¥113423.31', '次位10214件/9746笔/¥56177'],
-      flow: ["product_billboard_list({req:{date:'2026-10-01',pageType:3,keyWord:'收纳盒',pageIndex:1,pageSize:3}}) → code 200"],
-      table: [
-        {名次: 1, offerId: '1087689307649', 参考价: '¥10.01', 件数: 11331, 笔数: 11192, 销售额: '¥113423.31'},
-        {名次: 2, offerId: '886261779564', 参考价: '¥5.5', 件数: 10214, 笔数: 9746, 销售额: '¥56177'},
+      title: '收纳盒商品榜月榜、周榜与空结果复测',
+      date: '2026-11-11（榜单日期分别2026-10-01、2026-11-08）',
+      kpis: ['月榜code 200/原始totalCount 10000', '周榜code 200/原始totalCount 4889', '关键词+销售额排序正常；精确不存在型号返回0'],
+      flow: [
+        "product_billboard_list({req:{date:'2026-10-01',pageType:3,keyWord:'收纳盒',pageIndex:1,pageSize:3}}) → 200/10000",
+        "product_billboard_list({req:{date:'2026-11-08',pageType:2,keyWord:'收纳盒',beginPrice:5,endPrice:30,beginOrderCount:10,pageSize:3}}) → 200/4889（已知请求字段）",
+        "product_billboard_list({req:{date:'2026-10-01',pageType:3,keyWord:'收纳盒',sortField:'saleVolume30d',sortType:'desc',pageIndex:1,pageSize:3}}) → 200/10000",
+        "product_billboard_list({req:{date:'2026-10-01',pageType:3,keyWord:'不存在的磁吸收纳盒型号ZXQ999999',searchType:3}}) → 200/0/list[]（已知请求字段）",
       ],
-      note: '榜单请求日期与接口调用日期不同；pageSize=3，表中仅记录已提供的两条返回，不能外推全榜。',
-      source: 'mcp__1688__product_billboard_list；2026-11-10 实调，榜单date=2026-10-01。',
+      table: [
+        {榜单: '月榜', offerId: '1087689307649', 件数: 11331, 笔数: 11192, 预估销售额: '¥113423.31', 处理: '待深挖'},
+        {榜单: '月榜', offerId: '886261779564', 件数: 10214, 笔数: 9746, 预估销售额: '¥56177', 处理: '待深挖'},
+        {榜单: '周榜', offerId: '914416163670', 件数: 4187, 笔数: 2923, 展示价: '¥7', 处理: '保鲜盒；桌面收纳目标时剔除'},
+        {榜单: '周榜', offerId: '1094183577022', 件数: 1424, 笔数: 1421, 展示价: '¥10.01', 处理: '桌面收纳盒候选'},
+      ],
+      note: '四次真实调用分别为典型、边界、排序复测与正常空结果。月榜和周榜不混用，原始总数未经目标品类清洗。',
+      source: 'mcp__1688__product_billboard_list；2026-11-11实调4次，参数见flow。',
     },
   },
   {
@@ -126,19 +135,26 @@ export const a1688Skills = [
       '逐条交叉检查商品名称、类目和上架日期。',
       '标注错类与待核商品，避免以关键词命中直接断言新品机会。',
     ],
-    instructions: `用product_trend_new_list查询新品；保留真实request嵌套参数与返回code。按标题、类目核验命中，记录上架日期和排除理由；没有连续趋势序列不声称销量在上涨。`,
+    instructions: `调用product_trend_new_list({request:{keyWord:'桌面收纳盒',searchType:4,titleTags:['289794'],cycle:'30',pageIndex:1,pageSize:3}})；本MCP schema必须显式传request.titleTags，'289794'是已验证的新品标签，不声称覆盖全部标签。按用户指定的7天/30天周期传字符串cycle:'7'/'30'；beginOfferCreateTime/endOfferCreateTime用yyyy-MM-dd，beginPrice/endPrice限制价格，beginOrderCount限制周期笔数，beginSaleCount限制周期件数；累计门槛不要替代。逐行核标题、levelName、上架日期和用途，剔除笔筒/纸巾盒等错类；total为原始命中数。列表price需与quantityPrices及SKU阶梯对应采购量核对后才报价。code=200且total=0/list=[]先检查searchType:3精确词及硬条件，用户允许扩大检索范围才变更条件并说明；非200/超时记录错误，额度或数据源故障无证据不猜。输出真实request、调用日期、候选与剔除原因、笔/件/预估额；抽样不等于全量，缺失不补0，单次新品页不证明趋势。`,
     demo: {
-      title: '收纳盒新品关键词错类核验',
-      date: '2026-11-10',
-      kpis: ['code 200', '样本3个offerId，均不能直接作为目标收纳盒候选', '首条上架日期2026-10-23'],
-      flow: ["product_trend_new_list({request:{keyWord:'收纳盒',searchType:4,cycle:'30',titleTags:['289794'],pageIndex:1,pageSize:3}}) → code 200"],
-      table: [
-        {offerId: '1094384793742', 类目: '沥水碗架', 说明: '厨房碗碟架', 参考价: '¥99.99', 件数: 1001, 笔数: 2, 上架: '2026-10-23', 处理: '排除收纳盒目标'},
-        {offerId: '1095951942592', 类目: '便携餐具', 说明: '便携餐具盒', 参考价: '¥18.5', 件数: 4420, 笔数: 1, 上架: '2026-11-02', 处理: '排除错类'},
-        {offerId: '1090363232064', 类目: '蛋糕模', 说明: '硅胶模具', 参考价: '¥4.5', 件数: 17400, 笔数: 5, 上架: '2026-10-05', 处理: '排除错类'},
+      title: '桌面收纳盒新品30天、7天及精确词空结果',
+      date: '2026-11-11',
+      kpis: ['30天code 200/原始total 10000', '7天上架及价格边界code 200/原始total 326', '精确不存在型号code 200/total 0'],
+      flow: [
+        "product_trend_new_list({request:{keyWord:'桌面收纳盒',searchType:4,titleTags:['289794'],cycle:'30',pageIndex:1,pageSize:3}}) → 200/10000",
+        "product_trend_new_list({request:{keyWord:'桌面收纳盒',searchType:4,titleTags:['289794'],cycle:'7',beginOfferCreateTime:'2026-11-04',endOfferCreateTime:'2026-11-11',beginPrice:3,endPrice:30,beginOrderCount:1,pageIndex:1,pageSize:3}}) → 200/326",
+        "product_trend_new_list({request:{keyWord:'不存在的桌面收纳盒型号ZXQ999999',searchType:3,titleTags:['289794']}}) → 200/0/list[]（已知请求字段）",
       ],
-      note: 'titleTags=289794为新品标签；三条均与目标收纳盒品类有偏差。30天成交笔数分别为2、1、5，不能以件数推断零售热度，也不由单页判断类目趋势。',
-      source: 'mcp__1688__product_trend_new_list；2026-11-10 实调，参数见flow。',
+      table: [
+        {周期: '30天', offerId: '1085476982882', 类目: '化妆品收纳盒', 件数: 561, 笔数: 243, 展示价: '¥86.9', 处理: '用途需核'},
+        {周期: '30天', offerId: '1095398688885', 类目: '笔筒', 处理: '桌面收纳盒目标时剔除'},
+        {周期: '30天', offerId: '1088760013417', 类目: '折叠收纳盒', 件数: 4900, 笔数: 3, 处理: '大件数少笔数；阶梯价另核'},
+        {周期: '7天', offerId: '1098691501379', 类目: '纸巾盒', 处理: '剔除错类'},
+        {周期: '7天', offerId: '1095996431491', 类目: '化妆品桌面收纳盒', 件数: 1186, 笔数: 3, 展示价: '¥4.5', 处理: '用途需核'},
+        {周期: '7天', offerId: '1098194653641', 类目: 'PP收纳盒', 件数: 407, 笔数: 3, 展示价: '¥5.5', 处理: '1~49件quantityPrices为¥6.9'},
+      ],
+      note: '原始total未经目标用途清洗；列表价与实际采购量阶梯价不同。正常空列表先核精确词与筛选，不能推断额度或接口故障。',
+      source: 'mcp__1688__product_trend_new_list；2026-11-11实调3次，参数见flow。',
     },
   },
   {
