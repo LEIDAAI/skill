@@ -194,8 +194,8 @@
   }
   .modal-mask.open { display: flex; }
   .modal {
-    background: #fff; border-radius: 16px; max-width: 760px; width: 100%;
-    max-height: 82vh; display: flex; flex-direction: column; overflow: hidden;
+    background: #fff; border-radius: 16px; max-width: 960px; width: 100%;
+    max-height: 88vh; display: flex; flex-direction: column; overflow: hidden;
   }
   .modal-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); }
   .modal-head h3 { font-size: 16px; }
@@ -496,24 +496,42 @@ const SCENARIOS = {
 };
 
 /* ================= 内置技能 ================= */
-const OZON_SELECT_MD = [
-'# Ozon选品搜索','',
-'## 触发场景（何时使用）',
-'当用户需要在 Ozon（俄罗斯电商平台）上做选品调研时使用本技能，例如：',
-'- 输入「帮我看看 Ozon 家居类目有什么好卖的」→ 按类目搜索并返回热销商品清单',
-'- 输入「Ozon 上 2000 卢布以内、评分 4.5 以上的收纳盒找一下」→ 关键词+价格+评分筛选',
-'- 输入「找一下 Ozon 上近 28 天销量最高的宠物用品，只要跨境卖家」→ 类目+销量+卖家类型筛选','',
-'## 输入',
-'- 关键词或类目（必填其一）；价格区间（卢布）；销量门槛；评分门槛；卖家类型（1跨境/2本土/3自营）；返回数量（默认20）','',
-'## 执行步骤',
-'1. 类目名称先调 yq_dict_lookup 查 ID，不要猜编码；',
-'2. yq_ozon_goods_search（SKU 维度）或 yq_ozon_spu_search（SPU 维度），常用 sort [{"dailySales":"desc"}]；',
-'3. 需要详情时调 yq_ozon_goods_detail / yq_ozon_spu_detail；','',
-'## 输出格式',
-'结论（一句话）+ 数据表格（商品名/价格/评分/评论/28天销量/28天销售额/卖家类型）+ 1-3条建议','',
-'## 约束',
-'- 缺数据明确说明，不编造；空字段 ≠ 0；金额默认卢布；带7/28后缀=近7/28天；标注数据来源。',
-].join('\n');
+// 弹窗展示与本地底稿 skills/ozon-selection-search.md 保持同一执行口径。
+const OZON_SELECT_MD = `# Ozon选品搜索
+
+> 执行前先读《OZON接口实测速查》(ozon-api-playbook.md)：字段命名、接口可用性与空结果降级 SOP。接口状态以当次调用为准。
+
+## 触发与边界
+用户需要按类目/关键词寻找 Ozon 商品候选、筛选新品、比较不同规格或核验某条商品链接时使用。本技能产出可追溯商品清单；利润、持续监控、类目趋势由相应技能进一步处理。
+
+## 输入与口径
+- 必需：商品关键词或类目名称（至少一项）；仅有 SKU/链接则先提取 ID 核验详情。
+- 可选：价格区间（₽）、近7天/28天最低销量、评分 minScore、卖家类型 storeType（1跨境/2本土/3自营）、上架时间 minCreateDate/maxCreateDate、返回数量 size（默认20，最大500）。
+- 先确定 SKU（具体规格）还是 SPU（父款）口径；已有可用商品结果直接复用。用户给出的硬条件原样保留，不擅自放宽。
+
+## 执行步骤
+1. 解析筛选条件和排序依据；类目名称先调 yq_dict_lookup(platform="ozon")：前台 CATEGORY ID 给 types 数组，后台 CATEGORY_BACKEND ID 给 category 数组。记录类目名称、体系及 ID，不能猜或交叉误传。
+2. SKU 用 yq_ozon_goods_search，父款用 yq_ozon_spu_search；sort 可用 [{"dailySales":"desc"}]（日销）或 [{"soldSum28":"desc"}]（近28天销售额，历史实测有效）。近30天上架须用 minCreateDate/maxCreateDate、yyyy-MM-dd，不能拿 minCreateTime 数据发现时间替代。
+3. 中文词优先 skuNameZh（分词 AND 匹配，需要语义复核），俄文或英文词用 skuName。只有用户目标允许时才追加其他语言/类目路径；逐路记录参数与命中数，按 SKU 去重、按需按 SPU 归组，不把多路 total 相加当独立商品数。
+4. 对接口不支持的筛选条件在返回后逐条过滤，并在输出中说明。需要跟卖、库存、每日序列时用真实 SKU/SPU ID 调 goods_detail/spu_detail；goods_detail 实际字段用 soldCount/soldCount28/soldSum28/symbol 等驼峰名，不照抄字段字典旧 defaultFields。
+5. 对照标题、类目和图片剔除配件及跨类目误命中；相关性不确定单列待核。按本次真实可得指标排序，保留原始 ID、查询参数和来源。
+
+## 空结果与异常处理
+- total=0 时先核对类目体系与参数；必要时用已知有效参数核验接口健康。按需查 yq_quota_status，再用 yq_ozon_market_stat(key="all") 核对大盘。大盘有数不代表商品搜索有数。
+- 2026-11-11 实测 goods_search/spu_search 空；这是历史状态，不应假定永久不可用。若本次搜索仍空，明确告知无可用商品候选，列出已核验参数；不得用大盘指标冒充 TOP 商品或反复同义重查。
+- 单轮业务调用满10次暂停汇报，零结果最多两轮调整策略；不得放宽用户硬条件来凑样本。
+
+## 输出规范
+1. 查询口径：站点、类目体系及 ID、关键词语言、价格/销量/评分/店铺类型/时间窗、查询日、排序、SKU 去重及 SPU 归组后的有效样本数。
+2. 样本事实：样本数、价格区间和有覆盖的销量/销售额；不据 TOP20 推断市场规模、增长或竞争强度。
+3. 商品明细：主图、可打开的商品标题、SKU/SPU ID、价格与币种、评分、评论数、28天销量和销售额、店铺类型；缺失显示「—」，疑义标待核；按核心实得指标降序。
+4. 结论：1–3条由样本支撑的建议和下一步核验项。空结果时输出接口状态与口径说明，不生成虚构表格。
+
+## 数据纪律
+- 真实返回优先；空字段≠0；带7/28后缀表示近7/28天；金额核对 symbol，默认展示₽，不得混币统计。
+- 标注接口名、查询参数、查询日期与样本范围。上架日期与数据发现日期不能混用；缺少趋势序列不得断言增长。
+- 详情字段用驼峰名；字段字典 defaultFields 的 daily_sales/currency 是旧展示名，不能直接用于 _fields。
+`;
 
 const BASE_SKILLS = [
   /* ============ 1688 ============ */
@@ -547,9 +565,10 @@ const BASE_SKILLS = [
       '筛选：价格区间【如 500-2000 卢布】| 近28天最低销量【如 500】| 评分≥【如 4.5】| 卖家类型【跨境/本土/不限】',
       '要求：',
       '1. 类目词先用 yq_dict_lookup 查类目 ID，不要猜；',
-      '2. 调 yq_ozon_goods_search 按销量降序取 TOP20（必要时补 yq_ozon_goods_detail）；',
-      '3. 输出：结论（一句话概括机会）+ 数据表（商品名/价格/评分/评论数/28天销量/28天销售额/卖家类型）+ 1-3条建议；',
-      '4. 金额默认卢布，缺数据标「—」，标注数据来源。',
+      '2. 按 SKU 调 goods_search 或按父款调 spu_search；明确排序指标与硬条件，必要时以真实 ID 补 goods_detail；',
+      '3. 多路召回须记录参数与命中数，SKU 去重、SPU 归组，核验标题/类目/图片并排除配件；',
+      '4. 输出查询口径、样本数和按实得指标排序的明细表（商品链接/价格与币种/评分/评论/28天销量与销售额/店铺类型），缺失标「—」；',
+      '5. 如搜索接口空，核对类目体系与接口健康后如实说明，不拿大盘冒充商品榜；建议只基于已返回样本，标注接口与查询日期。',
     ].join('\n'),
     demo: {
       title: '实测：收纳类目跨境选品检索（四路召回+SPU归组）',
