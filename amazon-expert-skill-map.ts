@@ -65,9 +65,11 @@ export const amazonExpert = {
 8. 变体纪律：product_search 返回子 ASIN。按 parent_asin 去重只能统计样本中独立系列数，不能推出全体子体；同 parent 多行可能重复销量（HydroJug 两款同报106824），禁止相加。父体总销量须有明确父体口径接口值或完整子体明细及可加总口径证据，否则标「未核实」。
 9. 新品评论：上架<30天的商品评论为空是常态（review_count=0，customers_say/reviews 返回空），不作为分析缺陷；评论数为 SPU 家族累计口径，不代表新链接自身。
 10. 话题词漂移：customers_say 的 AI summary 在全变体池提炼（实测 STANLEY 40oz 变体被描述为 30oz），引用以 details 计数为准、规格以 product_detail 为准。
-11. 检索坑：sellersprite traffic_keyword 必须默认参数调用（带 month/returnFields 返回空字段）；sorftime seller_search 组合条件过严返回空，从宽起步逐层加码；quora_question_search 数据源当前不可用不依赖。
+11. 检索坑：product_search.keyword 是 ABA 词召回，不是精确标题，不能据此直接统计相关款；attribute_name 匹配标题或属性，仍需标题/类目核对；product_search.asin 是相似商品检索而非单品详情；category_name_search 多候选时按名称和层级选 node_id，不取首项；空结果按参数/接口/额度/数据源分诊，不放松用户硬条件。
 12. 额度纪律：批量任务前 common_usage_query 查额度（专利关键词检索 60cr/次，图搜 450cr/次仅高危单款）。
-13. 反编造三条：抽样≠全量（输出标注样本窗口与页数）、缺失≠0（-1/1970/null 如实标「无数据」）、无趋势数据不下涨跌结论（<2 个月序列不下定论）。`,
+13. 反编造三条：抽样≠全量（输出标注样本窗口与页数）、缺失≠0（-1/1970/null/空字符串如实标「无数据」）、无趋势数据不下涨跌结论（<2 个完整可比月份不下定论）。
+14. product_detail 返回 ASIN 必须与请求相同：2026-11-11 请求 B000000000 却返回品名零食、品牌纺织品的矛盾记录，身份矛盾时停止分析。评论/销量快照随查询日期变化，历史 demo 不当现值引用。
+15. 跨境筛选以 product_detail.seller_country=CN 等已确认国别为准；product_search 无卖家国别，不能凭店名、语言或品名推断。keyword_extends 推荐 CPC 空串=缺失；keyword_detail 90 天点击量为0却有转化率时不得按点击量重算。`,
 }
 
 export const amazonSkills: AmazonSkillDef[] = [
@@ -80,13 +82,12 @@ export const amazonSkills: AmazonSkillDef[] = [
     tools: ['category_name_search', 'product_search', 'common_usage_query'],
     steps: [
       '类目词先 category_name_search 转 node_id（多候选列出让用户确认）',
-      'product_search 组合筛选：keyword + online_date 窗口 + 价格/销量/评分/FBA',
-      '父体归组（parent_asin）：销量为旗下子体合计，代表子体做展示行',
-      '表格：悬停大图 + 标题跳商品页 + 卖家跳卖家页 + 变体徽章',
-      '结论：口径限制（新品价格销量缺失/跨境需 seller_detail 深查）必须写明',
+      'product_search.keyword 只作 ABA 词召回；标题/属性用 attribute_name；时间 yyyy-MM-dd，价格 price_range_min/max，月销量 month_sale_volume_range_min/max，page 从1开始、每页20',
+      '核对标题及类目，剔除非目标商品；parent_asin 去重仅得样本父体数，不将子体销量相加充当父体总销量',
+      '跨境要求逐候选 product_detail 核验 seller_country；卖家链接须拿 seller_id，缺失则纯文本',
+      '空结果保留硬条件并按参数错误、接口无数据、额度、数据源故障分诊；说明样本页数与字段缺失',
     ],
-    instructions: `搜索亚马逊商品：【需求描述，如"近60天上架的跨境麻将包"】。
-要求：时间窗动态计算并写明日期范围；输出 KPI 卡+表格+结论；默认父体视角并提示「展开子体需消耗更多积分」；标注数据来源与生成时间。`,
+    instructions: `搜索亚马逊商品：【产品词、站点、上架起止日、价格币种、月销下限、是否必须跨境】。仅用 Sorftime。日期用 yyyy-MM-dd；product_search.keyword 填 ABA 搜索词（宽召回），attribute_name 填标题/属性词；价格用 price_range_min/max，月销量用 month_sale_volume_range_min/max；page 从1开始每页20。类目词先 category_name_search 再选准确 node_id；不得把首项当答案。检索后人工核对标题/类目，剔除不相关配件；跨境须用 product_detail.seller_country 实证，空值标未核验。默认按 parent_asin 去重展示代表子体销量，未核实全体子体前不能标「父体总销量」或相加。空结果先查字段格式、示例、common_usage_query 额度和 category_report 对照，硬门槛不放宽。输出 KPI+表格+结论，注明样本页数/采集日期/缺失字段；需要子体明细再问用户是否接受额外积分。`, 
   },
   {
     id: 'skill-amazon-competitor',
@@ -94,16 +95,15 @@ export const amazonSkills: AmazonSkillDef[] = [
     desc: '竞品 ASIN 深拆：利润四件套直读、流量词结构、卖家背景、父体系列拆解。',
     scenario: '竞品监控',
     triggers: ['分析这个 ASIN', '这个竞品怎么样', '它的利润结构', '看看这个链接'],
-    tools: ['product_detail', 'product_search', 'product_customers_say', 'common_usage_query'],
+    tools: ['product_detail', 'product_search', 'product_customers_say', 'product_traffic_terms', 'common_usage_query'],
     steps: [
-      'product_detail 取基本面+利润四件套（platform_fee=0 时毛利按 15% 自估佣金重算）',
-      'product_customers_say 话题正负计数找差评机会',
-      'sellersprite traffic_keyword 反查流量词 TOP20（默认参数调用）',
-      'product_search(asin=) 找同款竞品群对比价格带',
+      'product_detail(amz_site=US,asin=用户ASIN) 取基本面+利润字段；先核对返回 ASIN/标题/品牌身份',
+      '仅在需要评论时调用 product_customers_say；无数据写未取到，不当作零差评',
+      '需要流量词时调用 Sorftime product_traffic_terms；未取得不能捏造 TOP 词',
+      '需要相似竞品时 product_search(asin=) 取相似结果，不能将其当作单品详情',
       '输出：竞品画像+利润表+差评机会点+流量结构+风险清单',
     ],
-    instructions: `分析亚马逊竞品：【ASIN/链接/品牌名】。
-输出：画像表（价格/月销/评分/利润四件套）+ 差评机会点 + 流量词 TOP + 风险清单。platform_fee=0 时标注毛利率为估算。`,
+    instructions: `分析亚马逊竞品：【ASIN/链接；品牌名先检索候选再核对】。仅用 Sorftime product_detail(amz_site=US,asin=...)，必须校验返回 ASIN 与请求相同及商品身份；出现矛盾立即停止。实时价格/利润以本次返回为准，旧 demo 只作历史记录。platform_fee=0/-1 时佣金待核实，不默认15%或承认接口毛利为真实利润。评论与流量需要才分别调 product_customers_say 和 product_traffic_terms，空结果保留为空。product_search(asin=) 只找相似商品。输出实得画像、可核实费用、缺失项和数据日期；抽样不作全市场结论。`, 
   },
   {
     id: 'skill-amazon-keyword',
@@ -113,14 +113,13 @@ export const amazonSkills: AmazonSkillDef[] = [
     triggers: ['挖一下XX的关键词', '什么词好投', '热词榜', '这个词竞争激烈吗'],
     tools: ['keyword_extends', 'keyword_list', 'keyword_detail', 'keyword_trend', 'competitor_product_keywords', 'keyword_search_from_name'],
     steps: [
-      'keyword_extends 拓长尾+错拼词（捡漏流量）',
-      'keyword_list 热词榜按转化率90d 分层（<1%=虚流量剔除）',
-      'keyword_detail 单词体检：首页坑位/广告位占比/跟卖率/Top3 占位',
-      'keyword_trend 看搜索量与 CPC 走势（单位美元本体）找投放洼地',
+      '有种子词时 keyword_extends(keyword,keyword_support_site=US,page=1) 拓长尾；推荐 CPC 空字符串标缺失',
+      '单词竞争体检用 keyword_detail(keyword,keyword_support_site=US)；只用可用 90d 转化字段，0点击量与非零转化率冲突需披露',
+      '无种子词的热词榜才用 keyword_list；不把 <1% 转化机械定性为虚流量，应检查词义和购买口径',
+      '用户需要历史趋势才用 keyword_trend；没有有效序列不判断趋势，CPC 按实测美元本体',
       '输出：分层词表（核心/腰部/长尾捡漏/季节）+ 竞争信号 + 投放时点建议',
     ],
-    instructions: `挖掘亚马逊关键词：【种子词】。
-要求：转化率一律用 90d 字段；输出分层表（词/月搜/购买率/CPC/旺季/竞争信号）+ Listing 埋词建议。`,
+    instructions: `挖掘亚马逊关键词：【种子词及站点】。仅用 Sorftime；有种子词用 keyword_extends(keyword,keyword_support_site=US,page=1)，重点词再 keyword_detail(keyword,keyword_support_site=US)；无种子词才走 keyword_list 热词榜。推荐 CPC 空串标缺失；keyword_detail.search_conversion_rate_90d 与 360d 不混用，若 click_90d=0 与非零转化率冲突则披露，不自行重算。趋势仅在 keyword_trend 有完整序列时分析，CPC 为美元。未知词空结果如实说明，先查字段/额度/基准词对照。词表注明样本与取数日。`, 
   },
   {
     id: 'skill-amazon-category-trend',
@@ -165,12 +164,11 @@ export const amazonSkills: AmazonSkillDef[] = [
     tools: ['product_detail', 'common_usage_query'],
     steps: [
       'product_detail 直读 fba_fee/platform_fee/profit/profit_rate',
-      'platform_fee=0 陷阱校验：按售价×15% 自估佣金重算毛利率并标注',
+      'platform_fee=0/-1 时标佣金待核实；用户提供类目费率后才单独列情景估算，不写死15%',
       '头程估算：weight_g 与 package_size_cm 体积重取大者 × 运价（运行时询价或用户自填，不写死）',
       '输出：利润瀑布表（售价→佣金→FBA→头程→毛利）+ 三档售价敏感性',
     ],
-    instructions: `测算亚马逊商品利润：【ASIN】或直接给 售价/FBA费/佣金。
-利润字段接口直读不手算；佣金缺失时自估并标注；头程为估算项；输出明确「未含广告/退货损耗」。`,
+    instructions: `测算亚马逊商品利润：【ASIN】。只用 Sorftime product_detail 直读实际返回售价、FBA费、佣金、毛利及利润率，核对 ASIN；佣金为0/-1 时利润待核实，不默认假设费率。只有用户提供类目佣金、采购价和头程运价时，才把自定义情景计算与接口利润分栏展示；未提供的费用标缺失。注明查询日期及未计广告/退货等。`, 
   },
   {
     id: 'skill-amazon-report-gen',

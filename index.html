@@ -1237,8 +1237,8 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '关键词/类目检索新品与热销，上架时间窗/价格/销量/评分/FBA 筛选，父体归组输出结构化表格。',
     triggers: ['帮我找XX','搜近60天上架的XX','出个表格','XX类目有什么新品'],
-    prompt: "搜索亚马逊商品：【需求描述，如\"近60天上架的跨境麻将包\"】。\n要求：时间窗动态计算并写明日期范围；输出 KPI 卡+表格+结论；默认父体视角并提示「展开子体需消耗更多积分」；标注数据来源与生成时间。",
-    tools: ['category_name_search','product_search','common_usage_query']
+    prompt: "仅用 Sorftime 搜亚马逊商品：【产品词/站点/日期/价格/月销/是否跨境】。product_search.keyword 为 ABA 宽召回，attribute_name 为标题或属性匹配；日期 yyyy-MM-dd，月销下限 month_sale_volume_range_min，page 从1开始。逐条核对标题/类目；跨境逐款 product_detail 核实 seller_country。parent_asin 只用于样本去重，未经完整子体核实不得相加称父体总销量；子体详情需额外积分先询问。空结果按参数/基准词/额度/数据源分诊，硬条件不放宽；注明样本页数和查询日期。详见 sorftime-amazon/SKILL.md。",
+    tools: ['category_name_search','product_search','product_detail','common_usage_query']
   },
   {
     id: 'skill-amazon-competitor',
@@ -1249,8 +1249,8 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '竞品 ASIN 深拆：利润四件套直读、流量词结构、卖家背景、父体系列拆解。',
     triggers: ['分析这个 ASIN','这个竞品怎么样','它的利润结构','看看这个链接'],
-    prompt: "分析亚马逊竞品：【ASIN/链接/品牌名】。\n输出：画像表（价格/月销/评分/利润四件套）+ 差评机会点 + 流量词 TOP + 风险清单。platform_fee=0 时标注毛利率为估算。",
-    tools: ['product_detail','product_search','product_customers_say','common_usage_query']
+    prompt: "仅用 Sorftime 分析亚马逊竞品：【ASIN/链接】。product_detail(amz_site=US,asin=...) 核实返回 ASIN、标题、品牌和类目；身份矛盾停止。实得售价/FBA/佣金/毛利标采集日；platform_fee=0/-1 时实际利润待核，不默认15%估算。需要流量才调 product_traffic_terms，评论才调 product_customers_say；product_search(asin=) 仅找相似品，空结果如实说明。详见 sorftime-amazon/SKILL.md。",
+    tools: ['product_detail','product_search','product_customers_say','product_traffic_terms','common_usage_query']
   },
   {
     id: 'skill-amazon-keyword',
@@ -1261,7 +1261,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '长尾+错拼拓展、热词榜转化分层、单词坑位竞争/跟卖率体检、CPC 趋势投放时点。',
     triggers: ['挖一下XX的关键词','什么词好投','热词榜','这个词竞争激烈吗'],
-    prompt: "挖掘亚马逊关键词：【种子词】。\n要求：转化率一律用 90d 字段；输出分层表（词/月搜/购买率/CPC/旺季/竞争信号）+ Listing 埋词建议。",
+    prompt: "仅用 Sorftime 挖词：【种子词/站点】。有词先 keyword_extends(keyword,keyword_support_site=US,page=1)，单词体检用 keyword_detail；无种子词才走 keyword_list。推荐CPC空串视缺失；search_conversion_rate_90d 与360d不混用，click_90d=0但转化非0时标冲突不反算。仅有有效序列才谈趋势；未知词空结果如实说明。输出样本页数与查询日，详见 sorftime-amazon/SKILL.md。",
     tools: ['keyword_extends','keyword_list','keyword_detail','keyword_trend','competitor_product_keywords','keyword_search_from_name']
   },
   {
@@ -3648,7 +3648,7 @@ const BASE_EXPERTS = [
     refPrompts: ["分析Owala FreeSip这个竞品","挖water bottle的关键词","Sports Water Bottles类目体检","水杯类目出选品报告"],
     skills: ["亚马逊选品搜索","亚马逊竞品分析","亚马逊关键词挖掘","亚马逊类目趋势","亚马逊商品解析","亚马逊利润测算","亚马逊选品报告"],
     mcpTools: ["category_name_search","category_report","category_trend","product_search","product_detail","product_customers_say","keyword_list","keyword_trend","patent_search_from_keyword"],
-    sysPrompt: "你是Sorftime亚马逊选品专家（USD口径）。\\n\\n【技能路由】选品搜索→竞品分析→关键词挖掘→类目趋势→商品解析→利润测算→选品报告。\\n\\n【实测纪律】1.product_detail直返fba_fee/platform_fee/profit_rate/重量尺寸，不手算 2.keyword_trend文档说cent实际返回美元 3.category_trend当前月剔除 4.1970-01-01与-1是缺失占位 5.seller_search过严从宽起步 6.反编造三条"
+    sysPrompt: "你是Sorftime亚马逊选品专家，仅用 sorftime-amazon MCP，USD口径。\n【路由】找品/时间价格门槛→选品搜索；ASIN对标→竞品分析；种子词/热词→关键词挖掘；大盘旺季→类目体检；商品评论→商品解析；费用→利润测算；选品决策→报告。跨技能依次类目→候选→竞品→利润→报告，复用已取字段；详细参数及空结果SOP见 sorftime-amazon/SKILL.md 和 amazon-expert-skill-map.ts。\n【实测纪律】product_search.keyword为ABA宽召回、attribute_name为标题或属性，日期yyyy-MM-dd，销量month_sale_volume_range_min，node_id由category_name_search精确选定；product_detail返回ASIN/商品身份矛盾停止。FBA费/佣金/毛利直读，platform_fee=0/-1时利润待核不默认15%；keyword_trend CPC美元本体，category_trend剔除未完月；1970-01-01/-1/空串为缺失。parent_asin去重仅为样本系列数，子体销量不能相加冒充父体总量；跨境要seller_country实证，seller_id缺失不造店铺链接。抽样≠全量、缺失≠0、无趋势不下涨跌结论。每轮业务调用满10次停止汇报。"
   },
   {
     id: 'exp-ss-amazon-keyword-v2',
