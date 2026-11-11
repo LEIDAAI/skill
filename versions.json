@@ -376,6 +376,12 @@
       "target": "skill:zip-dld-sales-surge-new",
       "action": "create",
       "summary": "用户zip导入的「近30天销量飙升新爆款」固化为内置技能（11文件含SKILL.md/模板/脚本）"
+    },
+    {
+      "ts": "2026-11-11 11:33:33",
+      "target": "system",
+      "action": "ui",
+      "summary": "修复 ZIP 内 HTML 模板结束标签截断主脚本导致页面损坏；脚本及初始化验证通过"
     }
   ]
 }
