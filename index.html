@@ -3972,6 +3972,7 @@ function appendVersion(target, action, summary) {
   return _versionsCache;
 }
 let _wsVerList = [];
+let _wsAutoLatestSkillVersion = false;
 function renderWsVersions(targetPrefix) {
   const boxId = 'ws-ver-' + Math.random().toString(36).slice(2, 8);
   window.__wsVerBoxId = boxId;
@@ -3979,8 +3980,15 @@ function renderWsVersions(targetPrefix) {
     const box = document.getElementById(boxId);
     if (!box) return;
     const v = await loadVersions();
-    const list = (v.entries || []).filter(e => e.target.startsWith(targetPrefix)).slice(-8).reverse();
+    if (!box.isConnected) return;
+    const list = (v.entries || []).filter(e => e.target === targetPrefix)
+      .sort((a, b) => String(b.ts).localeCompare(String(a.ts))).slice(0, 8);
     _wsVerList = list;
+    const selectLatest = _wsAutoLatestSkillVersion && wsMode === 'skill' && targetPrefix === 'skill:' + wsExpert.id;
+    if (selectLatest) {
+      _wsAutoLatestSkillVersion = false;
+      if (list.length) window.__wsVerSel = list[0].ts + '|' + list[0].action;
+    }
     box.innerHTML = list.length ? list.map((e, i) =>
       '<div class="ws-ver-item' + (window.__wsVerSel === e.ts + '|' + e.action ? ' sel' : '') + '" ' +
       'style="cursor:pointer;padding:6px 8px;border-bottom:1px dashed var(--border);font-size:11.5px;line-height:1.5;border-radius:6px" ' +
@@ -3990,6 +3998,7 @@ function renderWsVersions(targetPrefix) {
       '<span style="color:#2b3648">' + esc(e.summary) + '</span>' +
       (e.snapshots ? '<span style="color:#008a37;font-size:10.5px"> · 📸有快照</span>' : '') + '</div>').join('')
       : '<div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">暂无记录</div>';
+    if (selectLatest && list.length) wsRenderVersionContent(list[0]);
   }, 0);
   return '<div id="' + boxId + '"><div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">加载中…</div></div>';
 }
@@ -3997,9 +4006,12 @@ async function wsShowVersion(i) {
   const e = _wsVerList[i];
   if (!e) return;
   window.__wsVerSel = e.ts + '|' + e.action;
-  /* 重渲染左栏版本列表高亮 */
-  renderWsVersions(e.target.split(':')[0] === 'expert' ? 'expert:' + wsExpert.id : e.target.split(':')[0] === 'skill' ? 'skill:' + wsExpert.id : 'kb:' + (wsKb ? wsKb.id : ''));
-  /* 右侧显示快照 */
+  /* 已渲染列表直接切换高亮，避免异步刷新覆盖右侧快照。 */
+  document.querySelectorAll('#ws-left .ws-ver-item').forEach((item, index) => item.classList.toggle('sel', index === i));
+  wsRenderVersionContent(e);
+}
+function wsRenderVersionContent(e) {
+  /* 右侧显示所选版本的快照 */
   const right = document.getElementById('ws-right');
   const snap = e.snapshots;
   if (!snap) {
@@ -4008,6 +4020,7 @@ async function wsShowVersion(i) {
   }
   let htmlOut = '<h4>📸 版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + ' <span class="demo-badge">版本快照</span></h4>';
   if (snap.prompt) htmlOut += '<div class="demo-sec">该版本提示词</div><div class="ws-code" style="max-height:40vh">' + esc(snap.prompt) + '</div>';
+  if (snap.skillMd) htmlOut += '<div class="demo-sec">该版本技能全文</div><div class="ws-code" style="max-height:40vh">' + esc(snap.skillMd) + '</div>';
   if (snap.demo) {
     let demoObj = null;
     try { demoObj = (typeof snap.demo === 'string') ? JSON.parse(snap.demo.replace(/\n/g, ' ')) : snap.demo; } catch (err) { demoObj = null; }
@@ -4110,14 +4123,21 @@ let wsMode = 'expert'; // 'expert' | 'skill' | 'kb'
 let wsKb = null, wsKbDocIdx = -1, wsKbDocCache = {};
 function wsOpenGeneric(mode, obj, tab) {
   wsMode = mode;
-  if (mode === 'skill') { wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt'; setWsTabGeneric(tab || 'prompt'); }
+  if (mode === 'skill') {
+    wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
+    window.__wsVerSel = null;
+    _wsAutoLatestSkillVersion = !tab || tab === 'prompt';
+    wsTab = tab || 'prompt';
+    setWsTabGeneric(wsTab);
+  }
   else if (mode === 'kb') { wsKb = obj; wsKbDocIdx = obj.docs && obj.docs.length ? 0 : -1; renderKbWs(); }
   document.getElementById('ws-mask').classList.add('open');
   document.getElementById('ws').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function setWsTabGeneric(t) {
-  /* 技能工作台只有两个视图：prompt(默认) / demo(实测) */
+  /* 切换视图后展示该视图内容，下次打开工作台再默认选最新版本。 */
+  if (wsTab !== t) { window.__wsVerSel = null; _wsAutoLatestSkillVersion = false; }
   wsTab = t;
   renderSkillWs();
 }
