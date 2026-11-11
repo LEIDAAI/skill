@@ -1,5 +1,7 @@
 # Ozon选品搜索
 
+> 执行前先读《OZON接口实测速查》(ozon-api-playbook.md)：字段命名差异、接口可用性、空结果降级 SOP。
+
 ## 触发场景（何时使用）
 
 当用户需要在 Ozon（俄罗斯电商平台）上做选品调研时使用本技能，例如：
@@ -7,24 +9,39 @@
 - 输入「帮我看看 Ozon 家居类目有什么好卖的」→ 按类目搜索并返回热销商品清单
 - 输入「Ozon 上 2000 卢布以内、评分 4.5 以上的收纳盒找一下」→ 按关键词+价格+评分筛选
 - 输入「找一下 Ozon 上近 28 天销量最高的宠物用品，只要跨境卖家」→ 类目+销量排序+卖家类型筛选
-- 输入「这个 SKU 在 Ozon 卖得怎么样」→ 查询单品详情
+- 输入「近30天上架的连衣裙，看看哪些有销量」→ 类目+时间窗筛选
 
 ## 输入
 
 - 关键词或类目：商品关键词（中/俄文均可）或类目名称（必填其一）
-- 价格区间：minPrice / maxPrice，单位为卢布（可选）
-- 销量门槛：如近 7 天 / 28 天最低销量（可选，默认按销量降序取前 20）
+- 价格区间：minPrice / maxPrice，单位卢布（可选）
+- 销量门槛：如近 7 天 / 28 天最低销量（可选，默认按日销降序取前 20）
 - 评分门槛：minScore（可选）
-- 卖家类型：1=跨境卖家 2=本土卖家 3=Ozon 自营（可选，默认不限）
+- 卖家类型：storeType 1=跨境卖家 2=本土卖家 3=Ozon自营（可选，默认不限）
+- 上架时间窗：minCreateDate / maxCreateDate（可选，格式见下）
 - 返回数量：size（可选，默认 20，最大 500）
 
 ## 执行步骤
 
 1. 解析用户输入，提取关键词、类目、筛选条件与排序需求；
-2. 若用户给的是类目名称，先调用 `yq_dict_lookup`（type="CATEGORY_BACKEND" 或 "CATEGORY"）查类目 ID，**不要猜编码**；
-3. 调用 `yq_ozon_goods_search` 按 SKU 维度搜索（找具体商品/变体）或 `yq_ozon_spu_search` 按 SPU 维度搜索（看一个商品的整体款式），常用 sort：`[{"dailySales":"desc"}]`、`[{"soldSum28":"desc"}]`；
-4. 需要看单品完整信息（跟卖、库存、转化率、每日趋势）时，用返回的 SKU/SPU ID 调 `yq_ozon_goods_detail` / `yq_ozon_spu_detail`；
+2. 若用户给的是类目名称，先查类目 ID（**不要猜**）：
+   - 前台类目 → `yq_dict_lookup(type="CATEGORY", platform="ozon", keyword=用户说的词)` → 结果 ID 传给 `types`（数组）
+   - 后台类目 → `yq_dict_lookup(type="CATEGORY_BACKEND", platform="ozon", keyword=用户说的词)` → 结果 ID 传给 `category`（数组）
+   - 两个接口各有两个类目参数（types/category），查哪套传哪套，不能混
+3. 调用 `yq_ozon_goods_search` 按 SKU 维度搜索（找具体商品/变体）或 `yq_ozon_spu_search` 按 SPU 维度搜索（看一个商品的整体款式）：
+   - 排序字段用**驼峰**：`[{"dailySales":"desc"}]`（日销）、`[{"soldCount28":"desc"}]`（近28天销量）。⚠️ 不要写 `soldSum28`（不存在）
+   - 上架时间窗用 `minCreateDate`/`maxCreateDate`，格式 `yyyy-MM-dd`（如 `"2026-10-12"`）；运行时动态算「近30天」= 当前日期减30，输出写明筛选日期范围
+   - 中文关键词兜底传 `skuNameZh`（分词 AND 匹配，结果要二次语义过滤）；俄文品类词传 `skuName`；英文兜底传 `skuName`
+4. 需要看单品完整信息（跟卖、库存、转化率、每日趋势）时，用返回的 SKU/SPU ID 调 `yq_ozon_goods_detail` / `yq_ozon_spu_detail`（详情接口字段名是**下划线**风格，见速查第二节）
 5. 按下述格式整理并输出。
+
+## 空结果降级（必读）
+
+- 搜索返回 total=0 时，**先判断原因**（见速查第三节 SOP），不要盲目重试：
+  1. 换 `types` 与 `category` 交叉验证是否参数错；
+  2. 用 `yq_ozon_market_stat(key="all")` 验证大盘是否正常；
+  3. 若大盘正常但搜索接口持续空（当前已知 goods_search/spu_search 返回空），如实告知「商品搜索数据当前不可取」，不硬凑、不反复同义重查。
+- 单轮业务调用满 10 次暂停汇报；零结果最多两轮改策略。
 
 ## 输出格式
 
@@ -35,7 +52,8 @@
 ## 约束
 
 - 数据缺失时明确说明，不编造数值；字段为空表示平台未提供该维度数据，不代表为 0；
-- 金额单位以返回的 `symbol`（币种）字段为准，默认卢布（₽），不要默认按人民币解读；
-- 时间口径：dailySales=日、weeklySales=周、monthSales=月，带 7/28 后缀为近 7 天/近 28 天；
+- 金额单位以返回的 `symbol`（搜索接口）字段为准，默认卢布（₽），不要默认按人民币解读；
+- 时间口径：字段名带 7/28 后缀 = 近 7 天/近 28 天；`minCreateDate`=上架时间，`minCreateTime`=数据发现时间，两者不同别混；
 - 标注数据来源（接口名 + 查询参数），便于追溯；
-- 默认屏蔽官方自营数据时说明（official=true），避免与三方卖家混淆。
+- 默认屏蔽官方自营数据时说明（official=true），避免与三方卖家混淆；
+- 反编造三条：抽样≠全量、缺失不补0、无趋势数据不下涨跌结论。

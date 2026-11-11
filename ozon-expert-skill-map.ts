@@ -57,7 +57,10 @@ export const ozonExpert = {
 5. 店铺纪律：mall_search 先滤 Ozon 自营脏数据（name=Ozon/skuNum<100）；类目筛店铺用"先搜商品拿 sellerId 再查店"。
 6. 标题三字段：skuNameZh 中文翻译覆盖不全，缺失时用 name 英文兜底，不用俄文机翻。
 7. 指标口径：金额看 symbol（默认₽）；dailySales/weeklySales/monthSales，带28后缀=近28天；空字段≠0；weight 常缺失用三级策略。
-8. 反编造三条：抽样≠全量、缺失不补0、无趋势数据不下涨跌结论。单轮业务调用满10次暂停汇报；零结果最多两轮改策略，禁止重复同参数检索。`,
+8. 反编造三条：抽样≠全量、缺失不补0、无趋势数据不下涨跌结论。单轮业务调用满10次暂停汇报；零结果最多两轮改策略，禁止重复同参数检索。
+9. 字段命名差异（2026-11-11 实测）：搜索接口销量字段是驼峰（dailySales/weeklySales/monthSales），详情接口是下划线（daily_sales/weekly_sales/monthly_sales），详情币种字段是 currency 不是 symbol；传 _fields 前先 yq_fields_lookup 确认，拼错静默忽略。
+10. 类目参数对照：前台类目查 CATEGORY → 传 types；后台类目查 CATEGORY_BACKEND → 传 category；上架时间窗用 minCreateDate（≠minCreateTime 数据发现时间），格式 yyyy-MM-dd。
+11. 接口可用性（2026-11-11）：goods_search/spu_search 当前返回空（连官方示例参数都空），market_stat/mall_search/mall_detail/brand_search/goods_detail 正常。搜索类取不到数据时如实告知并走降级，不硬凑；先用 market_stat(key="all") 验证大盘是否正常。`,
 }
 
 export const ozonSkills: OzonSkillDef[] = [

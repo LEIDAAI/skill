@@ -403,6 +403,15 @@
       "target": "system",
       "action": "ui",
       "summary": "修复旧版多专家与v2同时显示；当前1688/OZON/TEMU各1、亚马逊按数据源2；修正built状态与稳定技能ID绑定"
+    },
+    {
+      "ts": "2026-11-11T08:21:18.919Z",
+      "target": "expert:exp-ozon-sel",
+      "action": "update",
+      "summary": "OZON技能实测优化：接口可用性地图+字段命名差异(搜索驼峰vs详情下划线)+空结果降级SOP；修正goods_search排序字段soldSum28→dailySales/soldCount28；新增ozon-api-playbook.md速查；选品搜索SKILL.md补类目参数对照/时间窗/降级路径",
+      "snapshots": {
+        "prompt": "详见ozon-api-playbook.md与ozon-selection-search.md"
+      }
     }
   ]
 }
