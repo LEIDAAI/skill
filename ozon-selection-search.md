@@ -29,7 +29,7 @@
    - 后台类目 → `yq_dict_lookup(type="CATEGORY_BACKEND", platform="ozon", keyword=用户说的词)` → 结果 ID 传给 `category`（数组）
    - 两个接口各有两个类目参数（types/category），查哪套传哪套，不能混
 3. 调用 `yq_ozon_goods_search` 按 SKU 维度搜索（找具体商品/变体）或 `yq_ozon_spu_search` 按 SPU 维度搜索（看一个商品的整体款式）：
-   - 排序字段用**驼峰**：`[{"dailySales":"desc"}]`（日销）、`[{"soldCount28":"desc"}]`（近28天销量）。⚠️ 不要写 `soldSum28`（不存在）
+   - 排序字段用**驼峰**：`[{"dailySales":"desc"}]`（日销）、`[{"soldSum28":"desc"}]`（近28天销售额，实测有效）
    - 上架时间窗用 `minCreateDate`/`maxCreateDate`，格式 `yyyy-MM-dd`（如 `"2026-10-12"`）；运行时动态算「近30天」= 当前日期减30，输出写明筛选日期范围
    - 中文关键词兜底传 `skuNameZh`（分词 AND 匹配，结果要二次语义过滤）；俄文品类词传 `skuName`；英文兜底传 `skuName`
 4. 需要看单品完整信息（跟卖、库存、转化率、每日趋势）时，用返回的 SKU/SPU ID 调 `yq_ozon_goods_detail` / `yq_ozon_spu_detail`（详情接口字段名是**下划线**风格，见速查第二节）

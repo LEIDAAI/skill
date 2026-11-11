@@ -472,8 +472,8 @@
         "prompt": "7技能instructions+专家纪律全面实测校准（2026-11-11，13次真实调用）：selection-search加例外放行/issued_date互斥/空结果三步判别/total口径；competitor-monitor修正_fields退化行为+混币种纪律；product-parse加region字符串格式/真零vs缺null/_empty处理；shop-analysis加Y2店捷径/无效ID静默跳过比对；category-trend加market_fully双重死锁实锤/brand_search类目榜用法；profit-calc加1688候选卡片信息复用（省调sku_prices/realtime_detail）/officialScore信号/四要素选源；report-gen加串联复用/0结果分支",
         "demo": "{\"title\":\"7技能触发条件实测矩阵\",\"date\":\"2026-11-11\",\"kpis\":[\"7技能全过\",\"13次真实调用\",\"6处提示词修复\",\"2处纪律升级\"],\"flow\":[\"selection-search: 正向568条德国半托/边界issued_date互斥/异常站点组合空\",\"competitor-monitor: 图搜162同款+_fields退化暴露\",\"product-parse: 详情干净返回/无效ID _empty\",\"shop-analysis: Y2店1000家/无效ID静默跳过\",\"category-trend: brand榜961品牌/market_fully双重死锁\",\"profit-calc: 1688卡片自带阶梯价省调\",\"report-gen: 串联复用纪律\"],\"table\":[{\"技能\":\"selection-search\",\"修复\":\"例外放行+互斥+空结果SOP\"},{\"技能\":\"competitor-monitor\",\"修复\":\"_fields退化+混币种\"},{\"技能\":\"product-parse\",\"修复\":\"region字符串+真零+_empty\"},{\"技能\":\"shop-analysis\",\"修复\":\"Y2捷径+静默跳过\"},{\"技能\":\"category-trend\",\"修复\":\"双重死锁+brand榜\"},{\"技能\":\"profit-calc\",\"修复\":\"卡片复用省调\"},{\"技能\":\"report-gen\",\"修复\":\"复用+0结果分支\"}],\"note\":\"全部发现来自真实调用，无推测；修复已同步专家纪律与技能instructions。\"}"
       }
-    }
-    ,{
+    },
+    {
       "ts": "2026-11-11 16:29:33",
       "target": "expert:exp-amazon-sel-v2",
       "action": "update",
@@ -482,6 +482,12 @@
         "prompt": "你是Sorftime亚马逊选品专家，仅用 sorftime-amazon MCP。找品→selection-search；ASIN→competitor；词→keyword；大盘→category-trend；评论→product-parse；费用→profit-calc；报告→report-gen。跨技能按类目→候选→竞品→利润→报告复用数据。keyword为ABA宽召回、attribute_name为标题或属性，日期yyyy-MM-dd、月销下限month_sale_volume_range_min；product_detail核验返回身份。佣金0/-1待核不默认15%；parent_asin仅去重，未核实完整子体不能称父体总销量。抽样≠全量、缺失≠0、无趋势不下涨跌结论。详细参数见 sorftime-amazon/SKILL.md 和 amazon-expert-skill-map.ts。",
         "demo": "2026-11-11，10次Sorftime调用：选品搜索宽召回89页混非麻将包，近60天/$10–40/月销≥50返回1页含混入牌架，极窄条件空；Owala $34.99、FBA $5.93、佣金 $6、毛利 $23.06/65.90%，STANLEY佣金0待核，测试ASIN身份矛盾；扩词20条CPC有空值，mahjong bag月搜88710/90d转化2.98%但点击量0，未知词空；Sports Water Bottles五节点中正确node_id=3395091。完整参数及矩阵见 amazon-trigger-acceptance-2026-11-11.md；另四技能待验，不声称全过。"
       }
+    },
+    {
+      "ts": "2026-11-11T08:32:29.285Z",
+      "target": "expert:exp-ozon-sel",
+      "action": "update",
+      "summary": "OZON剩余技能实测：商品解析(goods_detail完整字段/跟卖otherCount+others273家/weight388g)、店铺分析(mall脏数据+detail)、类目趋势(market_stat类目级/mallsNum失真确认/日期空洞)；修正字段命名错误结论(两接口均驼峰，defaultFields是误导旧名)；修正soldSum28排序字段为有效(撤回上轮误改)"
     }
   ]
 }
