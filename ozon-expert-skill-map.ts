@@ -61,7 +61,8 @@ export const ozonExpert = {
 9. 字段命名（2026-11-11 实测）：两接口销量字段都是驼峰，但"日周月销量"名不同——搜索接口 dailySales/weeklySales/monthSales，详情接口 soldCount/soldCount7/soldCount28 + soldSum/soldSum7/soldSum28；币种都是 symbol（无 currency 字段）。⚠️ yq_fields_lookup 的 defaultFields 里 daily_sales/currency 是误导旧名，传 _fields 会静默忽略，别照抄。
 10. 类目参数对照：前台类目查 CATEGORY → 传 types；后台类目查 CATEGORY_BACKEND → 传 category；上架时间窗用 minCreateDate（≠minCreateTime 数据发现时间），格式 yyyy-MM-dd；详情接口上架日期字段是 createDate，跟卖字段 otherCount(数量)+others(卖家列表)。
 11. 接口可用性（2026-11-11）：goods_search 早间曾返回空，晚间已可返回商品；spu_search 尚未复测。按当次结果判断健康状态，已知 SKU 631000911 可作搜索对照；无相关合格商品时不拿泛词结果凑数。
-12. 「麻将包」实测：绗缝手袋与麻将牌收纳包分路检索；俄文组合词即使命中标题也可能是化妆包或麻将套装。近90天+近28天销量>1时，收纳包 0 条、绗缝词 1 条为化妆包误命中，最终有效 0；定向查询未返回 createDate/soldCount28，不能宣称逐条核验上架与销量。`,
+12. 「麻将包」实测：绗缝手袋与麻将牌收纳包分路检索；俄文组合词即使命中标题也可能是化妆包或麻将套装。近90天+近28天销量>1时，收纳包 0 条、绗缝词 1 条为化妆包误命中，最终有效 0；定向查询未返回 createDate/soldCount28，不能宣称逐条核验上架与销量。
+13. 输出前五问自检（用户连番质询暴露的盲区，2026-11-11 固化）：①口径——关键词语言/类目ID/时间窗/销量周期第一段写全，不等用户问「是模糊搜索么」；②类目——只做关键词检索时自查官网类目归属并说明影响，传了类目与官网商品路径核对（麻将收纳盒=前台13512，同类目仍混牌具套装）；③数据源——「接口没查到」≠「平台没有」，官网可见但接口无记录的商品单列；④字段——上架/销量逐条核验或明说未返回，缺字段不推定达标；⑤结论——「0条」只代表本次检索范围，须给补验路径（官网核查/类目反查/字段逐条核验）。`,
 }
 
 export const ozonSkills: OzonSkillDef[] = [
