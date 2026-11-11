@@ -47,3 +47,13 @@
 ## 完成度与限制
 
 七技能均覆盖正向、边界、异常触发；报告为对真实接口结果的串联复用验收，未把报告本身当成一个 MCP 接口。`category_report` 历史近实时窗口空值原因尚不能精确区分上游更新时间与统计规则；已排除显见的 schema 错、额度耗尽及全库不可用，保留“该窗口当前无数据”。类目 TopN 非单调与评论跨变体口径均已写入提示词。前一轮表格中的“待验”是当时状态，以本节第二轮记录为准。
+
+## 第三轮：近90天麻将包精度复核（2026-11-11）
+
+口径：US，2026-08-13 至 2026-11-11，`month_sale_volume_range_min=2`（月估计销量严格大于1），不限定跨境。`product_search({amz_site:"US",keyword:"mahjong bag",attribute_name:"mahjong",online_date_range_min:"2026-08-13",online_date_range_max:"2026-11-11",month_sale_volume_range_min:2,page:1/2})` 返回总8页，**只看首页2页40条**；`product_search({amz_site:"US",attribute_name:"mahjong bag",online_date_range_min:"2026-08-13",online_date_range_max:"2026-11-11",month_sale_volume_range_min:2,page:1/2})` 返回2页共28条且读完。两路有重复，不把68条相加为独立商品数；宽搜余6页未核，不能称完整结果。
+
+- 宽搜混入规则卡 `B0HDC8F74V`、麻将整套附带包 `B0HFKC2QK2`、麻将垫 `B0H7Q1P6T9`、牌架 `B0H94X3PT1`；精准短语也混入整套 `B0H9K1G9KW`、挂件 `B0HF8T9TBC` 与垫筒 `B0HGFQ7NK2`。商品主件不为收纳麻将牌/牌架的包时剔除；时尚手袋 `B0HJ7KKL13` 详情为 Evening Bags，容量用途不明，列待核而非确证麻将包。
+- 精准短语漏掉宽搜真包 `B0HGM83K9X`（详情可放166张美式麻将牌，`listing_date=2026-10-06`、月销194），所以不能单路精准搜后声称齐全。入表样本详情核实：`B0HC2D3D2K` 2026-09-14/196件、`B0HC6LLFRY` 2026-09-01/168件、`B0HF9TXH1M` 2026-09-20/150件、`B0H9RSYP3B` 2026-09-09/52件；均指详情 listing_date / 本次估计月销，不是父体总销。
+- 日期口径关键冲突：`B0H337RR4S` 列表 online_date 2026-08-15/月销1270，详情 listing_date 2026-08-06（超窗）；`B0H82QYQ2G` 列表 online_date 2026-08-22/月销101，详情 listing_date 2026-07-20（超窗）。这两款虽是麻将包，也不能在“亚马逊近90天上架”已核表中。`B0HC3WMVZ2` 时尚手袋详情 listing_date 2026-09-09、月销436，但强调 phone & makeup clutch，容量用途不确定，暂不算已核麻将收纳包。详情销量与搜索列表可能变化，用详情快照并标来源。
+
+修订规则：按运行日生成近N天窗口，月销严格大于1传整数2；多路召回按 ASIN 去重，逐条看主商品和用途，不只凭关键词；严格亚马逊上架窗口以详情 `listing_date` 复核，`online_date` 只用于候选预筛；每条入表须同时满足品类、日期和月销；已看页数与未看页数分开披露。

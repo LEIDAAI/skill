@@ -37,7 +37,7 @@ export const amazonExpert = {
     '看看 water bottle 类目还能不能进',
     '分析 B0BZYBSRNF 这个竞品的利润结构',
     '挖一下 mahjong bag 的关键词',
-    '搜近60天上架的跨境麻将包出个表格',
+    '搜近90天上架、月销大于1的麻将包出个表格',
     '这个 ASIN 的差评主要吐槽什么',
     '这个类目能不能做，出个选品报告',
   ],
@@ -65,7 +65,7 @@ export const amazonExpert = {
 8. 变体纪律：product_search 返回子 ASIN。按 parent_asin 去重只能统计样本中独立系列数，不能推出全体子体；同 parent 多行可能重复销量（HydroJug 两款同报106824），禁止相加。父体总销量须有明确父体口径接口值或完整子体明细及可加总口径证据，否则标「未核实」。
 9. 新品评论：上架<30天的商品评论为空是常态（review_count=0，customers_say/reviews 返回空），不作为分析缺陷；评论数为 SPU 家族累计口径，不代表新链接自身。
 10. 话题词漂移：customers_say 的 AI summary 在全变体池提炼（实测 STANLEY 40oz 变体被描述为 30oz），引用以 details 计数为准、规格以 product_detail 为准。
-11. 检索坑：product_search.keyword 是 ABA 词召回，不是精确标题，不能据此直接统计相关款；attribute_name 匹配标题或属性，仍需标题/类目核对；product_search.asin 是相似商品检索而非单品详情；category_name_search 多候选时按名称和层级选 node_id，不取首项；空结果按参数/接口/额度/数据源分诊，不放松用户硬条件。
+11. 检索坑：product_search.keyword 是 ABA 词召回，不是精确标题；attribute_name 匹配标题或属性也会漏真实包、混整套和挂件；多路按 ASIN 去重并按主商品过滤。商品详情 listing_date 与列表 online_date 可能不同，严格亚马逊上架窗以详情 listing_date 逐条复核；product_search.asin 是相似商品检索而非单品详情；category_name_search 多候选核 node_id；空结果分诊且不放松硬条件。
 12. 额度纪律：批量任务前 common_usage_query 查额度（专利关键词检索 60cr/次，图搜 450cr/次仅高危单款）。
 13. 反编造三条：抽样≠全量（输出标注样本窗口与页数）、缺失≠0（-1/1970/null/空字符串如实标「无数据」）、无趋势数据不下涨跌结论（<2 个完整可比月份不下定论）。
 14. product_detail 返回 ASIN 必须与请求相同，标题/品牌/类目也须自洽：B000000000 是品名零食、品牌纺织品的矛盾记录，停止分析。评论/销量快照随查询日期变化，历史 demo 不当现值引用。
@@ -81,16 +81,17 @@ export const amazonSkills: AmazonSkillDef[] = [
     name: '亚马逊选品搜索',
     desc: '关键词/类目检索新品与热销，上架时间窗/价格/销量/评分/FBA 筛选，父体归组输出结构化表格。',
     scenario: '选品上架',
-    triggers: ['帮我找XX', '搜近60天上架的XX', '出个表格', 'XX类目有什么新品'],
+    triggers: ['帮我找XX', '搜近90天上架的XX', '出个表格', 'XX类目有什么新品'],
     tools: ['category_name_search', 'product_search', 'product_detail', 'common_usage_query'],
     steps: [
       '类目词先 category_name_search 转 node_id（多候选列出让用户确认）',
-      'product_search.keyword 只作 ABA 词召回；标题/属性用 attribute_name；时间 yyyy-MM-dd，价格 price_range_min/max，月销量 month_sale_volume_range_min/max，page 从1开始、每页20',
-      '核对标题及类目，剔除非目标商品；parent_asin 去重仅得样本父体数，不将子体销量相加充当父体总销量',
+      '近N天起止日按运行日计算；严格大于1件月销传 month_sale_volume_range_min=2。keyword 是 ABA 宽召回、attribute_name 是标题/属性匹配，可两路检索按ASIN合并；page 从1开始每页20',
+      '麻将在包场景以包为主商品：剔除附带包的整套、牌/牌架/桌垫/垫筒/挂件，时尚手袋装牌能力不明标待核；入表详情核 listing_date，不能把 online_date 当作已证亚马逊上架日',
+      '核对标题及类目，parent_asin 去重仅得样本父体数，不将子体销量相加充当父体总销量',
       '跨境要求逐候选 product_detail 核验 seller_country；卖家链接须拿 seller_id，缺失则纯文本',
       '空结果保留硬条件并按参数错误、接口无数据、额度、数据源故障分诊；说明样本页数与字段缺失',
     ],
-    instructions: `搜索亚马逊商品：【产品词、站点、上架起止日、价格币种、月销下限、是否必须跨境】。仅用 Sorftime。日期用 yyyy-MM-dd；product_search.keyword 填 ABA 搜索词（宽召回），attribute_name 填标题/属性词；价格用 price_range_min/max，月销量用 month_sale_volume_range_min/max；page 从1开始每页20。类目词先 category_name_search 再选准确 node_id；不得把首项当答案。检索后人工核对标题/类目，剔除不相关配件；跨境须用 product_detail.seller_country 实证，空值标未核验。默认按 parent_asin 去重展示代表子体销量，未核实全体子体前不能标「父体总销量」或相加。空结果先查字段格式、示例、common_usage_query 额度和 category_report 对照，硬门槛不放宽。输出 KPI+表格+结论，注明样本页数/采集日期/缺失字段；需要子体明细再问用户是否接受额外积分。`, 
+    instructions: `搜索亚马逊商品：【产品词、站点、近N天上架、价格币种、月销下限、是否必须跨境】。仅用 Sorftime。运行日算 yyyy-MM-dd 起止；销量严格大于1件须传 month_sale_volume_range_min=2。product_search.keyword 是 ABA 宽召回、attribute_name 是标题/属性检索，必要时两路互补并按ASIN去重；page 从1开始每页20，未翻完注明覆盖页数。类目词先 category_name_search 核 node_id，不取首项。麻将包以包为主商品：排除麻将整套附包、卡片、垫、垫筒、牌架、挂件；时尚手袋装麻将牌能力不明列待核。product_search 的 online_date 仅作预筛；严格亚马逊上架窗口须逐条 product_detail 核 listing_date，超窗不得入表；详情销量与列表不一致用本次详情并注明。跨境须详情 seller_country 实证。默认按 parent_asin 样本归组、展示代表子体估计月销，不相加冒充父体总销量。空结果核字段格式、示例、额度和基准数据，不放松硬门槛。输出 KPI+真实候选表+剔除说明，注明日期口径/页数/采集日/缺失项；子体明细先提示额外积分。`,
   },
   {
     id: 'skill-amazon-competitor',

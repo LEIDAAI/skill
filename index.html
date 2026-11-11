@@ -1126,8 +1126,8 @@ const BASE_SKILLS = [
     scenario: 'product-selection',
     status: 'built',
     desc: '关键词/类目检索新品与热销，上架时间窗/价格/销量/评分/FBA 筛选，父体归组输出结构化表格。',
-    triggers: ['帮我找XX','搜近60天上架的XX','出个表格','XX类目有什么新品'],
-    prompt: "仅用 Sorftime 搜亚马逊商品：【产品词/站点/日期/价格/月销/是否跨境】。product_search.keyword 为 ABA 宽召回，attribute_name 为标题或属性匹配；日期 yyyy-MM-dd，月销下限 month_sale_volume_range_min，page 从1开始。逐条核对标题/类目；跨境逐款 product_detail 核实 seller_country。parent_asin 只用于样本去重，未经完整子体核实不得相加称父体总销量；子体详情需额外积分先询问。空结果按参数/基准词/额度/数据源分诊，硬条件不放宽；注明样本页数和查询日期。详见 sorftime-amazon/SKILL.md。",
+    triggers: ['帮我找XX','搜近90天上架的XX','出个表格','XX类目有什么新品'],
+    prompt: "仅用 Sorftime 搜亚马逊商品：【产品词/站点/近N天上架/价格/月销/是否跨境】。动态计算 yyyy-MM-dd 起止，月销严格大于1传 month_sale_volume_range_min=2。keyword 为 ABA 宽召回，attribute_name 为标题/属性匹配；两路互补按ASIN去重，未翻完注明页数。麻将包以包为主商品，剔除整套附包、牌架、垫、垫筒、卡片、挂件，时尚手袋容量不明列待核；列表 online_date 只作预筛，入表逐款 product_detail 核 listing_date，超窗剔除，详情销量为本次快照。跨境核 seller_country；parent_asin 仅样本归组不相加称父体总销量。空结果分诊且硬条件不放宽；输出真实候选和排除理由，子体明细需额外积分先提示。详见 sorftime-amazon/SKILL.md。",
     tools: ['category_name_search','product_search','product_detail','common_usage_query']
   },
   {
