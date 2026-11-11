@@ -590,16 +590,54 @@
       }
     },
     {
-      "ts": "2026-11-11 16:47:50 +08:00", "target": "skill:skill-amazon-category-trend", "action": "update", "summary": "类目正向/历史窗边界/无效节点异常实测", "snapshots": {"prompt": "节点精确核对→报告/完整月趋势/关键词；TopN非单调禁用，0转化率口径待核，近期历史窗无数据保留缺口。", "demo": "节点3395091：Top100月销1401725件/$42426849.79，自营73.21%；Top3商品61.24%而Top5商品48.11%冲突；2026-11未完月剔除；近实时历史窗空而2026-10-01~31有数据；无效节点空，余额27818。"}
+      "ts": "2026-11-11 16:47:50 +08:00",
+      "target": "skill:skill-amazon-category-trend",
+      "action": "update",
+      "summary": "类目正向/历史窗边界/无效节点异常实测",
+      "snapshots": {
+        "prompt": "节点精确核对→报告/完整月趋势/关键词；TopN非单调禁用，0转化率口径待核，近期历史窗无数据保留缺口。",
+        "demo": "节点3395091：Top100月销1401725件/$42426849.79，自营73.21%；Top3商品61.24%而Top5商品48.11%冲突；2026-11未完月剔除；近实时历史窗空而2026-10-01~31有数据；无效节点空，余额27818。"
+      }
     },
     {
-      "ts": "2026-11-11 16:47:50 +08:00", "target": "skill:skill-amazon-product-parse", "action": "update", "summary": "商品评论正向/新品无评论边界/变体及错类异常实测", "snapshots": {"prompt": "product_customers_say 用 site=US，product_reviews 用 amz_site=US；评论跨变体，product_variations 实返大写键且销量不可加总，错类特征弃用。", "demo": "Owala 145352评论，durability负面话题2611；原文跨颜色尺寸；新品B0HPB52XGN零评论且两个评论接口空；变体首页20/共126条，water bottle特征混入瓶装水。"}
+      "ts": "2026-11-11 16:47:50 +08:00",
+      "target": "skill:skill-amazon-product-parse",
+      "action": "update",
+      "summary": "商品评论正向/新品无评论边界/变体及错类异常实测",
+      "snapshots": {
+        "prompt": "product_customers_say 用 site=US，product_reviews 用 amz_site=US；评论跨变体，product_variations 实返大写键且销量不可加总，错类特征弃用。",
+        "demo": "Owala 145352评论，durability负面话题2611；原文跨颜色尺寸；新品B0HPB52XGN零评论且两个评论接口空；变体首页20/共126条，water bottle特征混入瓶装水。"
+      }
     },
     {
-      "ts": "2026-11-11 16:47:50 +08:00", "target": "skill:skill-amazon-profit-calc", "action": "update", "summary": "费用齐全/佣金零值/身份与价格冲突实测", "snapshots": {"prompt": "详情先核身份；仅呈接口估算利润，未给采购和头程不称真实利润；佣金0或售价0销量非0时待核。", "demo": "HydroJug B0DGHBV6XS $27.99、FBA$6.17、佣金$4.20、接口估算$17.62；STANLEY佣金0不可信；B000000000身份矛盾、新品售价0月销2586不估利润。"}
+      "ts": "2026-11-11 16:47:50 +08:00",
+      "target": "skill:skill-amazon-profit-calc",
+      "action": "update",
+      "summary": "费用齐全/佣金零值/身份与价格冲突实测",
+      "snapshots": {
+        "prompt": "详情先核身份；仅呈接口估算利润，未给采购和头程不称真实利润；佣金0或售价0销量非0时待核。",
+        "demo": "HydroJug B0DGHBV6XS $27.99、FBA$6.17、佣金$4.20、接口估算$17.62；STANLEY佣金0不可信；B000000000身份矛盾、新品售价0月销2586不估利润。"
+      }
     },
     {
-      "ts": "2026-11-11 16:47:50 +08:00", "target": "skill:skill-amazon-report-gen", "action": "update", "summary": "报告正向/类目含糊边界/极窄条件空结果实测", "snapshots": {"prompt": "复用类目→候选→代表款详情，保留检索参数、页数和证据缺口；无精确类目不借大盘，零候选不产档位。", "demo": "运动水杯报告：类目3395091、商品搜索7页，首页混入摇摇杯，HydroJug详情费用可复用；mahjong bag无精确包类目但候选B0HC3WMVZ2卖家CN；当日上架价格≥$300且月销≥50000零候选。"}
+      "ts": "2026-11-11 16:47:50 +08:00",
+      "target": "skill:skill-amazon-report-gen",
+      "action": "update",
+      "summary": "报告正向/类目含糊边界/极窄条件空结果实测",
+      "snapshots": {
+        "prompt": "复用类目→候选→代表款详情，保留检索参数、页数和证据缺口；无精确类目不借大盘，零候选不产档位。",
+        "demo": "运动水杯报告：类目3395091、商品搜索7页，首页混入摇摇杯，HydroJug详情费用可复用；mahjong bag无精确包类目但候选B0HC3WMVZ2卖家CN；当日上架价格≥$300且月销≥50000零候选。"
+      }
+    },
+    {
+      "ts": "2026-11-11 17:05:00",
+      "target": "ui:hub-temu-skills",
+      "action": "ui",
+      "summary": "Hub下线旧7个TEMU技能（temu-selection/competitor/category/product/shop/profit/research），只保留规范版skill-*路由7技能；TEMU标签从14→7，消除新旧重复展示",
+      "snapshots": {
+        "prompt": "变更前：Hub TEMU标签下新旧两套技能并存（旧temu-* 7个+新skill-* 7个=14卡片，内容重叠，旧套含已并入的竞品调研）。变更后：仅保留skill-selection-search/skill-competitor-monitor/skill-product-parse/skill-shop-analysis/skill-category-trend/skill-profit-calc/skill-report-gen 7个（今日实测校准版），源码留注释说明下线原因。专家侧展示层不变（单专家exp-temu-sel），源码中4个旧专家定义暂留待后续清理。",
+        "demo": "{\"title\":\"TEMU技能去重\",\"date\":\"2026-11-11\",\"kpis\":[\"TEMU标签14→7\",\"旧技能0残留\",\"1688条件找品恢复完整\",\"语法+DOM全过\"],\"flow\":[\"定位旧7块(922~1054行)\",\"整体删除+恢复被误删的1688块\",\"校验：旧id 0残留/新7技能全在/1688技能8个正确/语法PASS/DOM 150引用0缺失\"],\"note\":\"过程中曾误删skill-1688-conditional-search，已从原始内容完整恢复并校验。\"}"
+      }
     }
   ]
 }
