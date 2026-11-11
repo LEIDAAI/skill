@@ -511,11 +511,11 @@ const OZON_SELECT_MD = `# Ozon选品搜索
 - 先确定 SKU（具体规格）还是 SPU（父款）口径；歧义词如「麻将包」先区分绗缝手袋与麻将牌收纳包，用户明确是装麻将牌的包后只检索麻将牌收纳包，不再扩到手袋/化妆包。销量大于1若未指定周期，明确按近28天销量≥2执行；已有可用结果直接复用，硬条件不放宽。
 
 ## 执行步骤
-1. 解析筛选条件和排序依据；类目名称先调 yq_dict_lookup(platform="ozon")：前台 CATEGORY ID 给 types 数组，后台 CATEGORY_BACKEND ID 给 category 数组。记录类目名称、体系及 ID，不能猜或交叉误传。
+1. 解析筛选条件和排序依据；类目词或全站关键词混入错品时，先核查 Ozon 买家页的商品类目路径，再调 yq_dict_lookup(platform="ozon")：前台 CATEGORY ID 给 types 数组，后台 CATEGORY_BACKEND ID 给 category 数组。类目缩小候选，不替代商品类型核查；如麻将收纳盒见于「多米诺骨牌和麻将」前台类目 types=["13512"]，同类目仍混有牌具套装。
 2. SKU 用 yq_ozon_goods_search，父款用 yq_ozon_spu_search；sort 可用 [{"dailySales":"desc"}]（日销）或 [{"soldSum28":"desc"}]（近28天销售额，历史实测有效）。近30天上架须用 minCreateDate/maxCreateDate、yyyy-MM-dd，不能拿 minCreateTime 数据发现时间替代。
 3. 中文词优先 skuNameZh（分词 AND 匹配，需要语义复核），俄文或英文词用 skuName。只有用户目标允许时才追加其他语言/类目路径；逐路记录参数与命中数，按 SKU 去重、按需按 SPU 归组，不把多路 total 相加当独立商品数。
 4. 对接口不支持的筛选条件在返回后逐条过滤，并在输出中说明。需要跟卖、库存、每日序列时用真实 SKU/SPU ID 调 goods_detail/spu_detail；goods_detail 实际字段用 soldCount/soldCount28/soldSum28/symbol 等驼峰名，不照抄字段字典旧 defaultFields。
-5. 对照标题、类目和图片剔除配件及跨类目误命中；绗缝手袋剔化妆包/工具包，麻将收纳包剔牌具套装，词面命中不等于商品类型正确。若 createDate/soldCount28 未返回，不宣称逐条核验上架/销量；相关性不确定单列待核。按真实可得指标排序并保留 ID、参数和来源。
+5. 对照标题、类目和图片剔除配件及跨类目误命中；绗缝手袋剔化妆包/工具包，麻将收纳包剔牌具套装，词面命中或类目正确不等于商品类型正确。按 SKU 定向请求 createDate/soldCount28；该商品缺字段或官网有商品而数据接口无记录时不能推定符合日期/销量。相关性不确定单列待核，按真实可得指标排序并保留 ID、参数和来源。
 
 ## 空结果与异常处理
 - total=0 时先核对类目体系与参数；无硬筛的精准词有结果、加日期或销量后为0，只能说明没有已证实的合格候选，诊断候选不可冒充结果。必要时用已知 SKU 核验搜索接口健康，按需查 yq_quota_status 或 market_stat；大盘有数不代表商品搜索有数。
