@@ -19,10 +19,10 @@ export interface AmazonSkillDef {
 }
 
 export const amazonExpert = {
-  id: 'exp-amazon-sel',
+  id: 'exp-amazon-sel-v2',
   name: 'Sorftime亚马逊选品专家',
   platform: 'AMAZON',
-  desc: '亚马逊（美站默认）一站式选品：类目大盘体检、竞品利润拆解、关键词挖掘、评论差评找机会、美元利润直读、结构化选品报告。Sorftime 实调校验 + 父体去重 + 反编造纪律，全部经真实接口验证。',
+  desc: '亚马逊（美站默认）一站式选品：类目大盘体检、竞品与评论分析、关键词挖掘、费用口径核验、结构化选品报告。Sorftime 实调校验 + 样本父体归组 + 反编造纪律。',
   greet: '你好！我是 Sorftime 亚马逊选品专家。可以帮你：看类目大盘（能不能进）、拆竞品（利润四件套直接读）、挖关键词（热词榜+错拼捡漏）、挖差评找差异化、算利润、出选品报告。给我一个 ASIN、品牌名或类目词就行。',
   capabilities: [
     '类目大盘体检（Top100 规模/集中度/官方涨跌预测）',
@@ -68,8 +68,11 @@ export const amazonExpert = {
 11. 检索坑：product_search.keyword 是 ABA 词召回，不是精确标题，不能据此直接统计相关款；attribute_name 匹配标题或属性，仍需标题/类目核对；product_search.asin 是相似商品检索而非单品详情；category_name_search 多候选时按名称和层级选 node_id，不取首项；空结果按参数/接口/额度/数据源分诊，不放松用户硬条件。
 12. 额度纪律：批量任务前 common_usage_query 查额度（专利关键词检索 60cr/次，图搜 450cr/次仅高危单款）。
 13. 反编造三条：抽样≠全量（输出标注样本窗口与页数）、缺失≠0（-1/1970/null/空字符串如实标「无数据」）、无趋势数据不下涨跌结论（<2 个完整可比月份不下定论）。
-14. product_detail 返回 ASIN 必须与请求相同：2026-11-11 请求 B000000000 却返回品名零食、品牌纺织品的矛盾记录，身份矛盾时停止分析。评论/销量快照随查询日期变化，历史 demo 不当现值引用。
-15. 跨境筛选以 product_detail.seller_country=CN 等已确认国别为准；product_search 无卖家国别，不能凭店名、语言或品名推断。keyword_extends 推荐 CPC 空串=缺失；keyword_detail 90 天点击量为0却有转化率时不得按点击量重算。`,
+14. product_detail 返回 ASIN 必须与请求相同，标题/品牌/类目也须自洽：B000000000 是品名零食、品牌纺织品的矛盾记录，停止分析。评论/销量快照随查询日期变化，历史 demo 不当现值引用。
+15. 跨境筛选以 product_detail.seller_country=CN 等已确认国别为准；product_search 无卖家国别，不能凭店名、语言或品名推断。keyword_extends 推荐 CPC 空串=缺失；keyword_detail 90 天点击量为0却有转化率时不得按点击量重算。
+16. 2026-11-11 类目报告 top_n_sales_volume_share 商品份额出现 Top3=61.24% 却 Top5=48.11% 的逆序，冲突维度禁用且不打分；conversion_rate=0、order_rate=null 不当作已核准零转化。category_report 指定临近当日的历史窗可返回空，先按有效历史窗对照；category_trend 当月未完月剔除。category_keywords 包含宽词、品牌词和瓶装水词，逐条语义过滤。
+17. product_variations 实际数据键为 Asin/Property/SalesAmount/ItemIndex/ItemTotal，与 doc 的 snake_case 不同；SalesAmount 文档解释为近15天抓取的页面销量、无更新返回 -1，不能按美元销售额或父体月销量相加。product_reviews 最多100条/近一年，返回跨尺寸变体评论；product_customers_say 的 site 参数不同于其他接口的 amz_site。similar_product_feature('water bottle') 混入瓶装水/电解质等语义噪音，不能直接当保温杯卖点。
+18. 价格为0但月销量有值、yearly_sales_volume=-9999 的新品属字段冲突或占位，不能据此推利润或零售价；接口毛利通常为 price-fba_fee-platform_fee 的平台估算，未计采购、头程、广告和退货，不称真实利润。`,
 }
 
 export const amazonSkills: AmazonSkillDef[] = [
@@ -79,7 +82,7 @@ export const amazonSkills: AmazonSkillDef[] = [
     desc: '关键词/类目检索新品与热销，上架时间窗/价格/销量/评分/FBA 筛选，父体归组输出结构化表格。',
     scenario: '选品上架',
     triggers: ['帮我找XX', '搜近60天上架的XX', '出个表格', 'XX类目有什么新品'],
-    tools: ['category_name_search', 'product_search', 'common_usage_query'],
+    tools: ['category_name_search', 'product_search', 'product_detail', 'common_usage_query'],
     steps: [
       '类目词先 category_name_search 转 node_id（多候选列出让用户确认）',
       'product_search.keyword 只作 ABA 词召回；标题/属性用 attribute_name；时间 yyyy-MM-dd，价格 price_range_min/max，月销量 month_sale_volume_range_min/max，page 从1开始、每页20',
@@ -131,12 +134,11 @@ export const amazonSkills: AmazonSkillDef[] = [
     steps: [
       'category_name_search 转 node_id（绝不猜编码）',
       'category_trend 取 25 个月序列（剔除当前未完月）算季节系数',
-      'category_report 体检：规模/Top3 集中度/自营占比/退货率/转化率/官方预测',
-      'category_keywords 前10词看流量温度（自营占比/新品份额/CPC 水位）',
-      '五维评分（需求/趋势/竞争/新品/盈利）+ 进入时窗建议',
+      'category_report 读取 Top100 规模/Top3 集中度/自营占比/退货率；核对 top_n 单调性、0 转化与 null 字段，冲突项排除',
+      'category_keywords 逐词检查相关性，剔除品牌词、瓶装水等偏题流量，再分析样本 CPC 与新品份额',
+      '按可用证据给有条件的进入建议；缺失维度不强行五维打分，不凭任意阈值断言垄断',
     ],
-    instructions: `体检亚马逊类目：【类目词】。
-输出：进入建议（推荐/谨慎/绕行）+ 维度判读表 + 近12月趋势明细 + 五维评分。当前月数据剔除；集中度红线：Top3 商品>50% 且品牌>60%=垄断绕行。`,
+    instructions: `体检亚马逊类目：【类目词、站点、时间窗口】。仅用 Sorftime。category_name_search(amz_site=US,category_name=...) 返回多节点时核对名称和层级再选 node_id；category_report(node_id,amz_site=US) 读取 Top100 规模/集中度/自营占比/退货率，历史窗 query_start/query_date 必须跨度3–40天且不取未完成的近实时窗口；category_trend(node_id,trend_index=SalesCount,amz_site=US) 仅比较完整月份；category_keywords(node_id,page=1,amz_site=US) 剔除品牌词/错类词。top_n 商品份额若 Top5 反小于 Top3 标源冲突禁用；conversion_rate=0 且 order_rate=null 标口径待核。2026-11-11 已知节点3395091的报告 Top100 月销1,401,725件/$42,426,849.79、Top3商品61.24%、自营73.21%，只属当次快照；趋势2026-11未完月240,687不得同比完整月。空结果按参数、历史窗、额度、数据源分诊。输出证据表、完整月趋势和带条件建议，缺字段不强制评分或按固定阈值断言垄断。`,
   },
   {
     id: 'skill-amazon-product-parse',
@@ -146,29 +148,28 @@ export const amazonSkills: AmazonSkillDef[] = [
     triggers: ['解析这个商品', '评论在骂什么', '差评都在吐槽什么', '什么卖点最带货'],
     tools: ['product_detail', 'product_variations', 'product_reviews', 'product_customers_say', 'similar_product_feature'],
     steps: [
-      'product_detail 基本面 + product_variations 变体结构（父体归组）',
-      'product_customers_say 话题计数快筛（details 计数为准）',
-      'product_reviews(Negative) 差评原文按「部件×场景」归纳',
-      'similar_product_feature 类目特征×销量份额（份额>占比=超配卖点）',
+      'product_detail(amz_site=US,asin=...) 先核实身份；需子体明细时先告知额外积分，再查 product_variations（实返大写键）',
+      'product_customers_say(asin=...,site=US) 话题计数快筛（details 计数为准）',
+      'product_reviews(asin=...,review_type=Negative,amz_site=US) 最多100条近一年原文，按「部件×场景」归纳并区分变体/配送',
+      'similar_product_feature(product_name=...,amz_site=US) 若语义样本混入瓶装水等错类则弃用该特征结论',
       '输出：单品档案 + 差评主题表 + 正面壁垒清单 + 新品卖点建议',
     ],
-    instructions: `解析亚马逊商品并挖评论：【ASIN 或类目词】。
-要求：新品零评论如实说明；差评区分产品缺陷与物流损坏；AI summary 措辞不引用（跨变体漂移），规格以 product_detail 为准。`,
+    instructions: `解析商品/评论：【ASIN、站点】。先 product_detail(amz_site=US,asin=...) 核对身份。按需 product_customers_say(asin=...,site=US) 取 details 话题计数，再 product_reviews(asin=...,review_type=Negative,amz_site=US) 查近一年最多100条评论；评论覆盖不同尺寸/颜色，逐条标 variant_attribute，区分盖子故障、吸管脱落和运输破损。若 review_count=0 且评论接口均无数据，标当前未取得评论，不据此声称无负面。额外展开变体前先告知积分，product_variations(asin=...,page=1,amz_site=US) 实返 Asin/Property/SalesAmount/ItemIndex/ItemTotal；SalesAmount 并非可加总父体月销。similar_product_feature(product_name=...,amz_site=US) 须剔除语义错类。规格以详情为准，AI 摘要与原文冲突时披露。`,
   },
   {
     id: 'skill-amazon-profit-calc',
     name: '亚马逊利润测算',
-    desc: '利润四件套直读（FBA费/佣金/毛利接口直返）+ 佣金缺失自估兜底 + 头程估算。',
+    desc: '平台估算费用直读（FBA费/佣金/利润字段）+ 采购与头程缺失分栏 + 用户提供假设后的情景测算。'
     scenario: '选品上架',
     triggers: ['算利润', '能赚多少', '毛利率多少', '这个价格有钱赚吗'],
     tools: ['product_detail', 'common_usage_query'],
     steps: [
       'product_detail 直读 fba_fee/platform_fee/profit/profit_rate',
       'platform_fee=0/-1 时标佣金待核实；用户提供类目费率后才单独列情景估算，不写死15%',
-      '头程估算：weight_g 与 package_size_cm 体积重取大者 × 运价（运行时询价或用户自填，不写死）',
-      '输出：利润瀑布表（售价→佣金→FBA→头程→毛利）+ 三档售价敏感性',
+      '售价为0但月销量有值或年销=-9999 等冲突标缺失；无采购价、头程运价/计费规则不推最终利润',
+      '输出售价→FBA→佣金→接口估算利润及未计费用；仅有用户明确假设时计算头程与售价敏感性',
     ],
-    instructions: `测算亚马逊商品利润：【ASIN】。只用 Sorftime product_detail 直读实际返回售价、FBA费、佣金、毛利及利润率，核对 ASIN；佣金为0/-1 时利润待核实，不默认假设费率。只有用户提供类目佣金、采购价和头程运价时，才把自定义情景计算与接口利润分栏展示；未提供的费用标缺失。注明查询日期及未计广告/退货等。`, 
+    instructions: `测算亚马逊商品利润：【ASIN、站点、可选采购价/头程规则】。只用 Sorftime product_detail(amz_site=US,asin=...)，核对 ASIN 与标题品牌类目；返回售价、FBA费、佣金、profit/profit_rate 是接口估算，不能称最终利润。2026-11-11 实例：HydroJug B0DGHBV6XS $27.99、FBA$6.17、佣金$4.20、接口估算$17.62/62.95%；缺采购价、头程、广告、退货不能断言有利可图。platform_fee=0/-1 或价格0但有销量时标费用/售价待核，不默认15%或沿用接口毛利率。仅有用户提供费率/采购/物流计费规则时计算单独情景；体积重不得自设除数。注明日期和缺项。`,
   },
   {
     id: 'skill-amazon-report-gen',
@@ -176,16 +177,15 @@ export const amazonSkills: AmazonSkillDef[] = [
     desc: '终点站技能：串联类目体检→候选搜索→竞品深挖→利润测算，输出结构化决策报告。',
     scenario: '选品上架',
     triggers: ['出个选品报告', '这个类目值不值得做', '给我一个选品建议', '预算X做什么好'],
-    tools: ['串联以上全部技能'],
+    tools: ['category_name_search', 'category_report', 'category_trend', 'product_search', 'product_detail', 'product_customers_say', 'product_reviews', 'common_usage_query'],
     steps: [
-      '类目体检（category-trend）定容量与进入建议',
-      '选品搜索（selection-search）拉候选池（父体归组）',
-      'TOP3-5 深挖（competitor + product-parse）',
-      '代表款利润测算（profit-calc）+ 专利关键词风控（60cr/款）',
-      '输出：①总结论 ②机会档位表 ③重点商品卡 ④风险与假设 ⑤下一步清单',
+      '类目体检先确认精确 node_id，获取报告/完整月趋势；源数据冲突的维度跳过',
+      '选品搜索复用 node_id 拉候选池，按 parent_asin 归组并逐条核对目标产品',
+      '按实际需要深挖代表 ASIN 的身份、费用、评论；复用既有响应，不自动对每款重复取数',
+      '代表款利润按接口估算与采购/头程未提供部分分栏；专利检查需另有明确需求才触发',
+      '输出已核实的总结论、候选表、重点商品、证据缺口、风险及下一步；零结果不生成机会档位',
     ],
-    instructions: `生成亚马逊选品报告，主题：【类目/产品】。
-内部串联：类目体检→候选→深挖→利润→风控。输出结构化报告，末尾列数据来源接口与查询参数、标注样本窗口。`,
+    instructions: `生成亚马逊选品报告：【主题、站点、必要硬门槛】。仅 Sorftime，先 category_name_search 核对节点，再 category_report/category_trend；复用 node_id 做 product_search，筛标题/子类目噪音、按 parent_asin 归组，仅展示代表子体观测月销量。代表款复用 product_detail 费用与 seller_country；需要评论才取 product_customers_say/site=US 和 product_reviews/amz_site=US。正向示例 Sports Water Bottles node_id=3395091，2026-11-11 Top100 报告月销1,401,725件，样本检索 page1/7 包含保温杯和运动水杯但混入摇摇杯；HydroJug B0DGHBV6XS $27.99/FBA$6.17/佣金$4.20/接口估算$17.62，采购等未计。边界如 mahjong bag 多节点但无精确包类目时只做关键词候选报告，类目规模留空；异常极窄条件为空则保留硬门槛并说明无候选，不产伪档位。报告列每路参数/取样页数/查询日；TopN非单调、评论缺失、售价冲突等只列风险，缺维不打总分。`,
   },
 ]
 
