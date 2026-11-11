@@ -265,6 +265,9 @@
   .ds-btn { border: 1px solid #d8dee8; background: #fff; color: #47536b; border-radius: 8px; padding: 5px 12px; font-size: 12px; cursor: pointer; }
   .ds-btn.on { background: #2563eb; color: #fff; border-color: #2563eb; }
   .ds-btn:hover:not(.on) { border-color: #2563eb; color: #2563eb; }
+  .card { position: relative; }
+  .sel-cb { position: absolute; top: 10px; right: 10px; z-index: 3; }
+  .sel-cb input { width: 18px; height: 18px; cursor: pointer; accent-color: #2563eb; }
   .eskill-wrap { margin-top: 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
   .eskill-label { font-size: 11px; color: #8592a6; margin-right: 2px; }
   .eskill-chip { display: inline-flex; align-items: center; gap: 3px; border: 1px solid #dbeafe; background: #f0f6ff; color: #1d4ed8; border-radius: 999px; padding: 2px 10px; font-size: 11.5px; cursor: pointer; transition: background .15s, border-color .15s; }
@@ -313,6 +316,7 @@
       <button class="btn btn-add" id="btn-add">＋ 添加技能</button>
       <button class="btn btn-mini" id="btn-export" title="导出自定义技能为 JSON">导出</button>
       <button class="btn btn-mini" id="btn-import" title="从 JSON 导入自定义技能">导入</button>
+      <button class="btn btn-mini" id="btn-select-export" title="勾选多个技能批量导出">勾选导出</button>
       <input type="file" id="file-import" accept=".json,.zip" style="display:none">
     </div>
   </div>
@@ -1031,6 +1035,8 @@ const BASE_SKILLS = [
 
 /* ================= 状态与渲染 ================= */
 const LS_KEY = 'dld_ozon_skills_custom_v1';
+let selectExportMode = false;
+const selectedExportIds = new Set();
 let customSkills = [];
 try { customSkills = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { customSkills = []; }
 let curPlatform = 'all';
@@ -1099,7 +1105,8 @@ function renderGrid() {
       const p = PLATFORMS[k] || { label: k, color: '#8592a6' };
       return '<span class="ptag" style="color:' + p.color + ';border:1.5px solid ' + p.color + '">' + esc(p.label) + '</span>';
     }).join('');
-    return '<div class="card" data-id="' + esc(s.id) + '">' +
+    const selCb = selectExportMode ? '<label class="sel-cb" title="选择导出"><input type="checkbox" data-selid="' + esc(s.id) + '"' + (selectedExportIds.has(s.id) ? ' checked' : '') + '></label>' : '';
+    return '<div class="card" data-id="' + esc(s.id) + '">' + selCb +
       '<div class="card-head">' +
         '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span></div>' +
         '<span class="badge ' + (built ? 'badge-built' : 'badge-plan') + '">' + (built ? '✓ 已建成' : '待建 · 指令可用') + '</span>' +
@@ -1169,6 +1176,37 @@ function fallbackCopy(text, done) {
   document.body.appendChild(ta); ta.select();
   try { document.execCommand('copy'); done(); } catch (e) { toast('复制失败，请手动选择文本复制'); }
   document.body.removeChild(ta);
+}
+
+document.getElementById('grid').addEventListener('change', e => {
+  const cb = e.target.closest('input[data-selid]');
+  if (!cb) return;
+  if (cb.checked) selectedExportIds.add(cb.dataset.selid); else selectedExportIds.delete(cb.dataset.selid);
+  updateExportBar();
+});
+function updateExportBar() {
+  let bar = document.getElementById('sel-export-bar');
+  if (!selectExportMode) { if (bar) bar.remove(); return; }
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'sel-export-bar';
+    bar.style.cssText = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;border-radius:12px;padding:10px 18px;display:flex;align-items:center;gap:12px;z-index:80;box-shadow:0 8px 30px rgba(0,0,0,.25)';
+    document.body.appendChild(bar);
+  }
+  bar.innerHTML = '<span style="font-size:13px">已选 <b>' + selectedExportIds.size + '</b> 个技能</span>' +
+    '<button id="seb-json" style="border:0;background:#2563eb;color:#fff;border-radius:8px;padding:6px 14px;font-size:12.5px;cursor:pointer">导出 JSON</button>' +
+    '<button id="seb-cancel" style="border:1px solid #4b5563;background:transparent;color:#d1d5db;border-radius:8px;padding:6px 14px;font-size:12.5px;cursor:pointer">取消</button>';
+  bar.querySelector('#seb-json').onclick = () => {
+    const list = allSkills().filter(s => selectedExportIds.has(s.id));
+    if (!list.length) { toast('请先勾选技能'); return; }
+    const blob = new Blob([JSON.stringify(list, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'skills-selected-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click(); URL.revokeObjectURL(a.href);
+    toast('✓ 已导出 ' + list.length + ' 个技能');
+  };
+  bar.querySelector('#seb-cancel').onclick = () => { selectExportMode = false; selectedExportIds.clear(); refreshAll(); };
 }
 document.getElementById('grid').addEventListener('click', e => {
   const btn = e.target.closest('button[data-action]');
@@ -1280,10 +1318,76 @@ document.getElementById('file-import').addEventListener('change', e => {
   e.target.value = '';
 });
 
+document.getElementById('btn-select-export').addEventListener('click', () => {
+  selectExportMode = !selectExportMode;
+  if (!selectExportMode) selectedExportIds.clear();
+  updateExportBar();
+  refreshAll();
+  toast(selectExportMode ? '勾选模式：点卡片左上角复选框选择要导出的技能' : '已退出勾选模式');
+});
+
 /* ---- init ---- */
 refreshAll();
 
 /* ================= 技能包(.zip)导入 ================= */
+/* zip 导入向导：选平台+场景+确认后落库 */
+function openZipImportWizard() {
+  const s = window.__pendingZipSkill;
+  if (!s) return;
+  const body = document.getElementById('form-modal-body');
+  document.getElementById('form-modal-title').textContent = '导入技能包 · 确认归属';
+  body.innerHTML =
+    '<div style="margin-bottom:14px"><div style="font-size:15px;font-weight:600;margin-bottom:4px">📦 ' + esc(s.name) + '</div>' +
+    '<div style="font-size:12px;color:#8592a6">' + esc(s.desc || '') + '</div>' +
+    '<div style="font-size:11.5px;color:#9aa3b2;margin-top:4px">版本 v' + esc(s.version) + ' · 包内 ' + s.zipFiles.length + ' 个文件</div></div>' +
+    '<label class="flabel">适用平台（可多选，已按包内容预选）</label>' +
+    '<div class="frow"><div class="pf-checks" id="zip-pf"></div></div>' +
+    '<label class="flabel">所属场景</label>' +
+    '<div class="frow"><select id="zip-sc" style="flex:1"></select></div>';
+  // 平台复选
+  const pfBox = body.querySelector('#zip-pf');
+  PLATFORM_KEYS.forEach(k => {
+    const on = s.platforms.includes(k);
+    const lb = document.createElement('label');
+    lb.style.cssText = 'display:inline-flex;align-items:center;gap:5px;margin:3px 10px 3px 0;font-size:13px;cursor:pointer';
+    lb.innerHTML = '<input type="checkbox" value="' + k + '"' + (on ? ' checked' : '') + '> ' + (PLATFORMS[k].label);
+    pfBox.appendChild(lb);
+  });
+  // 场景下拉
+  const scSel = body.querySelector('#zip-sc');
+  Object.keys(SCENARIOS).forEach(k => {
+    const op = document.createElement('option');
+    op.value = k; op.textContent = SCENARIOS[k].label;
+    if (k === s.scenario) op.selected = true;
+    scSel.appendChild(op);
+  });
+  // 底部按钮
+  const foot = document.createElement('div');
+  foot.className = 'form-foot';
+  foot.innerHTML = '<button class="btn-solid" id="zip-ok">✓ 确认导入</button><button class="btn-plain" id="zip-cancel">取消</button>';
+  body.appendChild(foot);
+  document.getElementById('form-modal').classList.add('open');
+  foot.querySelector('#zip-cancel').onclick = () => { document.getElementById('form-modal').classList.remove('open'); window.__pendingZipSkill = null; };
+  foot.querySelector('#zip-ok').onclick = () => {
+    const picked = Array.from(pfBox.querySelectorAll('input:checked')).map(i => i.value);
+    if (!picked.length) { toast('请至少选择一个平台'); return; }
+    const sk = window.__pendingZipSkill;
+    sk.platforms = picked;
+    sk.scenario = scSel.value;
+    customSkills.push(sk);
+    try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); }
+    catch (se) {
+      customSkills.forEach(x => { if (x.isZip) { x.zipData = {}; } });
+      try { localStorage.setItem(LS_KEY, JSON.stringify(customSkills)); toast('⚠️ 本地存储超限，文件内容未缓存（重新导入可查看）'); } catch (e2) {}
+    }
+    document.getElementById('form-modal').classList.remove('open');
+    window.__pendingZipSkill = null;
+    refreshAll();
+    toast('✓ 技能包已导入：' + sk.name);
+    // 追加版本记录
+    if (typeof appendVersion === 'function') appendVersion('skill:' + sk.id, 'create', 'zip导入：' + sk.name + '（' + sk.zipFiles.length + '文件）');
+  };
+}
 async function importSkillZip(file) {
   try {
     if (typeof fflate === 'undefined') { await loadFflate(); }
@@ -1310,10 +1414,10 @@ async function importSkillZip(file) {
     if (/ozon/i.test(depStr + name)) platforms.push('ozon');
     if (/amazon|亚马逊/i.test(depStr + name)) platforms.push('amazon');
     if (/temu/i.test(depStr + name)) platforms.push('temu');
-    const skill = {
+    window.__pendingZipSkill = {
       id, custom: true, isZip: true,
       name, desc: man.description || fmDesc || '',
-      platforms: platforms.length ? platforms : ['ozon'],
+      platforms: platforms,
       scenario: 'product-selection',
       status: 'built',
       version: man.version || '1.0.0',
@@ -1323,20 +1427,28 @@ async function importSkillZip(file) {
       zipFiles: fileList.map(n => ({ name: n, size: files[n].length })),
       zipData: Object.fromEntries(fileList.map(n => [n, new TextDecoder().decode(files[n]).slice(0, 200000)]))
     };
-    customSkills.push(skill);
-    localStorage.setItem(LS_KEY, JSON.stringify(customSkills));
-    refreshAll();
-    toast('✓ 技能包已导入：' + name + '（' + fileList.length + ' 个文件）');
-  } catch (err) { toast('zip 解析失败：' + err.message); }
+    openZipImportWizard();
+  } catch (err) { toast('zip 解析失败：' + (err.message || err)); }
 }
 let _fflateLoading = null;
 function loadFflate() {
   if (_fflateLoading) return _fflateLoading;
+  const CDNS = [
+    'https://cdnjs.cloudflare.com/ajax/libs/fflate/0.8.2/fflate.min.js',
+    'https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js',
+    'https://unpkg.com/fflate@0.8.2/umd/index.js'
+  ];
   _fflateLoading = new Promise((res, rej) => {
-    const sc = document.createElement('script');
-    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/fflate/0.8.2/fflate.min.js';
-    sc.onload = res; sc.onerror = () => rej(new Error('fflate 加载失败（需联网）'));
-    document.head.appendChild(sc);
+    let i = 0;
+    const tryNext = () => {
+      if (i >= CDNS.length) { _fflateLoading = null; rej(new Error('解压库加载失败：三个CDN均不可达')); return; }
+      const sc = document.createElement('script');
+      sc.src = CDNS[i++];
+      sc.onload = () => typeof fflate !== 'undefined' ? res() : tryNext();
+      sc.onerror = tryNext;
+      document.head.appendChild(sc);
+    };
+    tryNext();
   });
   return _fflateLoading;
 }
@@ -1368,7 +1480,428 @@ try { customExperts = JSON.parse(localStorage.getItem(EXPERTS_LS_KEY) || '[]'); 
 let curExpertPlatform = 'all';
 let curExpertSearch = '';
 
+/* 1688 专家共享纪律（参考店雷达网关版选品助手提示词，2026-11-09 吸收） */
+const DLD_1688_SHARED = [
+  '## 通用纪律（全平台共享）',
+  '① 日期：以上下文注入的当前日期为准，不编造时间戳；历史榜单先换算绝对年月，超出服务端可查范围（约近一年）直接说明不可查并询问是否改查最近可用期，不硬调接口；',
+  '② 工具真实性：只使用实际绑定且工具发现成功的接口——提示词里列的名称不代表已接线；未发现或未绑定的功能如实说明不可调用，不用搜索引擎/代码工具冒充数据；',
+  '③ 叙述一致：没调用的工具、没传的参数禁止声称已执行；结论中的每个数字必须来自本轮真实工具返回或用户提供（用户提供须标注性质）；',
+  '④ 点数保护：单轮业务工具调用满 10 次暂停询问用户是否继续；',
+  '⑤ 结论先行：结论+关键数字放最前，接口名/参数等技术细节收敛到末尾附注（面向终端用户的回复不堆叠 JSON 与实现细节）；',
+  '⑥ 缺数据标「—」不编造；测试/用户自述数据明确标注性质。',
+].join('\n');
+
 const BASE_EXPERTS = [
+  {
+    id: 'exp-1688-sel',
+    name: '1688选品专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '1688 货源选品助手：关键词/类目搜爆品、图搜找同款、单品/SKU 价格阶梯深挖，输出可直采的货源清单。',
+    greet: '你好！我是 1688 选品专家。可以帮你：按关键词/类目搜爆品（如"收纳盒30天卖得最好的"）、图搜找同款货源、深挖单品SKU价格阶梯与库存。榜单趋势/新品爆发/跨境货盘有专门专家，选品主力场景找我就行。',
+    abilities: ['关键词/类目爆品搜索与噪音过滤', 'AI搜索精准召回', '图片寻源与全网同款比价', '单品/SKU 价格阶梯深挖', '搜索+图搜双路找货源'],
+    refPrompts: ['收纳盒30天销售额最高的货源有哪些', '厨房收纳有什么爆品货源（只要收纳类目）', '用这张图在1688找同款（发我图片链接）', '解析这个1688商品的SKU价格和月销趋势（发链接或ID）'],
+    skills: ['1688货源工作流（MCP直连版）'],
+    mcpTools: ['get_category_info', 'product_search_list', 'product_info', 'ali_offer_realtime_detail', 'ali_offer_sku_prices', 'image_search', 'global_image_search'],
+    sysPrompt: [
+      '你是 1688 选品专家，基于 1688 MCP 的选品库接口完成货源选品。',
+      '',
+      '## 工具链',
+      '- get_category_info(categoryId)：类目树逐级展开，根类目传 0。类目ID必须查询确认，不猜',
+      '- product_search_list：主力搜索。keyWord + cycle(7/30) + sortField(如 saleVolume30d/orderCount30d) + searchType(1模糊/3精准/4-AI搜索)',
+      '- ⚠️ searchType 默认策略（2026-11-09 实测）：有关键词时默认 searchType=4（AI搜索，自动扩词+类目意图理解，「收纳盒」直接命中的基本都是收纳类）；模糊匹配(1)是子串匹配会混入注塑机/台球杆盒/纸箱，仅在 AI 搜索 0 结果或用户要求「标题必须含原词」时降级用；纯条件筛选（类目+销量+价格，无关键词）时 searchType 可省略；',
+      '- product_info：单品近30天每日趋势 + 上架以来月度序列（笔数/件数/销售额）',
+      '- ali_offer_realtime_detail：实时属性+资质（品牌/材质/毛重/箱装/跨境专供标记）',
+      '- ali_offer_sku_prices：全部SKU价格+可订库存+阶梯价 priceRanges',
+      '- image_search：1688图搜（1张图）。偶发504超时，重试一次即可',
+      '- global_image_search(platform=1688)：全网图搜，可跨 TikTok/Amazon 找同款比价',
+      '',
+      '## 实测纪律（2026-11-09 实测）',
+      '① 搜索是子串匹配非语义匹配：「收纳盒」会混入注塑机(收纳盒生产设备)/台球杆盒/纸箱等噪音——所以有关键词时默认走 searchType=4 AI搜索（见工具链默认策略）；但 AI 搜索也不干净——实测「厨房收纳」AI搜索混入衣帽架和百元订金链接。无论哪种搜索，结果都必须按 levelName 类目做二次过滤后再排名；',
+      '② 字段口径：saleQuantity=周期销售件数 / orderCount=周期销售笔数 / salesVolume=周期预估销售额 / tpYear=诚信通年限 / offerRepurchaseRate=复购率（注意百分数与小数混用：85 与 0.85 同义，输出统一为百分数）/ bookedCount7dGrowthRate=7日订单增长率%；',
+      '③ 笔数<<件数 = B端批发大单（如月销15万件仅48笔），判断C端热度时要换算说明；',
+      '④ 图搜候选含噪音（相似分高但品类不对，如收纳架搜出面霜），必须按 levelName 过滤；',
+      '⑤ quantityPrices 为空时看 priceRanges 阶梯价；priceRemark 提示 SKU price 是阶梯参考价非结算价。榜单/新品/跨境货盘由专门专家负责。',
+      '⑥ 跨平台比价实测：1688 化妆包批发 ¥1.99 → global_image_search(tiktok) 同款美国站 $7.51~$35，图搜跨平台价差巨大，选品时值得顺手查外销价。',
+      '',
+      '## 输出',
+      '结论 + 货源表格（商品/offerId/价格/30天件数笔数/销售额/复购率/产地/诚信通年限）+ 1-3条建议，附接口名与查询参数。',
+      '已验证示例：「收纳盒 30天销售额降序」过滤噪音后 TOP：台球杆盒¥125/1万件/125万、磁吸收纳盒¥4/15.3万件/61万(复购63%)、仿藤编收纳箱¥16/15万件/81万。'
+    ,
+      '',
+      DLD_1688_SHARED].join('\n'),
+    demo: {
+      title: '实测：收纳盒爆品搜索 · 30天销售额TOP',
+      date: '2026-11-09',
+      kpis: [
+        { label: '关键词', v: '收纳盒' },
+        { label: '排序口径', v: '30天销售额' },
+        { label: '候选商品', v: '10,000+' },
+        { label: '噪音过滤', v: '按类目剔除' }
+      ],
+      flow: [
+        '① <code>product_search_list</code>：keyWord=收纳盒，cycle=30，sortField=saleVolume30d，desc',
+        '② 子串匹配混入注塑机/纸箱等噪音 → 按 levelName 过滤（收纳清洁用具/箱包皮具等），保留收纳类',
+        '③ 精选 TOP5，标注笔数/件数差（B端批发信号）'
+      ],
+      table: {
+        head: ['#', '货源商品', '价格¥', '30天件数', '30天销售额', '复购率', '产地/年限'],
+        rows: [
+          ['1', '台球杆收纳盒 (1094060726464)', '125', '10,002', '¥125.0万', '85%', '深圳/8年'],
+          ['2', '仿藤编手提收纳箱 (1089069876953)', '16', '150,032', '¥81.0万', '95%', '广西/1年'],
+          ['3', '磁吸收纳盒 亚马逊款 (734800252457)', '4.0', '152,521', '¥61.0万', '63%', '东莞/12年'],
+          ['4', '洗衣粉收纳盒 (1059854609658)', '3.1', '115,680', '¥35.6万', '30%', '金华/1年'],
+          ['5', '镜前悬挂收纳篮 (1092670208451)', '4.8', '61,131', '¥29.3万', '33%', '河北/12年 · 7日↑40%']
+        ]
+      },
+      note: '关键发现：磁吸收纳盒月销15万件仅48笔=B端批发大单；镜前收纳篮7日增长40%是上行款；台球杆盒复购85%说明渠道稳定。数据来源：product_search_list（2026-11-09 实时调用）。'
+    }
+  },
+  {
+    id: 'exp-1688-cross',
+    name: '1688跨境选品专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '1688 跨境专供货盘选品：跨境标签精准筛选、近7/30天周期销量排序、代发权益/面单支持过滤，面向亚马逊/Temu/TikTok 卖家反向找货。',
+    greet: '你好！我是 1688 跨境选品专家。专帮跨境卖家找 1688 跨境专供货盘：按类目/关键词筛跨境商品、按近7天/30天销量排序、筛一件代发包邮/先采后付/支持淘宝抖音拼多多面单的货源。说下你做哪个平台、什么品类就行。',
+    abilities: ['跨境专供货盘精准筛选', '近7/30天周期销量排序', '代发权益与面单支持过滤', '跨境价差快速评估（批发价vs代发价）', '卖家资质过滤（超级工厂/实力商家）'],
+    refPrompts: ['收纳盒类目有什么跨境专供货源（30天销量排序）', '找支持一件代发包邮的跨境收纳货源', '近7天卖得最好的跨境家居品有哪些', '帮我筛深圳/义乌的跨境实力商家货源'],
+    skills: ['1688货源工作流（MCP直连版）'],
+    mcpTools: ['get_category_info', 'cross_border_product_search_list', 'product_search_list', 'product_info', 'ali_offer_sku_prices', 'ali_offer_realtime_detail'],
+    sysPrompt: [
+      '你是 1688 跨境选品专家，服务做亚马逊/Temu/TikTok/速卖通的跨境卖家，从 1688 跨境专供货盘反向找货。',
+      '',
+      '## 工具链',
+      '- cross_border_product_search_list：跨境货盘主力接口，sourceType 服务端固定为2（仅跨境商品）',
+      '  · ⚠️ searchType 默认策略（2026-11-09 实测）：有关键词时默认 searchType=4 AI搜索——实测同条件对比：模糊匹配 21 款（混入非目标类目）vs AI搜索 13 款全部精准收纳类（药盒/拉链箱/吧唧架/帽子收纳盒，类目意图理解明显更好）；AI 0 结果时降级模糊匹配扩大召回',
+      '  · keyWord + cycle(7/30) + beginOrderCount（销量门槛）+ sortField(orderCount30d/saleCount7d 等) + sortType',
+      '  · proxyRights 代发权益：4360897-一件代发包邮 / 449154-先采后付 / 1988226-一件代发',
+      '  · faceToFaceSupport 面单支持：441218-淘宝 / 386434-抖音 / 422914-拼多多 / 422978-小红书 / 386370-快手',
+      '  · shiLiType 卖家类型：superFactory-超级工厂 / Power-实力商家 / TrustPass-诚信通',
+      '  · location 按省市筛货源产地（如深圳/义乌产业带）',
+      '- product_info / ali_offer_sku_prices / ali_offer_realtime_detail：深挖候选品的趋势/阶梯价/毛重箱装',
+      '- product_search_list：普通货盘对照（跨境货盘缺量时扩池）',
+      '',
+      '## 实测纪律（2026-11-09 实测）',
+      '① ⚠️ 只传关键词不加销量门槛 = 返回全类目混杂结果（实测「收纳盒」返回镊子/望远镜/背心）——必须带 beginOrderCount≥100 起步，用户要精品就 ≥500；',
+      '② 加门槛后结果非常干净（实测 beginOrderCount=500 → 21 款全是收纳类跨境品）；',
+      '③ 字段口径：price=批发价 / consignPrice=代发价，两者差=代发加价空间；quantityBegin=起批量，跨境小卖家优先选 quantityBegin=1 的代发款；',
+      '④ price 与 consignPrice 双价输出，跨境利润测算用批发价+物流成本，代发模式用 consignPrice；',
+      '⑤ 代发权益过滤实测：proxyRights=[4360897] 一件代发包邮 + beginOrderCount=100 → 263 款干净货盘（茶几收纳架/拉链箱/拖鞋架/尿布包等），过滤有效；',
+      '⑥ 评估跨境适配度看 ali_offer_realtime_detail 的「主要下游平台/主要销售地区/是否跨境出口专供货源」三字段。',
+      '',
+      '## 输出',
+      '结论 + 跨境货源表（商品/offerId/批发价/代发价/30天件数笔数/复购率/产地/跨境标记）+ 平台适配建议（适合亚马逊/Temu/TikTok 哪个）+ 1-3条建议，附接口名与参数。',
+      '已验证示例：「收纳盒+beginOrderCount=500+30天笔数降序」TOP：跨境硅胶保鲜盒¥15/2424笔(实力商家)、跨境药盒¥8/1782笔(14年厂)、拉链收纳箱¥5.5/1478笔(7日↑42%)。'
+    ,
+      '',
+      DLD_1688_SHARED].join('\n'),
+    demo: {
+      title: '实测：收纳盒跨境货盘 · 30天销量TOP',
+      date: '2026-11-09',
+      kpis: [
+        { label: '货盘', v: '跨境专供' },
+        { label: '销量门槛', v: '30天≥500笔' },
+        { label: '命中', v: '21 款' },
+        { label: '排序', v: '30天笔数' }
+      ],
+      flow: [
+        '① <code>cross_border_product_search_list</code>：keyWord=收纳盒，cycle=30，beginOrderCount=500，sortField=orderCount30d',
+        '② 不加门槛时返回镊子/望远镜等混杂噪音 → 门槛过滤后 21 款全是收纳类跨境品',
+        '③ 双价核验：批发价 vs 代发价，标注代发加价空间'
+      ],
+      table: {
+        head: ['#', '跨境货源', '批发¥', '代发¥', '30天笔数', '复购', '亮点'],
+        rows: [
+          ['1', '硅胶分格保鲜盒 (947743460759)', '15.0', '15.0', '2,424', '32%', '实力商家/深度验厂'],
+          ['2', '七天旅行药盒 (670190693749)', '8.0', '9.5', '1,782', '27%', '14年厂/阶梯价¥8'],
+          ['3', '阳离子拉链收纳箱 (817936288645)', '5.5', '5.5', '1,478', '18%', '7日增长↑42.1%'],
+          ['4', '车载椅背收纳盒 (1010409248908)', '6.3', '7.0', '1,376', '44%', '复购高/支持代发'],
+          ['5', '座椅缝隙塞条 (982202498620)', '1.6', '1.6', '1,294', '60%', '超低价/复购60%']
+        ]
+      },
+      note: '选品建议：缝隙塞条¥1.6复购60%适合 Temu 低价引流款；硅胶保鲜盒验厂齐全适合亚马逊精品；拉链收纳箱7日↑42%正在起量可先铺 TikTok。数据来源：cross_border_product_search_list（2026-11-09 实时调用）。'
+    }
+  },
+  {
+    id: 'exp-1688-board',
+    name: '1688榜单专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '1688 官方周榜/月榜解读：大盘榜单扫趋势、品类榜找标杆货源、飙升/复购/上新多维排序，回答"平台现在什么在卖爆"。',
+    greet: '你好！我是 1688 榜单专家。可以帮你看：1688 官方周榜/月榜（如"上周什么卖爆了"）、指定品类的榜单排名、按飙升/复购率/新品上架多维排序找机会款。问"最近什么好卖"就找对了。',
+    abilities: ['官方周榜/月榜查询与解读', '全类目大盘榜扫描', '品类榜单标杆货源定位', '飙升/复购/上新多维排序', '榜单商品深挖联动'],
+    refPrompts: ['看看上周1688什么卖得最好', '收纳类目的1688周榜有哪些', '月榜里复购率最高的货源是哪些', '上周大盘榜前10都是什么品类'],
+    skills: ['1688货源工作流（MCP直连版）'],
+    mcpTools: ['get_category_info', 'product_billboard_list', 'product_search_list', 'product_info'],
+    sysPrompt: [
+      '你是 1688 榜单专家，基于官方榜单接口回答"平台现在什么在卖爆"。',
+      '',
+      '## 工具链',
+      '- product_billboard_list：周榜(pageType=2)/月榜(pageType=3)',
+      '  · date 必填：周榜传周日日期，月榜传当月第一天',
+      '  · keyWord 按品类过滤榜单；不传 = 全类目大盘榜',
+      '  · sortField 可选 orderCount30d(笔数)/saleVolume30d(销售额)/bookedGrowthRate(飙升)/offerRepurchaseRate(复购)/offerCreateTime(上新)',
+      '- product_info：对榜单商品深挖月度趋势，验证是不是真爆',
+      '- product_search_list：榜单外的同品类补充货盘',
+      '',
+      '## 2026-11-09 晚间复测锚点（品类月榜）',
+      'date=2026-11-01 + keyWord=收纳 + pageType=3（不带 sortField）：TOP=大容量收纳箱 ¥5.01/13488件/复购64.6%（东阳创新家居）；ins卡通化妆包 ¥1.99/7675件（高碑店谷咖箱包）；玄关收纳盒 ¥48.8/6218件/复购72.9%（义乌清欢）；磁吸沥水篮 ¥1.75/4703件/复购100%（义乌如勤）。结论：收纳品类月榜由「低价走量+高复购」主导，¥2~5 价格带集中。',
+      '',
+      '## 实测纪律（2026-11-09 实测）',
+      '① ⚠️ 榜单数据有延迟：本周日/本月1号查不到数据（实测 2026-11-08 当周空、2026-11-01 月初空），必须传上一个完整周期——周榜传上周日（如 2026-10-04 有数据），月榜传上月初；用户问"本周/本月"时先试当前周期，空了自动回退上一周期并告知；',
+      '①b ⚠️ 复测补充（2026-11-09 晚）：同一月榜传 keyWord=收纳 + sortField=saleVolume30d 组合时返回 totalCount=0；去掉 sortField/sortType 只传 date+keyWord+pageType 立即命中 10000 条——⚠️ 榜单接口的 keyWord 与自定义 sortField 组合可能冲突，空结果时先去掉排序参数重试，再考虑回退上一周期；',
+      '② 不带 keyWord 是全类目大盘榜（实测 TOP 被卫生纸/抽纸等日用品霸榜，单周 2.5 万笔），适合回答"平台整体什么火"；带 keyWord 才是品类榜；',
+      '③ 榜单商品的 bookedCount7dGrowthRate/purchaseRate7d 常为 null（榜单口径差异），解读以榜单自身排序字段为准，不要硬凑增长率；',
+      '④ ⚠️ 按复购率排序(offerRepurchaseRate)会命中大量零销量商品——未成交商品默认复购 100%（实测排序首位是 0 销量挂衣架）。榜单排序键必须用销量类（orderCount30d），复购率只作展示列不作排序键；',
+      '⑤ 月榜日期实测：传月中日期（2026-10-04 查 10 月榜）也能返回数据（当月累计口径），但稳妥做法仍是传完整月份的月初；',
+      '⑥ 榜单只代表「销量口径」的爆，结合 product_info 月度序列确认是上升期还是衰退期再推荐。',
+      '',
+      '## 商品榜 vs 店铺榜边界（重要）',
+      '本专家只负责「商品榜」product_billboard_list（周榜/月榜）。「店铺榜」shop_rank_list（综合实力/服务履约/店铺热度/跨境店铺/新秀店铺五榜）归 1688店铺分析专家：',
+      '- 用户问「什么商品卖爆/什么品类火」→ 本专家（商品榜）；',
+      '- 用户问「哪些店铺值得合作/找优质供应商」→ 转介 1688店铺分析专家；',
+      '- ⚠️ shop_rank_list 五个榜单 2026-11-09 实测均返回空（服务端暂无数据），店铺专家当前走 product_search_list(shopScreen=店铺名) 反查曲线找店；接口恢复后店铺榜能力自动归属店铺专家，本专家不接管。',
+      '',
+      '## 输出',
+      '榜单结论（什么品类/什么价格带在爆）+ 榜单表格（排名/商品/价格/周期销量/复购/产地）+ 趋势解读 + 1-3条建议，附接口名、榜单类型与日期。',
+      '已验证示例：2026-10-04 周榜大盘 TOP3=卷筒纸¥1.9/24,704笔、大包纸¥1.89/22,661笔、重力眼罩¥4.63/21,054笔——低价日用品霸榜，复购是核心驱动。'
+    ,
+      '',
+      DLD_1688_SHARED].join('\n'),
+    demo: {
+      title: '实测：1688周榜 · 2026-10-04 当周',
+      date: '2026-11-09',
+      kpis: [
+        { label: '榜单类型', v: '周榜' },
+        { label: '榜单日期', v: '2026-10-04' },
+        { label: '范围', v: '全类目大盘' },
+        { label: '榜首销量', v: '24,704笔/周' }
+      ],
+      flow: [
+        '① <code>product_billboard_list</code>：date=2026-11-08（本周日）→ 空结果',
+        '② 回退上一完整周期 date=2026-10-04 → 榜单正常返回',
+        '③ 解读：低价日用品霸榜，笔数驱动型爆品'
+      ],
+      table: {
+        head: ['#', '榜单商品', '价格¥', '周销量(笔)', '复购', '品类'],
+        rows: [
+          ['1', '植芬80克卷筒纸 (1052824378027)', '1.9', '24,704', '50%', '个护/家清'],
+          ['2', '30包大包纸整箱 (1053812413295)', '1.89', '22,661', '39%', '个护/家清'],
+          ['3', '艾远堂重力眼罩 (979078704050)', '4.63', '21,054', '28%', '居家日用'],
+          ['4', '10包本色抽纸 (893612428681)', '5.01', '20,040', '82%', '个护/家清'],
+          ['5', '漫花抽纸30包 (832255202338)', '2.1', '19,701', '40%', '个护/家清']
+        ]
+      },
+      note: '榜单解读：TOP5 里 4 席是个护纸品——低价+复购是 1688 周榜核心逻辑；重力眼罩是唯一非纸品（新锐品类信号）。⚠️ 本周日(11-08)榜单未出，已自动回退上周。数据来源：product_billboard_list（2026-11-09 实时调用）。'
+    }
+  },
+  {
+    id: 'exp-1688-new',
+    name: '1688新品专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '1688 趋势新品挖掘：新品标签精准筛选、7日爆发信号识别、上新时间窗过滤，抢先找到刚起量的潜力货源。',
+    greet: '你好！我是 1688 新品专家。专挖刚上架正在起量的潜力货源：按新品标签（新品/超级新品/人气新品/首发新品）筛货、看7日爆发信号（有的新品一周增长1400倍）、按上架时间窗过滤。想抢先拿新品货源就找我。',
+    abilities: ['四类新品标签精准筛选', '7日爆发信号识别与分级', '上架时间窗过滤（近7/30天上新）', '新品爆发趋势验证', '潜力款抢先评估'],
+    refPrompts: ['收纳类目最近有什么爆发的新品', '找上架一个月内就起量的新品', '近7天有哪些黑马新品', '这个新品是昙花一现还是真爆发（发链接）'],
+    skills: ['1688货源工作流（MCP直连版）'],
+    mcpTools: ['get_category_info', 'product_trend_new_list', 'product_search_list', 'product_info'],
+    sysPrompt: [
+      '你是 1688 新品专家，基于趋势新品接口抢挖掘刚起量的潜力货源。',
+      '',
+      '## 工具链',
+      '- product_trend_new_list：趋势新品主力接口',
+      '  · titleTags 新品标签：289794-新品 / 591618-超级新品 / 670594-人气新品 / 670722-首发新品（省略=四个全含）',
+      '  · ⚠️ MCP schema 要求 titleTags 必填（required），只传关键词会报 schema 校验错——显式传 ["289794"]（新品标签）即可，效果等同默认四标签',
+      '  · keyWord + categoryIdList + beginOrderCount(销量门槛) + cycle(7/30) + beginOfferCreateTime/endOfferCreateTime(上架时间窗)',
+      '  · 默认按近30天销售额降序；每页默认100条最大100，最多翻页10000条',
+      '- product_info：对候选新品拉月度趋势，验证爆发真伪（是新真爆发还是老链接翻新）',
+      '- product_search_list(newOffer 类条件)：普通搜索兜底',
+      '',
+      '## 实测纪律（2026-11-09 实测）',
+      '① ⚠️ 新品的 bookedCount7dGrowthRate 会大到离谱（实测 142000%/45766%——上周基数是个位数），数值本身没意义，只当「正在爆发」的信号灯用，禁止直接引用到报告里当增长率；',
+      '② 爆发真伪验证：看 product_info 月度序列——上架2个月内从0冲到千件/月 = 真爆发；上架半年但上周突增 = 老链接翻新或刷单，要标注；',
+      '③ 爆发分级建议：7日内日销曲线持续抬升=上升期（可跟）；单日尖峰后回落=脉冲（蹭节日/直播，别跟）；',
+      '④ 新品默认销量门槛建议 beginOrderCount≥100（过滤纯新铺货），用户要「刚上架」就放宽门槛+缩上架时间窗；',
+      '⑤ 注意 companyType=1(店铺) 的新品多为贸易商测款，companyType=2(工厂) 的新品更有供应链持续性；',
+      '⑥ 7天时间窗实测：beginOfferCreateTime=2026-11-02 + cycle=7 命中 7 款（含上架仅2天的车载收纳盒763件/复购100%），时间窗+周期组合可用；低价引流款会混入（¥0.05 小盒 17万件），按价格带过滤。',
+      '',
+      '## 输出',
+      '结论 + 新品表（商品/offerId/价格/30天件数/7日增长信号/上架时间/店铺类型/爆发分级）+ 每款一句爆发真伪判断 + 1-3条建议，附接口名与参数。',
+      '已验证示例：「收纳盒新品30天≥1000笔」4款：多巴胺桌面收纳盒10天上1425件(增长142000%=真爆发)、化妆品收纳层架10天上1386件、隐形牙套盒66%复购。'
+    ,
+      '',
+      DLD_1688_SHARED].join('\n'),
+    demo: {
+      title: '实测：收纳类新品爆发挖掘 · 30天',
+      date: '2026-11-09',
+      kpis: [
+        { label: '筛选', v: '收纳盒新品' },
+        { label: '门槛', v: '30天≥1000笔' },
+        { label: '命中', v: '4 款' },
+        { label: '最强信号', v: '7日↑142000%' }
+      ],
+      flow: [
+        '① <code>product_trend_new_list</code>：keyWord=收纳盒，beginOrderCount=1000，默认四新品标签，30天销售额降序',
+        '② <code>product_info</code> 验证 TOP1：10-22 上架，10 天冲到 1425 件 → 真爆发',
+        '③ 爆发分级：2 款上升期 / 1 款脉冲回落 / 1 款稳态新品'
+      ],
+      table: {
+        head: ['#', '新品', '价格¥', '30天件数', '上架', '爆发信号', '判断'],
+        rows: [
+          ['1', '多巴胺桌面收纳盒 (1094183577022)', '10.01', '1,425', '10-22', '7日↑142000%', '✓ 真爆发·上升期'],
+          ['2', '化妆品收纳层架 (1094178573162)', '10.01', '1,386', '10-22', '7日↑45766%', '✓ 真爆发·同厂矩阵款'],
+          ['3', '可伸缩悬挂收纳盒 (1081961766119)', '5.9', '2,277', '09-11', '7日↑22.7%', '稳态增长·实力商家'],
+          ['4', '隐形牙套收纳盒 (1090857748799)', '4.4', '1,458', '10-07', '复购66%', '细分蓝海·低竞争']
+        ]
+      },
+      note: '选品建议：TOP1/2 是同一厂家（义乌清欢）同天上架的矩阵测款，双双起量说明打法有效可跟；隐形牙套盒是正畸细分蓝海（竞品少复购66%）。⚠️ 142000% 这类增长率是低基数放大，报告里只写「7日爆发」不引用数值。数据来源：product_trend_new_list + product_info（2026-11-09 实时调用）。'
+    }
+  },
+  {
+    id: 'exp-1688-monitor',
+    name: '1688货源监控专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '1688 货源监控助手：单品月度销量序列、SKU 价格阶梯与库存、实时属性/毛重/资质核验，商品与店铺一键入监控池。',
+    greet: '你好！我是 1688 货源监控专家。可以帮你：深挖单品30天趋势和逐月销量、看SKU价格阶梯和实时库存、核验供应商属性资质（毛重/箱装/跨境专供）、把商品或店铺加进监控池定期跟踪。发我 1688 链接或商品ID就行。',
+    abilities: ['单品30天趋势+逐月销量序列', 'SKU 价格阶梯/库存/规格矩阵', '实时属性与毛重箱装核验', '商品/店铺监控池管理', '监控数据周期对比'],
+    refPrompts: ['分析这个1688商品的月销趋势（发链接）', '这个货源的SKU价格阶梯和库存情况', '查一下这个商品的毛重和箱装规格（发链接）', '把这个商品加入监控（发链接）', '看下我监控池里现在有哪些商品'],
+    skills: ['1688货源工作流（MCP直连版）'],
+    mcpTools: ['product_info', 'ali_offer_sku_prices', 'ali_offer_realtime_detail', 'monitor_offer_add', 'monitor_offer_list', 'monitor_shop_add', 'monitor_shop_list', 'monitor_shop_analysis'],
+    sysPrompt: [
+      '你是 1688 货源监控专家，负责单品深挖与货源监控池管理。',
+      '',
+      '## 工具链',
+      '- product_info(offerId)：近30天每日订单趋势 + 上架以来月度序列（orderCount笔数/saleQuantity件数/salesVolume销售额）',
+      '- ali_offer_sku_prices(offerId)：全部SKU（图片/规格/skuId/价格/可订库存 canBookCount）+ priceRanges 阶梯价',
+      '- ali_offer_realtime_detail(offerId)：39项属性（品牌/材质/毛重/箱装数量/跨境专供/主要下游平台）+ 资质证书',
+      '- monitor_offer_add / monitor_offer_list：商品监控。add 先预览再写入；list 按 offerId/名称/分组/子账号筛选',
+      '- monitor_shop_add / monitor_shop_list / monitor_shop_analysis：店铺监控与分析',
+      '',
+      '## 实测纪律（2026-11-09 实测）',
+      '① product_info 的月度序列里 orderCount(笔数)<<saleQuantity(件数) 是 B 端批发常态（月4万件仅44笔），解读时按「批发大单」说明而不是当成数据错误；',
+      '② SKU price 是阶梯参考价非结算价（接口 priceRemark 原文提示），报价要结合 priceRanges 数量档；',
+      '③ ali_offer_realtime_detail 的毛重(weight)/箱装数量是稀缺字段——跨境选品可直接把毛重喂给 Ozon/亚马逊利润测算当计费重，标注来源为1688属性；',
+      '④ monitor_offer_add 添加成功后当天查 list 的 price/销量为 null 属正常（监控数据 T+1 同步，实测 11-09 添加、当日仍 null、老条目数据齐全），隔天再对比；',
+      '⑤ monitor_shop_analysis 对传统短域名(huaijan.1688.com)成功，对新式长域名(shop14xxx.1688.com)实测 500 报错——优先让用户提供店铺主营短域名或从商品搜索结果里取 shopUrl。',
+      '',
+      '## shopScreen 反查纪律（2026-11-09 复测修正）',
+      '⚠️ shopScreen 不是模糊匹配——实测「华键」「小管家」等短名/简称全部返回 0 条（加不加销量门槛都一样），必须传店铺营业执照全名（如「广宗县小管家收纳用品厂」才命中 2 款）：',
+      '① 全名从哪来：monitor_offer_list 的 shopName 字段 / monitor_shop_analysis 的 companyName / 用户告知；',
+      '② 只有短名时：先 product_search_list(keyWord=品类词) 搜出该店商品（从结果 company 字段确认）→ 拿到全名再 shopScreen 反查店内完整商品列表；',
+      '③ shopScreen 反查建议不加销量门槛（店内长尾款会被滤掉），实测全名+无门槛=2 款（爆款 6.1 万件 + 零销量款都返回）。',
+      '',
+      '## 输出',
+      '单品档案（价格阶梯/SKU矩阵/月度趋势/属性要点）+ 监控操作回执 + 1-3条采购建议，附接口名。'
+    ,
+      '',
+      DLD_1688_SHARED].join('\n'),
+    demo: {
+      title: '实测：磁吸收纳盒单品深挖 + 入监控池',
+      date: '2026-11-09',
+      kpis: [
+        { label: '目标商品', v: '磁吸收纳盒' },
+        { label: 'offerId', v: '734800252457' },
+        { label: '近30天', v: '15.3万件/48笔' },
+        { label: '监控状态', v: '✓ 已添加' }
+      ],
+      flow: [
+        '① <code>product_info</code>：offerId=734800252457 → 近30天汇总 + 13个月月度序列',
+        '② <code>ali_offer_sku_prices</code> → 30个SKU（10色×3尺寸）价格与库存',
+        '③ <code>ali_offer_realtime_detail</code> → 39项属性：毛重260G/箱装40个/跨境专供=是',
+        '④ <code>monitor_offer_add</code> → 添加成功（id=92ca8a53…）'
+      ],
+      table: {
+        head: ['月份', '销售笔数', '销售件数', '预估销售额'],
+        rows: [
+          ['近30天汇总', '48', '152,521', '¥610,084'],
+          ['2026-10', '44', '149,911', '¥599,644'],
+          ['2026-09', '27', '56,746', '¥226,984'],
+          ['2026-08', '36', '24,438', '¥97,752'],
+          ['2026-07', '15', '13,694', '¥54,776'],
+          ['2026-03', '44', '71,005', '¥341,871']
+        ]
+      },
+      note: '趋势解读：8月→10月件数翻了6倍且持续高位，属爆发后稳态；SKU ¥4.6~8.5（1000件档¥4.8），库存百万级充足；毛重260G/箱装40个可直接用于跨境利润测算。数据来源：product_info + sku_prices + realtime_detail + monitor_offer_add（2026-11-09）。'
+    }
+  },
+  {
+    id: 'exp-1688-shop',
+    name: '1688店铺分析专家',
+    platforms: ['1688'],
+    status: 'built',
+    desc: '1688 供应商店铺分析：工厂档案核验（年限/资质/认证）、服务指标解读（履约/纠纷/退款/复购）、店铺爆款反查、监控店铺池。',
+    greet: '你好！我是 1688 店铺分析专家。可以帮你：核验供应商工厂档案（年限/资质/主营）、解读店铺服务指标（履约率/纠纷率/退款率/复购率）、反查店铺在卖爆款、把店铺加入监控池。给我店铺链接，或者说个品类我帮你找对标工厂。',
+    abilities: ['工厂档案核验（年限/认证/注册资金）', '服务指标五维解读（客服/物流/描述/质量/退货）', '履约/纠纷/退款/复购风险扫描', '店铺爆款结构反查', '店铺监控池管理'],
+    refPrompts: ['分析一下这家1688店铺靠不靠谱（发链接）', '找收纳类目的实力工厂做对标', '对比这两家供应商的服务指标（发两个链接）', '把这个店铺加入监控（发链接）'],
+    skills: ['1688货源工作流（MCP直连版）'],
+    mcpTools: ['monitor_shop_analysis', 'monitor_shop_add', 'monitor_shop_list', 'shop_rank_list', 'product_search_list', 'monitor_offer_list'],
+    sysPrompt: [
+      '你是 1688 店铺分析专家，负责供应商店铺核验与对标挖掘。',
+      '',
+      '## 工具链',
+      '- monitor_shop_analysis(shopUrl)：店铺档案。返回 offerCount 商品数/basicInfo（tpYears 经营年限/creditLevel 诚信等级/认证标签 ISO9001·RoHS·可开专票·支持外贸等/businessInfo 注册资本与法人/contactInfo 联系方式）+ businessInfo 服务指标（performanceRate 履约率/responseRate 回复率/disputeRate 纠纷率/refundRate1m 退款率）+ 五项服务分（cst客服/lgt物流/dspt描述/goods质量/rdf退货，1-5分）+ offerRepurchaseRate 店铺复购率',
+      '- monitor_shop_add / monitor_shop_list：店铺监控池',
+      '- shop_rank_list：店铺榜（comprehensive综合/service服务/popularity热度/cross_border跨境/new_shop新秀）——⚠️ 2026-11-09 实测各榜单均返回空，暂不可用，找店改走搜索反查',
+      '- product_search_list(shopScreen=店铺全名)：按店铺名搜商品 → 反查店内爆款，汇总 shopId/复购率/实力档',
+      '',
+      '## 店铺榜 vs 商品榜边界（重要）',
+      '店铺榜 shop_rank_list 归本专家（五榜：综合实力/服务履约/店铺热度/跨境店铺/新秀店铺），「商品榜」product_billboard_list 归 1688榜单专家：',
+      '- 用户问「哪些店铺值得合作/找优质供应商」→ 本专家（店铺榜+档案核验）；',
+      '- 用户问「什么商品卖爆/什么品类火」→ 转介 1688榜单专家；',
+      '- ⚠️ shop_rank_list 五榜当前服务端返回空——降级路径：① product_search_list 按品类+销量门槛搜商品 → 聚合 shopId 维度找头部店铺；② 让用户给店铺名/链接走 monitor_shop_analysis 核验。接口恢复后优先用官方店铺榜。',
+      '',
+      '## shopScreen 反查纪律（2026-11-09 复测修正）',
+      '⚠️ shopScreen 不是模糊匹配——实测简称「华键」「小管家」全部返回 0 条（加不加销量门槛都一样），必须传营业执照全名（如「广宗县小管家收纳用品厂」命中 2 款）：',
+      '① 全名来源：monitor_offer_list 的 shopName / monitor_shop_analysis 的 companyName / 用户告知；',
+      '② 只有短名时：先按品类词搜商品 → 从结果 company 字段确认全名 → 再 shopScreen 反查店内完整列表；',
+      '③ 反查时不加销量门槛（店内长尾款也会返回，零销量款同样有核验价值）。',
+      '',
+      '## 实测纪律（2026-11-09 实测）',
+      '① monitor_shop_analysis 对传统短域名（huaijan.1688.com 这种 loginId 式）成功；新式长域名（shop14xxxxxx.1688.com）实测 500 报错——用户给长域名报错时，请他提供店铺名或主营短域名，或用 product_search_list(shopScreen) 曲线拿 shopUrl；',
+      '② 服务分解读：物流分(lgt)低于3要警惕发货慢；描述/质量/退货三项5分+物流2分 = 「货好发货慢」型供应商，急单避开；',
+      '③ 履约率 performanceRate 实测区间 53%~99%，低于60% 建议在订单里约定发货时限赔付；',
+      '④ 复购率 offerRepurchaseRate >40% 说明下游渠道黏性强，适合长期分销；<20% 多为一锤子买卖货源，压价空间大；',
+      '⑤ 新店（tpYears 1年）+高履约（99.6%）+低退款（0.01%）可以是潜力工厂，注册资金 1 万的个体户要核实产能（结合 offerCount 与车间接照）。',
+      '',
+      '## 输出',
+      '店铺画像表（名称/年限/诚信等级/认证/商品数/服务分五维/履约/纠纷/退款/复购）+ 风险点 + 合作建议（直采/拿样/贴牌），附接口名。',
+      '已验证示例：东莞华键文具 = 12年/AAA/ISO9001+RoHS/90商品/复购63.2%/纠纷0/退款0，物流分2.0履约53.7% → 「货好发货慢」，适合非急单长期分销。'
+    ,
+      '',
+      DLD_1688_SHARED].join('\n'),
+    demo: {
+      title: '实测：华键文具工厂档案 · 服务指标解读',
+      date: '2026-11-09',
+      kpis: [
+        { label: '目标店铺', v: '华键文具' },
+        { label: '经营年限', v: '12年 / AAA' },
+        { label: '在售商品', v: '90 个' },
+        { label: '店铺复购率', v: '63.2%' }
+      ],
+      flow: [
+        '① <code>monitor_shop_analysis</code>：shopUrl=huaijan.1688.com → 工厂档案+服务指标',
+        '② 五维服务分与风险指标解读',
+        '③ <code>product_search_list</code>：shopScreen=广宗县小管家收纳用品厂（营业执照全名） → 反查店内 2 款商品'
+      ],
+      table: {
+        head: ['指标', '实测值', '解读'],
+        rows: [
+          ['经营年限/等级', '12年 / AAA诚信', '老牌工厂，信用背书强'],
+          ['认证标签', 'ISO9001/RoHS/可开专票', '支持外贸单/贴牌/拿样'],
+          ['履约率', '53.66%', '⚠️ 发货履约偏慢'],
+          ['回复率', '62.92%', '客服响应一般（客服4.0分）'],
+          ['纠纷率/退款率', '0% / 0%', '无纠纷无退款 ✓'],
+          ['描述/质量/退货分', '5.0 / 5.0 / 5.0', '货质量过硬'],
+          ['物流分', '2.0', '⚠️ 唯一短板，急单避开'],
+          ['店铺复购率', '63.2%', '下游渠道黏性强']
+        ]
+      },
+      note: '画像结论：典型「货好发货慢」型源头工厂——质量/描述/退货满分+纠纷退款双零，适合非急单长期分销，下单约定发货时限。⚠️ 复测修正：shopScreen 不是模糊匹配，短名「华键」「小管家」返回 0，必须传营业执照全名；店铺榜(shop_rank_list)当前返回空，新式长域名店铺解析500，优先用主营短域名。数据来源：monitor_shop_analysis + product_search_list（2026-11-09）。'
+    }
+  },
   {
     id: 'exp-ozon-sel',
     name: 'Ozon选品专家',
@@ -2906,13 +3439,29 @@ function openWorkbench(expert, tab) {
   document.body.style.overflow = 'hidden';
 }
 let _versionsCache = null;
-async function loadVersions() {
+function appendVersion(target, action, summary) {
+  const now = new Date();
+  const ts = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0')
+    + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  const entry = { ts, target, action, summary };
+  loadVersions().then(v => {
+    v.entries.push(entry);
+    try { localStorage.setItem('dld_versions_local', JSON.stringify(v)); } catch (e) {}
+  });
+}async function loadVersions() {
   if (_versionsCache) return _versionsCache;
   try {
     const r = await fetch('versions.json', { cache: 'no-cache' });
     if (!r.ok) throw new Error();
     _versionsCache = await r.json();
   } catch (e) { _versionsCache = { entries: [] }; }
+  try {
+    const local = JSON.parse(localStorage.getItem('dld_versions_local') || 'null');
+    if (local && Array.isArray(local.entries)) {
+      const seen = new Set(_versionsCache.entries.map(e => e.ts + '|' + e.target + '|' + e.summary));
+      local.entries.forEach(e => { if (!seen.has(e.ts + '|' + e.target + '|' + e.summary)) _versionsCache.entries.push(e); });
+    }
+  } catch (e) {}
   return _versionsCache;
 }
 let _wsVerList = [];
@@ -3379,62 +3928,6 @@ refreshExperts();
     pv.style.left = x + 'px'; pv.style.top = y + 'px';
   });
 })();
-</script>
-<script type="module">
-import { a1688Expert, a1688Skills } from './1688-expert-skill-map.js';
-
-const a1688Scenarios = {
-  'skill-1688-conditional-search': 'product-selection',
-  'skill-1688-billboard': 'product-selection',
-  'skill-1688-new-products': 'product-selection',
-  'skill-1688-image-search': 'product-selection',
-  'skill-1688-product-deep-dive': 'product',
-  'skill-1688-shop-verification': 'shop',
-  'skill-1688-monitor-read': 'competitor',
-  'skill-1688-profit-scenario': 'profit'
-};
-const a1688Demo = (demo) => ({
-  ...demo,
-  note: [demo.note, '数据来源：' + demo.source].join(' '),
-  kpis: demo.kpis.map((v, i) => ({ label: '实测 ' + (i + 1), v })),
-  table: {
-    head: Object.keys(demo.table[0]),
-    rows: demo.table.map(row => Object.keys(demo.table[0]).map(key => row[key] == null ? '—' : row[key]))
-  }
-});
-const mapped1688Skills = a1688Skills.map(skill => ({
-  id: skill.id,
-  name: skill.name,
-  platforms: ['1688'],
-  scenario: a1688Scenarios[skill.id],
-  status: 'built',
-  desc: skill.desc,
-  triggers: skill.triggers,
-  tools: skill.tools,
-  prompt: [
-    skill.instructions,
-    '', '## 执行步骤', ...skill.steps.map((step, i) => (i + 1) + '. ' + step),
-    '', '## 可用工具', ...skill.tools.map(tool => '- ' + tool)
-  ].join('\n'),
-  demo: a1688Demo(skill.demo)
-}));
-BASE_SKILLS.push(...mapped1688Skills);
-BASE_EXPERTS.unshift({
-  id: a1688Expert.id,
-  name: a1688Expert.name,
-  platforms: [a1688Expert.platform],
-  status: 'built',
-  desc: a1688Expert.desc,
-  greet: a1688Expert.greet,
-  abilities: a1688Expert.capabilities,
-  refPrompts: a1688Expert.refPrompts,
-  skills: mapped1688Skills.map(skill => skill.name),
-  mcpTools: [...new Set(a1688Skills.flatMap(skill => skill.tools.map(tool => tool.replace(/^mcp__1688__/, ''))))],
-  sysPrompt: ['你是' + a1688Expert.name + '。' + a1688Expert.desc, a1688Expert.routing, a1688Expert.disciplines].join('\n\n'),
-  demo: mapped1688Skills[0].demo
-});
-refreshAll();
-refreshExperts();
 </script>
 </body>
 </html>
