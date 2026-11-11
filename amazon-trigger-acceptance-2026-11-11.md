@@ -57,3 +57,21 @@
 - 日期口径关键冲突：`B0H337RR4S` 列表 online_date 2026-08-15/月销1270，详情 listing_date 2026-08-06（超窗）；`B0H82QYQ2G` 列表 online_date 2026-08-22/月销101，详情 listing_date 2026-07-20（超窗）。这两款虽是麻将包，也不能在“亚马逊近90天上架”已核表中。`B0HC3WMVZ2` 时尚手袋详情 listing_date 2026-09-09、月销436，但强调 phone & makeup clutch，容量用途不确定，暂不算已核麻将收纳包。详情销量与搜索列表可能变化，用详情快照并标来源。
 
 修订规则：按运行日生成近N天窗口，月销严格大于1传整数2；多路召回按 ASIN 去重，逐条看主商品和用途，不只凭关键词；严格亚马逊上架窗口以详情 `listing_date` 复核，`online_date` 只用于候选预筛；每条入表须同时满足品类、日期和月销；已看页数与未看页数分开披露。
+
+## 第四轮：七路由多条件组合问话回归（2026-11-11）
+
+以下新调用仅用 Sorftime，复用同轮已取响应时明确写“复用”。日期窗按运行日固定为近90天 2026-08-13~11-11、近60天 2026-09-12~11-11。**覆盖的是这些组合问话与调用链，不等于任意条件排列均已穷尽。**
+
+| 技能 / 用户问话 | 实际参数与复用 | 返回、人工核对 | 问题 / 处理 |
+|---|---|---|---|
+| 搜索①：US近90天麻将包，$10–30，月销>1，评分≥4 | `product_search({amz_site:"US",attribute_name:"mahjong bag",online_date_range_min:"2026-08-13",online_date_range_max:"2026-11-11",month_sale_volume_range_min:2,price_range_min:10,price_range_max:30,star_range_min:4,page:1})`；宽搜同参加 `keyword:"mahjong bag",attribute_name:"mahjong"` | 精准1页8条，宽搜3页仅读首页20条；精准含垫筒，宽搜含整套/牌架/麻将垫 | 多入口按ASIN合并，标题/主商品过滤；不能把宽搜页数当精准合格数 |
+| 搜索②：再限评论≤10且FBA并要求跨境 | 在①精准参数加 `comment_count_range_max:10,shipping_type:"FBA"`；`product_detail({asin:"B0HCKQQ9P5",amz_site:"US"})`、`product_detail({asin:"B0HGFQ7NK2",amz_site:"US"})` | 1页6条；B0HCKQQ9P5 是牌袋，CN/FBA、月销75，但列表online_date 09-23、详情listing_date 08-09超窗；B0HGFQ7NK2 是垫筒，CN/FBA且详情listing_date 05-15 | FBA/CN详情才可证实；两条都不得作为近90天麻将牌包合格结果 |
+| 搜索③：US近60天麻将包，$15–30、月销≥100、评分≥4.5、评论≤20、FBA、CN卖家 | `product_search({amz_site:"US",attribute_name:"mahjong bag",online_date_range_min:"2026-09-12",online_date_range_max:"2026-11-11",month_sale_volume_range_min:100,price_range_min:15,price_range_max:30,star_range_min:4.5,comment_count_range_max:20,shipping_type:"FBA",page:1})`；`product_detail({asin:"B0HC2D3D2K",amz_site:"US"})` | 1条，MEWTOGO牌/牌架/垫收纳包，listing_date 09-14、月销196、$25.99、4.9星/18评论、CN/FBA | 当前组合下已核实1条；不是全站所有合格包，其他召回入口未跑同组筛选 |
+| 搜索异常：US近90天运动水杯，$20–40，月销≥1000，评分≥4.5，评论≤100，FBA | `product_search({amz_site:"US",node_id:"3395091",online_date_range_min:"2026-08-13",online_date_range_max:"2026-11-11",price_range_min:20,price_range_max:40,month_sale_volume_range_min:1000,star_range_min:4.5,comment_count_range_max:100,shipping_type:"FBA",page:1})`；去掉末两条件**仅诊断**；`product_detail({asin:"B0HKYH5TF2",amz_site:"US"})` | 原条件无数据；诊断4条且评论数均>100。首条 online_date 09-25、listing_date 2024-06-17，days_on_shelf 47，字段矛盾 | 诊断样本不能回填原结果；严格90天上架不收录首条 |
+| 类目：运动水杯的10月规模可否说明上述空筛选有机会 | `category_name_search({category_name:"Sports Water Bottles",amz_site:"US"})`、`category_report({node_id:"3395091",query_start:"2026-10-01",query_date:"2026-10-31",amz_site:"US"})` | 名称返回5节点；10月Top100销量3,602,938、销售额$113,604,872.63；Top3商品79.66%但Top5商品60.52% | 禁用逆序份额；类目Top100规模不能代替组合筛选的候选数 |
+| 关键词：找麻将包长尾、筛错类并看趋势 | `keyword_extends({keyword:"mahjong bag",keyword_support_site:"US",page:1})`、`keyword_detail({keyword:"mahjong bags for tiles and racks",keyword_support_site:"US"})`、`keyword_trend({keyword:"mahjong bag",type:2,keyword_support_site:"US"})` | 扩词20条混入mahjong set；目标长尾月搜26,383/CPC$0.71，但click_90d=0、90d转化2.99%，首页总数79与organic48+ad2不闭合，Top3类目含Camera/Sports；趋势完整月到10月 | 剔除错类词；点击/转化和首页坑位异常字段隔离；11月CPC单点不当完整月 |
+| 竞品+商品解析：对比两款牌袋的费用和差评 | 复用 `product_detail`：B0HC2D3D2K、另调 `product_detail({asin:"B0H9CKLL3S",amz_site:"US"})`；两款分别 `product_reviews({asin,review_type:"Negative",amz_site:"US"})`、`product_customers_say({asin,site:"US"})` | 两款详情评论数18与10，两个评论接口均无数据；后者售价$24.99、月销34、月销额$1189.66（售价×月销=$849.66）、年销=-9999 | 不得说无差评；销售额口径待核，不能用于平均售价或作为可靠报告排序依据 |
+| 利润：两款包在没有采购与头程的条件下能赚多少 | 复用上述两款 `product_detail` | MEWTOGO $25.99/FBA$8.29/佣金$3.51/接口估算$14.19；Frjjthchy $24.99/FBA$7.58/佣金$5.25/接口估算$12.16 | 只比较接口估算，不说真实净利；没有用户给定采购、物流、广告规则，不补入假设数字 |
+| 报告：US近60天、$15–30、月销≥100、4.5星、≤20评论、FBA、CN的麻将包能否做 | 复用搜索③、详情、关键词长尾和评论结果；类目名称未找到精确麻将包节点（见第二轮记录），不借运动水杯大盘 | 仅1条已核候选、评论文本缺失；关键词一词含统计冲突；类目专属规模无数据 | 报告只给样本与缺口，不产总分/市场规模/保证盈利结论 |
+
+回归后的规则：先保留用户硬条件真实返回，再用剥离条件的请求定位空结果来源，诊断结果与正式结果分栏；所有候选按主商品、详情日期和不可在列表验证的条件复核；评论数不推出差评存在或不存在；销售额、关键词坑位、类目TopN出现不闭合时隔离冲突字段。

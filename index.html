@@ -1127,7 +1127,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '关键词/类目检索新品与热销，上架时间窗/价格/销量/评分/FBA 筛选，父体归组输出结构化表格。',
     triggers: ['帮我找XX','搜近90天上架的XX','出个表格','XX类目有什么新品'],
-    prompt: "仅用 Sorftime 搜亚马逊商品：【产品词/站点/近N天上架/价格/月销/是否跨境】。动态计算 yyyy-MM-dd 起止，月销严格大于1传 month_sale_volume_range_min=2。keyword 为 ABA 宽召回，attribute_name 为标题/属性匹配；两路互补按ASIN去重，未翻完注明页数。麻将包以包为主商品，剔除整套附包、牌架、垫、垫筒、卡片、挂件，时尚手袋容量不明列待核；列表 online_date 只作预筛，入表逐款 product_detail 核 listing_date，超窗剔除，详情销量为本次快照。跨境核 seller_country；parent_asin 仅样本归组不相加称父体总销量。空结果分诊且硬条件不放宽；输出真实候选和排除理由，子体明细需额外积分先提示。详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime 搜亚马逊商品：【产品词/站点/近N天上架/价格/月销/是否跨境】。动态计算 yyyy-MM-dd 起止，月销严格大于1传 month_sale_volume_range_min=2。keyword 为 ABA 宽召回，attribute_name 为标题/属性匹配；两路互补按ASIN去重，未翻完注明页数。麻将包以包为主商品，剔除整套附包、牌架、垫、垫筒、卡片、挂件，时尚手袋容量不明列待核；列表 online_date 只作预筛，入表逐款 product_detail 核 listing_date，超窗剔除，详情销量为本次快照。FBA/跨境在详情核 is_fba/seller_country，listing_date 与其他日期冲突时严格上架窗剔除；parent_asin 仅样本归组不相加称父体总销量。空结果可松条件仅诊断不回填原结果；销售额与当前售价×月销冲突则待核；输出真实候选和排除理由，子体明细需额外积分先提示。详见 sorftime-amazon/SKILL.md。",
     tools: ['category_name_search','product_search','product_detail','common_usage_query']
   },
   {
@@ -1139,7 +1139,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '竞品 ASIN 深拆：利润四件套直读、流量词结构、卖家背景、父体系列拆解。',
     triggers: ['分析这个 ASIN','这个竞品怎么样','它的利润结构','看看这个链接'],
-    prompt: "仅用 Sorftime 分析亚马逊竞品：【ASIN/链接】。product_detail(amz_site=US,asin=...) 核实返回 ASIN、标题、品牌和类目；身份矛盾停止。实得售价/FBA/佣金/毛利标采集日；platform_fee=0/-1 时实际利润待核，不默认15%估算。需要流量才调 product_traffic_terms，评论才调 product_customers_say；product_search(asin=) 仅找相似品，空结果如实说明。详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime 分析亚马逊竞品：【ASIN/链接】。product_detail(amz_site=US,asin=...) 核实返回 ASIN、标题、品牌和类目；身份矛盾停止。实得售价/FBA/佣金/毛利标采集日；platform_fee=0/-1 时实际利润待核，不默认15%估算。需要流量才调 product_traffic_terms，评论才调 product_customers_say；product_search(asin=) 仅找相似品；多款对比时核详情日期及销售额口径，冲突字段隔离，空结果如实说明。详见 sorftime-amazon/SKILL.md。",
     tools: ['product_detail','product_search','product_customers_say','product_traffic_terms','common_usage_query']
   },
   {
@@ -1151,7 +1151,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '长尾+错拼拓展、热词榜转化分层、单词坑位竞争/跟卖率体检、CPC 趋势投放时点。',
     triggers: ['挖一下XX的关键词','什么词好投','热词榜','这个词竞争激烈吗'],
-    prompt: "仅用 Sorftime 挖词：【种子词/站点】。有词先 keyword_extends(keyword,keyword_support_site=US,page=1)，单词体检用 keyword_detail；无种子词才走 keyword_list。推荐CPC空串视缺失；search_conversion_rate_90d 与360d不混用，click_90d=0但转化非0时标冲突不反算。仅有有效序列才谈趋势；未知词空结果如实说明。输出样本页数与查询日，详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime 挖词：【种子词/站点】。有词先 keyword_extends(keyword,keyword_support_site=US,page=1)，单词体检用 keyword_detail；无种子词才走 keyword_list。推荐CPC空串视缺失；search_conversion_rate_90d 与360d不混用，click_90d=0但转化非0时标冲突不反算。扩词先剔错类词；首页总数/自然位/广告位不闭合或类目混杂时隔离坑位指标；仅用完整月趋势，当月单点不当完整月；未知词空结果如实说明。输出样本页数与查询日，详见 sorftime-amazon/SKILL.md。",
     tools: ['keyword_extends','keyword_list','keyword_detail','keyword_trend','competitor_product_keywords','keyword_search_from_name']
   },
   {
@@ -1163,7 +1163,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '类目大盘 19 维体检：Top100 规模/集中度/新品窗口/官方涨跌预测/进入时窗建议。',
     triggers: ['这个类目能不能进','类目大盘','旺季是什么时候','市场饱和吗'],
-    prompt: "仅用 Sorftime 体检类目：【类目词/站点】。category_name_search 选准 node_id，再取 category_report、category_trend(SalesCount) 和 category_keywords。当前月剔除；TopN份额非单调时禁用该字段，转化率0且分组为null时标待核；关键词需剔品牌词/错类。输出样本口径与证据缺口，不按固定阈值机械断言垄断。详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime 体检类目：【类目词/站点】。category_name_search 选准 node_id，再取 category_report、category_trend(SalesCount) 和 category_keywords。当前月剔除；TopN份额非单调时禁用该字段，转化率0且分组为null时标待核；关键词需剔品牌词/错类。类目Top100总盘不能代替多条件筛选候选数；输出样本口径与证据缺口，不按固定阈值机械断言垄断。详见 sorftime-amazon/SKILL.md。",
     tools: ['category_name_search','category_report','category_trend','category_keywords','common_usage_query']
   },
   {
@@ -1175,7 +1175,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '单品深挖+评论差评原文归纳：部件级痛点定位、类目特征×销量份额、Listing 卖点策划。',
     triggers: ['解析这个商品','评论在骂什么','差评都在吐槽什么','什么卖点最带货'],
-    prompt: "仅用 Sorftime 解析：【ASIN/站点】。product_detail 核身份，product_customers_say 用 site=US，product_reviews 用 amz_site=US、review_type=Negative；评论跨颜色尺寸，区分产品缺陷与配送。变体额外积分先提示；product_variations 实返 Asin/Property/SalesAmount 等大写键，不能加总作父体月销。新品无评论标未取到，特征样本混类时弃用。详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime 解析：【ASIN/站点】。product_detail 核身份，product_customers_say 用 site=US，product_reviews 用 amz_site=US、review_type=Negative；评论跨颜色尺寸，区分产品缺陷与配送。变体额外积分先提示；product_variations 实返 Asin/Property/SalesAmount 等大写键，不能加总作父体月销。评论数>0但两接口无文本也标未取到，不能称无差评；特征样本混类时弃用。详见 sorftime-amazon/SKILL.md。",
     tools: ['product_detail','product_variations','product_reviews','product_customers_say','similar_product_feature']
   },
   {
@@ -1187,7 +1187,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: 'FBA费/佣金/接口估算利润直读，采购、头程与广告等缺口分栏；用户提供假设后再做情景测算。',
     triggers: ['算利润','能赚多少','毛利率多少','这个价格有钱赚吗'],
-    prompt: "仅用 Sorftime product_detail 核验【ASIN】后读取售价/FBA/佣金/接口估算利润。佣金0/-1、售价0与销量冲突时标待核，不自估固定费率。采购、头程、广告、退货缺失时不称最终利润；仅用户给定费率/采购与物流计费规则后另列情景。详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime product_detail 核验【ASIN】后读取售价/FBA/佣金/接口估算利润。佣金0/-1、售价0与销量冲突时标待核，不自估固定费率。采购、头程、广告、退货缺失时不称最终利润；月销额与当前售价×月销量冲突时不推成交均价；仅用户给定费率/采购与物流计费规则后另列情景。详见 sorftime-amazon/SKILL.md。",
     tools: ['product_detail','common_usage_query']
   },
   {
@@ -1199,7 +1199,7 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '终点站技能：串联类目体检→候选搜索→竞品深挖→利润测算，输出结构化决策报告。',
     triggers: ['出个选品报告','这个类目值不值得做','给我一个选品建议','预算X做什么好'],
-    prompt: "仅用 Sorftime 生成【类目/产品】选品报告：类目核 node_id→报告/完整月趋势→候选搜索→代表 ASIN 详情费用，已有结果复用；有评论需求再调用。逐条排错类、按 parent_asin 样本归组；平台估算利润未计采购头程。类目不匹配标缺口、极窄条件空不生成伪档位，TopN不单调不打总分；附参数/页数/查询日。详见 sorftime-amazon/SKILL.md。",
+    prompt: "仅用 Sorftime 生成【类目/产品】选品报告：类目核 node_id→报告/完整月趋势→候选搜索→代表 ASIN 详情费用，已有结果复用；有评论需求再调用。逐条排错类、按 parent_asin 样本归组；平台估算利润未计采购头程。入表候选核详情上架日/FBA/卖家国别，冲突月销额隔离；类目不匹配标缺口、极窄条件空不生成伪档位，诊断样本不得回填原结果，TopN不单调不打总分；附参数/页数/查询日。详见 sorftime-amazon/SKILL.md。",
     tools: ['category_name_search','category_report','category_trend','product_search','product_detail','product_customers_say','product_reviews','common_usage_query']
   },
   {

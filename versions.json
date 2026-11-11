@@ -760,6 +760,16 @@
         "prompt": "组合实测新增纪律：纪律5追加market_semi仅美国站；纪律6追加mall_ids必传ware_house_type+Y2非质量背书；纪律7追加多条件交叉用英文词+fuzzy误报必核查；product-parse steps加mall对象来源差异+prices单条如实+评论分母化；competitor-monitor steps加_want语义与缺字段降级；profit-calc steps加下游平台=其他的处理。",
         "demo": "{\"title\":\"7技能组合问话实测矩阵\",\"date\":\"2026-11-11\",\"kpis\":[\"11次调用\",\"6处新坑\",\"德国站全托Y2店日销2440\",\"美国站家居.46亿复测3次口径稳\"],\"flow\":[\"selection-search: 5条件交叉(5~15€/月销100/评分4.5/德国半托/storage box)\",\"competitor-monitor: 抽屉架图搜180同款_want=3返90+条\",\"product-parse: 床单单品mall对象全量+1131评论分母化(差评8%)\",\"shop-analysis: 德国Y2榜1000家/OrnaHue低分Y2警示/mall_ids模式依赖\",\"category-trend: 德国站_empty/美国站复测$/价格段10-15GMV.06亿\",\"profit-calc: realtime_detail下游=其他\"],\"table\":[{\"坑\":\"中文词组合条件\",\"修复\":\"多条件用英文词\"},{\"坑\":\"mall_ids必传ware_house_type\",\"修复\":\"双模式查店内\"},{\"坑\":\"Y2低分店\",\"修复\":\"画像必看score+reviews\"},{\"坑\":\"market_semi德国站空\",\"修复\":\"仅美国站如实告知\"},{\"坑\":\"图搜_want语义\",\"修复\":\"自按distance过滤\"},{\"坑\":\"下游平台=其他\",\"修复\":\"仍按跨境专供判断\"}],\"note\":\"用户式组合问话比自设计矩阵多抓6个坑；验证了语义层测试价值。\"}"
       }
+    },
+    {
+      "ts": "2026-11-11 20:36:59 +08:00",
+      "target": "expert:exp-amazon-sel-v2",
+      "action": "update",
+      "summary": "Sorftime七技能多条件问话实调：检索空值隔离诊断、详情日期/FBA/国别复核、销售额与关键词分项冲突拦截、评论数与差评文本分离",
+      "snapshots": {
+        "prompt": "仅使用Sorftime；七路由依自然问话串联并复用已取结果。选品组合筛选以原条件为准，临时放宽仅诊断；详情核listing_date/is_fba/seller_country。竞品及利润隔离与当前售价和月销量不相容的销售额。关键词去错类并隔离首页数量冲突；类目Top100不代替筛选结果。评论数>0而评论接口空时标未取到。选品报告只列已核样本和缺口。完整提示词在amazon-expert-skill-map.ts和Hub七张卡片。",
+        "demo": "US近60天麻将包$15–30/月销≥100/评分≥4.5/评论≤20/FBA/CN：B0HC2D3D2K已核1条（listing_date=2026-09-14，月销196，$25.99）；近90天B0HCKQQ9P5列表09-23但详情08-09须剔除。水杯组合加评论≤100为空，放宽仅诊断；B0HKYH5TF2列表09-25但详情2024-06-17。麻将包扩词混mahjong set，keyword_detail首页总数79与48+2不闭合；评论数18/10而负评接口空；B0H9CKLL3S售价$24.99/月销34但月销额$1189.66冲突。逐次参数见amazon-trigger-acceptance-2026-11-11.md第四轮。"
+      }
     }
   ]
 }

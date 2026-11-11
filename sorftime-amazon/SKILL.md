@@ -8,7 +8,8 @@
 - `-1`、`1970-01-01` 和空字符串视字段语义标缺失；`0` 也需甄别业务真零与采集未覆盖。对 `product_detail` 先核对请求/返回 ASIN、标题、品牌；矛盾时拒绝分析该条。
 - 页数从 `page=1` 起，每页 20 条；未取完全部页时展示“已检索 N 页的样本”。多检索入口按 ASIN 合并再做相关性筛选，剔除原因要可复核；仅按返回 `parent_asin` 去重，不能把多条子体销量相加宣称父体销量。需要父体总量时必须确认完整子体与销量口径；展开子体会额外消耗积分，应先询问。
 - 表格：主图悬停 320×320 白底大图；标题链接为对应站点 `/dp/{asin}`。商品搜索返回 `buybox_seller` 名称但无 `seller_id`；店铺跳转仅在 `product_detail.seller_id` 实得时建立 `/sp?seller={seller_id}`，否则纯文本。`seller_country` 仅详情有，不能从名称推定跨境。
-- 空结果 SOP：先查工具 schema 参数名、站点和日期格式；核对当前硬门槛与基准词/示例的可用性；仍空则 `common_usage_query` 查剩余额度；整体异常可用已知节点的 `category_report` 做数据源对照。四类结论分别记录“参数错已修正 / 当前接口无数据 / 额度限制 / 数据源异常”；不得放松用户时间、售价、月销、站点等硬条件去凑数量。未发生额度/整体故障时不虚称已排除。
+- 空结果 SOP：先查工具 schema 参数名、站点和日期格式；核对当前硬门槛与基准词/示例的可用性。可临时移除部分条件诊断是哪组筛选导致空值，但诊断样本不得回填用户原条件结果；仍空则 `common_usage_query` 查剩余额度；整体异常可用已知节点的 `category_report` 做数据源对照。四类结论分别记录“参数错已修正 / 当前接口无数据 / 额度限制 / 数据源异常”；不得放松用户时间、售价、月销、站点等硬条件去凑数量。未发生额度/整体故障时不虚称已排除。
+- 多条件交集须逐条复核可见字段；`shipping_type=FBA` 等列表不返回的字段要详情 `is_fba` 证实，跨境用 `seller_country` 证实。`review_count` 不是差评文本；详情 `listing_date` 与 `days_on_shelf` 或列表 `online_date` 相互冲突时优先披露冲突、剔除严格上架窗。`monthly_sales_amount` 与当前价格×月销不符时标不同口径/待核，不推成交单价或重算月销售额。
 
 ## 路由与参数
 
@@ -21,6 +22,14 @@
 | `skill-amazon-product-parse` | 解析商品、评论洞察 | `product_detail(asin=...,amz_site="US")` → 按需 `product_reviews(asin=...,review_type="Negative",amz_site="US")` / `product_customers_say(asin=...,site="US")` / `product_variations(asin=...,page=1,amz_site="US")` | 评论跨变体，变体实返大写键；无评论标未取到；`similar_product_feature` 混类要弃用 |
 | `skill-amazon-profit-calc` | 毛利、费用 | `product_detail` 返回 `fba_fee/platform_fee/profit/profit_rate`；采购价与运价需用户提供 | 接口毛利未扣采购/头程/广告；佣金0/-1、售价0与销量冲突时不下实际利润结论 |
 | `skill-amazon-report-gen` | 出选品报告 | 复用已取类目→候选→竞品→利润结果，每段标参数/页数/日期 | 类目不匹配则报告该维缺失；零候选不产伪档位，TopN冲突不打总分 |
+
+## 组合问话回归（2026-11-11）
+
+- “US近90天上架，麻将包，$10–30，月销>1，评分≥4”：精准标题/属性入口返回1页8条；宽召回入口返回3页（仅核首页20条），出现麻将垫筒、整套及牌架。两路是候选合集，不能把同时传 `keyword` 与 `attribute_name` 理解成两个精确标题条件的交集。对同一候选再次按“评论≤10且FBA”筛选得到6条，其中 `B0HGFQ7NK2` 虽为 FBA、CN 卖家却是垫筒，且详情 `listing_date=2026-05-15`，必须剔除。详情 `B0HCKQQ9P5` 虽为真麻将牌袋、FBA、CN 卖家，列表 `online_date=2026-09-23`，详情 `listing_date=2026-08-09`，超出窗口；不得入表。
+- “US近60天，麻将包，$15–30，月销≥100，评分≥4.5，评论≤20，FBA”：返回1条 `B0HC2D3D2K`；详情核实为牌/牌架/垫收纳包、`listing_date=2026-09-14`、月销196、FBA、CN 卖家。条件组合后不能只看 `product_search`：卖家国别与 `is_fba` 只有详情可确证。评论数18但 Negative 和 Customers Say 均无数据，只能说“当前未取到差评文本”，不能说“没有差评”。
+- “US近90天，Sports Water Bottles，$20–40，月销≥1000，评分≥4.5，评论≤100，FBA”：返回空；去掉评论≤100与FBA两项仅作**诊断**，返回4条（均>100评论），不得当成原硬条件结果。首条 `B0HKYH5TF2` 列表 `online_date=2026-09-25`、详情 `listing_date=2024-06-17`、`days_on_shelf=47`，日期字段互相矛盾；严格近90天上架不可收录。类目 `3395091` 的历史报告可返回数据，但 Top3商品份额79.66%、Top5为60.52%（逆序），只禁用冲突份额维度。不能拿类目Top100规模替代上述筛选后商品数。
+- “找可投的麻将包长尾词并看趋势”：`keyword_extends("mahjong bag")` 有20条，包括 `mahjong set`（整套，排除）与推荐CPC空串词（缺失）；`keyword_detail("mahjong bags for tiles and racks")` 月搜26,383、CPC $0.71，但 `click_90d=0` 与90天转化2.99%不相容；首页 `product_count=79` 与 organic48+ad2 不闭合、`avg_review_count=0` 同时存在低评论比例，应隔离这些衍生统计；Top3类目混入 Camera、Sports，不能宣称词流量全是麻将包。`keyword_trend("mahjong bag",type=2)` 到2026-10的完整月序列可用，2026-11 CPC单点不当完整月趋势。
+- “比较两个麻将包的利润和差评，再出带条件的选品报告”：`B0HC2D3D2K` 详情售价$25.99、FBA$8.29、佣金$3.51、接口估算$14.19；`B0H9CKLL3S` 售价$24.99、FBA$7.58、佣金$5.25、接口估算$12.16、月销34，但销售额$1189.66与当前售价×月销$849.66不一致，且年销=-9999。销售额口径待核，不计算成交均价或用它排序；两款评论文本均未取到。采购、头程、广告没有真实输入时只比较平台估算值，报告保留这些缺口；空候选报告不造档位。
 
 ## 已实测返回与边界（2026-11-11）
 
