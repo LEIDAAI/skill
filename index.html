@@ -3948,7 +3948,7 @@ function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').repla
 function openWorkbench(expert, tab) {
   wsMode = 'expert'; wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = (wsTab === 'skill' && (expert.skills || []).length) ? 0 : -1; wsSkillView = 'prompt';
   window.__wsVerSel = null;
-  _wsAutoLatestVersion = wsTab === 'prompt';
+  _wsAutoLatestVersion = wsTab === 'prompt' && expert.id !== 'exp-1688-sel';
   document.getElementById('ws-title').innerHTML = esc(expert.name) +
     ' <span class="demo-badge">' + esc((expert.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
     (expert.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
@@ -4149,7 +4149,7 @@ function wsOpenGeneric(mode, obj, tab) {
   if (mode === 'skill') {
     wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
     window.__wsVerSel = null;
-    _wsAutoLatestVersion = !tab || tab === 'prompt';
+    _wsAutoLatestVersion = !isA1688Skill(obj) && (!tab || tab === 'prompt');
     wsTab = tab || 'prompt';
     setWsTabGeneric(wsTab);
   }

@@ -44,6 +44,7 @@ export const a1688Expert = {
 - 店铺核验/厂家资质/履约评价/店铺榜/优质供应商 → skill-1688-shop-verification
 - 我的监控池/已监控商品或店铺 → skill-1688-monitor-read
 - 报价测算/毛利/费用情景 → skill-1688-profit-scenario
+关键词路由：先从用户原话提取完整商品短语，保留明确修饰词；「跨境麻将包」→跨境选品接口且keyWord原样传「跨境麻将包」，不得退化为「麻将包」；「麻将包，优先跨境货源」→跨境选品接口且keyWord传「麻将包」，跨境货源作为筛选诉求。删除时间、销量等筛选描述时不得删商品词；补查近义词须列出原/新请求，不能把补查结果冒充原词命中。上述跨境麻将包是规则示例，尚未真实调用。
 跨技能串联：榜单或新品或条件找品或图搜 → 复用已得到的 offerId 深挖 → 用已知 shopUrl 核店 → 复用已核对的 skuId 与参考价做情景测算。监控池条目需深挖时只查该条目，已有响应不重复调用；同一请求有多个意图时依链路依次执行。搜索空列表先检查精确词、日期和硬门槛；仅经用户允许扩大条件并明确新检索范围。单轮业务调用满10次停调汇报，剩余触发留待下轮验证。`,
   disciplines: `# 平台实测纪律（2026-11-10至2026-11-11；两轮数据不可混为同一时点）
 1. 只使用1688接口和用户提供的假设；样本排序/榜单日期/监控池各有独立口径，抽样不等于全量；totalCount是原始查询命中数，不是筛后目标商品数。上一轮普通检索10000/跨境67与本轮普通7250/跨境4条件和调用时间不同，不作占比比较。
@@ -63,14 +64,14 @@ export const a1688Skills = [
     name: '1688条件找品（含跨境）',
     desc: '按关键词、周期和排序筛选普通及跨境货盘，逐条排除错类结果。',
     scenario: '选品找货',
-    triggers: ['帮我找磁吸收纳盒', '找近30天销量高的收纳盒', '近90天上架且销量大于1的麻将牌收纳包', '优先跨境货源找这款'],
+    triggers: ['帮我找磁吸收纳盒', '找近30天销量高的收纳盒', '近90天上架且销量大于1的跨境麻将包', '麻将包，优先跨境货源'],
     tools: ['mcp__1688__product_search_list', 'mcp__1688__cross_border_product_search_list'],
     steps: [
       '确定品类、必要属性、周期与是否跨境，分别设置检索参数。',
       '普通检索和跨境检索各取样本，按offerId去重并逐条核对标题、类目与规格。',
       '列出有效候选及被排除的噪音，分别标明笔数、件数、金额和检索范围。',
     ],
-    instructions: `典型：product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}})。明确要求跨境时调用cross_border_product_search_list，参数仍嵌套req，填keyWord/searchType/cycle/pageIndex/pageSize及用户指定的硬条件，不自动把两路totalCount相减。边界：时间beginOfferCreateTime/endOfferCreateTime用yyyy-MM-dd；cycle取'7'或'30'，7天件数排序saleCount7d/desc；beginPrice/endPrice为价格区间；beginOrderCount为周期订单笔数，beginSaleCount为周期件数，累计门槛beginOrdersCount/beginSalesCount不能混用。只传用户指定的硬门槛，跨境标签不保证目标市场适配。结果按offerId去重，逐条比对标题、levelName与必需属性；totalCount是原始命中，表内标注剔除/待核；列表price与quantityPrices、SKU priceRanges不得等同采购成交价。异常：code=200且totalCount=0/list=[]，先核对searchType=3的精确词和条件；仅用户允许时改变检索范围并显式披露。非200/超时记录接口与错误，若有可靠响应才用作对照；未查额度不能断言额度耗尽。输出实际req、调用日期、筛后候选数及笔/件/预估额，缺失不补0。销量大于1且未指定周期→累计件数门槛beginSalesCount:2；明确近7/30天件数→cycle:'7'/'30'与beginSaleCount:2。列表saleQuantity未明确cycle时不冒充累计件数，若未返回累计saleCount，仅能依据筛选条件不能逐条独立核实。近90天上架传beginOfferCreateTime/endOfferCreateTime并核对offerCreateTime。麻将包须区分麻将牌/牌架/桌布收纳套装、麻将主题小袋和女士时装包：标题+levelName+主图交叉筛，歧义时查详情；无尺寸/容纳牌具证据列待核；504记超时。2026-11-11实测：麻将包AI检索原始496仅抽第1页20条，四件套1098084573136与三件套1097674918061主图和详情可佐证牌具收纳；小骰子袋1096686343648和泡泡纱化妆包1098102025204不能列整套包；豹纹小袋1093579866480/1090727655921待核。完整证据见本技能SKILL.md。`,
+    instructions: `典型：product_search_list({req:{keyWord:'磁吸收纳盒',searchType:4,cycle:'30',pageIndex:1,pageSize:3,sortField:'saleVolume30d',sortType:'desc'}})。提取完整商品短语并逐字保留修饰词：用户说「跨境麻将包」→cross_border_product_search_list({req:{keyWord:'跨境麻将包',...}})；用户说「麻将包，优先跨境货源」→同跨境接口但keyWord:'麻将包'。不要擅改成「麻将牌收纳包」；补查近义词须注明改词。参数仍嵌套req，填keyWord/searchType/cycle/pageIndex/pageSize及用户指定的硬条件，不自动把两路totalCount相减。跨境麻将包仅是参数构造示例，未实测。边界：时间beginOfferCreateTime/endOfferCreateTime用yyyy-MM-dd；cycle取'7'或'30'，7天件数排序saleCount7d/desc；beginPrice/endPrice为价格区间；beginOrderCount为周期订单笔数，beginSaleCount为周期件数，累计门槛beginOrdersCount/beginSalesCount不能混用。只传用户指定的硬门槛，跨境标签不保证目标市场适配。结果按offerId去重，逐条比对标题、levelName与必需属性；totalCount是原始命中，表内标注剔除/待核；列表price与quantityPrices、SKU priceRanges不得等同采购成交价。异常：code=200且totalCount=0/list=[]，先核对searchType=3的精确词和条件；仅用户允许时改变检索范围并显式披露。非200/超时记录接口与错误，若有可靠响应才用作对照；未查额度不能断言额度耗尽。输出实际req、调用日期、筛后候选数及笔/件/预估额，缺失不补0。销量大于1且未指定周期→累计件数门槛beginSalesCount:2；明确近7/30天件数→cycle:'7'/'30'与beginSaleCount:2。列表saleQuantity未明确cycle时不冒充累计件数，若未返回累计saleCount，仅能依据筛选条件不能逐条独立核实。近90天上架传beginOfferCreateTime/endOfferCreateTime并核对offerCreateTime。麻将包须区分麻将牌/牌架/桌布收纳套装、麻将主题小袋和女士时装包：标题+levelName+主图交叉筛，歧义时查详情；无尺寸/容纳牌具证据列待核；504记超时。2026-11-11实测：麻将包AI检索原始496仅抽第1页20条，四件套1098084573136与三件套1097674918061主图和详情可佐证牌具收纳；小骰子袋1096686343648和泡泡纱化妆包1098102025204不能列整套包；豹纹小袋1093579866480/1090727655921待核。完整证据见本技能SKILL.md。`,
     demo: {
       title: '磁吸收纳盒：典型、边界与精确词空结果',
       date: '2026-11-11',
