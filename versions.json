@@ -910,6 +910,12 @@
         "prompt": "当前绑定以 amazon-expert-skill-map.ts 与 youweiAI-amazon/SKILL.md 为准；新增路由接口说明已经核对，尚未实调验收；公开内容不出现上游数据源名称。",
         "demo": "页面与映射共八个独立技能 ID；旧本地缓存和共享亚马逊技能不覆盖内置八项；原七技能历史实测只作历史口径。"
       }
+    },
+    {
+      "ts": "2026-11-12 14:20:36 +08:00",
+      "target": "expert:exp-amazon-sel-v2",
+      "action": "update",
+      "summary": "补全当前人设 System Prompt：八技能路由、检索核验、数据口径和交付规范；历史快照增加查看当前提示词入口"
     }
   ]
 }
