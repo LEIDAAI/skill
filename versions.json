@@ -928,6 +928,48 @@
       "target": "skill:skill-amazon-selection-search",
       "action": "update",
       "summary": "将当前选品搜索调用指令扩充为分段执行规范，覆盖硬条件、检索、逐条核验、父子体、输出和空结果；技能弹窗默认显示当前指令，历史版本另行高亮"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-competitor",
+      "action": "update",
+      "summary": "扩写当前竞品分析指令：身份核验、费用与流量、趋势对比、冲突隔离及交付"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-keyword",
+      "action": "update",
+      "summary": "扩写当前关键词挖掘指令：扩词、ASIN反查、自然广告坑位、转化与趋势口径"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-category-trend",
+      "action": "update",
+      "summary": "扩写当前类目体检指令：节点匹配、Top100榜单、完整月趋势及冲突指标处理"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-product-parse",
+      "action": "update",
+      "summary": "扩写当前商品解析与评论指令：Listing资产、评论原文、变体口径与缺失边界"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-profit-calc",
+      "action": "update",
+      "summary": "扩写当前利润测算指令：平台估算、成本输入、情景公式与异常费用隔离"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-report-gen",
+      "action": "update",
+      "summary": "扩写当前选品报告指令：类目候选竞品利润串联、硬门槛和证据缺口"
+    },
+    {
+      "ts": "2026-11-12 15:49:27 +08:00",
+      "target": "skill:skill-amazon-seller-analysis",
+      "action": "update",
+      "summary": "扩写当前卖家店铺分析指令：三种定位路径、金额最小单位与店铺样本范围"
     }
   ]
 }
