@@ -1,8 +1,7 @@
-# 亚马逊技能包（按工作流拆分，4 个技能）
+# 亚马逊技能包（youweiAI-amazon）
 
-> 建立日期：2026-11-09 | 数据源：sorftime-amazon MCP + sellersprite MCP
-> 与专家体系的绑定关系见 amazon-experts.md；全部步骤经对话内真实调用验证
-> 平台：亚马逊（默认 US 站，支持 GB/DE/FR/CA/JP/IT/ES/MX）
+> 当前公开口径：单一亚马逊选品专家绑定八项技能，名称与技能 ID 以 `experts-migration.md` 的当前迁移清单为准；各项状态以原验收记录为准，不把迁移规划算作实测。
+> 以下为 2026-11-09 的四技能历史工作流。旧技能数量、调用顺序和双源配置不可作为当前调用指南；历史输出示例与数值仅供追溯。
 
 ---
 
@@ -18,7 +17,7 @@
 2. `common_usage_query` 查额度（本轮涉及多接口批量调用）
 3. `product_detail` 取竞品基本面：价格/月销/年销/评分/评论数/FBA费/佣金/预估毛利/上架时间/重量尺寸/卖家
 4. `product_customers_say` 评论 AI 提炼：分话题正负计数 → 找用户吐槽点（差异化切入点）
-5. `mcp__sellersprite__traffic_keyword(asin=)` 反查竞品流量词 TOP20：主词搜索量/自然排名/流量占比/SPR/点击集中度
+5. `traffic_keyword(asin=)` 反查竞品流量词 TOP20：主词搜索量/自然排名/流量占比/SPR/点击集中度
 6. `product_search(asin=竞品ASIN)` 找同款竞品群（similar 模式），对比价格带与销量分布
 7. `seller_detail` 查竞品卖家背景（公司/地址/开店时长）
 8. 高危单款：`patent_search_from_keyword` 查外观/结构专利（60cr）
@@ -49,10 +48,10 @@
 
 **执行步骤：**
 1. 种子词确认（用户给产品词或类目词）
-2. `keyword_extends`（Sorftime）：拓长尾——正常词+错拼词，每个带月搜量/周搜量/推荐CPC/季节性
+2. `keyword_extends`（原主数据源）：拓长尾——正常词+错拼词，每个带月搜量/周搜量/推荐CPC/季节性
 3. `category_keywords`：该类目核心词榜（若用户给了类目）——重点看三页竞品结构字段
-4. `mcp__sellersprite__keyword_research`：交叉补充——搜索量/购买率/购买量/供需比/商品数/PPC 竞价区间
-5. `mcp__sellersprite__aba_research_monthly(searchModel=3或4)`：增长/飙升榜发现机会词（可选带 departments 类目过滤）
+4. `keyword_research`：交叉补充——搜索量/购买率/购买量/供需比/商品数/PPC 竞价区间
+5. `aba_research_monthly(searchModel=3或4)`：增长/飙升榜发现机会词（可选带 departments 类目过滤）
 6. 分层标记：核心大词（月搜>50万）/腰部词（5万-50万）/长尾捡漏词（<5万 或 错拼词）/季节词（标旺季月份）
 
 **输出格式：**
@@ -78,7 +77,7 @@
 1. `category_name_search` 把类目词转 node_id（多候选时列出让用户确认或全部分析）
 2. `category_trend(node_id)`：取 25 个月销量序列 → 计算同比/环比/季节系数（峰值月/淡季月销量比）——**剔除当前未完月**
 3. `category_report`：市场体检 19 维度——规模/集中度/价格结构/星级分布/评论分布/退货率/转化率/平均上架天数 + 未来两月涨跌预测
-4. `mcp__sellersprite__market_research_statistics(nodeIdPath=)`：新品视角——新品占比/新品均销 vs 整体均销/头部对比
+4. `market_research_statistics(nodeIdPath=)`：新品视角——新品占比/新品均销 vs 整体均销/头部对比
 5. `category_keywords` 前 10 词：流量大盘温度（自营占比/新品份额/CPC 水位）
 6. 综合评分：需求规模/增长趋势/竞争强度/新品机会/盈利空间 五维打分（1-5 分）
 

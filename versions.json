@@ -1,5 +1,5 @@
 {
-  "note": "变更版本记录（追加式）。格式见 entries。git 仓库本身也是全量历史，此文件只是人类可读摘要。",
+  "note": "变更版本历史摘要。旧亚马逊多专家、四/七技能及双源方案仅供追溯，不可作为当前调用指南；当前公开名称 youweiAI-amazon，八技能单专家迁移规划见 experts-migration.md。品牌脱敏后的历史 target 和快照文字不代表当前实际服务绑定，也不代表本轮重新实测。",
   "entries": [
     {
       "ts": "2026-11-10 17:20:00",
@@ -213,57 +213,57 @@
       "ts": "2026-11-11 00:58:40",
       "target": "expert:exp-ss-amazon-keyword",
       "action": "create",
-      "summary": "创建卖家精灵亚马逊关键词专家（单一专家4技能路由：挖词/转化分层/趋势回溯/流量词反查），四条主链路真实跑通，人设含traffic_keyword默认参数坑、滤虚流量、分层方法论、反编造三条",
+      "summary": "创建已退役辅助来源亚马逊关键词专家（单一专家4技能路由：挖词/转化分层/趋势回溯/流量词反查），四条主链路真实跑通，人设含traffic_keyword默认参数坑、滤虚流量、分层方法论、反编造三条（历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家，基于 sellersprite MCP 完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜，无种子词先走ABA)；转化→skill-ss-kw-conversion(keyword_conversion 90天三匹配PPC/CPA)；趋势→skill-ss-kw-trend(aba_research_trend 58个月)；流量词反查→skill-ss-kw-traffic(traffic_keyword_stat→traffic_keyword默认参数→空则降级traffic_extend queryType=0)。纪律：①traffic_keyword带month/returnFields必返回空必须默认参数；②热词榜按90天购买率滤虚流量(needoh 296万搜/0.47%；dice 13.8万搜/相关度1.4%剔噪音)；③分层方法论：核心大词看SPR→长尾投放主力→错拼变体捡漏CPC低30%+；④反编造三条：抽样≠全量/缺失≠0/无趋势数据不下涨跌结论。参数口径：keyword_research month滞后一月；aba_weekly不能传date；Acos min/max顺序异常只引均值；keyword_order page从0。与Sorftime版分工：本版强在ABA市场榜+90天转化分层+流量词反查。",
-        "demo": "{\"title\":\"mahjong bag 四链路贯穿实测\",\"date\":\"2026-11-10\",\"kpis\":[\"词族1840词\",\"转化分层106词\",\"趋势两年23倍(528→58322)\",\"头部变体垄断mahjong set 40.6%流量\"],\"flow\":[\"keyword_miner(mahjong bag) → 1840词族，TOP=mahjong set 41万搜/购买率1.31%\",\"keyword_conversion(mahjong bag,90D) → 106词，mahjong tile bag 搜转2.83%/CPA$14.77最优\",\"aba_research_trend(mahjong bag,M) → 2022-04入榜528 → 2026-09峰值58322\",\"traffic_keyword(B0H45MC3T2默认参数) → mahjong racks吃89.1%流量；B0HFJPW8PL带month返回空复现坑\"],\"table\":{\"head\":[\"链路\",\"接口\",\"锚点词\",\"关键数据\"],\"rows\":[[\"挖词\",\"keyword_miner\",\"mahjong bag\",\"1840词族/dice跨类目噪音剔除\"],[\"转化分层\",\"keyword_conversion\",\"mahjong tile bag\",\"搜转2.83%/exact PPC$0.66/转化率25.6%\"],[\"趋势\",\"aba_research_trend\",\"mahjong bag\",\"2022-04:528→2026-09:58322强成长\"],[\"流量反查\",\"traffic_keyword+extend\",\"B0H45MC3T2\",\"mahjong racks吃89.1%/自然位#27\"]]},\"note\":\"投放建议：主力投mahjong tile bag/mahjong mat(低CPA高转化)；mahjong set大词被Majolicia变体矩阵垄断(B0H113JGS6单变体吃86.3%)暂避开；错拼moh-jong/mah jongg捡漏。数据来源：sellersprite MCP 四接口 2026-11-10 实时调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（历史快照，当前不可用），曾基于已退役辅助来源完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜，无种子词先走ABA)；转化→skill-ss-kw-conversion(keyword_conversion 90天三匹配PPC/CPA)；趋势→skill-ss-kw-trend(aba_research_trend 58个月)；流量词反查→skill-ss-kw-traffic(traffic_keyword_stat→traffic_keyword默认参数→空则降级traffic_extend queryType=0)。纪律：①traffic_keyword带month/returnFields必返回空必须默认参数；②热词榜按90天购买率滤虚流量(needoh 296万搜/0.47%；dice 13.8万搜/相关度1.4%剔噪音)；③分层方法论：核心大词看SPR→长尾投放主力→错拼变体捡漏CPC低30%+；④反编造三条：抽样≠全量/缺失≠0/无趋势数据不下涨跌结论。参数口径：keyword_research month滞后一月；aba_weekly不能传date；Acos min/max顺序异常只引均值；keyword_order page从0。与原主数据源版分工：本版强在ABA市场榜+90天转化分层+流量词反查。",
+        "demo": "{\"title\":\"mahjong bag 四链路贯穿实测\",\"date\":\"2026-11-10\",\"kpis\":[\"词族1840词\",\"转化分层106词\",\"趋势两年23倍(528→58322)\",\"头部变体垄断mahjong set 40.6%流量\"],\"flow\":[\"keyword_miner(mahjong bag) → 1840词族，TOP=mahjong set 41万搜/购买率1.31%\",\"keyword_conversion(mahjong bag,90D) → 106词，mahjong tile bag 搜转2.83%/CPA$14.77最优\",\"aba_research_trend(mahjong bag,M) → 2022-04入榜528 → 2026-09峰值58322\",\"traffic_keyword(B0H45MC3T2默认参数) → mahjong racks吃89.1%流量；B0HFJPW8PL带month返回空复现坑\"],\"table\":{\"head\":[\"链路\",\"接口\",\"锚点词\",\"关键数据\"],\"rows\":[[\"挖词\",\"keyword_miner\",\"mahjong bag\",\"1840词族/dice跨类目噪音剔除\"],[\"转化分层\",\"keyword_conversion\",\"mahjong tile bag\",\"搜转2.83%/exact PPC$0.66/转化率25.6%\"],[\"趋势\",\"aba_research_trend\",\"mahjong bag\",\"2022-04:528→2026-09:58322强成长\"],[\"流量反查\",\"traffic_keyword+extend\",\"B0H45MC3T2\",\"mahjong racks吃89.1%/自然位#27\"]]},\"note\":\"投放建议：主力投mahjong tile bag/mahjong mat(低CPA高转化)；mahjong set大词被Majolicia变体矩阵垄断(B0H113JGS6单变体吃86.3%)暂避开；错拼moh-jong/mah jongg捡漏。数据来源：已退役辅助来源四接口 2026-11-10 实时调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 00:58:40",
       "target": "skill:skill-ss-kw-mine",
       "action": "create",
-      "summary": "创建关键词挖掘技能（keyword_miner词族+ABA榜市场发现合并入口，TS映射快照）",
+      "summary": "创建关键词挖掘技能（keyword_miner词族+ABA榜市场发现合并入口，TS映射快照；已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "有种子词：keyword_miner(keyword)取词族TOP20按购买率+相关度过滤跨类目噪音(dice 13.8万搜/相关度1.4%=噪音案例)。无种子词：aba_research_monthly(searchModel 1-6)按市场模式发现机会词。keyword_research对重点词做四维体检(标注数据月份=month-1)。分层输出：核心大词/长尾/错拼三档。\n\n## 执行步骤\n1. 判断有无种子词走对应入口\n2. 按90天购买率过滤虚流量(<1%标⚠️)\n3. 重点词keyword_research四维体检\n4. 输出分层词表+数据来源与日期",
-        "demo": "{\"title\":\"mahjong bag 词族挖掘+噪音过滤\",\"date\":\"2026-11-10\",\"kpis\":[\"词族1840词\",\"TOP=mahjong set 41万搜\",\"噪音词dice已剔\",\"数据月份2026.10\"],\"flow\":[\"keyword_miner({request:{keyword:mahjong bag,marketplace:US,order:{field:searches,desc:true},size:10}}) → total 1840\"],\"table\":{\"head\":[\"词\",\"月搜\",\"购买率\",\"供需比\",\"PPC\",\"判读\"],\"rows\":[[\"mahjong set\",\"41.0万\",\"1.31%\",\"47.7\",\"$0.69\",\"核心大词\"],[\"mahjong mat\",\"21.8万\",\"3.13%\",\"41.3\",\"$0.95\",\"⭐长尾主力\"],[\"mahjong tiles\",\"17.6万\",\"1.04%\",\"16.4\",\"$0.53\",\"核心词\"],[\"dice\",\"13.8万\",\"5.75%\",\"5.4\",\"$0.61\",\"⚠️跨类目噪音(相关度1.4%)\"]]},\"note\":\"dice购买率虽高但与麻将包相关度仅1.4%是跨类目噪音必须剔除——搜购双看之外还要看相关度。数据来源：keyword_miner 2026-11-10 实时调用。\"}"
+        "prompt": "已退役辅助来源历史快照，当前不可用。有种子词：keyword_miner(keyword)取词族TOP20按购买率+相关度过滤跨类目噪音(dice 13.8万搜/相关度1.4%=噪音案例)。无种子词：aba_research_monthly(searchModel 1-6)按市场模式发现机会词。keyword_research对重点词做四维体检(标注数据月份=month-1)。分层输出：核心大词/长尾/错拼三档。\n\n## 执行步骤\n1. 判断有无种子词走对应入口\n2. 按90天购买率过滤虚流量(<1%标⚠️)\n3. 重点词keyword_research四维体检\n4. 输出分层词表+数据来源与日期",
+        "demo": "{\"title\":\"mahjong bag 词族挖掘+噪音过滤\",\"date\":\"2026-11-10\",\"kpis\":[\"词族1840词\",\"TOP=mahjong set 41万搜\",\"噪音词dice已剔\",\"数据月份2026.10\"],\"flow\":[\"keyword_miner({request:{keyword:mahjong bag,marketplace:US,order:{field:searches,desc:true},size:10}}) → total 1840\"],\"table\":{\"head\":[\"词\",\"月搜\",\"购买率\",\"供需比\",\"PPC\",\"判读\"],\"rows\":[[\"mahjong set\",\"41.0万\",\"1.31%\",\"47.7\",\"$0.69\",\"核心大词\"],[\"mahjong mat\",\"21.8万\",\"3.13%\",\"41.3\",\"$0.95\",\"⭐长尾主力\"],[\"mahjong tiles\",\"17.6万\",\"1.04%\",\"16.4\",\"$0.53\",\"核心词\"],[\"dice\",\"13.8万\",\"5.75%\",\"5.4\",\"$0.61\",\"⚠️跨类目噪音(相关度1.4%)\"]]},\"note\":\"dice购买率虽高但与麻将包相关度仅1.4%是跨类目噪音必须剔除——搜购双看之外还要看相关度。数据来源：已退役辅助来源 keyword_miner 2026-11-10 实时调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 00:58:40",
       "target": "skill:skill-ss-kw-conversion",
       "action": "create",
-      "summary": "创建关键词转化分层技能（90天广告转化三匹配PPC/CPA，Acos区间异常纪律，TS映射快照）",
+      "summary": "创建关键词转化分层技能（90天广告转化三匹配PPC/CPA，Acos区间异常纪律，TS映射快照；已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "keyword_conversion(keyword, timeType=90D或WEEK)取转化数据：searchConvRate与clickConvRate双口径、phrase/exact/broad三匹配PPC+CPA+预算、Top3点击ASIN。Acos字段min>max顺序异常(实测min:3.33/max:0.13)区间不可信只引均值或如实说明。结论=投/不投/低价试+理由。\n\n## 执行步骤\n1. keyword_conversion取90天转化数据\n2. 双转化率+三匹配成本读数\n3. Top3点击ASIN判断头部垄断\n4. 给投放结论+数据来源",
-        "demo": "{\"title\":\"mahjong bag 词族90天转化分层\",\"date\":\"2026-11-10\",\"kpis\":[\"词族词106个\",\"最优词=mahjong tile bag\",\"CPA区间$14.77~31.51\",\"Acos区间异常已标注\"],\"flow\":[\"keyword_conversion({request:{keyword:mahjong bag,marketplace:US,timeType:90D}}) → total 106\"],\"table\":{\"head\":[\"词\",\"搜索转化\",\"点击转化\",\"exact PPC\",\"exact CPA\",\"判读\"],\"rows\":[[\"mahjong tile bag\",\"2.83%\",\"4.47%\",\"$0.66\",\"$14.77\",\"⭐优先投\"],[\"mahjong mat\",\"2.13%\",\"5.16%\",\"$0.94\",\"$18.22\",\"可投\"],[\"mahjong bag\",\"1.55%\",\"2.92%\",\"$0.72\",\"$24.66\",\"低价试\"],[\"mahjong mat with rules\",\"2.29%\",\"5.84%\",\"$0.84\",\"$14.38\",\"⭐优先投\"]]},\"note\":\"mahjong tile bag转化率25.6%全场最高但月搜仅22.6万——长尾高转化词是投放主力；mahjong bag本词CPA$24.66偏高建议低价试。Acos min:3.33/max:0.13顺序异常区间不引用只报均值。数据来源：keyword_conversion 2026-11-10 实时调用。\"}"
+        "prompt": "已退役辅助来源历史快照，当前不可用。keyword_conversion(keyword, timeType=90D或WEEK)取转化数据：searchConvRate与clickConvRate双口径、phrase/exact/broad三匹配PPC+CPA+预算、Top3点击ASIN。Acos字段min>max顺序异常(实测min:3.33/max:0.13)区间不可信只引均值或如实说明。结论=投/不投/低价试+理由。\n\n## 执行步骤\n1. keyword_conversion取90天转化数据\n2. 双转化率+三匹配成本读数\n3. Top3点击ASIN判断头部垄断\n4. 给投放结论+数据来源",
+        "demo": "{\"title\":\"mahjong bag 词族90天转化分层\",\"date\":\"2026-11-10\",\"kpis\":[\"词族词106个\",\"最优词=mahjong tile bag\",\"CPA区间$14.77~31.51\",\"Acos区间异常已标注\"],\"flow\":[\"keyword_conversion({request:{keyword:mahjong bag,marketplace:US,timeType:90D}}) → total 106\"],\"table\":{\"head\":[\"词\",\"搜索转化\",\"点击转化\",\"exact PPC\",\"exact CPA\",\"判读\"],\"rows\":[[\"mahjong tile bag\",\"2.83%\",\"4.47%\",\"$0.66\",\"$14.77\",\"⭐优先投\"],[\"mahjong mat\",\"2.13%\",\"5.16%\",\"$0.94\",\"$18.22\",\"可投\"],[\"mahjong bag\",\"1.55%\",\"2.92%\",\"$0.72\",\"$24.66\",\"低价试\"],[\"mahjong mat with rules\",\"2.29%\",\"5.84%\",\"$0.84\",\"$14.38\",\"⭐优先投\"]]},\"note\":\"mahjong tile bag转化率25.6%全场最高但月搜仅22.6万——长尾高转化词是投放主力；mahjong bag本词CPA$24.66偏高建议低价试。Acos min:3.33/max:0.13顺序异常区间不引用只报均值。数据来源：已退役辅助来源 keyword_conversion 2026-11-10 实时调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 00:58:40",
       "target": "skill:skill-ss-kw-trend",
       "action": "create",
-      "summary": "创建关键词趋势回溯技能（58个月ABA序列，rank=0非零搜索纪律，TS映射快照）",
+      "summary": "创建关键词趋势回溯技能（58个月ABA序列，rank=0非零搜索纪律，TS映射快照；已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "aba_research_trend(keyword, timeGranularity=M)取58个月ABA排名+搜索量序列；keyword_research_trends补购买量/同比环比。rank=0且searches=0的月份是「无ABA数据」不是搜索量为0。输出生命周期判断+季节峰谷+投放时点。\n\n## 执行步骤\n1. aba_research_trend月粒度取58个月序列\n2. 识别无数据月份(rank=0)如实标注\n3. keyword_research_trends补同比环比\n4. 输出生命周期+季节性+投放时点结论",
-        "demo": "{\"title\":\"mahjong bag 58个月趋势回溯\",\"date\":\"2026-11-10\",\"kpis\":[\"ABA覆盖自2022-04\",\"两年增长23倍\",\"2026-09峰值58322\",\"生命周期=强成长期\"],\"flow\":[\"aba_research_trend({keyword:mahjong bag,marketplace:US,timeGranularity:M}) → 58个月序列\"],\"table\":{\"head\":[\"月份\",\"ABA排名\",\"月搜索量\",\"节点判读\"],\"rows\":[[\"2022-01~03\",\"—(rank=0)\",\"—\",\"无ABA数据非零搜索\"],[\"2022-04\",\"1,887,957\",\"528\",\"首次入榜\"],[\"2024-12\",\"582,741\",\"2,530\",\"起量拐点\"],[\"2026-09\",\"22,571\",\"58,322\",\"历史峰值\"]]},\"note\":\"mahjong bag从2022-04入榜528到2026-09峰值58322两年23倍=强成长期词；2026-10回落属未完月不下衰退结论。2022-01~03 rank=0是ABA无覆盖不能说零搜索。数据来源：aba_research_trend 2026-11-10 实时调用。\"}"
+        "prompt": "已退役辅助来源历史快照，当前不可用。aba_research_trend(keyword, timeGranularity=M)取58个月ABA排名+搜索量序列；keyword_research_trends补购买量/同比环比。rank=0且searches=0的月份是「无ABA数据」不是搜索量为0。输出生命周期判断+季节峰谷+投放时点。\n\n## 执行步骤\n1. aba_research_trend月粒度取58个月序列\n2. 识别无数据月份(rank=0)如实标注\n3. keyword_research_trends补同比环比\n4. 输出生命周期+季节性+投放时点结论",
+        "demo": "{\"title\":\"mahjong bag 58个月趋势回溯\",\"date\":\"2026-11-10\",\"kpis\":[\"ABA覆盖自2022-04\",\"两年增长23倍\",\"2026-09峰值58322\",\"生命周期=强成长期\"],\"flow\":[\"aba_research_trend({keyword:mahjong bag,marketplace:US,timeGranularity:M}) → 58个月序列\"],\"table\":{\"head\":[\"月份\",\"ABA排名\",\"月搜索量\",\"节点判读\"],\"rows\":[[\"2022-01~03\",\"—(rank=0)\",\"—\",\"无ABA数据非零搜索\"],[\"2022-04\",\"1,887,957\",\"528\",\"首次入榜\"],[\"2024-12\",\"582,741\",\"2,530\",\"起量拐点\"],[\"2026-09\",\"22,571\",\"58,322\",\"历史峰值\"]]},\"note\":\"mahjong bag从2022-04入榜528到2026-09峰值58322两年23倍=强成长期词；2026-10回落属未完月不下衰退结论。2022-01~03 rank=0是ABA无覆盖不能说零搜索。数据来源：已退役辅助来源 aba_research_trend 2026-11-10 实时调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 00:58:40",
       "target": "skill:skill-ss-kw-traffic",
       "action": "create",
-      "summary": "创建流量词反查技能（traffic_keyword默认参数坑+extend降级路径，含本轮坑复现证据，TS映射快照）",
+      "summary": "创建流量词反查技能（traffic_keyword默认参数坑+extend降级路径，含本轮坑复现证据，TS映射快照；已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "三步：①traffic_keyword_stat看全景；②traffic_keyword只传asin+marketplace+order/page/size(带month/returnFields必空)；③total=0时降级traffic_extend(asinList,queryType=0,includeKeywords=词根)按父体变体池查关联流量份额。trafficPercentage=该词分给此ASIN的流量占比非内部占比。输出流量词表+打法判断。\n\n## 执行步骤\n1. stat全景统计\n2. keyword默认参数查明细(禁传month)\n3. 空结果降级extend变体池查询并说明\n4. 输出流量词表+打法判断+数据来源",
-        "demo": "{\"title\":\"流量词反查：正例+坑复现+降级路径\",\"date\":\"2026-11-10\",\"kpis\":[\"正例B0H45MC3T2=2词\",\"坑复现B0HFJPW8PL带month=0\",\"降级extend=539词\",\"mahjong set变体池吃40.6%\"],\"flow\":[\"traffic_keyword(B0HFJPW8PL,带month) → total=0(坑复现)\",\"traffic_keyword(B0HFJPW8PL,默认参数) → 仍total=0\",\"traffic_keyword(B0H45MC3T2,默认参数) → 2词正常\",\"traffic_extend(asinList=[B0HFJPW8PL],queryType=0,includeKeywords=[mahjong]) → 539词\"],\"table\":{\"head\":[\"ASIN\",\"方式\",\"流量词\",\"关键数据\"],\"rows\":[[\"B0H45MC3T2\",\"keyword默认\",\"mahjong racks\",\"吃89.1%流量/自然位#27\"],[\"B0H45MC3T2\",\"keyword默认\",\"american mahjong\",\"吃10.9%流量\"],[\"B0HFJPW8PL父体池\",\"extend降级\",\"mahjong set\",\"池吃40.6%，B0H113JGS6单变体吃86.3%\"]]},\"note\":\"B0HFJPW8PL(麻将包90天表TOP1父体代表)ASIN级查询无流量词覆盖(新品词覆盖少)降级extend按父体池查得539词——降级路径有效。Majolicia变体矩阵垄断mahjong set 40.6%流量大词暂避。数据来源：traffic_keyword+traffic_extend 2026-11-10 实时调用。\"}"
+        "prompt": "已退役辅助来源历史快照，当前不可用。三步：①traffic_keyword_stat看全景；②traffic_keyword只传asin+marketplace+order/page/size(带month/returnFields必空)；③total=0时降级traffic_extend(asinList,queryType=0,includeKeywords=词根)按父体变体池查关联流量份额。trafficPercentage=该词分给此ASIN的流量占比非内部占比。输出流量词表+打法判断。\n\n## 执行步骤\n1. stat全景统计\n2. keyword默认参数查明细(禁传month)\n3. 空结果降级extend变体池查询并说明\n4. 输出流量词表+打法判断+数据来源",
+        "demo": "{\"title\":\"流量词反查：正例+坑复现+降级路径\",\"date\":\"2026-11-10\",\"kpis\":[\"正例B0H45MC3T2=2词\",\"坑复现B0HFJPW8PL带month=0\",\"降级extend=539词\",\"mahjong set变体池吃40.6%\"],\"flow\":[\"traffic_keyword(B0HFJPW8PL,带month) → total=0(坑复现)\",\"traffic_keyword(B0HFJPW8PL,默认参数) → 仍total=0\",\"traffic_keyword(B0H45MC3T2,默认参数) → 2词正常\",\"traffic_extend(asinList=[B0HFJPW8PL],queryType=0,includeKeywords=[mahjong]) → 539词\"],\"table\":{\"head\":[\"ASIN\",\"方式\",\"流量词\",\"关键数据\"],\"rows\":[[\"B0H45MC3T2\",\"keyword默认\",\"mahjong racks\",\"吃89.1%流量/自然位#27\"],[\"B0H45MC3T2\",\"keyword默认\",\"american mahjong\",\"吃10.9%流量\"],[\"B0HFJPW8PL父体池\",\"extend降级\",\"mahjong set\",\"池吃40.6%，B0H113JGS6单变体吃86.3%\"]]},\"note\":\"B0HFJPW8PL(麻将包90天表TOP1父体代表)ASIN级查询无流量词覆盖(新品词覆盖少)降级extend按父体池查得539词——降级路径有效。Majolicia变体矩阵垄断mahjong set 40.6%流量大词暂避。数据来源：已退役辅助来源 traffic_keyword+traffic_extend 2026-11-10 实时调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 00:59:24",
       "target": "expert:exp-amazon-sel",
       "action": "merge",
-      "summary": "五专家合并为单一Sorftime亚马逊选品专家，7技能路由（竞品/关键词/类目体检/商品解析评论/利润/搜索/报告），13条实测纪律+串联规则+表格交互规范写入人设"
+      "summary": "五专家合并为单一原主数据源亚马逊选品专家，7技能路由（竞品/关键词/类目体检/商品解析评论/利润/搜索/报告），13条实测纪律+串联规则+表格交互规范写入人设"
     },
     {
       "ts": "2026-11-11 00:59:24",
@@ -363,13 +363,13 @@
       "ts": "2026-11-11 10:14:36",
       "target": "expert:exp-amazon-sel-v2",
       "action": "create",
-      "summary": "Sorftime亚马逊选品专家v2上线（7技能路由）"
+      "summary": "原主数据源亚马逊选品专家v2上线（7技能路由）"
     },
     {
       "ts": "2026-11-11 10:14:36",
       "target": "expert:exp-ss-amazon-keyword-v2",
       "action": "create",
-      "summary": "卖家精灵亚马逊关键词专家v2上线（4技能路由）"
+      "summary": "已退役辅助来源亚马逊关键词专家v2上线（4技能路由；历史快照，当前不可用）"
     },
     {
       "ts": "2026-11-11 10:29:25",
@@ -387,60 +387,60 @@
       "ts": "2026-11-11 16:22:06",
       "target": "skill:skill-ss-kw-mine",
       "action": "update",
-      "summary": "三类触发回归实测后更新：补 wordCountMax 静默忽略坑、minPurchases+minSearches 收窄、pu 类噪音 relevancy 过滤、生僻词空结果 SOP",
+      "summary": "三类触发回归实测后更新：补 wordCountMax 静默忽略坑、minPurchases+minSearches 收窄、pu 类噪音 relevancy 过滤、生僻词空结果 SOP（已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家，基于 sellersprite MCP 完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与Sorftime版分工不变。",
-        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：sellersprite MCP 2026-11-11 16轮真实调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（历史快照，当前不可用），曾基于已退役辅助来源完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与原主数据源版分工不变。",
+        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：已退役辅助来源 2026-11-11 16轮真实调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 16:22:06",
       "target": "skill:skill-ss-kw-conversion",
       "action": "update",
-      "summary": "三类触发回归实测后更新：90D/WEEK 口径差标注、exactPpc=null 缺失标注、生僻词空结果不重试",
+      "summary": "三类触发回归实测后更新：90D/WEEK 口径差标注、exactPpc=null 缺失标注、生僻词空结果不重试（已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家，基于 sellersprite MCP 完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与Sorftime版分工不变。",
-        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：sellersprite MCP 2026-11-11 16轮真实调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（历史快照，当前不可用），曾基于已退役辅助来源完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与原主数据源版分工不变。",
+        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：已退役辅助来源 2026-11-11 16轮真实调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 16:22:06",
       "target": "skill:skill-ss-kw-trend",
       "action": "update",
-      "summary": "三类触发回归实测后更新：W 周粒度 searches=1 占位值纪律、trends 全 0 序列=无收录非无人搜索",
+      "summary": "三类触发回归实测后更新：W 周粒度 searches=1 占位值纪律、trends 全 0 序列=无收录非无人搜索（已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家，基于 sellersprite MCP 完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与Sorftime版分工不变。",
-        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：sellersprite MCP 2026-11-11 16轮真实调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（历史快照，当前不可用），曾基于已退役辅助来源完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与原主数据源版分工不变。",
+        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：已退役辅助来源 2026-11-11 16轮真实调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 16:22:06",
       "target": "skill:skill-ss-kw-traffic",
       "action": "update",
-      "summary": "三类触发回归实测后更新：stat 与 keyword 明细计数口径差(6 vs 2)、带 month 坑第三次复现",
+      "summary": "三类触发回归实测后更新：stat 与 keyword 明细计数口径差(6 vs 2)、带 month 坑第三次复现（已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家，基于 sellersprite MCP 完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与Sorftime版分工不变。",
-        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：sellersprite MCP 2026-11-11 16轮真实调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（历史快照，当前不可用），曾基于已退役辅助来源完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与原主数据源版分工不变。",
+        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：已退役辅助来源 2026-11-11 16轮真实调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 16:22:06",
       "target": "expert:exp-ss-amazon-keyword",
       "action": "update",
-      "summary": "专家 disciplines 从 6 条扩到 10 条：滤噪三看/筛选参数实测/W粒度占位值/全0序列/生僻词SOP/空结果判型四型，与四技能 instructions 对齐",
+      "summary": "专家 disciplines 从 6 条扩到 10 条：滤噪三看/筛选参数实测/W粒度占位值/全0序列/生僻词SOP/空结果判型四型，与四技能 instructions 对齐（已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家，基于 sellersprite MCP 完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与Sorftime版分工不变。",
-        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：sellersprite MCP 2026-11-11 16轮真实调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（历史快照，当前不可用），曾基于已退役辅助来源完成挖词→转化分层→趋势→流量词反查→投放建议链路。默认美站US。路由：挖词→skill-ss-kw-mine(keyword_miner+ABA榜双入口)；转化→skill-ss-kw-conversion(keyword_conversion 90D/WEEK)；趋势→skill-ss-kw-trend(aba_research_trend M/W双粒度)；流量词反查→skill-ss-kw-traffic(stat→keyword默认参数→extend降级)。纪律(2026-11-11 16轮实测更新)：①traffic_keyword带month/returnFields必空(三次复现)必须默认参数；②滤噪三看：购买率<1%虚流量+relevancy<5%跨类目噪音(dice 1.4%/pu 0.7%)+超短词字母巧合，minSearches滤不掉低相关噪音只能客户端剔；③keyword_miner词长过滤必须maxWordCount(wordCountMax被静默忽略，特征=total与无筛选相同)，收窄词池用minPurchases+minSearches(1856→26)；④W周粒度searches=1是占位值(2022年大量rank=0/searches=1周)，真实数据从有rank的周起读；⑤keyword_research_trends对无收录词返回全0序列=词无收录非无人搜索；⑥生僻词四接口一致空=不在词库如实告知换词，禁止重试超2次；⑦traffic_keyword_stat与keyword明细计数口径不同(6 vs 2：历史累计vs当前月)都要标注；⑧反编造三条+空结果判型SOP(参数错/接口空/额度/数据源四型)。与原主数据源版分工不变。",
+        "demo": "{\"title\":\"四技能×三类触发·12轮回归实测\",\"date\":\"2026-11-11\",\"kpis\":[\"mine:1856→26(筛选)→392(maxWordCount)\",\"conversion:90D 106词/WEEK 64词\",\"trend:W粒度200+周点\",\"traffic:stat 6 vs 明细 2口径差\"],\"flow\":[\"①正向:keyword_miner(mahjong bag)1856词/conversion 90D 106词/trend M 58月/traffic默认参数2词\",\"②边界:minPurchases+minSearches→26词;wordCountMax传错total不变(参数被忽略)改maxWordCount=2→392;WEEK时间窗64词搜转2.68%与90D口径不同;W周粒度searches=1占位周;stat与keyword计数6vs2\",\"③异常:zxqfwv生僻词四接口一致空(miner 0/conversion 0/trends全0序列/trend无覆盖)=词无收录如实告知;traffic带month三次复现total=0\"],\"table\":{\"head\":[\"技能\",\"正向\",\"边界\",\"异常\"],\"rows\":[[\"mine\",\"1856词族\",\"筛选26词/maxWordCount 392词/wordCountMax无效坑\",\"zxqfwv total=0\"],[\"conversion\",\"106词转化\",\"WEEK 64词/90D与WEEK口径差/exactPpc=null标—\",\"zxqfwv total=0\"],[\"trend\",\"58月序列\",\"W周200+点/searches=1占位\",\"trends全0序列=无收录\"],[\"traffic\",\"2词明细\",\"stat 6vs明细2口径差\",\"带month三次复现空\"]]},\"note\":\"新沉淀5条写进纪律：①wordCountMax静默忽略坑(判断法=total与无筛选相同)；②pu类超短词噪音minSearches滤不掉需relevancy<5客户端剔；③W周粒度searches=1占位值；④keyword_research_trends无收录词全0序列非无人搜索；⑤stat与keyword明细口径差(历史累计vs当前月)。空结果判型SOP四型(参数错/接口空/额度/数据源)。数据来源：已退役辅助来源 2026-11-11 16轮真实调用（历史快照，当前不可用）。\"}"
       }
     },
     {
       "ts": "2026-11-11 16:29:33",
       "target": "expert:exp-amazon-sel-v2",
       "action": "update",
-      "summary": "Sorftime 七路由首轮十次业务实调：选品搜索/竞品/关键词各三触发，类目节点入口一次；补真实参数、空结果分诊、身份核验及父体销量不重复计",
+      "summary": "原主数据源 七路由首轮十次业务实调：选品搜索/竞品/关键词各三触发，类目节点入口一次；补真实参数、空结果分诊、身份核验及父体销量不重复计",
       "snapshots": {
-        "prompt": "你是Sorftime亚马逊选品专家，仅用 sorftime-amazon MCP。找品→selection-search；ASIN→competitor；词→keyword；大盘→category-trend；评论→product-parse；费用→profit-calc；报告→report-gen。跨技能按类目→候选→竞品→利润→报告复用数据。keyword为ABA宽召回、attribute_name为标题或属性，日期yyyy-MM-dd、月销下限month_sale_volume_range_min；product_detail核验返回身份。佣金0/-1待核不默认15%；parent_asin仅去重，未核实完整子体不能称父体总销量。抽样≠全量、缺失≠0、无趋势不下涨跌结论。详细参数见 sorftime-amazon/SKILL.md 和 amazon-expert-skill-map.ts。",
-        "demo": "2026-11-11，10次Sorftime调用：选品搜索宽召回89页混非麻将包，近60天/$10–40/月销≥50返回1页含混入牌架，极窄条件空；Owala $34.99、FBA $5.93、佣金 $6、毛利 $23.06/65.90%，STANLEY佣金0待核，测试ASIN身份矛盾；扩词20条CPC有空值，mahjong bag月搜88710/90d转化2.98%但点击量0，未知词空；Sports Water Bottles五节点中正确node_id=3395091。完整参数及矩阵见 amazon-trigger-acceptance-2026-11-11.md；另四技能待验，不声称全过。"
+        "prompt": "你是原主数据源亚马逊选品专家，仅用 youweiAI-amazon MCP。找品→selection-search；ASIN→competitor；词→keyword；大盘→category-trend；评论→product-parse；费用→profit-calc；报告→report-gen。跨技能按类目→候选→竞品→利润→报告复用数据。keyword为ABA宽召回、attribute_name为标题或属性，日期yyyy-MM-dd、月销下限month_sale_volume_range_min；product_detail核验返回身份。佣金0/-1待核不默认15%；parent_asin仅去重，未核实完整子体不能称父体总销量。抽样≠全量、缺失≠0、无趋势不下涨跌结论。详细参数见 youweiAI-amazon/SKILL.md 和 amazon-expert-skill-map.ts。",
+        "demo": "2026-11-11，10次原主数据源调用：选品搜索宽召回89页混非麻将包，近60天/$10–40/月销≥50返回1页含混入牌架，极窄条件空；Owala $34.99、FBA $5.93、佣金 $6、毛利 $23.06/65.90%，STANLEY佣金0待核，测试ASIN身份矛盾；扩词20条CPC有空值，mahjong bag月搜88710/90d转化2.98%但点击量0，未知词空；Sports Water Bottles五节点中正确node_id=3395091。完整参数及矩阵见 amazon-trigger-acceptance-2026-11-11.md；另四技能待验，不声称全过。"
       }
     },
     {
@@ -547,9 +547,9 @@
       "ts": "2026-11-11 16:47:50 +08:00",
       "target": "expert:exp-amazon-sel-v2",
       "action": "update",
-      "summary": "Sorftime七技能两轮正向/边界/异常触发完成，取消十次上限；修复类目TopN冲突、变体键名、评论跨变体、利润与报告缺项口径",
+      "summary": "原主数据源七技能两轮正向/边界/异常触发完成，取消十次上限；修复类目TopN冲突、变体键名、评论跨变体、利润与报告缺项口径",
       "snapshots": {
-        "prompt": "七技能路由：类目→候选→竞品→利润→报告，复用结果；仅Sorftime。类目报告TopN非单调禁用；未完月剔除；评论跨变体、变体键名Asin/Property/SalesAmount，销量不加总；接口毛利未扣采购/头程/广告/退货，佣金0或售价0与销量冲突不称真实利润。空结果按参数、接口无数据、额度、数据源分诊。详细参数见 amazon-expert-skill-map.ts 与 sorftime-amazon/SKILL.md。",
+        "prompt": "七技能路由：类目→候选→竞品→利润→报告，复用结果；仅原主数据源。类目报告TopN非单调禁用；未完月剔除；评论跨变体、变体键名Asin/Property/SalesAmount，销量不加总；接口毛利未扣采购/头程/广告/退货，佣金0或售价0与销量冲突不称真实利润。空结果按参数、接口无数据、额度、数据源分诊。此为七技能历史快照；当前迁移规则见 experts-migration.md，具体接口参数需按实际运行环境核对。",
         "demo": "2026-11-11：Sports Water Bottles节点3395091报告Top100月销1401725件/$42426849.79，Top3商品61.24%但Top5商品48.11%冲突；Owala评论耐用性负面2611话题、差评跨尺寸；新品B0HPB52XGN无评论且售价0/月销2586冲突；HydroJug B0DGHBV6XS售价$27.99、FBA$6.17、佣金$4.20、接口估算利润$17.62，未计采购头程；报告7页候选且有摇摇杯错类，极窄条件零候选不产档位。完整矩阵见 amazon-trigger-acceptance-2026-11-11.md。"
       }
     },
@@ -616,11 +616,11 @@
     },
     {
       "ts": "2026-11-11 17:27:35 +08:00",
-      "target": "ui:hub-sorftime-skills",
+      "target": "ui:hub-youweiAI-amazon-skills",
       "action": "ui",
-      "summary": "为七张 Sorftime 亚马逊技能卡显示数据源标签，并支持按 Sorftime 搜索",
+      "summary": "为七张 原主数据源 亚马逊技能卡显示数据源标签，并支持按 原主数据源 搜索",
       "snapshots": {
-        "prompt": "仅在 skill-amazon-* 七张技能卡的亚马逊平台及场景标签旁显示 Sorftime；搜索 Sorftime 只匹配对应七技能，保留其他来源亚马逊技能原样。",
+        "prompt": "仅在 skill-amazon-* 七张技能卡的亚马逊平台及场景标签旁显示 原主数据源；搜索 原主数据源 只匹配对应七技能，保留其他来源亚马逊技能原样。",
         "demo": "静态脚本与模拟 DOM 校验；浏览器扩展连接后补真实页面交互验收。"
       }
     },
@@ -692,7 +692,7 @@
       "ts": "2026-11-11 18:29:26 +08:00",
       "target": "skill:skill-amazon-selection-search",
       "action": "update",
-      "summary": "Sorftime近90天麻将包月销>1实测：双路检索去错类、详情上架日复核",
+      "summary": "原主数据源近90天麻将包月销>1实测：双路检索去错类、详情上架日复核",
       "snapshots": {
         "prompt": "近N天按运行日算起止，月销>1传month_sale_volume_range_min=2。keyword与attribute_name互补按ASIN合并；麻将包以收纳包为主商品，剔整套/垫/挂件，时尚手袋待核。列表online_date预筛，详情listing_date复核，超窗剔除；详情月销为本次快照，父体归组不加总。",
         "demo": "US 2026-08-13~2026-11-11：宽召回8页仅读前2页40条；短语检索2页28条读完。详情真包B0HC2D3D2K月销196、B0HGM83K9X月销194、B0HC6LLFRY月销168、B0HF9TXH1M月销150、B0H9RSYP3B月销52；B0H337RR4S/B0H82QYQ2G虽是真包但详情listing_date超窗。详见amazon-trigger-acceptance-2026-11-11.md。"
@@ -713,10 +713,10 @@
       "ts": "2026-11-11 18:54:32",
       "target": "expert:exp-ss-amazon-keyword",
       "action": "update",
-      "summary": "对话内验收用户口径(近90天+销量>1+麻将包)后新增纪律第10条：competitor_lookup无总销量下限参数需客户端过滤",
+      "summary": "对话内验收用户口径(近90天+销量>1+麻将包)后新增纪律第10条：competitor_lookup无总销量下限参数需客户端过滤（已退役辅助来源历史快照，当前不可用）",
       "snapshots": {
-        "prompt": "你是卖家精灵亚马逊关键词专家（纪律11条版）。新增第10条：competitor_lookup 无总销量下限服务端参数——用户带销量>1/N门槛做上架时间窗筛选时，available_date 降序取数后客户端按 units 过滤并注明已过滤X条；过滤比例>30%时改走 total_units 降序路径。其余纪律与路由不变（traffic_keyword 默认参数/滤噪三看/maxWordCount/W粒度占位值/全0序列/生僻词SOP/空结果判型四型/反编造三条）。",
-        "demo": "{\"title\":\"对话内验收：近90天上架+销量>1+麻将包\",\"date\":\"2026-11-11\",\"kpis\":[\"窗口校验40/40\",\"相关性40/40零噪音\",\"销量>1过滤剩37条(剔3条units=1)\",\"过滤比例7.5%<30%阈值\"],\"flow\":[\"competitor_lookup(keyword=mahjong bag,matchType=3,order=available_date desc,size=40)\",\"客户端校验：窗口2026-10-05~11-06全命中；相关性全为mahjong主题\",\"客户端过滤 units<=1 剔除3条\"],\"table\":{\"head\":[\"ASIN\",\"商品\",\"价格\",\"30天销量\",\"月销额\"],\"rows\":[[\"B0H45MC3T2\",\"TIASUSAN紫色160牌套装+包\",\"$139.79\",\"326\",\"$45,572\"],[\"B0HG73R13B\",\"Mavronley牌袋(AC)\",\"$11.99\",\"248\",\"$2,974\"],[\"B0HN82JBCT\",\"CraksNCo 33.8寸加大包\",\"$22.99\",\"231\",\"$5,311\"],[\"B0HPG2T4YX\",\"Mybbao个性化化妆麻将包\",\"$12.99\",\"206\",\"$2,676\"]]},\"note\":\"结论：结果准确、商品匹配，仅销量门槛需客户端过滤（接口无总销量下限参数）——已沉淀为纪律第10条。数据来源：competitor_lookup 2026-11-11 实时调用。\"}"
+        "prompt": "你是已退役辅助来源亚马逊关键词专家（纪律11条版；历史快照，当前不可用）。新增第10条：competitor_lookup 无总销量下限服务端参数——用户带销量>1/N门槛做上架时间窗筛选时，available_date 降序取数后客户端按 units 过滤并注明已过滤X条；过滤比例>30%时改走 total_units 降序路径。其余纪律与路由不变（traffic_keyword 默认参数/滤噪三看/maxWordCount/W粒度占位值/全0序列/生僻词SOP/空结果判型四型/反编造三条）。",
+        "demo": "{\"title\":\"对话内验收：近90天上架+销量>1+麻将包\",\"date\":\"2026-11-11\",\"kpis\":[\"窗口校验40/40\",\"相关性40/40零噪音\",\"销量>1过滤剩37条(剔3条units=1)\",\"过滤比例7.5%<30%阈值\"],\"flow\":[\"competitor_lookup(keyword=mahjong bag,matchType=3,order=available_date desc,size=40)\",\"客户端校验：窗口2026-10-05~11-06全命中；相关性全为mahjong主题\",\"客户端过滤 units<=1 剔除3条\"],\"table\":{\"head\":[\"ASIN\",\"商品\",\"价格\",\"30天销量\",\"月销额\"],\"rows\":[[\"B0H45MC3T2\",\"TIASUSAN紫色160牌套装+包\",\"$139.79\",\"326\",\"$45,572\"],[\"B0HG73R13B\",\"Mavronley牌袋(AC)\",\"$11.99\",\"248\",\"$2,974\"],[\"B0HN82JBCT\",\"CraksNCo 33.8寸加大包\",\"$22.99\",\"231\",\"$5,311\"],[\"B0HPG2T4YX\",\"Mybbao个性化化妆麻将包\",\"$12.99\",\"206\",\"$2,676\"]]},\"note\":\"结论：结果准确、商品匹配，仅销量门槛需客户端过滤（接口无总销量下限参数）——已沉淀为纪律第10条。数据来源：已退役辅助来源 competitor_lookup 2026-11-11 实时调用（历史快照，当前不可用）。\"}"
       }
     },
     {
@@ -765,9 +765,9 @@
       "ts": "2026-11-11 20:36:59 +08:00",
       "target": "expert:exp-amazon-sel-v2",
       "action": "update",
-      "summary": "Sorftime七技能多条件问话实调：检索空值隔离诊断、详情日期/FBA/国别复核、销售额与关键词分项冲突拦截、评论数与差评文本分离",
+      "summary": "原主数据源七技能多条件问话实调：检索空值隔离诊断、详情日期/FBA/国别复核、销售额与关键词分项冲突拦截、评论数与差评文本分离",
       "snapshots": {
-        "prompt": "仅使用Sorftime；七路由依自然问话串联并复用已取结果。选品组合筛选以原条件为准，临时放宽仅诊断；详情核listing_date/is_fba/seller_country。竞品及利润隔离与当前售价和月销量不相容的销售额。关键词去错类并隔离首页数量冲突；类目Top100不代替筛选结果。评论数>0而评论接口空时标未取到。选品报告只列已核样本和缺口。完整提示词在amazon-expert-skill-map.ts和Hub七张卡片。",
+        "prompt": "仅使用原主数据源；七路由依自然问话串联并复用已取结果。选品组合筛选以原条件为准，临时放宽仅诊断；详情核listing_date/is_fba/seller_country。竞品及利润隔离与当前售价和月销量不相容的销售额。关键词去错类并隔离首页数量冲突；类目Top100不代替筛选结果。评论数>0而评论接口空时标未取到。选品报告只列已核样本和缺口。完整提示词在amazon-expert-skill-map.ts和Hub七张卡片。",
         "demo": "US近60天麻将包$15–30/月销≥100/评分≥4.5/评论≤20/FBA/CN：B0HC2D3D2K已核1条（listing_date=2026-09-14，月销196，$25.99）；近90天B0HCKQQ9P5列表09-23但详情08-09须剔除。水杯组合加评论≤100为空，放宽仅诊断；B0HKYH5TF2列表09-25但详情2024-06-17。麻将包扩词混mahjong set，keyword_detail首页总数79与48+2不闭合；评论数18/10而负评接口空；B0H9CKLL3S售价$24.99/月销34但月销额$1189.66冲突。逐次参数见amazon-trigger-acceptance-2026-11-11.md第四轮。"
       }
     },
@@ -893,12 +893,22 @@
     },
     {
       "ts": "2026-11-12 11:15:46 +08:00",
-      "target": "hub:amazon-sorftime-only",
+      "target": "hub:amazon-youweiAI-amazon-only",
       "action": "update",
-      "summary": "亚马逊技能导航仅保留七项 Sorftime 技能与单一专家，撤下卖家精灵四项技能及旧混合源技能入口",
+      "summary": "亚马逊技能导航仅保留七项原主数据源技能与单一专家，撤下原辅助数据源四项技能及旧混合源技能入口（历史记录）",
       "snapshots": {
-        "prompt": "亚马逊导航仅展示 skill-amazon-selection-search、skill-amazon-competitor、skill-amazon-keyword、skill-amazon-category-trend、skill-amazon-product-parse、skill-amazon-profit-calc、skill-amazon-report-gen；专家仅 exp-amazon-sel-v2。",
-        "demo": "在页面初始化和本地缓存、同步技能混合情况下，亚马逊筛选仅可见上述七项 Sorftime 路由；历史版本记录保留供追溯。"
+        "prompt": "历史版本：亚马逊导航仅展示原七条 skill-amazon 路由；当前八技能见 amazon-expert-skill-map.ts。",
+        "demo": "历史版本记录供追溯，不代表当前页面数量。"
+      }
+    },
+    {
+      "ts": "2026-11-12 12:00:59 +08:00",
+      "target": "expert:exp-amazon-sel-v2",
+      "action": "update",
+      "summary": "对外统一 youweiAI-amazon，单专家扩为八技能：新增卖家店铺分析，补类目榜单、竞品趋势、关键词反查及商品内容；历史辅助来源从当前页面与技能包移除",
+      "snapshots": {
+        "prompt": "当前绑定以 amazon-expert-skill-map.ts 与 youweiAI-amazon/SKILL.md 为准；新增路由接口说明已经核对，尚未实调验收；公开内容不出现上游数据源名称。",
+        "demo": "页面与映射共八个独立技能 ID；旧本地缓存和共享亚马逊技能不覆盖内置八项；原七技能历史实测只作历史口径。"
       }
     }
   ]

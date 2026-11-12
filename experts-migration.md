@@ -3,7 +3,7 @@
 > 生成时间：2026-11-08（2026-11-09 增补专家四~七：TEMU 四专家）
 > 用途：管理后台（leidaaisystem #/experts）后端就绪后，照本清单逐字段录入或做成导入 JSON。
 > 事实源：导航页 Hub（leidaai.github.io/skill）专家 Tab；本文档是「搬运说明书」。
-> 2026-11-11 导航展示修正：内置当前专家共 5 个——1688、OZON、TEMU 各 1 个，亚马逊按 Sorftime / 卖家精灵各 1 个。历史多专家定义仅保留参考，不再进入卡片、计数与搜索；用户自建专家保留。当前四个新版专家分别按稳定技能 ID 绑定 8 / 7 / 7 / 4 项技能，再解析显示名称，避免重名旧技能或名称差异导致绑定失效。
+> 当前亚马逊迁移口径：公开名称统一 `youweiAI-amazon`，一个亚马逊选品专家绑定八项技能；具体 ID、验收边界与保密要求见文末「当前亚马逊迁移规范」。下文 2026-11-08 至 11-11 的历史专家数、双源方案、七技能配置及实测锚点保留追溯，不可作为当前亚马逊绑定或调用指南。
 > 运行前提：目标运行时需挂载 yunqi-data MCP（Ozon 数据）+ 1688 MCP（图搜/拿货价），知识库需部署「OZON中国跨境佣金与国际物流」4 篇文档。
 
 ---
@@ -303,7 +303,7 @@
 | OZON利润空间测算 | ✅ 全链路对话实测过（连衣裙TOP8利润率38.7%~68.3%） | `skills/ozon-profit-calc.md` |
 | Ozon选品搜索 | ✅ 后台已有 v20261106143542 | `skills/ozon-selection-search.md` |
 | TEMU 7技能（选品搜索/竞品监控/类目大盘/商品解析/店铺分析/利润测算/竞品调研） | ✅ 2026-11-09 接口实测后转为接口式 | Hub 技能 Tab（TEMU 标签） |
-| 其余技能指令 | Hub 可复制（1688×7/Ozon×7/亚马逊×4） | Hub 技能 Tab |
+| 其余技能指令（历史口径） | 当时 Hub 展示（1688×7/Ozon×7/亚马逊×4）；亚马逊当前八技能见文末 | 历史技能 Tab，仅供追溯 |
 
 ## 知识库资产（后台知识库模块部署用）
 
@@ -382,11 +382,11 @@
 | TEMU核价 | （本日下午已全链路实测） | 5接口联动 | ✅ | 见专家五锚点 |
 | TEMU店铺 | 全托家居日销TOP+明星店核验 | yq_mall_search | ✅ | ⚠️ 新发现：**mall_star 作筛选参数会被忽略**（_note 报字段不存在），正确姿势=日销榜取头部后用返回的 star_seller_time 字段核验（实测头部5店全部在榜明星店）；opened_at 两接口有7天差（20220901 vs 20220908），表述用「2022年9月初」 |
 | TEMU大盘 | 家居类目下钻+玩具品牌榜 | yq_market_semi + brand_search | ✅ | optId 下钻稳定；brand_search+opt_ids=[204] 组合正常，SANRIO 居首 |
-| 亚马逊选品 | Sports Water Bottles 类目报告 | sorftime category_report | ✅ | Top100 月销155.2万件/$4664万（与 11-09 早间锚点156.5万/$4698万差<1%，口径稳定）；自营占73.91%、Owala 36.93%+STANLEY 16.44% 双寡头格局不变；退货率9.85%/转化率7.0%/平均上架1158天 |
-| 亚马逊店铺 | 类目中国卖家筛选 | sorftime seller_search | ✅ | 18 个 CN 卖家，RAYMYLO Direct 头部（$57.1万/月、top3集中度100%）；is_chinese_seller=1+node_id 组合稳定 |
-| 亚马逊选品(新品) | water bottle 2026新品+月销5000+ | sorftime product_search | ✅ | STANLEY IceFlow 2.0（2026-01上架）月销5.1万件/$179万居首；**buybox_seller=Amazon 占比高**是重要信号；混入少量非水杯品（Boppy哺乳枕），按 sub_category 过滤 |
-| 亚马逊关键词 | water bottle 关键词详情 | sorftime keyword_detail | ✅ | ⚠️ keyword_list 热词榜 504 超时（重试1次仍失败，属接口侧问题）；keyword_detail 稳定：月搜166.4万/CPC $1.05/首页100坑位(52自然+13广告)/hijack 26%——跟卖率高企是水杯类目特征 |
-| 亚马逊评论洞察 | Owala 差评100条+HP联名款 customers_say | sorftime product_reviews + customers_say | ✅ | 差评五主题归纳再次验证（弹簧断裂/吸管脱落/漏水/杯架不兼容/质保踢皮球）；HP联名款正面话题：quality 240提及/负面仅7——正面壁垒数据可交叉使用 |
+| 亚马逊选品 | Sports Water Bottles 类目报告 | youweiAI-amazon category_report | ✅ | Top100 月销155.2万件/$4664万（与 11-09 早间锚点156.5万/$4698万差<1%，口径稳定）；自营占73.91%、Owala 36.93%+STANLEY 16.44% 双寡头格局不变；退货率9.85%/转化率7.0%/平均上架1158天 |
+| 亚马逊店铺 | 类目中国卖家筛选 | youweiAI-amazon seller_search | ✅ | 18 个 CN 卖家，RAYMYLO Direct 头部（$57.1万/月、top3集中度100%）；is_chinese_seller=1+node_id 组合稳定 |
+| 亚马逊选品(新品) | water bottle 2026新品+月销5000+ | youweiAI-amazon product_search | ✅ | STANLEY IceFlow 2.0（2026-01上架）月销5.1万件/$179万居首；**buybox_seller=Amazon 占比高**是重要信号；混入少量非水杯品（Boppy哺乳枕），按 sub_category 过滤 |
+| 亚马逊关键词 | water bottle 关键词详情 | youweiAI-amazon keyword_detail | ✅ | ⚠️ keyword_list 热词榜 504 超时（重试1次仍失败，属接口侧问题）；keyword_detail 稳定：月搜166.4万/CPC $1.05/首页100坑位(52自然+13广告)/hijack 26%——跟卖率高企是水杯类目特征 |
+| 亚马逊评论洞察 | Owala 差评100条+HP联名款 customers_say | youweiAI-amazon product_reviews + customers_say | ✅ | 差评五主题归纳再次验证（弹簧断裂/吸管脱落/漏水/杯架不兼容/质保踢皮球）；HP联名款正面话题：quality 240提及/负面仅7——正面壁垒数据可交叉使用 |
 | 1688选品 | 收纳盒30天销售额降序 | product_search_list | ✅ | 与 11-09 早间锚点一致（台球杆盒¥125/1万件居首）；⚠️ 「收纳盒」仍混入注塑机（¥83.6万），levelName 二次过滤纪律有效 |
 | 1688榜单 | 收纳品类月榜 | product_billboard_list | ✅ | ⚠️ 新发现：keyWord+sortField 组合返回0（去掉 sortField 即命中10000条）——榜单接口 keyWord 与自定义排序可能冲突，空结果先去排序参数重试；品类月榜 TOP=大容量收纳箱¥5.01/13488件/复购64.6% |
 | 1688新品 | 收纳盒新品 | product_trend_new_list | ✅ | ⚠️ 新发现：**MCP schema 要求 titleTags 必填**，只传关键词报校验错，显式传 ["289794"] 即可；命中仿藤编手提箱15万件（老锚点同款，稳定） |
@@ -397,22 +397,22 @@
 
 - 19 专家实测：**18 通过 / 1 接口侧不可用**（1688店铺榜，已有降级路径兜底）
 - 新增人设修正 4 处：Ozon大盘（mallsNum 失真）/ TEMU店铺（mall_star 筛选无效→字段核验法）/ 1688榜单（keyWord+sortField 冲突）/ 1688新品（titleTags schema 必填）
-- 接口侧已知问题 3 个：yunqi ozon goods_search 偶发超时（重试即成）/ sorftime keyword_list 504 / 1688 shop_rank_list 空数据
+- 接口侧已知问题 3 个：yunqi ozon goods_search 偶发超时（重试即成）/ youweiAI-amazon keyword_list 504 / 1688 shop_rank_list 空数据
 - 后台验收：按本矩阵重跑，对上锚点即通过
 
-## 卖家精灵专家五件套（2026-11-09 下午新增 · 24 接口全实测后搭建）
+## 原辅助数据源专家五件套（2026-11-09 下午新增 · 24 接口全实测后搭建）
 
-> 背景：卖家精灵（sellersprite MCP）接口组评估可做 6 个专家，用户拍板先做 5 个（选品/关键词/大盘/评论/流量）。命名规范延续「数据源前缀+平台+角色」。已写入 Hub（exp-ss-amazon-*，status=built，各带实测 demo）。
+> 背景：原辅助数据源（youweiAI-amazon MCP）接口组评估可做 6 个专家，用户拍板先做 5 个（选品/关键词/大盘/评论/流量）。命名规范延续「数据源前缀+平台+角色」。已写入 Hub（exp-ss-amazon-*，status=built，各带实测 demo）。
 
 | 专家 | id | 接口 | 可行性结论 |
 |---|---|---|---|
-| 卖家精灵亚马逊选品专家 | exp-ss-amazon-sel | product_node / competitor_lookup / asin_detail / asin_competitor / asin_prediction / bsr_prediction / market_research_statistics | ✅ 全部可用（⚠️ product_research 的 keywords 参数无效，见坑1） |
-| 卖家精灵亚马逊关键词专家 | exp-ss-amazon-keyword | keyword_research / keyword_research_trends / keyword_miner / keyword_order / keyword_conversion / aba_monthly / aba_weekly / aba_trend | ✅ 全部可用（⚠️ month 滞后一月 / weekly 不能传 date / Acos min-max 顺序异常） |
-| 卖家精灵亚马逊大盘专家 | exp-ss-amazon-market | market_research(_statistics) + 8 分布接口 + product_node / google_trend | ✅ 全部可用（⚠️ market_research 传 nodeIdPath 返回空，单节点下钻走 statistics） |
-| 卖家精灵亚马逊评论洞察专家 | exp-ss-amazon-voc | review + asin_detail | ✅ 可用（星级/SKU/时间窗/图视频差评筛选齐全；无 AI 话题计数，与 Sorftime 版互补分工） |
-| 卖家精灵亚马逊流量专家 | exp-ss-amazon-traffic | traffic_keyword(_stat) / traffic_extend / traffic_listing(_stat) / traffic_source | ✅ 全部可用（⚠️ traffic_keyword 带 month 返回空 / extend queryType=1 空 / relations=["SP"] 空） |
+| 原辅助数据源亚马逊选品专家 | exp-ss-amazon-sel | product_node / competitor_lookup / asin_detail / asin_competitor / asin_prediction / bsr_prediction / market_research_statistics | ✅ 全部可用（⚠️ product_research 的 keywords 参数无效，见坑1） |
+| 原辅助数据源亚马逊关键词专家 | exp-ss-amazon-keyword | keyword_research / keyword_research_trends / keyword_miner / keyword_order / keyword_conversion / aba_monthly / aba_weekly / aba_trend | ✅ 全部可用（⚠️ month 滞后一月 / weekly 不能传 date / Acos min-max 顺序异常） |
+| 原辅助数据源亚马逊大盘专家 | exp-ss-amazon-market | market_research(_statistics) + 8 分布接口 + product_node / google_trend | ✅ 全部可用（⚠️ market_research 传 nodeIdPath 返回空，单节点下钻走 statistics） |
+| 原辅助数据源亚马逊评论洞察专家 | exp-ss-amazon-voc | review + asin_detail | ✅ 可用（星级/SKU/时间窗/图视频差评筛选齐全；无 AI 话题计数，与 原主数据源 版互补分工） |
+| 原辅助数据源亚马逊流量专家 | exp-ss-amazon-traffic | traffic_keyword(_stat) / traffic_extend / traffic_listing(_stat) / traffic_source | ✅ 全部可用（⚠️ traffic_keyword 带 month 返回空 / extend queryType=1 空 / relations=["SP"] 空） |
 
-### 卖家精灵接口参数坑（2026-11-09 实测，人设已内置）
+### 原辅助数据源接口参数坑（2026-11-09 实测，人设已内置）
 
 1. **product_research 的 keywords 参数无效**：传 "water bottle" 返回全库商品（Nespresso 咖啡胶囊，total 7848 万）——商品关键词筛选一律用 competitor_lookup(keyword+matchType=3 精准)，不要用 product_research。
 2. **market_research 传 nodeIdPath 返回空**（total=0）：类目下钻用 market_research_statistics + 8 个分布接口（都支持 nodeIdPath）；market_research 只用 departmentKeyword 或纯筛选条件。
@@ -425,29 +425,29 @@
 9. **变体级销量共享**：同 parent 变体 units 相同（父体口径），amzUnit 才是变体自营近期销量。
 10. **bsr_prediction 的 categoryId 是一级类目 code**（284507=Kitchen & Dining），传三级节点失败。
 
-### 实测锚点（2026-11-09 US 站，锚点商品=Owala B0BZYBSRNF 沿用 Sorftime 版）
+### 实测锚点（2026-11-09 US 站，锚点商品=Owala B0BZYBSRNF 沿用 原主数据源 版）
 
 - competitor_lookup(water bottle 精准)：Owala FreeSip 系霸榜 TOP5，Alpine Sport 24oz 月销 18.8 万件/$659 万/毛利率 68.05%
 - asin_prediction：2026-10 月销 187,455 件；峰值 2026-08=31 万件（8 月旺季/冬季淡季 9.6 万）
 - bsr_prediction(Kitchen, BSR#1)：日销 6,842 件/月销 20.5 万件
 - keyword_research(2026.09 数据)：water bottle 月搜 185.9 万/购买率 2.09%/PPC $1.17/供需比 16.17；keyword_miner：owala 月搜 321 万（品牌词是品类词 1.9 倍）
 - 大盘(3395091)：Owala 品牌份额 25.86% 一家独大未过半；40$+ 高价段 11 款占销量 33.31%；2025-2026 年新款占 63% 销量（新品窗口大开）；中国卖家仅 13%；有 A+ 占 90%
-- review(1-2星)：头号差评主题=漏水（4/5 条，与 Sorftime 版「弹簧断裂」互补）；16oz/24oz 差评集中 32oz 少；差评池 2,254 条
+- review(1-2星)：头号差评主题=漏水（4/5 条，与 原主数据源 版「弹簧断裂」互补）；16oz/24oz 差评集中 32oz 少；差评池 2,254 条
 - 流量(traffic_keyword_stat)：1,343 流量词/自然 1,330/AC 79/广告 0=纯自然打法；owala 词吃 24.7% 流量；121 关联位全免费（fbt 41+vav 62+bab 12）
 
-### 与 Sorftime 版分工边界
+### 与 原主数据源 版分工边界
 
-- 选品：Sorftime 主库（利润四件套直返）为主，卖家精灵版强在 competitor_lookup 关键词筛品+asin_prediction 14 个月走势+bsr_prediction 销量换算
-- 关键词：Sorftime 强在单词坑位竞争/跟卖率/CPC 趋势；卖家精灵强在 ABA 6 模式市场榜+keyword_research 四维筛选+58 个月趋势
-- 大盘：Sorftime category_report 一站式 19 维；卖家精灵 8 个分布接口更细（国籍/EBC/上架年份）
-- 评论：Sorftime 有 AI 话题计数+特征销量份额；卖家精灵有 SKU 级差评+时间窗+图视频筛选
-- 流量：Sorftime 是关键词维度（词位对比）；卖家精灵是 ASIN 维度（流量词结构/关联商品/免费付费比）——两库互验
+- 选品：原主数据源 主库（利润四件套直返）为主，原辅助数据源版强在 competitor_lookup 关键词筛品+asin_prediction 14 个月走势+bsr_prediction 销量换算
+- 关键词：原主数据源 强在单词坑位竞争/跟卖率/CPC 趋势；原辅助数据源强在 ABA 6 模式市场榜+keyword_research 四维筛选+58 个月趋势
+- 大盘：原主数据源 category_report 一站式 19 维；原辅助数据源 8 个分布接口更细（国籍/EBC/上架年份）
+- 评论：原主数据源 有 AI 话题计数+特征销量份额；原辅助数据源有 SKU 级差评+时间窗+图视频筛选
+- 流量：原主数据源 是关键词维度（词位对比）；原辅助数据源是 ASIN 维度（流量词结构/关联商品/免费付费比）——两库互验
 
 
 ## 维护约定
 
 - Hub（skill 仓库）是专家人设的**单一事实源**；后台录入后如有改动，反向同步回 Hub
-- 每次对话内新增实测/修改专家，完成后 git commit + push 本仓库
+- 历史维护流程曾包含提交与推送；本次仅更新限定文件，不提交或推送。公开文案须遵守文末当前亚马逊保密规范。
 
 ---
 
@@ -489,3 +489,25 @@ mcp__1688__monitor_shop_list
 ```
 
 **2026-11-10 实测边界与验收**：普通磁吸收纳盒检索原始 `totalCount=10000` 未清洗，跨境 `totalCount=67` 也需逐条去噪；商品榜请求 `date=2026-10-01` 与调用日不同；新品样本的沥水碗架、餐具盒、蛋糕模均属错类。单品 `734800252457` 近30天 48 笔 / 152721 件 / ¥610884；白色磁吸 166*122 的 `skuId=5251111954228` 参考 ¥4.6，不能借用无磁吸 ¥4 或 500 件起阶梯价。店铺 `https://huaijan.1688.com` 核验见店铺分析；本轮店铺榜 `shop_rank_list` 返回 `code=200,totalCount=0`，降级按商品找店铺链接再核验，不得写成榜单上榜。商品监控池 `total=5`、店铺池 `total=10` 属一次分页快照，缺失字段留 `null`，`monthSalesVolume` 单位未核实。图搜本轮 `image_search` 返回 504，`global_image_search` 返回 code 500，无本轮候选；同日历史报告 `reports/wig-profit-batch-a.json` 的成功图搜仅有待拿样候选，与本轮图片和结果分开记录。利润例中 ¥20 售价、¥3 运费、¥2 其他费用为指定假设，配 ¥4.6 SKU 参考价得情景毛利 ¥10.4、毛利率 52%；采购结算价及税损未核，绝非真实利润。验收时按各技能 demo 的 `flow/source/date` 回看请求与口径，不把上文 2026-11-09 旧数字混入本次 demo。
+
+---
+
+## 当前亚马逊迁移规范（youweiAI-amazon，八技能单专家）
+
+- **公开身份**：一个亚马逊选品专家；公开名称及数据来源统一写作 `youweiAI-amazon`。历史独立选品/店铺/大盘/关键词/评论/流量专家均只作档案，不再作为并列专家导入或展示。
+- **技能绑定**：以下八项绑定同一个亚马逊选品专家。前七项是旧七路由的已有 ID；第八项是迁移清单新增的店铺分析规划，需在实际映射与前台实现后再上线，不能因列入清单就标记已启用或已实测。
+
+| 技能 | 稳定 ID / 迁移规划 ID | 当前验收边界 |
+|---|---|---|
+| 选品搜索 | `skill-amazon-selection-search` | 旧记录有调用样本；具体条件与结果需按历史日期核查 |
+| 竞品分析 | `skill-amazon-competitor` | 旧记录有调用样本；流量与评论支线以各轮记录为准 |
+| 关键词挖掘 | `skill-amazon-keyword` | 旧记录有调用样本；榜单/趋势支线以各轮记录为准 |
+| 类目体检 | `skill-amazon-category-trend` | 旧记录有节点、报告及趋势样本；冲突字段需隔离 |
+| 商品解析与评论洞察 | `skill-amazon-product-parse` | 旧记录有样本；评论摘要不能冒充单子体结论 |
+| 利润测算 | `skill-amazon-profit-calc` | 旧记录有接口估算样本；未计采购、头程、广告与退货 |
+| 选品报告 | `skill-amazon-report-gen` | 旧记录为真实返回的串联复用，不是独立接口实测 |
+| 店铺分析 | `skill-amazon-shop-analysis`（规划 ID） | 本次没有可核查的第八路由调用记录；待实现并单独验收 |
+
+- **路由原则**：按用户主意图选择技能，复用同轮已有数据；店铺相关问题由店铺分析承担，未实现前明确说明该路由待接入。历史四技能、七技能和独立关键词专家文档不得作为当前八技能的调用指南。
+- **公开保密规范**：对外标题、简介、提示词、演示、注释和版本摘要只使用 `youweiAI-amazon`；不公开旧数据源品牌或旧 MCP 服务专名。接口方法名、参数名及可核查的历史响应数据按技术语义保留，但历史调用不得包装为新实测；具体服务绑定须由实际运行环境配置核对，不凭文案臆造 MCP 命名空间。
+- **上线校验**：对照映射与页面确认一个专家绑定八项技能，再分别核查第八项工具链、边界与异常案例。验收前不得写“八技能均已跑通”。本节为迁移规划与文案规范，不代表部署或本轮新调用。

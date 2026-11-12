@@ -1,8 +1,7 @@
-# 亚马逊体系实测记录（2026-11-09）
+# 亚马逊体系历史验收记录（2026-11-09）
 
-> 用途：专家卡片「📊 实测预览」数据源 + 后台迁移验收对照
-> 环境：对话内真实 MCP 调用，站点 US，测试类目 Sports Water Bottles（node_id=3395091）
-> 结论：sorftime-amazon + sellersprite 双库全链路打通，无需 1688/外部补数即可完成利润测算
+> 历史资料：以下三专家四技能、双源配置及演示数值仅记录当时方案，不可作为当前八技能单专家的调用或迁移指南；此处没有新增实测。当前公开名称统一为 youweiAI-amazon，当前迁移规则见 `experts-migration.md`。
+> 当时环境：对话内 MCP 调用，站点 US，测试类目 Sports Water Bottles（node_id=3395091）。下列利润为接口估算，未覆盖采购、头程、广告等实际成本。
 
 ## 实测一：类目大盘体检（对应专家：大盘专家 / 技能：类目趋势）
 
@@ -50,7 +49,7 @@
 
 ## 实测三：竞品流量结构（对应技能：竞品分析）
 
-**调用过程：** `mcp__sellersprite__traffic_keyword(asin=B0BZYBSRNF, US)`（注意：带 month=202610 或 returnFields 时返回空字段，**用默认参数调用**）
+**调用过程：** `traffic_keyword(asin=B0BZYBSRNF, US)`（注意：带 month=202610 或 returnFields 时返回空字段，**用默认参数调用**）
 
 **结果数据：** 共 **1,340 个流量词**，TOP5：
 | 关键词 | 月搜索 | 自然排名 | 流量占比 | SPR | 点击集中度 |
@@ -65,10 +64,10 @@
 
 ## 实测四：关键词双库交叉验证（对应技能：关键词挖掘）
 
-**调用过程：** Sorftime `category_keywords` + SellerSprite `keyword_research` + `aba_research_monthly(searchModel=3)`
+**调用过程：** 原主数据源 `category_keywords` + 原辅助数据源 `keyword_research` + `aba_research_monthly(searchModel=3)`
 
 **结果数据：**
-- 口径互验：water bottle 月搜索量 Sorftime **1,664,046** vs SellerSprite **1,667,158**，差 0.19% → 两库口径一致
+- 口径互验：water bottle 月搜索量 原主数据源 **1,664,046** vs 原辅助数据源 **1,667,158**，差 0.19% → 两库口径一致
 - ABA 增长榜锚点（202610）：the rainmaker 月搜 66.2 万/排名增速 98.18%/购买率 2.87%/**CPC $0.31（洼地）**
 - 季节节奏锚点：万圣节词 vampire fangs(58.5万)/freddy krueger costume(47.4万) 10 月爆发，12 月排名跌 99.5%（w4RankGrowthRate 0.9936 的负向含义）→ 季节词需提前 2-3 个月布局
 - 错拼词捡漏锚点：water bittle(1.6万)/waterbottle(8.2万) CPC 与主词持平但竞争度极低
@@ -110,5 +109,5 @@
 2. ✅ 专家人设×3（选品/店铺/大盘）含工具链+口径+纪律+锚点
 3. ✅ 技能×4（竞品分析/关键词挖掘/类目趋势/选品报告）含触发+步骤+输出格式
 4. ✅ 数据坑清单：组合条件过严返回空、traffic_keyword 勿传 month/returnFields、未完月数据、1970 占位、-1 缺失值、seller 接口站点枚举子集
-5. ⏳ 待用户同步到店雷达导航（leidaai.github.io/skill）：新增亚马逊 Tab×4 技能卡 + 专家×3 卡（demo 用本文件实测数据）
-6. ⏳ 后台就绪后迁移：MCP 白名单=sorftime-amazon+sellersprite；知识库可复用 OZON 佣金库模式建亚马逊 FBA 费率库（暂非必需——Sorftime 详情接口已直接返回费用）
+5. 历史待办：当时拟新增四技能卡与三专家卡；该数量已过时，不作当前导航配置。
+6. 历史待办：当时拟采用双源白名单与 FBA 费率库；具体绑定以当前运行环境核对，不能照本行配置。

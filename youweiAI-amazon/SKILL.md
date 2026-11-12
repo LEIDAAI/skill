@@ -1,6 +1,6 @@
-# Sorftime 亚马逊选品工作流
+# youweiAI-amazon 选品工作流
 
-仅使用 `sorftime-amazon` 数据。单一专家 `exp-amazon-sel-v2` 路由至 `amazon-expert-skill-map.ts` 的七个技能；入口按用户意图选主技能，选品报告按类目→候选→竞品→利润串联。每条路由的 `instructions` 即对话调用提示词，本文提供可执行参数和异常分诊。2026-11-11 两轮已覆盖七技能的正向、边界、异常触发；详见验收矩阵。
+仅使用现有亚马逊 MCP 数据与工具调用机制。单一专家 `exp-amazon-sel-v2`（youweiAI-amazon选品专家）路由至 `amazon-expert-skill-map.ts` 的八个技能；入口按用户意图选主技能，选品报告按类目→候选→竞品→利润串联，按需复用关键词、商品内容与卖家店铺结果。每条路由的 `instructions` 即对话调用提示词，本文提供可执行参数和异常分诊。2026-11-11 两轮实测仅覆盖原七技能的正向、边界、异常触发；新增接口及卖家店铺分析尚无本文件实测记录，不把接口文档当作实测。
 
 ## 共用纪律
 
@@ -10,18 +10,20 @@
 - 表格：主图悬停 320×320 白底大图；标题链接为对应站点 `/dp/{asin}`。商品搜索返回 `buybox_seller` 名称但无 `seller_id`；店铺跳转仅在 `product_detail.seller_id` 实得时建立 `/sp?seller={seller_id}`，否则纯文本。`seller_country` 仅详情有，不能从名称推定跨境。
 - 空结果 SOP：先查工具 schema 参数名、站点和日期格式；核对当前硬门槛与基准词/示例的可用性。可临时移除部分条件诊断是哪组筛选导致空值，但诊断样本不得回填用户原条件结果；仍空则 `common_usage_query` 查剩余额度；整体异常可用已知节点的 `category_report` 做数据源对照。四类结论分别记录“参数错已修正 / 当前接口无数据 / 额度限制 / 数据源异常”；不得放松用户时间、售价、月销、站点等硬条件去凑数量。未发生额度/整体故障时不虚称已排除。
 - 多条件交集须逐条复核可见字段；`shipping_type=FBA` 等列表不返回的字段要详情 `is_fba` 证实，跨境用 `seller_country` 证实。`review_count` 不是差评文本；详情 `listing_date` 与 `days_on_shelf` 或列表 `online_date` 相互冲突时优先披露冲突、剔除严格上架窗。`monthly_sales_amount` 与当前价格×月销不符时标不同口径/待核，不推成交单价或重算月销售额。
+- 卖家筛选 `seller_search` 的 `average_price_min/max`、`listing_monthly_sale_amount_min/max` **入参**使用站点货币最小单位（美站美分：$20 传 2000），返回字段的展示单位需按字段单独核对；美站类目/商品实测金额为美元本体，不能据此推断卖家筛选入参也是美元。`seller_search` 站点仅 US/GB/DE/FR/CA/JP/ES/IT/MX；卖家接口使用 `amz_seller_site`，其他商品/类目接口使用各自的 `amz_site` 或 `keyword_support_site`。
 
 ## 路由与参数
 
 | 路由 | 典型触发 | 关键接口和参数 | 异常处理 |
 |---|---|---|---|
 | `skill-amazon-selection-search` | 找品、近 N 天上架、价格/销量下限 | 先按运行日计算起止日（格式 `yyyy-MM-dd`），如 2026-11-11 的近90天为 `2026-08-13` 至 `2026-11-11`；销量严格大于1传 `month_sale_volume_range_min=2`。`product_search(amz_site="US",keyword="mahjong bag",attribute_name="mahjong",online_date_range_min="2026-08-13",online_date_range_max="2026-11-11",month_sale_volume_range_min=2,page=1)` 宽召回；可并行试 `attribute_name="mahjong bag"` 补精准包候选，按 ASIN 去重 | 两路互补：精准短语仍混套装/挂件，也漏宽搜真正的包；逐条按主商品判断，麻将牌/牌架/垫子/垫筒/卡片/挂件及附送收纳袋的整套均剔除。包主商品但侧重时尚手袋且容量不明的列待核。上架窗口是 `online_date` 预筛；严格“亚马逊上架日”须对入表 ASIN 调 `product_detail` 核 `listing_date`，与 `online_date` 不同则以明确声明的口径复核，不把超窗记录入表；详情销量可能变化，以本次详情快照为准 |
-| `skill-amazon-competitor` | 分析 ASIN、竞品对比 | 单品 `product_detail(asin="B0BZYBSRNF",amz_site="US")`；`product_search(asin=...)` **仅相似商品**；需要流量才 `product_traffic_terms` | ASIN 身份矛盾停止；`platform_fee=0/-1` 不作为实付佣金，毛利待核，不能默认15%重算 |
-| `skill-amazon-keyword` | 种子词扩词、关键词竞争 | 有种子词 `keyword_extends(keyword="water bottle",keyword_support_site="US",page=1)`；单词 `keyword_detail(keyword="mahjong bag",keyword_support_site="US")`；无种子词才 `keyword_list` | 推荐 CPC 空串标缺失；只用标注的90d转化字段；点击量0但转化率非零不自行重算；未知词空不编造 |
-| `skill-amazon-category-trend` | 类目体检、趋势 | `category_name_search(category_name="Sports Water Bottles",amz_site="US")` 得 `3395091`；`category_report(node_id="3395091",amz_site="US")`、`category_trend(node_id="3395091",trend_index="SalesCount",amz_site="US")`、`category_keywords(node_id="3395091",page=1,amz_site="US")` | 历史窗跨度3–40天且需有数据；TopN份额非单调禁用；转化率0口径待核；当前未完月剔除，关键词语义过滤 |
-| `skill-amazon-product-parse` | 解析商品、评论洞察 | `product_detail(asin=...,amz_site="US")` → 按需 `product_reviews(asin=...,review_type="Negative",amz_site="US")` / `product_customers_say(asin=...,site="US")` / `product_variations(asin=...,page=1,amz_site="US")` | 评论跨变体，变体实返大写键；无评论标未取到；`similar_product_feature` 混类要弃用 |
+| `skill-amazon-competitor` | 分析 ASIN、竞品对比、历史走势 | 单品 `product_detail(asin="B0BZYBSRNF",amz_site="US")`；需要历史变化时 `product_trend(asin=...,type="SalesVolume",amz_site="US")`（按需求选维度），需要单品综合信息才 `product_report(asin=...,amz_site="US")`；`product_search(asin=...)` **仅相似商品**；需要流量才 `product_traffic_terms` | ASIN 身份矛盾停止；未完月不与完整月同比，报告与详情冲突标待核；`platform_fee=0/-1` 不作为实付佣金，毛利待核，不能默认15%重算 |
+| `skill-amazon-keyword` | 种子词扩词、关键词竞争、ASIN 反查 | 有种子词 `keyword_extends(keyword="water bottle",keyword_support_site="US",page=1)`；单词 `keyword_detail(keyword="mahjong bag",keyword_support_site="US")`；看自然/广告搜索结果 `keyword_search_results(keyword=...,keyword_support_site="US",page=1,position_type=1/2)`；给定 ASIN 反查核心词的自然曝光位置 `competitor_product_keywords(asin=...,keyword_support_site="US",page=1)`；无种子词且无 ASIN 才 `keyword_list` | 搜索结果每页20条，标页数；自然曝光不代表广告；推荐 CPC 空串标缺失；只用标注的90d转化字段；点击量0但转化率非零不自行重算；未知词空不编造 |
+| `skill-amazon-category-trend` | 类目体检、趋势、Top100 商品 | `category_name_search(category_name="Sports Water Bottles",amz_site="US")` 得 `3395091`；`category_report(node_id="3395091",amz_site="US")`、`category_trend(node_id="3395091",trend_index="SalesCount",amz_site="US")`、`category_keywords(node_id="3395091",page=1,amz_site="US")`；需要榜单明细时 `category_products(node_id="3395091",amz_site="US")` 一次取类目 Top100，不分页 | 历史窗跨度3–40天且需有数据；TopN份额非单调禁用；转化率0口径待核；当前未完月剔除，关键词语义过滤；榜单不当全类目 |
+| `skill-amazon-product-parse` | 解析商品、评论洞察、Listing 内容 | `product_detail(asin=...,amz_site="US")` → 需要图文资产时 `product_content(asin=...,amz_site="US")`（主图、五点、属性、A+；基础价格销量仍读详情）；按需 `product_reviews(asin=...,review_type="Negative",amz_site="US")` / `product_customers_say(asin=...,site="US")` / `product_variations(asin=...,page=1,amz_site="US")` | 评论跨变体，变体实返大写键；无评论标未取到；`similar_product_feature` 混类要弃用 |
+| `skill-amazon-seller-analysis` | 店铺分析、按 ASIN/品牌找卖家、筛中国卖家 | `seller_search_from_name(name=...,query_type=1/2/3,amz_seller_site="US",page=1)` 分别按店铺全名/ASIN/品牌找候选；`seller_detail(name=店铺全名或seller_id,query_type=1或2,amz_seller_site="US")` 核背景；需要店铺商品时用核实的 seller_id 调 `product_search(seller_id=...,amz_site="US",page=1)`；按类目或经营条件筛选才 `seller_search(node_id=...,is_chinese_seller=1,amz_seller_site="US",page=1,...)`，只有要求中国卖家时传 1 | 三接口均使用 `amz_seller_site`；`seller_search` 仅 US/GB/DE/FR/CA/JP/ES/IT/MX；金额筛选入参按当地最小货币单位，返回字段单位另核；名称不等于国别，空值不补猜 |
 | `skill-amazon-profit-calc` | 毛利、费用 | `product_detail` 返回 `fba_fee/platform_fee/profit/profit_rate`；采购价与运价需用户提供 | 接口毛利未扣采购/头程/广告；佣金0/-1、售价0与销量冲突时不下实际利润结论 |
-| `skill-amazon-report-gen` | 出选品报告 | 复用已取类目→候选→竞品→利润结果，每段标参数/页数/日期 | 类目不匹配则报告该维缺失；零候选不产伪档位，TopN冲突不打总分 |
+| `skill-amazon-report-gen` | 出选品报告 | 复用已取类目→候选→竞品→利润结果；按需复用 `category_products`、`product_trend`/`product_report`、`keyword_search_results`/`competitor_product_keywords`、`product_content`、三种 `seller_*` 接口的已有响应；只在问题确实需要且参数/站点适用时补取，每段标参数/页数/日期 | 类目不匹配则报告该维缺失；零候选不产伪档位，TopN冲突不打总分；新增接口无实测值时只标取数结果，不引历史记录冒充 |
 
 ## 组合问话回归（2026-11-11）
 
