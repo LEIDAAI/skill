@@ -937,7 +937,19 @@ const BASE_SKILLS = [
     status: 'built',
     desc: '关键词/类目检索新品与热销，上架时间窗/价格/销量/评分/FBA 筛选，父体归组输出结构化表格。',
     triggers: ['帮我找XX','搜近90天上架的XX','出个表格','XX类目有什么新品'],
-    prompt: "仅用 youweiAI-amazon 搜亚马逊商品：【产品词/站点/近N天上架/价格/月销/是否跨境】。动态计算 yyyy-MM-dd 起止，月销严格大于1传 month_sale_volume_range_min=2。keyword 为 ABA 宽召回，attribute_name 为标题/属性匹配；两路互补按ASIN去重，未翻完注明页数。麻将包以包为主商品，剔除整套附包、牌架、垫、垫筒、卡片、挂件，时尚手袋容量不明列待核；列表 online_date 只作预筛，入表逐款 product_detail 核 listing_date，超窗剔除，详情销量为本次快照。FBA/跨境在详情核 is_fba/seller_country，listing_date 与其他日期冲突时严格上架窗剔除；parent_asin 仅样本归组不相加称父体总销量。空结果可松条件仅诊断不回填原结果；销售额与当前售价×月销冲突则待核；输出真实候选和排除理由，子体明细需额外积分先提示。按类目取候选时可调 category_products；逐款核身份与日期。详见 youweiAI-amazon/SKILL.md。",
+    prompt: `你是 youweiAI-amazon·选品搜索。按用户给定条件检索亚马逊真实商品，交付可核查的候选表；仅使用本技能允许的亚马逊接口。不要引用历史演示当作本轮结果。
+
+【输入与硬条件】提取产品用途、站点、价格区间及币种、上架时间窗、月销下限、评分/评论数、FBA/跨境、数量与排序要求。用户未指定站点时默认 US、金额美元；仅在缺少决定检索范围的必要条件时追问。保留用户的硬门槛，严格大于1件月销传 month_sale_volume_range_min=2；其他下限/上限按用户原意设置，不为凑数量放宽。近 N 天由运行日期计算 yyyy-MM-dd 起止，不能套用历史测试日期。
+
+【检索】类目词先用 category_name_search 核准 node_id，多个相近类目列出歧义再选，不能直接取首项。按需以 product_search 的 keyword 做宽召回、attribute_name 做标题/属性匹配；两路结果按 ASIN 去重，核对接口筛选条件实际生效情况。按 page=1 起每页20条记录已读取页数；未翻完只说已读取样本，不宣称全量。类目头部候选可用 category_products，明确其榜单范围，不能替代全部符合筛选条件的商品。
+
+【逐条核验】先按标题、类目和主商品用途剔除不相关项；例如搜麻将包，应排除以麻将整套、牌架、垫、垫筒、卡片、挂件为主商品的结果，附送包的整套不算包，容量不明的时尚手袋单列待核。列表 online_date 只作预筛；若要求亚马逊近 N 天上架，对拟入表 ASIN 调 product_detail 核对返回 ASIN、标题、品牌、类目及 listing_date，超窗或身份矛盾不得入表。listing_date、online_date、days_on_shelf 冲突时披露并剔除严格时间窗结果。FBA 用详情 is_fba，跨境/卖家国别用 seller_country 核实；缺 seller_id 时店铺名称仅作文本，不能伪造店铺链接。详情与列表月销不一致时采用本次详情快照并标注口径与采集日期。
+
+【父子体与费用】默认按 parent_asin 对本次样本归组，每组展示代表子 ASIN 的标题、图片、价格及代表子体估计月销；仅有 parent_asin 不代表已取齐全部子体，不得把样本子体销量相加称父体总量。要求展开全部子体或计算父体总量时，先提示额外接口积分消耗和口径限制，再按用户选择执行。需要进一步利润测算时交给相应技能；不能把缺少采购、头程、广告、退货的接口估算称真实净利润。
+
+【输出】先给 KPI 卡（实际有效样本数、已检页数、价格与月销范围及口径），再给明细表与结论。表格按用户核心指标降序；主图悬停放大，标题链接至对应站点 /dp/{asin}，实得 seller_id 才能生成店铺链接。每行保留代表子 ASIN、parent_asin、商品用途、价格/币种、估计月销、详情上架日及验证状态；单列剔除和待核清单。注明运行日期、站点、检索参数、页数、字段缺失与样本范围；缺失不补零。销售额与当前售价×月销不一致时标注口径待核，不反推均价。
+
+【空结果与异常】先核接口参数名、站点和日期格式，再区分硬条件交集为空、接口当前无数据、额度不足与数据源异常；可临时松条件做原因诊断，但诊断结果绝不回填原硬条件结果。没有证据不得声称已排除某类故障；0 条就如实给出 0 条及可复核的原因，不造候选或趋势。`,
     tools: ['category_name_search','product_search','product_detail','common_usage_query','category_products']
   },
   {
@@ -3040,6 +3052,12 @@ async function wsShowVersion(i) {
     wsTab = 'version';
     renderWsTabs();
     document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">历史版本</div><div class="ws-desc">左侧选择版本；未保存全文的记录仅展示更新摘要。当前人设请切换到「提示词」。</div>';
+  } else if (wsMode === 'skill') {
+    wsTab = 'version';
+    document.querySelectorAll('#ws-tabs .ws-tab').forEach(tab => tab.classList.remove('on'));
+    if (!document.querySelector('#ws-tabs .ws-version-tab')) {
+      document.getElementById('ws-tabs').insertAdjacentHTML('beforeend', '<button class="ws-tab ws-version-tab on" onclick="setWsTabGeneric(\'prompt\')">历史版本</button>');
+    }
   }
   document.querySelectorAll('#ws-left .ws-ver-item').forEach((item, index) => item.classList.toggle('sel', index === i));
   wsRenderVersionContent(e);
@@ -3061,7 +3079,7 @@ function wsRenderVersionContent(e) {
     } else {
       right.innerHTML = notice + (wsMode === 'expert'
         ? '<button class="btn-solid" onclick="setWsTab(\'prompt\')">查看当前完整人设提示词</button>'
-        : '<div class="ws-code">' + esc(wsExpert.prompt || '暂无技能内容') + '</div>');
+        : '<button class="btn-solid" onclick="setWsTabGeneric(\'prompt\')">查看当前技能提示词</button>');
     }
     return;
   }
@@ -3181,7 +3199,7 @@ function wsOpenGeneric(mode, obj, tab) {
   if (mode === 'skill') {
     wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
     window.__wsVerSel = null;
-    _wsAutoLatestVersion = !isA1688Skill(obj) && (!tab || tab === 'prompt');
+    _wsAutoLatestVersion = !isA1688Skill(obj) && !(obj.platforms || []).includes('amazon') && (!tab || tab === 'prompt');
     wsTab = tab || 'prompt';
     setWsTabGeneric(wsTab);
   }

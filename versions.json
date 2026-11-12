@@ -922,6 +922,12 @@
       "target": "expert:exp-amazon-sel-v2",
       "action": "update",
       "summary": "区分当前提示词与历史版本：默认展示当前全文，历史无快照只显示摘要，有快照明确标注保存内容"
+    },
+    {
+      "ts": "2026-11-12 15:16:27 +08:00",
+      "target": "skill:skill-amazon-selection-search",
+      "action": "update",
+      "summary": "将当前选品搜索调用指令扩充为分段执行规范，覆盖硬条件、检索、逐条核验、父子体、输出和空结果；技能弹窗默认显示当前指令，历史版本另行高亮"
     }
   ]
 }
