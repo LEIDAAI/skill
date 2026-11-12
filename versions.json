@@ -916,6 +916,12 @@
       "target": "expert:exp-amazon-sel-v2",
       "action": "update",
       "summary": "补全当前人设 System Prompt：八技能路由、检索核验、数据口径和交付规范；历史快照增加查看当前提示词入口"
+    },
+    {
+      "ts": "2026-11-12 15:01:19 +08:00",
+      "target": "expert:exp-amazon-sel-v2",
+      "action": "update",
+      "summary": "区分当前提示词与历史版本：默认展示当前全文，历史无快照只显示摘要，有快照明确标注保存内容"
     }
   ]
 }

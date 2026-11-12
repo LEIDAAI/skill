@@ -2964,7 +2964,7 @@ function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').repla
 function openWorkbench(expert, tab) {
   wsMode = 'expert'; wsExpert = expert; wsTab = tab || 'prompt'; wsSkillIdx = (wsTab === 'skill' && (expert.skills || []).length) ? 0 : -1; wsSkillView = 'prompt';
   window.__wsVerSel = null;
-  _wsAutoLatestVersion = wsTab === 'prompt' && expert.id !== 'exp-1688-sel';
+  _wsAutoLatestVersion = false;
   document.getElementById('ws-title').innerHTML = esc(expert.name) +
     ' <span class="demo-badge">' + esc((expert.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
     (expert.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
@@ -3035,7 +3035,12 @@ async function wsShowVersion(i) {
   const e = _wsVerList[i];
   if (!e) return;
   window.__wsVerSel = e.ts + '|' + e.action;
-  /* 已渲染列表直接切换高亮，避免异步刷新覆盖右侧快照。 */
+  /* 历史版本单独成视图，避免当前提示词标签与版本内容同时高亮。 */
+  if (wsMode === 'expert') {
+    wsTab = 'version';
+    renderWsTabs();
+    document.getElementById('ws-mid').innerHTML = '<div class="ws-sec">历史版本</div><div class="ws-desc">左侧选择版本；未保存全文的记录仅展示更新摘要。当前人设请切换到「提示词」。</div>';
+  }
   document.querySelectorAll('#ws-left .ws-ver-item').forEach((item, index) => item.classList.toggle('sel', index === i));
   wsRenderVersionContent(e);
 }
@@ -3044,8 +3049,9 @@ function wsRenderVersionContent(e) {
   const right = document.getElementById('ws-right');
   const snap = e.snapshots;
   if (!snap || !(snap.prompt || snap.skillMd || snap.demo)) {
-    const notice = '<h4>版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + '</h4>' +
-      '<div class="demo-note">该版本记录只有摘要，没有保存当时的内容。下方展示的是当前内容，不能代表该历史版本。</div>';
+    const notice = '<h4>历史版本 · ' + esc(e.ts) + '</h4>' +
+      '<div class="demo-note">更新摘要：' + esc(e.summary) + '</div>' +
+      '<div class="ws-desc">这条记录没有保存当时的完整提示词，无法还原历史正文。</div>';
     if (wsMode === 'kb') {
       const doc = (wsKb.docs || [])[wsKbDocIdx];
       right.innerHTML = notice + '<div class="ws-code">' + (doc ? '正在读取当前文档…' : '暂无文档') + '</div>';
@@ -3053,12 +3059,14 @@ function wsRenderVersionContent(e) {
         .then(text => { if (window.__wsVerSel === e.ts + '|' + e.action) right.innerHTML = notice + '<div class="demo-sec">当前文档：' + esc(doc.name) + '</div><div class="ws-code">' + esc(text) + '</div>'; })
         .catch(() => { if (window.__wsVerSel === e.ts + '|' + e.action) right.innerHTML = notice + '<div class="ws-code">当前文档加载失败</div>'; });
     } else {
-      right.innerHTML = notice + '<div class="ws-code">' + esc(wsMode === 'expert' ? wsExpert.sysPrompt || '暂无人设内容' : wsExpert.prompt || '暂无技能内容') + '</div>';
+      right.innerHTML = notice + (wsMode === 'expert'
+        ? '<button class="btn-solid" onclick="setWsTab(\'prompt\')">查看当前完整人设提示词</button>'
+        : '<div class="ws-code">' + esc(wsExpert.prompt || '暂无技能内容') + '</div>');
     }
     return;
   }
   let htmlOut = '<h4>📸 版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + ' <span class="demo-badge">版本快照</span></h4>';
-  if (snap.prompt) htmlOut += '<div class="demo-sec">该版本提示词</div><div class="ws-code" style="max-height:40vh">' + esc(snap.prompt) + '</div>';
+  if (snap.prompt) htmlOut += '<div class="demo-sec">' + (wsMode === 'expert' && snap.prompt.length < 1000 ? '该版本保存的提示词摘要' : '该版本保存的提示词') + '</div><div class="ws-code" style="max-height:40vh">' + esc(snap.prompt) + '</div>';
   if (snap.skillMd) htmlOut += '<div class="demo-sec">该版本技能全文</div><div class="ws-code" style="max-height:40vh">' + esc(snap.skillMd) + '</div>';
   if (snap.demo) {
     let demoObj = null;
@@ -3077,10 +3085,17 @@ function closeWorkbench() {
 function renderWsTabs() {
   const tabs = [['prompt', '提示词'], ['skill', '技能 (' + (wsExpert.skills || []).length + ')'], ['demo', '实测']];
   if (!wsExpert.demo && !wsExpert.demoShop && !wsExpert.demoMarket) tabs.pop();
+  if (wsTab === 'version') tabs.push(['version', '历史版本']);
   document.getElementById('ws-tabs').innerHTML = tabs.map(t =>
     '<button class="ws-tab' + (wsTab === t[0] ? ' on' : '') + '" onclick="setWsTab(\'' + t[0] + '\')">' + t[1] + '</button>').join('');
 }
-function setWsTab(t) { wsTab = t; wsSkillView = 'prompt'; window.__wsVerSel = null; if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0; renderWsTabs(); renderWsBody(); }
+function setWsTab(t) {
+  if (t === 'version') return;
+  wsTab = t; wsSkillView = 'prompt'; window.__wsVerSel = null;
+  document.querySelectorAll('#ws-left .ws-ver-item.sel').forEach(item => item.classList.remove('sel'));
+  if (t === 'skill' && wsSkillIdx < 0 && (wsExpert.skills || []).length) wsSkillIdx = 0;
+  renderWsTabs(); renderWsBody();
+}
 function renderWsLeft() {
   const e = wsExpert;
   document.getElementById('ws-left').innerHTML =
