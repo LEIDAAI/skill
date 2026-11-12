@@ -76,7 +76,8 @@ export const amazonExpert = {
 17. product_variations 实际数据键为 Asin/Property/SalesAmount/ItemIndex/ItemTotal，与 doc 的 snake_case 不同；SalesAmount 文档解释为近15天抓取的页面销量、无更新返回 -1，不能按美元销售额或父体月销量相加。product_reviews 最多100条/近一年，返回跨尺寸变体评论；product_customers_say 的 site 参数不同于其他接口的 amz_site。similar_product_feature('water bottle') 混入瓶装水/电解质等语义噪音，不能直接当保温杯卖点。
 18. 价格为0但月销量有值、yearly_sales_volume=-9999 的新品属字段冲突或占位，不能据此推利润或零售价；接口毛利通常为 price-fba_fee-platform_fee 的平台估算，未计采购、头程、广告和退货，不称真实利润。
 19. 多条件问话仍逐项验收：筛选空可临时放宽条件诊断，但诊断样本不回填原问题。product_search 未返回 is_fba/seller_country，FBA与跨境须 product_detail 核实。listing_date 与 online_date/days_on_shelf 冲突时严格上架窗剔除；评论数非负评文本，评论接口空标未取到。销售额与当前售价×月销量不符时标待核，不能从冲突字段反推均价；关键词首页 product_count 与各坑位合计不闭合或混入错类时隔离指标。
-20. 跨技能证据底表保留接口、参数、页码、ASIN/parent_asin、采集日、筛选条件核验和剔除原因；逐条计数实际返回的记录、重复ASIN和有效候选，不能按页数推算。店铺级统计与商品列表差异只称统计口径或时点待核，缺窗口证据不可归因。coupon=0 不称折后价，佣金/售价的算术比率不证明类目费率。评论痛点次数或占比须有逐条编码清单；话题摘要时间不称全量评论池覆盖时间。Top100卖家份额余数不能解读为新品可分流量，品牌或评论分层也不能直接推出新链接转化。样本占比只用已取有效样本为分母，不称全市场份额。评论痛点须连接原文、变体与可执行实物测试，未测试不得写通过。售价×估计月销仅为理论乘积，不称实际销售额；缺少成本或规则不报真实净利、盈亏平衡或完整投入产出。不得建议虚假交易或操控评论。`
+20. 跨技能证据底表保留接口、参数、页码、ASIN/parent_asin、采集日、筛选条件核验和剔除原因；逐条计数实际返回的记录、重复ASIN和有效候选，不能按页数推算。店铺级统计与商品列表差异只称统计口径或时点待核，缺窗口证据不可归因。coupon=0 不称折后价，佣金/售价的算术比率不证明类目费率。评论痛点次数或占比须有逐条编码清单；话题摘要时间不称全量评论池覆盖时间。Top100卖家份额余数不能解读为新品可分流量，品牌或评论分层也不能直接推出新链接转化。样本占比只用已取有效样本为分母，不称全市场份额。评论痛点须连接原文、变体与可执行实物测试，未测试不得写通过。售价×估计月销仅为理论乘积，不称实际销售额；缺少成本或规则不报真实净利、盈亏平衡或完整投入产出。不得建议虚假交易或操控评论。
+21. 2026-11-12 八技能对话回归：跨节点检索把去日期等诊断样本与全硬条件候选分列，注明实际页码，不能把仅查入口说成全类目“仅有”；listing_date、online_date 与 days_on_shelf 出现不同口径时并列并标上架时点待核。竞品“2 pounds”是重量不证明32 fl oz；估计月销×售价应先算术核对，接口佣金与售价之比不证明类目费率。关键词点击量/点击转化率同为0但购买量非0时隔离漏斗；首页占比无可核分母不推新品机会；同比须同窗。店铺详情98件与卖家商品检索第1页11条、共1页及第2页空结果并存时不称11/98覆盖率。类目报告和榜单快照月销不同时分列；商品Top3/Top5逆序整组禁用；品牌/卖家Top10/20与Top5重复而明细复算不符也禁用；评分/评论分层款数合计不等于Top100时不可据此推出冷启动门槛。评论主题命中数要去交叉重复并与100条样本核对，未展示其余评论编号不能称全部逐条编码；预测和样本结构不外推全市场。`
 }
 
 export const amazonSkills: AmazonSkillDef[] = [
@@ -93,7 +94,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       '麻将在包场景以包为主商品：剔除附带包的整套、牌/牌架/桌垫/垫筒/挂件，时尚手袋装牌能力不明标待核；入表详情核 listing_date，不能把 online_date 当作已证亚马逊上架日',
       '核对标题及类目，parent_asin 去重仅得样本父体数，不将子体销量相加充当父体总销量',
       'FBA/跨境要求逐候选 product_detail 核验 is_fba/seller_country；卖家链接须拿 seller_id，缺失则纯文本；严格上架窗遇日期冲突剔除',
-      '空结果可放宽条件仅作诊断，诊断样本不得回填硬条件结果；按参数错误、接口无数据、额度、数据源故障分诊；说明样本页数与字段缺失',
+      '空结果可放宽条件仅作诊断，诊断样本不得回填硬条件结果；跨节点按入口列实际页数与计数，不将诊断记录混入全硬条件样本；按参数错误、接口无数据、额度、数据源故障分诊；日期字段交叉核验，不从单节点结果推全类目结论',
     ],
     instructions: `搜索亚马逊商品：【产品词、站点、近N天上架、价格币种、月销下限、是否必须跨境】。仅用现有亚马逊数据接口。运行日算 yyyy-MM-dd 起止；销量严格大于1件须传 month_sale_volume_range_min=2。product_search.keyword 是 ABA 宽召回、attribute_name 是标题/属性检索，必要时两路互补并按ASIN去重；page 从1开始每页20，未翻完注明覆盖页数。类目词先 category_name_search 核 node_id，不取首项。麻将包以包为主商品：排除麻将整套附包、卡片、垫、垫筒、牌架、挂件；时尚手袋装麻将牌能力不明列待核。product_search 的 online_date 仅作预筛；严格亚马逊上架窗口须逐条 product_detail 核 listing_date，超窗不得入表；详情销量与列表不一致用本次详情并注明。FBA/跨境须详情 is_fba/seller_country 实证；listing_date 与 online_date/days_on_shelf 冲突时严格上架窗剔除。默认按 parent_asin 样本归组、展示代表子体估计月销，不相加冒充父体总销量。空结果可临时放宽筛选做诊断，但诊断结果不回填原硬门槛。销售额与售价×月销不符时只标口径待核，不反推均价。输出 KPI+真实候选表+剔除说明，注明日期口径/页数/采集日/缺失项；子体明细先提示额外积分。另留候选核验底表：ASIN/父体、召回入口与页码、列表/详情日期、用途与硬条件核验、剔除或待核理由；分别逐条统计两路各实返数、原始合计、重复ASIN、去重、详情已核及有效数；列出重复ASIN和每个候选的来源词/页码，不按页数乘每页容量推算实返。`
   },
@@ -143,7 +144,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       'category_name_search 转 node_id（绝不猜编码）',
       'category_trend 取 25 个月序列（剔除当前未完月）算季节系数',
       '需要 Top100 商品明细时 category_products(node_id,amz_site=US) 一次取榜单，不分页；只将其作为类目榜单样本，不当成全类目商品',
-      'category_report 读取 Top100 规模/Top3 集中度/自营占比/退货率；核对 top_n 单调性、0 转化与 null 字段，冲突项排除',
+      'category_report 读取 Top100 规模/Top3 集中度/自营占比/退货率；核对 top_n 单调性及Top10/20与明细复算，评分/评论分层款数合计须等于声称样本数；0转化与null字段待核，报告聚合与榜单快照不同口径分列',
       'category_keywords 逐词检查相关性，剔除品牌词、瓶装水等偏题流量，再分析样本 CPC 与新品份额',
       '组合筛选空值不能拿类目Top100总盘代替；按可用证据给有条件的建议，缺维不打总分',
     ],
@@ -159,7 +160,7 @@ export const amazonSkills: AmazonSkillDef[] = [
     steps: [
       'product_detail(amz_site=US,asin=...) 先核实身份；需要主图、五点、属性或 A+ 时 product_content(asin,amz_site=US)，基础价格销量仍以详情为准；需子体明细时先告知额外积分，再查 product_variations（实返大写键）',
       'product_customers_say(asin=...,site=US) 话题计数快筛（details 计数为准）',
-      'product_reviews(asin=...,review_type=Negative,amz_site=US) 最多100条近一年原文，按「部件×场景」归纳并区分变体/配送',
+      'product_reviews(asin=...,review_type=Negative,amz_site=US) 最多100条近一年原文，按「部件×场景」归纳并区分变体/配送；跨主题同一评论按唯一ID去重，未列出其余评论映射时不宣称100条全部逐条编码',
       'similar_product_feature(product_name=...,amz_site=US) 若语义样本混入瓶装水等错类则弃用该特征结论',
       '输出：单品档案 + 差评主题表 + 正面壁垒清单 + 新品卖点建议',
     ],
