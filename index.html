@@ -1210,54 +1210,6 @@ const BASE_SKILLS = [
     tools: ['category_name_search','category_report','category_trend','product_search','product_detail','product_customers_say','product_reviews','common_usage_query']
   },
   {
-    id: 'skill-ss-kw-mine',
-    name: '卖家精灵关键词挖掘',
-    slug: '/skill-ss-kw-mine',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    status: 'built',
-    desc: '种子词→词族扩展（keyword_miner 1840词级）+ 市场四维体检（搜索/购买/供需/PPC）+ ABA 市场榜发现（无种子词入口）。',
-    triggers: ['帮我挖词','找相关关键词','扩词库','这个月有什么词在涨'],
-    prompt: "挖掘亚马逊关键词：种子词【填写】或说\"看看这月 ABA 有什么机会词\"。\n要求：keyword_miner 取词族 TOP20 按 90 天购买率过滤虚流量（<1% 标⚠️）；重点词用 keyword_research 体检并标注数据月份；输出分层词表（品类词/品牌词/季节词/虚流量词四类标注+搜索量/购买率/供需比/PPC 五列）+ 数据来源与日期。",
-    tools: ['keyword_miner','keyword_research','aba_research_monthly','aba_research_weekly']
-  },
-  {
-    id: 'skill-ss-kw-conversion',
-    name: '卖家精灵关键词转化分层',
-    slug: '/skill-ss-kw-conversion',
-    platforms: ['amazon'],
-    scenario: 'product',
-    status: 'built',
-    desc: '90天广告转化视角：搜索/点击转化率、三匹配PPC/CPA/预算、Top3点击ASIN，判断词值不值得投。',
-    triggers: ['这个词值不值得投','转化怎么样','ACOS 高吗','广告数据分析'],
-    prompt: "分析亚马逊关键词转化：词【填写】（默认90天，要周数据注明）。\n要求：keyword_conversion 返回搜索/点击转化率+三匹配 PPC/CPA/预算+Top3 点击 ASIN；Acos min/max 顺序异常时只引均值并说明；结论=投/不投/低价试+理由；输出转化分层表+数据来源与日期。",
-    tools: ['keyword_conversion']
-  },
-  {
-    id: 'skill-ss-kw-trend',
-    name: '卖家精灵关键词趋势回溯',
-    slug: '/skill-ss-kw-trend',
-    platforms: ['amazon'],
-    scenario: 'category',
-    status: 'built',
-    desc: '单词 58 个月搜索量+ABA 排名趋势（aba_research_trend），判断词生命周期与季节性，无数据月份如实标注。',
-    triggers: ['这个词趋势怎么样','涨了还是跌了','季节性词吗','近三年搜索量'],
-    prompt: "回溯亚马逊关键词趋势：词【填写】。\n要求：aba_research_trend 月粒度取 58 个月序列；rank=0/searches=0 的月份标注\"无ABA数据\"不下零搜索结论；keyword_research_trends 补同比环比；结论=词生命周期（成长/成熟/衰退）+季节峰谷+投放时点；输出趋势摘要表（选取关键月份）+数据来源与日期。",
-    tools: ['aba_research_trend','keyword_research_trends']
-  },
-  {
-    id: 'skill-ss-kw-traffic',
-    name: '卖家精灵流量词反查',
-    slug: '/skill-ss-kw-traffic',
-    platforms: ['amazon'],
-    scenario: 'competitor',
-    status: 'built',
-    desc: 'ASIN→流量词（traffic_keyword 默认参数！）+ 拓展词关联变体流量份额（traffic_extend），判断竞品流量打法。',
-    triggers: ['这个竞品吃什么词','流量词反查','它的流量从哪来','帮我拓这个词'],
-    prompt: "反查亚马逊 ASIN 流量词：ASIN【填写】。\n要求：① traffic_keyword_stat 看全景；② traffic_keyword 必须默认参数（传 month 会返回空）；③ total=0 时改用 traffic_extend(queryType=0, includeKeywords=词根) 查变体池关联流量份额并说明降级；④ trafficPercentage 解读为\"吃掉该词X%流量\"；输出流量词表+竞品流量打法判断+数据来源与日期。",
-    tools: ['traffic_keyword','traffic_extend','traffic_keyword_stat']
-  },
-  {
     "id": "zip-dld-sales-surge-new",
     "name": "近30天销量飙升新爆款",
     "slug": "/zip-dld-sales-surge-new",
@@ -1354,11 +1306,19 @@ const skillSyncStates = new Map();
 const hubSyncBase = 'http://127.0.0.1:17643';
 let hubSyncToken = '';
 let hubSyncQueue = Promise.resolve();
+const SORFTIME_AMAZON_SKILL_IDS = new Set([
+  'skill-amazon-selection-search', 'skill-amazon-competitor', 'skill-amazon-keyword',
+  'skill-amazon-category-trend', 'skill-amazon-product-parse',
+  'skill-amazon-profit-calc', 'skill-amazon-report-gen'
+]);
+function isCurrentAmazonSkill(skill) {
+  return !(skill.platforms || []).includes('amazon') || SORFTIME_AMAZON_SKILL_IDS.has(skill.id);
+}
 function allSkills() {
   const byId = new Map(BASE_SKILLS.map(s => [s.id, s]));
   sharedSkills.forEach(s => { if (!isA1688Skill(s)) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
   customSkills.forEach(s => { if (!isA1688Skill(s) && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
-  return [...byId.values()].sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
+  return [...byId.values()].filter(isCurrentAmazonSkill).sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
 }
 function setSyncLabel(text, detail) {
   const button = document.getElementById('btn-git-sync');
@@ -3579,14 +3539,13 @@ const ACTIVE_EXPERT_SKILLS = {
   'exp-ozon-sel': null,
   'exp-1688-sel': ['skill-1688-conditional-search', 'skill-1688-billboard', 'skill-1688-new-products', 'skill-1688-image-search', 'skill-1688-product-deep-dive', 'skill-1688-shop-verification', 'skill-1688-monitor-read', 'skill-1688-profit-scenario'],
   'exp-temu-sel-v2': ['skill-selection-search', 'skill-competitor-monitor', 'skill-product-parse', 'skill-shop-analysis', 'skill-category-trend', 'skill-profit-calc', 'skill-report-gen'],
-  'exp-amazon-sel-v2': ['skill-amazon-selection-search', 'skill-amazon-competitor', 'skill-amazon-keyword', 'skill-amazon-category-trend', 'skill-amazon-product-parse', 'skill-amazon-profit-calc', 'skill-amazon-report-gen'],
-  'exp-ss-amazon-keyword-v2': ['skill-ss-kw-mine', 'skill-ss-kw-conversion', 'skill-ss-kw-trend', 'skill-ss-kw-traffic']
+  'exp-amazon-sel-v2': ['skill-amazon-selection-search', 'skill-amazon-competitor', 'skill-amazon-keyword', 'skill-amazon-category-trend', 'skill-amazon-product-parse', 'skill-amazon-profit-calc', 'skill-amazon-report-gen']
 };
 function allExperts() {
   const activeIds = new Set(Object.keys(ACTIVE_EXPERT_SKILLS));
   const retiredIds = new Set(BASE_EXPERTS.filter(e => !activeIds.has(e.id)).map(e => e.id));
   const byId = new Map();
-  BASE_EXPERTS.filter(e => activeIds.has(e.id)).concat(customExperts.filter(e => !retiredIds.has(e.id) && !activeIds.has(e.id))).forEach(e => {
+  BASE_EXPERTS.filter(e => activeIds.has(e.id)).concat(customExperts.filter(e => !retiredIds.has(e.id) && !activeIds.has(e.id) && (!(e.platforms || []).includes('amazon') || e.id === 'exp-amazon-sel-v2'))).forEach(e => {
     const skillIds = ACTIVE_EXPERT_SKILLS[e.id];
     const skills = skillIds ? skillIds.map(id => allSkills().find(s => s.id === id)).filter(Boolean).map(s => s.name) : e.skills;
     byId.set(e.id, Object.assign({}, e, { skills, skillIds, status: activeIds.has(e.id) ? 'built' : e.status }));
