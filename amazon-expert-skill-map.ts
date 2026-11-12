@@ -75,7 +75,8 @@ export const amazonExpert = {
 16. 2026-11-11 类目报告 top_n_sales_volume_share 商品份额出现 Top3=61.24% 却 Top5=48.11% 的逆序，冲突维度禁用且不打分；conversion_rate=0、order_rate=null 不当作已核准零转化。category_report 指定临近当日的历史窗可返回空，先按有效历史窗对照；category_trend 当月未完月剔除。category_keywords 包含宽词、品牌词和瓶装水词，逐条语义过滤。
 17. product_variations 实际数据键为 Asin/Property/SalesAmount/ItemIndex/ItemTotal，与 doc 的 snake_case 不同；SalesAmount 文档解释为近15天抓取的页面销量、无更新返回 -1，不能按美元销售额或父体月销量相加。product_reviews 最多100条/近一年，返回跨尺寸变体评论；product_customers_say 的 site 参数不同于其他接口的 amz_site。similar_product_feature('water bottle') 混入瓶装水/电解质等语义噪音，不能直接当保温杯卖点。
 18. 价格为0但月销量有值、yearly_sales_volume=-9999 的新品属字段冲突或占位，不能据此推利润或零售价；接口毛利通常为 price-fba_fee-platform_fee 的平台估算，未计采购、头程、广告和退货，不称真实利润。
-19. 多条件问话仍逐项验收：筛选空可临时放宽条件诊断，但诊断样本不回填原问题。product_search 未返回 is_fba/seller_country，FBA与跨境须 product_detail 核实。listing_date 与 online_date/days_on_shelf 冲突时严格上架窗剔除；评论数非负评文本，评论接口空标未取到。销售额与当前售价×月销量不符时标待核，不能从冲突字段反推均价；关键词首页 product_count 与各坑位合计不闭合或混入错类时隔离指标。`,
+19. 多条件问话仍逐项验收：筛选空可临时放宽条件诊断，但诊断样本不回填原问题。product_search 未返回 is_fba/seller_country，FBA与跨境须 product_detail 核实。listing_date 与 online_date/days_on_shelf 冲突时严格上架窗剔除；评论数非负评文本，评论接口空标未取到。销售额与当前售价×月销量不符时标待核，不能从冲突字段反推均价；关键词首页 product_count 与各坑位合计不闭合或混入错类时隔离指标。
+20. 跨技能证据底表保留接口、参数、页码、ASIN/parent_asin、采集日、筛选条件核验和剔除原因；样本占比只用已取有效样本为分母，不称全市场份额。评论痛点须连接原文、变体与可执行实物测试，未测试不得写通过。售价×估计月销仅为理论乘积，不称实际销售额；缺少成本或规则不报真实净利、盈亏平衡或完整投入产出。不得建议虚假交易或操控评论。`
 }
 
 export const amazonSkills: AmazonSkillDef[] = [
@@ -94,7 +95,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       'FBA/跨境要求逐候选 product_detail 核验 is_fba/seller_country；卖家链接须拿 seller_id，缺失则纯文本；严格上架窗遇日期冲突剔除',
       '空结果可放宽条件仅作诊断，诊断样本不得回填硬条件结果；按参数错误、接口无数据、额度、数据源故障分诊；说明样本页数与字段缺失',
     ],
-    instructions: `搜索亚马逊商品：【产品词、站点、近N天上架、价格币种、月销下限、是否必须跨境】。仅用现有亚马逊数据接口。运行日算 yyyy-MM-dd 起止；销量严格大于1件须传 month_sale_volume_range_min=2。product_search.keyword 是 ABA 宽召回、attribute_name 是标题/属性检索，必要时两路互补并按ASIN去重；page 从1开始每页20，未翻完注明覆盖页数。类目词先 category_name_search 核 node_id，不取首项。麻将包以包为主商品：排除麻将整套附包、卡片、垫、垫筒、牌架、挂件；时尚手袋装麻将牌能力不明列待核。product_search 的 online_date 仅作预筛；严格亚马逊上架窗口须逐条 product_detail 核 listing_date，超窗不得入表；详情销量与列表不一致用本次详情并注明。FBA/跨境须详情 is_fba/seller_country 实证；listing_date 与 online_date/days_on_shelf 冲突时严格上架窗剔除。默认按 parent_asin 样本归组、展示代表子体估计月销，不相加冒充父体总销量。空结果可临时放宽筛选做诊断，但诊断结果不回填原硬门槛。销售额与售价×月销不符时只标口径待核，不反推均价。输出 KPI+真实候选表+剔除说明，注明日期口径/页数/采集日/缺失项；子体明细先提示额外积分。`,
+    instructions: `搜索亚马逊商品：【产品词、站点、近N天上架、价格币种、月销下限、是否必须跨境】。仅用现有亚马逊数据接口。运行日算 yyyy-MM-dd 起止；销量严格大于1件须传 month_sale_volume_range_min=2。product_search.keyword 是 ABA 宽召回、attribute_name 是标题/属性检索，必要时两路互补并按ASIN去重；page 从1开始每页20，未翻完注明覆盖页数。类目词先 category_name_search 核 node_id，不取首项。麻将包以包为主商品：排除麻将整套附包、卡片、垫、垫筒、牌架、挂件；时尚手袋装麻将牌能力不明列待核。product_search 的 online_date 仅作预筛；严格亚马逊上架窗口须逐条 product_detail 核 listing_date，超窗不得入表；详情销量与列表不一致用本次详情并注明。FBA/跨境须详情 is_fba/seller_country 实证；listing_date 与 online_date/days_on_shelf 冲突时严格上架窗剔除。默认按 parent_asin 样本归组、展示代表子体估计月销，不相加冒充父体总销量。空结果可临时放宽筛选做诊断，但诊断结果不回填原硬门槛。销售额与售价×月销不符时只标口径待核，不反推均价。输出 KPI+真实候选表+剔除说明，注明日期口径/页数/采集日/缺失项；子体明细先提示额外积分。另留候选核验底表：ASIN/父体、召回入口与页码、列表/详情日期、用途与硬条件核验、剔除或待核理由；分别统计原始、去重、详情已核及有效数。`
   },
   {
     id: 'skill-amazon-competitor',
@@ -112,7 +113,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       '需要相似竞品时 product_search(asin=) 取相似结果，不能将其当作单品详情',
       '输出：竞品画像+利润表+差评机会点+流量结构+风险清单',
     ],
-    instructions: `分析亚马逊竞品：【ASIN/链接；品牌名先检索候选再核对】。仅用现有亚马逊数据接口 product_detail(amz_site=US,asin=...)，必须校验返回 ASIN 与请求相同及商品身份；出现矛盾立即停止。实时价格/利润以本次返回为准，旧 demo 只作历史记录。platform_fee=0/-1 时佣金待核实，不默认15%或承认接口毛利为真实利润。评论与流量需要才分别调 product_customers_say 和 product_traffic_terms；需要历史变化按维度调 product_trend(asin,type,amz_site=US)，需要单品综合分析调 product_report(asin,amz_site=US)，只比较完整可比时段，冲突字段标待核，空结果保留为空。product_search(asin=) 只找相似商品。对比多个 ASIN 时分别核身份、上架日及售价/销售额口径，销售额与售价×月销不一致标待核；抽样不作全市场结论。输出实得画像、可核实费用、缺失项和数据日期。`,
+    instructions: `分析亚马逊竞品：【ASIN/链接；品牌名先检索候选再核对】。仅用现有亚马逊数据接口 product_detail(amz_site=US,asin=...)，必须校验返回 ASIN 与请求相同及商品身份；出现矛盾立即停止。实时价格/利润以本次返回为准，旧 demo 只作历史记录。platform_fee=0/-1 时佣金待核实，不默认15%或承认接口毛利为真实利润。评论与流量需要才分别调 product_customers_say 和 product_traffic_terms；需要历史变化按维度调 product_trend(asin,type,amz_site=US)，需要单品综合分析调 product_report(asin,amz_site=US)，只比较完整可比时段，冲突字段标待核，空结果保留为空。product_search(asin=) 只找相似商品。对比多个 ASIN 时分别核身份、上架日及售价/销售额口径，销售额与售价×月销不一致标待核；抽样不作全市场结论。输出实得画像、可核实费用、缺失项和数据日期。多竞品用同站点、可比规格及时间窗横向底表；品牌结论仅针对已取得样本。若有用户自有方案，可提出附证据和待验证动作的优势/弱点/机会/威胁假设；缺公司经营资料不推资金、供应链或站外投放。`
   },
   {
     id: 'skill-amazon-keyword',
@@ -129,7 +130,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       '用户需要历史趋势才用 keyword_trend；没有有效序列不判断趋势，CPC 按实测美元本体',
       '输出：分层词表（核心/腰部/长尾捡漏/季节）+ 竞争信号 + 投放时点建议',
     ],
-    instructions: `挖掘亚马逊关键词：【种子词及站点】。仅用现有亚马逊数据接口；有种子词用 keyword_extends(keyword,keyword_support_site=US,page=1)，重点词再 keyword_detail(keyword,keyword_support_site=US)；需要查看搜索结果自然/广告位置时用 keyword_search_results(keyword,keyword_support_site=US,page=1,position_type=1或2)，注明每页20条及样本范围；用户给 ASIN 反查核心词时用 competitor_product_keywords(asin,keyword_support_site=US,page=1)，只说明自然曝光位置；无种子词且无 ASIN 才走 keyword_list 热词榜。推荐 CPC 空串标缺失；keyword_detail.search_conversion_rate_90d 与 360d 不混用，若 click_90d=0 与非零转化率冲突则披露，不自行重算。趋势仅在 keyword_trend 有完整序列时分析，CPC 为美元；当月单点不当完整月。扩词语义过滤，例如麻将包需求剔除 mahjong set；首页 product_count 与 organic/ad 分项不闭合、类别混入 Camera/Sports 时隔离该维度，不凭异常坑位统计判断竞争。未知词空结果如实说明，先查字段/额度/基准词对照。词表注明样本与取数日。`,
+    instructions: `挖掘亚马逊关键词：【种子词及站点】。仅用现有亚马逊数据接口；有种子词用 keyword_extends(keyword,keyword_support_site=US,page=1)，重点词再 keyword_detail(keyword,keyword_support_site=US)；需要查看搜索结果自然/广告位置时用 keyword_search_results(keyword,keyword_support_site=US,page=1,position_type=1或2)，注明每页20条及样本范围；用户给 ASIN 反查核心词时用 competitor_product_keywords(asin,keyword_support_site=US,page=1)，只说明自然曝光位置；无种子词且无 ASIN 才走 keyword_list 热词榜。推荐 CPC 空串标缺失；keyword_detail.search_conversion_rate_90d 与 360d 不混用，若 click_90d=0 与非零转化率冲突则披露，不自行重算。趋势仅在 keyword_trend 有完整序列时分析，CPC 为美元；当月单点不当完整月。扩词语义过滤，例如麻将包需求剔除 mahjong set；首页 product_count 与 organic/ad 分项不闭合、类别混入 Camera/Sports 时隔离该维度，不凭异常坑位统计判断竞争。未知词空结果如实说明，先查字段/额度/基准词对照。词表注明样本与取数日，每词保留原种子/ASIN、接口与页码、词义匹配、需求时间窗、竞争字段有效性及排除理由；测试建议列待验证指标，不设未经用户给定的固定门槛。`
   },
   {
     id: 'skill-amazon-category-trend',
@@ -146,7 +147,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       'category_keywords 逐词检查相关性，剔除品牌词、瓶装水等偏题流量，再分析样本 CPC 与新品份额',
       '组合筛选空值不能拿类目Top100总盘代替；按可用证据给有条件的建议，缺维不打总分',
     ],
-    instructions: `体检亚马逊类目：【类目词、站点、时间窗口】。仅用现有亚马逊数据接口。category_name_search(amz_site=US,category_name=...) 返回多节点时核对名称和层级再选 node_id；category_report(node_id,amz_site=US) 读取 Top100 规模/集中度/自营占比/退货率，历史窗 query_start/query_date 必须跨度3–40天且不取未完成的近实时窗口；category_trend(node_id,trend_index=SalesCount,amz_site=US) 仅比较完整月份；category_keywords(node_id,page=1,amz_site=US) 剔除品牌词/错类词；需要核对榜单商品、品牌和价格带时 category_products(node_id,amz_site=US) 一次取类目 Top100，不把榜单当全量。top_n 商品份额若 Top5 反小于 Top3 标源冲突禁用；conversion_rate=0 且 order_rate=null 标口径待核。2026-11-11 已知节点3395091的报告 Top100 月销1,401,725件/$42,426,849.79、Top3商品61.24%、自营73.21%，只属当次快照；趋势2026-11未完月240,687不得同比完整月。空结果按参数、历史窗、额度、数据源分诊。输出证据表、完整月趋势和带条件建议，缺字段不强制评分或按固定阈值断言垄断。`,
+    instructions: `体检亚马逊类目：【类目词、站点、时间窗口】。仅用现有亚马逊数据接口。category_name_search(amz_site=US,category_name=...) 返回多节点时核对名称和层级再选 node_id；category_report(node_id,amz_site=US) 读取 Top100 规模/集中度/自营占比/退货率，历史窗 query_start/query_date 必须跨度3–40天且不取未完成的近实时窗口；category_trend(node_id,trend_index=SalesCount,amz_site=US) 仅比较完整月份；category_keywords(node_id,page=1,amz_site=US) 剔除品牌词/错类词；需要核对榜单商品、品牌和价格带时 category_products(node_id,amz_site=US) 一次取类目 Top100，不把榜单当全量。top_n 商品份额若 Top5 反小于 Top3 标源冲突禁用；conversion_rate=0 且 order_rate=null 标口径待核。2026-11-11 已知节点3395091的报告 Top100 月销1,401,725件/$42,426,849.79、Top3商品61.24%、自营73.21%，只属当次快照；趋势2026-11未完月240,687不得同比完整月。空结果按参数、历史窗、额度、数据源分诊。输出证据表、完整月趋势和带条件建议，缺字段不强制评分或按固定阈值断言垄断。需要品牌、价位、评分或评论结构时仅以 category_products 实得有效榜单样本分段，注明分母、缺失及去重规则；榜单样本占比不称全市场份额。`
   },
   {
     id: 'skill-amazon-product-parse',
@@ -162,7 +163,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       'similar_product_feature(product_name=...,amz_site=US) 若语义样本混入瓶装水等错类则弃用该特征结论',
       '输出：单品档案 + 差评主题表 + 正面壁垒清单 + 新品卖点建议',
     ],
-    instructions: `解析商品/评论：【ASIN、站点】。先 product_detail(amz_site=US,asin=...) 核对身份；需要主图/五点/属性/A+ 再调 product_content(asin,amz_site=US)，该接口不提供基础售价、评分、销量，不用其替代详情。按需 product_customers_say(asin=...,site=US) 取 details 话题计数，再 product_reviews(asin=...,review_type=Negative,amz_site=US) 查近一年最多100条评论；评论覆盖不同尺寸/颜色，逐条标 variant_attribute，区分盖子故障、吸管脱落和运输破损。即使 review_count>0 而评论接口无数据，也标当前未取得评论文本，不据此声称没有差评；review_count 可能是跨变体累计。额外展开变体前先告知积分，product_variations(asin=...,page=1,amz_site=US) 实返 Asin/Property/SalesAmount/ItemIndex/ItemTotal；SalesAmount 并非可加总父体月销。similar_product_feature(product_name=...,amz_site=US) 须剔除语义错类。规格以详情为准，AI 摘要与原文冲突时披露。`,
+    instructions: `解析商品/评论：【ASIN、站点】。先 product_detail(amz_site=US,asin=...) 核对身份；需要主图/五点/属性/A+ 再调 product_content(asin,amz_site=US)，该接口不提供基础售价、评分、销量，不用其替代详情。按需 product_customers_say(asin=...,site=US) 取 details 话题计数，再 product_reviews(asin=...,review_type=Negative,amz_site=US) 查近一年最多100条评论；评论覆盖不同尺寸/颜色，逐条标 variant_attribute，区分盖子故障、吸管脱落和运输破损。即使 review_count>0 而评论接口无数据，也标当前未取得评论文本，不据此声称没有差评；review_count 可能是跨变体累计。额外展开变体前先告知积分，product_variations(asin=...,page=1,amz_site=US) 实返 Asin/Property/SalesAmount/ItemIndex/ItemTotal；SalesAmount 并非可加总父体月销。similar_product_feature(product_name=...,amz_site=US) 须剔除语义错类。规格以详情为准，AI 摘要与原文冲突时披露。每个痛点关联评论 ASIN、变体、短引、部件/场景、样本内出现次数和可测的改进假设；话题计数与实读原文数分列。实物测试写项目、判定标准待确认和待测/已测状态，未拿样不声称通过。`
   },
   {
     id: 'skill-amazon-seller-analysis',
@@ -178,7 +179,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       '核实 seller_id 后需查看店铺商品时调用 product_search(seller_id=...,amz_site=US,page=1)，只汇报已取得的样本页；seller_search 的 average_price_min/max、listing_monthly_sale_amount_min/max 入参用站点货币最小单位（美站美元乘100传美分），返回展示金额逐字段核对单位；分页每页20条',
       '输出核实过的店铺身份、站点、店铺信息、经营指标、取样页数与缺失项；不同接口冲突时标待核',
     ],
-    instructions: `分析亚马逊卖家店铺：【店铺全名/ASIN/品牌、站点，或类目与筛选条件】。仅用现有亚马逊数据接口。按名称、ASIN、品牌分别调用 seller_search_from_name(name=...,query_type=1/2/3,amz_seller_site=US,page=1) 定位候选，不把品牌直接当店铺身份；核对后以 seller_detail(name=店铺全名或seller_id,query_type=1或2,amz_seller_site=US) 读取店铺背景。按条件找卖家用 seller_search(node_id=已核实节点,is_chinese_seller=1仅在要求中国卖家时,amz_seller_site=US,page=1,...)；seller_search 站点仅支持 US/GB/DE/FR/CA/JP/ES/IT/MX，其他站点不得尝试此接口并说明限制。average_price_min/max 与 listing_monthly_sale_amount_min/max 的筛选入参须使用站点货币最小单位，美站 $20 应传 2000；返回金额须按返回字段单位核实后展示，不能以筛选入参单位推定。需要店铺商品时凭已核实 seller_id 调 product_search(seller_id=...,amz_site=US,page=1)，只描述已取得的样本页。按每页20条标明已取页数与样本范围，店铺名、国别、开店时间、商品/品牌数和反馈等仅引用实得字段；空结果按共用纪律分诊。`,
+    instructions: `分析亚马逊卖家店铺：【店铺全名/ASIN/品牌、站点，或类目与筛选条件】。仅用现有亚马逊数据接口。按名称、ASIN、品牌分别调用 seller_search_from_name(name=...,query_type=1/2/3,amz_seller_site=US,page=1) 定位候选，不把品牌直接当店铺身份；核对后以 seller_detail(name=店铺全名或seller_id,query_type=1或2,amz_seller_site=US) 读取店铺背景。按条件找卖家用 seller_search(node_id=已核实节点,is_chinese_seller=1仅在要求中国卖家时,amz_seller_site=US,page=1,...)；seller_search 站点仅支持 US/GB/DE/FR/CA/JP/ES/IT/MX，其他站点不得尝试此接口并说明限制。average_price_min/max 与 listing_monthly_sale_amount_min/max 的筛选入参须使用站点货币最小单位，美站 $20 应传 2000；返回金额须按返回字段单位核实后展示，不能以筛选入参单位推定。需要店铺商品时凭已核实 seller_id 调 product_search(seller_id=...,amz_site=US,page=1)，只描述已取得的样本页。按每页20条标明已取页数与样本范围，店铺名、国别、开店时间、商品/品牌数和反馈等仅引用实得字段；空结果按共用纪律分诊。对标卖家只比较同站点、同时间窗及单位可比的实得字段；已读商品页样本与全店规模分开，公司资金、库存和站外投放缺证据标未核实。`
   },
   {
     id: 'skill-amazon-profit-calc',
@@ -193,7 +194,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       '售价为0但月销量有值或年销=-9999 等冲突标缺失；无采购价、头程运价/计费规则不推最终利润',
       '输出售价→FBA→佣金→接口估算利润及未计费用；仅有用户明确假设时计算头程与售价敏感性',
     ],
-    instructions: `测算亚马逊商品利润：【ASIN、站点、可选采购价/头程规则】。只用现有亚马逊数据接口 product_detail(amz_site=US,asin=...)，核对 ASIN 与标题品牌类目；返回售价、FBA费、佣金、profit/profit_rate 是接口估算，不能称最终利润。2026-11-11 实例：HydroJug B0DGHBV6XS $27.99、FBA$6.17、佣金$4.20、接口估算$17.62/62.95%；缺采购价、头程、广告、退货不能断言有利可图。platform_fee=0/-1 或价格0但有销量时标费用/售价待核，不默认15%或沿用接口毛利率。仅有用户提供费率/采购/物流计费规则时计算单独情景；体积重不得自设除数。若 monthly_sales_amount 与当前售价×月销不一致，不据此计算成交均价或真实利润。注明日期和缺项。`,
+    instructions: `测算亚马逊商品利润：【ASIN、站点、可选采购价/头程规则】。只用现有亚马逊数据接口 product_detail(amz_site=US,asin=...)，核对 ASIN 与标题品牌类目；返回售价、FBA费、佣金、profit/profit_rate 是接口估算，不能称最终利润。2026-11-11 实例：HydroJug B0DGHBV6XS $27.99、FBA$6.17、佣金$4.20、接口估算$17.62/62.95%；缺采购价、头程、广告、退货不能断言有利可图。platform_fee=0/-1 或价格0但有销量时标费用/售价待核，不默认15%或沿用接口毛利率。仅有用户提供费率/采购/物流计费规则时计算单独情景；体积重不得自设除数。若 monthly_sales_amount 与当前售价×月销不一致，不据此计算成交均价或真实利润。注明日期和缺项。用户提供单件采购、运输计费、广告、退货、汇率及适用费用规则时，按售价/运输方式/采购量列同币种情景；平台费随售价变且缺费率时标无法完整计算，不沿用旧售价费用。仅规则齐备才算盈亏平衡售价，关税仓储未核不补零。`
   },
   {
     id: 'skill-amazon-report-gen',
@@ -209,7 +210,7 @@ export const amazonSkills: AmazonSkillDef[] = [
       '代表款利润按接口估算与采购/头程未提供部分分栏；专利检查需另有明确需求才触发',
       '输出已核实的总结论、候选表、重点商品、证据缺口、风险及下一步；零结果不生成机会档位',
     ],
-    instructions: `生成亚马逊选品报告：【主题、站点、必要硬门槛】。仅用现有亚马逊数据接口，先 category_name_search 核对节点，再 category_report/category_trend；复用 node_id 做 product_search，筛标题/子类目噪音、按 parent_asin 归组，仅展示代表子体观测月销量。代表款复用 product_detail 费用与 seller_country；需要评论才取 product_customers_say/site=US 和 product_reviews/amz_site=US；按用户问题复用已取得的 category_products 榜单、product_trend/product_report 竞品、keyword_search_results/competitor_product_keywords 关键词、product_content 商品内容与 seller_search_from_name/seller_detail/seller_search 店铺结果，缺少时仅在确有必要且符合各技能参数和站点限制时补取。正向示例 Sports Water Bottles node_id=3395091，2026-11-11 Top100 报告月销1,401,725件，样本检索 page1/7 包含保温杯和运动水杯但混入摇摇杯；HydroJug B0DGHBV6XS $27.99/FBA$6.17/佣金$4.20/接口估算$17.62，采购等未计。边界如 mahjong bag 多节点但无精确包类目时只做关键词候选报告，类目规模留空；异常极窄条件为空则保留硬门槛并说明无候选，放宽条件只作诊断、不产伪档位。组合筛选的报告须对入表候选核详情 listing_date/is_fba/seller_country；销售额与当前售价×销量冲突则隔离销售额。报告列每路参数/取样页数/查询日；TopN非单调、评论缺失、售价冲突等只列风险，缺维不打总分。`,
+    instructions: `生成亚马逊选品报告：【主题、站点、必要硬门槛】。仅用现有亚马逊数据接口，先 category_name_search 核对节点，再 category_report/category_trend；复用 node_id 做 product_search，筛标题/子类目噪音、按 parent_asin 归组，仅展示代表子体观测月销量。代表款复用 product_detail 费用与 seller_country；需要评论才取 product_customers_say/site=US 和 product_reviews/amz_site=US；按用户问题复用已取得的 category_products 榜单、product_trend/product_report 竞品、keyword_search_results/competitor_product_keywords 关键词、product_content 商品内容与 seller_search_from_name/seller_detail/seller_search 店铺结果，缺少时仅在确有必要且符合各技能参数和站点限制时补取。正向示例 Sports Water Bottles node_id=3395091，2026-11-11 Top100 报告月销1,401,725件，样本检索 page1/7 包含保温杯和运动水杯但混入摇摇杯；HydroJug B0DGHBV6XS $27.99/FBA$6.17/佣金$4.20/接口估算$17.62，采购等未计。边界如 mahjong bag 多节点但无精确包类目时只做关键词候选报告，类目规模留空；异常极窄条件为空则保留硬门槛并说明无候选，放宽条件只作诊断、不产伪档位。组合筛选的报告须对入表候选核详情 listing_date/is_fba/seller_country；销售额与当前售价×销量冲突则隔离销售额。报告列每路参数/取样页数/查询日；TopN非单调、评论缺失、售价冲突等只列风险，缺维不打总分。按九模块交付：证据底表、类目样本结构、竞品品牌、用户场景、痛点原文、实物测试计划、费用与有输入时的利润情景、有预算目标时的投入产出、证据索引与下一步；无证据模块列未核实。候选二次验证从初筛到身份日期、费用评论、样品测试；样本内占比注明分母，售价×估计月销只称理论乘积，不编造实际销售额或固定目标。`
   },
 ]
 

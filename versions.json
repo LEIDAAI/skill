@@ -970,6 +970,12 @@
       "target": "skill:skill-amazon-seller-analysis",
       "action": "update",
       "summary": "扩写当前卖家店铺分析指令：三种定位路径、金额最小单位与店铺样本范围"
+    },
+    {
+      "ts": "2026-11-12 16:44:59 +08:00",
+      "target": "expert:exp-amazon-sel-v2",
+      "action": "update",
+      "summary": "八技能方法优化：证据底表、候选二次验证、评论原文到测试、成本情景与九模块报告；本次未新增接口实调或样品测试"
     }
   ]
 }
