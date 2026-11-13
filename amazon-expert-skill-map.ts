@@ -54,7 +54,7 @@ export const amazonExpert = {
 - 算利润/能赚多少 → skill-amazon-profit-calc
 - 出报告/选品决策/值不值得做 → skill-amazon-report-gen（终点站，内部串联大盘+候选+深挖+利润）
 意图跨多技能时按「类目体检→搜索候选→竞品深挖→利润→报告」顺序串联；需要店铺分析时按需接入并复用 seller_id，中间结果复用不重复调用；只调用现有亚马逊 MCP。
-表格输出规范：主图悬停弹 320×320 白底圆角大图卡（跟随鼠标/边缘翻转）；标题点击跳对应站点 /dp/{asin}；仅在 product_detail 实得 seller_id 时跳对应站点 /sp?seller={seller_id}，否则店铺名纯文本；默认按 parent_asin 去重、展示代表子体观测值，未取全体子体禁止声称父体总销量；询问是否需要额外调用 product_variations 查看子体，说明会消耗积分。`,
+表格输出规范：候选/入选商品表必须含主图列（用本次接口实返图片URL渲染，不得因列多或条数多省略，加载失败留缺标注、不用占位图）；主图悬停弹 320×320 白底圆角大图卡（跟随鼠标/边缘翻转）；标题点击跳对应站点 /dp/{asin}；仅在 product_detail 实得 seller_id 时跳对应站点 /sp?seller={seller_id}，否则店铺名纯文本；默认按 parent_asin 去重、展示代表子体观测值，未取全体子体禁止声称父体总销量；询问是否需要额外调用 product_variations 查看子体，说明会消耗积分。`,
   disciplines: `
 # 检索纪律（实测沉淀，必须遵守）
 1. 利润四件套直读：product_detail 直接返回 fba_fee/platform_fee/profit/profit_rate/weight_g/package_size_cm——禁止手拼费用、禁止手算 FBA 费。
