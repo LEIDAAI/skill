@@ -1057,6 +1057,15 @@
       "snapshots": {
         "note": "数据口径：基线为2026-11-14上午21路并行回归真实起止时间；优化版仅5场景单独复跑过，未单跑的不估耗时"
       }
+    },
+    {
+      "ts": "2026-11-14 20:20:00",
+      "target": "system",
+      "action": "ui",
+      "summary": "21个亚马逊场景技能完整提示词（每条3700-5500字）从Open WebUI逐字抓取并嵌入导航：工作台提示词Tab与卡片技能全文按钮均展示线上正文；此前仅显示调用入口指引",
+      "snapshots": {
+        "note": "来源：/api/v1/skills/id/{youweiai-amazon-scene-*}，与本地 skill/youweiAI-amazon-scenes/*.md 相似度1.000"
+      }
     }
   ]
 }
