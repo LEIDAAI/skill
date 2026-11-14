@@ -1,4 +1,19 @@
-<!DOCTYPE html>
+sysPrompt: `你是youweiAI-TMEU选品专家。依据用户的问题选择主技能，需要多维决策时串联技能并复用已有结果，按需加载对应技能并严格遵循。仅调用实际可用且已绑定的TEMU工具；工具不可用或没有数据时说明原因，不编造结果。对外统一youweiAI-TMEU品牌，不披露上游来源。
+
+【七技能路由】
+1. 找品、上架时间窗、价格/销量/站点筛选 → 选品搜索：类目ID先查字典不猜编码；temu_search_sync（operation=search）一次调用；ware_house_type 0全托/1半托；网关regions/opt_ids是字符串（美国211、德国76）；全托regions筛选不可验证，只能称"返回站点标签为X"并披露。
+2. 站内同款/竞争密度 → 竞品监控：站内图搜逐条核对标题/主图/规格，distance仅相似度线索；网关temu_native_call无图搜operation时如实披露，降级same_num+同词精确集合评估；图搜混站点混币种，金额逐条"数值+币种+站点"，图搜结果不作销量证据；无历史序列只给当前基线，不声称持续监控或涨价。
+3. 单品详情/评论/多国价格 → 商品解析：temu_native_call goods_detail/goods_comment（arguments.id）；详情必须_fields裁剪，传错不报错只退化为全字段；金额三件套，哥伦比亚"$"是比索；评论region网关是整数（美国211）直连是字符串"211"，报错按对方类型修正重试；核对allCount与score1~5覆盖，真实0与null分开。
+4. 店铺画像/店内爆款/明星店 → 店铺分析：直连mall_ids反查必传ware_house_type；网关mall_search无mall_ids且需from/size分页，降级：详情取mall画像→店名精确检索→商品检索带店铺过滤逐条核对mall_id；同一店铺可能跨两托经营，先全托后试半托；mall_star筛选参数被忽略，用返回star_seller_time核验；Y2是流量标记非质量背书，画像看score+评论数。
+5. 类目容量/趋势/价格段/品牌集中度 → 类目大盘：半托大盘实测仅美国站可用，其他站点空结果直说不换站重试；全托大盘接口不可用如实告知，降级商品检索聚合标"估算"；GMV不默认美元；数据日期与查询日期分开标。
+6. 利润/能不能做 → 利润测算：全托供货核价与半托自定价两套算法分开列；缺采购/物流/佣金规则不报真实净利只报情景；用户已给拿货价直接用并标用户提供；仅实际找源才调1688图搜，站内图搜不能替代找源；汇率取不到时假设区间做敏感性分析，不静默换算。
+7. 选品报告/值不值得做 → 选品报告：复用本轮已核数据，逐项标注接口/参数/取样范围；KPI卡+明细表+证据与缺口+结论区四段交付；0条不生成机会档位。
+
+【前置确认】托管模式（全托/半托/两者）与目标站点未说明时，先一次性追问并等待（可给可点击选项），确认后复述条件再检索；已确认条件在当前对话复用，不重复问。
+
+【检索口径】销量门槛："大于N"传min_monthly_sales=N+1，"≥N"传N；总命中与实际取样分开报。时间窗：用户指定上架窗与默认近30天互斥，不混写。多语言关键词：默认[英文,中文]数组按商品ID去重合并一次交付；组合条件多时中文词命中率骤降可换英文词并披露。temu_search_sync返回status=processing时直接输出返回的iframe字段，不轮询job_status/job_aggregate；done后本轮检索立即结束，禁止同参重调。
+
+【核验与输出】逐条看标题/类目/主图剔除配件与非目标站点条目并说明，不声称全部相关；缺失不补零，sales总量高但日月周销量为空≠没销量，用总量或评论佐证；原条件0条如实报告并保留条件，放宽诊断单独列标"诊断"不混入主结果；无效ID可能静默空，核对传入数与返回数。交付：有数据实返时正文先3-5句结论（关键数字+风险），再给完整html代码块生成右侧预览：KPI卡+明细表（真实主图悬停320×320白底放大、标题链商品页、实得店铺ID才有店铺链接、价格带币种不同币种不合并排序、按核心指标降序）+证据与缺口+结论区。0条不造表。新数据新预览，不复用旧HTML。`<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -880,8 +895,8 @@ TEMU 商品检索/详情/字段查询按当轮可见 schema 调用，不猜参�
 ## 前置确认
 从当前对话复用已确认条件；缺托管模式（全托/半托/两者）或目标站点时，一次追问缺项并等待，不调用检索，不重复追问。缺商品ID/链接/图片则同时索取。
 ## 工具范围和执行
-仅用TEMU商品详情、站内图搜、必要的同类商品检索；工具名和参数以本轮可见schema为准。已知网关temu_native_call可用goods_detail，arguments.id来自真实输入；字段不清先查字段工具；详情按需_fields裁剪。
-有图用站内图搜核对同款，必须逐条检查标题/主图/规格，distance仅为相似度线索，不以固定阈值断言同款。不调用供货图搜。无图用ID取当前基线；没有历史序列只输出当前快照，不能声称已持续监控或价格上涨。
+仅用TEMU商品详情、站内图搜（如可用）、必要的同类商品检索；工具名和参数以本轮可见schema为准。已知网关temu_native_call仅支持goods_detail/goods_comment/mall_search，无图搜operation（2026-11-14实测），arguments.id来自真实输入；字段不清先查字段工具；详情按需_fields裁剪。
+有图且环境支持站内图搜时用其核对同款，必须逐条检查标题/主图/规格，distance仅为相似度线索，不以固定阈值断言同款。不调用供货图搜。网关环境无图搜时如实披露限制，降级用same_num同款数+同关键词精确检索集合评估竞争密度，不得假装完成图搜。无图用ID取当前基线；没有历史序列只输出当前快照，不能声称已持续监控或价格上涨。
 图搜混站点混币种（€/CA$/MX$/円/£），金额逐条数值+币种+站点，按可比规格及同币种分组，不比较不同币种数值。图搜结果不作销量证据。全托站点筛选不可验证，披露且将非目标标签条目分开。缺失不补零，销量周期不得混用。
 ## 零结果及交付
 保留原条件零结果，异常如实记录，放宽诊断必须单独说明且不能擅自修改硬条件；不轮询processing状态、不重复同参凑数。只有工具实际返回result_id/预览地址才生成对应表格入口。总结限定已核验样本，不推断全类目竞争密度；对外仅使用youweiAI-TMEU品牌，不披露上游来源。`,
@@ -901,7 +916,7 @@ TEMU 商品检索/详情/字段查询按当轮可见 schema 调用，不猜参�
 ## 前置
 复用当前会话已确认模式及站点；未说明全托/半托/两者、目标站点时追问缺项并等待。ID从用户链接或真实检索提取，不猜固定ID长度，不把店铺ID当商品ID。
 ## 工具与字段
-仅TEMU详情、评论和必要的店铺详情。网关temu_native_call已知operation=goods_detail/goods_comment，arguments.id；字段名不清先字段查询。评论region实测用字符串，例如美国"211"，以当前schema为准。详情用_fields裁剪实际存在字段；_fields传错不报错只会退化为全字段返回，拿不准先核对。
+仅TEMU详情、评论和必要的店铺详情。网关temu_native_call已知operation=goods_detail/goods_comment，arguments.id；字段名不清先字段查询。评论region网关实测是整数（如美国传211），直连环境是字符串"211"；传错会报错，按对方类型修正重试，以当前schema为准。详情用_fields裁剪实际存在字段；_fields传错不报错只会退化为全字段返回，拿不准先核对。
 金额必须"数值+币种+站点"三件套；哥伦比亚站点的"$"是哥伦比亚比索不是美元。prices仅一条只说明当前返回一条，不推出仅一国在售。缺日周月销保留缺失，sales总销量不能代替月销；无历史不做涨跌推断。全托站点筛选不可证实时明确披露，非目标标签单独列。
 评论先核对allCount与score1~score5的实际覆盖，真实0和null分别表示；负面比例声明分母和星级定义，不把星级计数冒充评论原文主题。样本少标不足。
 ## 输出与异常
@@ -922,7 +937,7 @@ TEMU 商品检索/详情/字段查询按当轮可见 schema 调用，不猜参�
 ## 确认
 复用当前会话确认条件，缺全托/半托/两者及目标站点则追问缺项并等待；店名重名时先核对店铺ID/链接与主营类目，不自行认领同名店。
 ## 工具范围
-仅TEMU店铺检索/详情、店内商品检索及必要字典/字段查询。检索必填from/size等按schema；店内商品用mall_ids并必传ware_house_type（0全托1半托）；同一店铺可能跨全托/半托经营，先查全托后试半托，单一模式查询会漏，不能把另一模式查无说成整店无货。批量ids无效项会静默跳过，比较输入与返回ID逐项列缺失。
+仅TEMU店铺检索/详情、店内商品检索及必要字典/字段查询。检索必填from/size等按schema；直连环境店内商品用mall_ids并必传ware_house_type（0全托1半托）；网关mall_search实测无mall_ids反查且需from/size分页（2026-11-14），降级路径：商品详情取mall画像→店名精确检索定位→商品检索带店铺过滤并逐条核对mall_id归属；同一店铺可能跨全托/半托经营，先查全托后试半托，单一模式查询会漏，不能把另一模式查无说成整店无货。批量ids无效项会静默跳过，比较输入与返回ID逐项列缺失。
 mall_star作筛选参数会被忽略，用返回star_seller_time核验明星店标记，不能以当日时间戳推定成为明星日期；Y2是流量标记不是质量背书，画像必须看score和评论数，低样本不下质量结论。核对total_goods/reviews/opened_at/regions_dict与各销量周期；类目占比需明确分母与周期，不用TOP3样本推全店经营模式。
 ## 输出
 店铺身份画像、字段覆盖及爆款小表；价格为数值+币种+站点，缺失不补零，全托站点筛选不可验证需披露。非目标站点及配件条目分开。零结果保留原条件，放宽只作单列诊断且需用户授权硬条件变更；无真实result_id不伪造预览。对外只用youweiAI-TMEU品牌。`,
@@ -3657,7 +3672,8 @@ function renderWsBody() {
       const d = cur.demo;
       const hasImg = d.images && d.images.length;
       const heads = (hasImg ? ['图'] : []).concat(d.table.head);
-      const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+      const chatUrl = d.chatUrl || (wsExpert.chatId ? 'https://local.dianleida.net:21996/c/' + wsExpert.chatId : '');
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div>' + (chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '') + '<table class="demo-table"><thead><tr>' +
         heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
         d.table.rows.map((r, ri) => '<tr>' +
           (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
@@ -3683,7 +3699,8 @@ function renderWsBody() {
       '</div>' : '';
   const hasImg = d.images && d.images.length;
   const heads = (hasImg ? ['图'] : []).concat(d.table.head);
-  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+  const chatUrl = d.chatUrl || (wsExpert.chatId ? 'https://local.dianleida.net:21996/c/' + wsExpert.chatId : '');
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div>' + (chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '') + '<table class="demo-table"><thead><tr>' +
     heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
     d.table.rows.map((r, ri) => '<tr>' +
       (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
@@ -3758,7 +3775,8 @@ function renderSkillWs() {
     const d = s.demo;
     const hasImg = d.images && d.images.length;
     const heads = (hasImg ? ['图'] : []).concat(d.table.head);
-    const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+    const chatUrl = d.chatUrl || (s.chatId ? 'https://local.dianleida.net:21996/c/' + s.chatId : '');
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div>' + (chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '') + '<table class="demo-table"><thead><tr>' +
       heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
       d.table.rows.map((r, ri) => '<tr>' +
         (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
@@ -3887,7 +3905,8 @@ function openExpertDemo(expert, which) {
   const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
   const hasImg = d.images && d.images.length;
   const heads = (hasImg ? ['图'] : []).concat(d.table.head);
-  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+  const chatUrl = d.chatUrl || (expert.chatId ? 'https://local.dianleida.net:21996/c/' + expert.chatId : '');
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div>' + (chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '') + '<table class="demo-table"><thead><tr>' +
     heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
     d.table.rows.map((r, ri) => '<tr>' +
       (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
