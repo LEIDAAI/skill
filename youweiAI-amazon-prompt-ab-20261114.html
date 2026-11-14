@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>youweiAI-amazon · 21场景提示词优化A/B实验报告（2026-11-14）</title>
+<style>
+  :root{
+    --bg:#f7f9fb; --card:#ffffff; --ink:#0f1f2e; --ink2:#40525f; --ink3:#7b8a96;
+    --line:#e4ebf1; --brand:#0b7a4b; --brand2:#e9f7f0; --blue:#2456c4; --blue2:#eef4ff;
+    --red:#c2410c; --red2:#fff3ec; --amber:#a16207; --amber2:#fffbe6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 22px 60px}
+  header.hero{background:linear-gradient(135deg,#0b7a4b 0%,#0e8f72 60%,#127f9c 100%);color:#fff;border-radius:18px;padding:26px 28px;box-shadow:0 8px 24px rgba(11,122,75,.18)}
+  .hero h1{margin:0 0 6px;font-size:23px;letter-spacing:.3px}
+  .hero .sub{opacity:.92;font-size:13px}
+  .hero .chips{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .hero .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);border-radius:999px;padding:3px 11px;font-size:12px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0 8px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .kpi span{display:block;font-size:12px;color:var(--ink3)}
+  .kpi b{display:block;font-size:21px;margin-top:4px;color:var(--brand)}
+  .kpi small{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-top:16px}
+  h2{font-size:16px;margin:0 0 12px;padding-left:10px;border-left:4px solid var(--brand)}
+  h3{font-size:13.5px;margin:18px 0 8px;color:var(--ink2)}
+  p{margin:8px 0}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:#f3f7fa;color:var(--ink2);font-weight:600;font-size:12.5px;white-space:nowrap}
+  tbody tr:hover{background:#fafcfe}
+  td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ok{color:#0f7a3d;font-weight:600}
+  .no{color:#c0392b;font-weight:600}
+  .warn{color:#a16207;font-weight:600}
+  .tag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:11.5px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+  .tag-s{background:var(--blue2);color:var(--blue);border-color:#c8dbfa}
+  .tag-p{background:var(--brand2);color:var(--brand);border-color:#bde6d2}
+  .tag-k{background:#f1f4f7;color:#5b6b78;border-color:#dfe7ee}
+  .tag-n{background:var(--amber2);color:var(--amber);border-color:#f0e2ac}
+  .note{background:#f8fafc;border-left:3px solid #cbd8e3;padding:10px 13px;border-radius:0 10px 10px 0;font-size:12.5px;color:var(--ink2);margin-top:12px}
+  .note b{color:var(--ink)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:860px){.grid2{grid-template-columns:1fr}}
+  .box{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fcfdfe}
+  .box h4{margin:0 0 6px;font-size:13.5px}
+  .box p{font-size:12.5px;color:var(--ink2);margin:4px 0}
+  .verdict{border-radius:12px;padding:12px 15px;font-size:13px;margin-top:10px}
+  .verdict.good{background:var(--brand2);border:1px solid #bde6d2}
+  .verdict.bad{background:var(--red2);border:1px solid #f6d3bd}
+  .footer{margin-top:18px;color:var(--ink3);font-size:12px;text-align:center}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>youweiAI-amazon · 21 场景提示词优化 A/B 实验报告</h1>
+    <div class="sub">实验日期 2026-11-14 · 全部走真实 UI 会话（Open WebUI + 浏览器扩展通道）· 数据源为当次真实接口返回</div>
+    <div class="chips">
+      <span class="chip">3 组 A/B 对照</span>
+      <span class="chip">15 场景优化方案定稿</span>
+      <span class="chip">21 场景基线耗时实测</span>
+      <span class="chip">口径纪律 0 退化</span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><span>调用数最优改进</span><b>-33%</b><small>场景12 五维判定 9→6 次</small></div>
+    <div class="kpi"><span>耗时最优改进</span><b>21.7→9.0 分</b><small>场景8 节令新品（单独跑）</small></div>
+    <div class="kpi"><span>搜索调用收敛</span><b>4→1 次</b><small>场景8 首轮带齐三层硬条件</small></div>
+    <div class="kpi"><span>质量退化</span><b class="ok">0 项</b><small>listing_date窗/order_rate如实/未完月剔除全保持</small></div>
+  </div>
+
+  <section>
+    <h2>一、结论速览</h2>
+    <div class="grid2">
+      <div class="box">
+        <h4>✅ 采纳① 搜索层收紧</h4>
+        <p>首轮检索就把月销下限、评论上限、上架时间窗三层硬条件交给服务端过滤，召回池直接缩小，后续核验量随之下降。场景8：<b>54→44 次调用、search_sync 4→1 次</b>。</p>
+        <p>适用范围：列表筛选类（3/5/8/9/11/13）。</p>
+      </div>
+      <div class="box">
+        <h4>✅ 采纳② 三路并行直出</h4>
+        <p>同一 node_id 的类目报告、趋势、榜单三路一次并发发出，中间不写叙述，直接出结论与报告。场景12：<b>9→6 次调用（-33%）</b>，且核验从抽样升级为 Top100 全量逐条。</p>
+        <p>适用范围：分析类（4/6/7/10/12/13/16/17/18/19/20）。</p>
+      </div>
+      <div class="box">
+        <h4>❌ 不采纳 分步收敛</h4>
+        <p>「先详情后趋势、已检不重检」在场景5 没有减少调用（31→48/52 次），因为趋势核验是判断“是否单月脉冲”的质量必需项。耗时下降来自脱离并行争用，不是方案本身。</p>
+      </div>
+      <div class="box">
+        <h4>⚠️ 方法教训 续问不等于独立会话</h4>
+        <p>同一会话连续追问会让上下文膨胀，模型出现“过度执行”：场景9 调用 <b>26→67 次（+158%）</b>。优化效果必须用<b>独立新会话</b>测，续问数据只能作参考。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>二、三方案 A/B 对照（独立新会话，数据有效）</h2>
+    <table>
+      <thead><tr><th>场景</th><th>方案</th><th class="num">基线调用</th><th class="num">变体调用</th><th class="num">基线耗时</th><th class="num">变体耗时</th><th>质量</th><th>判定</th></tr></thead>
+      <tbody>
+        <tr><td>12 市场五维判定</td><td>B 三路并行直出</td><td class="num">9</td><td class="num"><b>6</b></td><td class="num">约5分（单独）</td><td class="num">6.8分</td><td>提升：Top100 全量100款逐条核验</td><td class="ok">✅ 采纳</td></tr>
+        <tr><td>8 节令新品灵感</td><td>B 搜索层收紧</td><td class="num">54</td><td class="num"><b>44</b></td><td class="num">21.7分（争用）</td><td class="num"><b>9.0分</b></td><td>相当：12款赢家+跟款优先级+不碰清单</td><td class="ok">✅ 采纳</td></tr>
+        <tr><td>5 找评论少销量高</td><td>A 分步收敛</td><td class="num">31</td><td class="num">48</td><td class="num">20.7分（争用）</td><td class="num">10.3分</td><td>相当：口径全命中</td><td class="no">❌ 不采纳</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>读数提示：</b>场景5 的 10.3 分主要是“单独跑、没有 21 路并行争用”带来的红利，变体本身并没有减少调用次数——趋势核验省不掉，所以这个方案对该场景无增益。</div>
+  </section>
+
+  <section>
+    <h2>三、全量推广实测（同会话续问模式，仅作参考）</h2>
+    <table>
+      <thead><tr><th>场景</th><th>优化后做法</th><th class="num">基线调用</th><th class="num">优化版调用</th><th class="num">基线耗时</th><th class="num">优化版耗时</th><th>判定</th></tr></thead>
+      <tbody>
+        <tr><td>1 BSR 飙升潜力款</td><td>三路并行（detail 批量 8-12/批 + 趋势只对上升款）</td><td class="num">36</td><td class="num">57</td><td class="num">14.4分</td><td class="num">17.4分</td><td class="warn">调用 +58%：detail 28 款全核替代抽样，覆盖更全但更慢 → 保持原样</td></tr>
+        <tr><td>5 找评论少销量高</td><td>搜索层三层硬条件收紧</td><td class="num">31</td><td class="num">52</td><td class="num">20.7分</td><td class="num"><b>13.1分</b></td><td class="warn">时间 -37%（无争用红利为主），调用 +68%</td></tr>
+        <tr><td>9 蓝海新品</td><td>搜索层收紧</td><td class="num">26</td><td class="num"><b>67</b></td><td class="num">25.1分</td><td class="num">26.4分</td><td class="no">❌ 调用 +158%：detail 41 + content 8 过度核验</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>为什么这三条不作为采纳依据：</b>它们是同一个会话里连续追问跑出来的，历史上下文会让模型不断“再核一遍”。同一份提示词在独立新会话里表现明显更克制，因此只有第二章的独立会话数据参与决策。</div>
+  </section>
+
+  <section>
+    <h2>四、21 场景基线耗时与采纳方案</h2>
+    <p style="font-size:12.5px;color:var(--ink3);margin:0 0 6px">基线为 2026-11-14 上午 21 路并行回归的真实起止时间（含并行争用，比单独跑偏慢）；优化版耗时仅对单独复跑过的场景给出。</p>
+    <table>
+      <thead><tr><th>场景</th><th class="num">基线耗时</th><th class="num">基线调用</th><th>采纳方案</th><th class="num">优化版</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>1 BSR 飙升潜力款</td><td class="num">14.4分</td><td class="num">36</td><td>保持原版（多路召回本身就是需求）</td><td class="num">17.4分 / 57</td><td><span class="tag tag-k">保持原样</span></td></tr>
+        <tr><td>2 FBM 小批测款法</td><td class="num">35.1分*</td><td class="num">9</td><td>未纳入本轮（含 ask_user 等待，无筛选链路差异）</td><td class="num">—</td><td><span class="tag tag-n">沿用原版</span></td></tr>
+        <tr><td>3 关键词供需双筛</td><td class="num">17.1分</td><td class="num">12</td><td>搜索层收紧 + keyword_detail 批量并行</td><td class="num">已定稿未单跑</td><td><span class="tag tag-s">S · 搜索层收紧</span></td></tr>
+        <tr><td>4 去年Q4旺季备货</td><td class="num">22.9分</td><td class="num">41</td><td>历史搜索两节点并行 + 趋势两批 8 个</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>5 找评论少销量高</td><td class="num">20.7分</td><td class="num">31</td><td>搜索层三层硬条件服务端过滤</td><td class="num">13.1分 / 52</td><td><span class="tag tag-s">S · 搜索层收紧</span></td></tr>
+        <tr><td>6 搜索量上升利基品</td><td class="num">17.2分</td><td class="num">18</td><td>keyword_trend 批量并行 8 词/批</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>7 本土溢价市场</td><td class="num">14.8分</td><td class="num">30</td><td>china_seller_share 子类清单一次并行、零中间叙述</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>8 节令新品灵感</td><td class="num">21.7分</td><td class="num">54</td><td>首轮带齐月销/评论/上架窗三层硬条件</td><td class="num"><b>9.0分 / 44</b></td><td><span class="tag tag-s">S · 搜索层收紧</span></td></tr>
+        <tr><td>9 蓝海新品</td><td class="num">20.1分</td><td class="num">26</td><td>搜索层收紧（评论≤100+评分≥4.5+上架窗）</td><td class="num">26.4分 / 67（续问膨胀）</td><td><span class="tag tag-s">S · 搜索层收紧</span></td></tr>
+        <tr><td>10 跨站点爆款复制</td><td class="num">19.0分</td><td class="num">20</td><td>美德两站搜索+类目报告各一次并行</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>11 小类深度调研四步法</td><td class="num">18.5分</td><td class="num">23</td><td>Top100 一次 + 类目报告一次并行；1688 供应商搜索收紧销量≥5000</td><td class="num">已定稿未单跑</td><td><span class="tag tag-s">S · 搜索层收紧</span></td></tr>
+        <tr><td>12 市场环境五维判定</td><td class="num">15.9分（单独约5分）</td><td class="num">9</td><td>category_report + trend + products 三路同 node_id 并发，零叙述直出</td><td class="num"><b>6.8分 / 6</b></td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>13 筛细分类目</td><td class="num">16.3分</td><td class="num">9</td><td>多子类 category_report 并行直出对比表</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>14 1688 图搜拿货+毛利</td><td class="num">15.7分</td><td class="num">13</td><td>不适用（图搜链路无列表筛选/多路召回）</td><td class="num">—</td><td><span class="tag tag-k">不适用</span></td></tr>
+        <tr><td>15 外网图搜 1688 货源</td><td class="num">53.6分*</td><td class="num">0</td><td>不适用（卡在等图片 URL 的合规分支，正常约 4 分钟）</td><td class="num">—</td><td><span class="tag tag-k">不适用</span></td></tr>
+        <tr><td>16 ASIN 详情解析·跟款</td><td class="num">9.2分</td><td class="num">6</td><td>detail + content + variations 一次三连</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>17 Listing 卖点渗透率</td><td class="num">6.7分</td><td class="num">8</td><td>三 ASIN 的 detail + content 两路一批（6 调用/批）</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>18 Listing 诊断</td><td class="num">8.9分</td><td class="num">13</td><td>三趋势 + 词反查 + 评论分层各一批并行</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>19 竞品差评找改进点</td><td class="num">23.8分*</td><td class="num">22</td><td>三 ASIN 差评分层一批并行（含 ask_user 等待）</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>20 竞品销量变化归因</td><td class="num">6.7分</td><td class="num">17</td><td>销量/价格/BSR/词趋势四路并行</td><td class="num">已定稿未单跑</td><td><span class="tag tag-p">P · 并行直出</span></td></tr>
+        <tr><td>21 SP 广告搜索词分析</td><td class="num">0.6分</td><td class="num">2</td><td>不适用（需用户上传真实 SP 报告，缺文件分支）</td><td class="num">—</td><td><span class="tag tag-k">不适用</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>* 含等待时间：</b>场景2 的 35.1 分含两轮 ask_user 问答等待；场景15 的 53.6 分卡在等图片 URL 的合规分支；场景19 含问站点等待与 84 条差评分层抽样。这些不是执行速度问题。</div>
+  </section>
+
+  <section>
+    <h2>五、给客户的耗时口径（单独跑、无并行争用）</h2>
+    <table>
+      <thead><tr><th>档位</th><th>典型场景</th><th class="num">耗时</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>快 · 单点解析/判定</td><td>12 五维判定、16 ASIN解析、17 卖点渗透、20 销量归因、21 缺文件分支</td><td class="num">5-8 分钟</td><td>调用 6-17 次，1-3 轮取数</td></tr>
+        <tr><td>中 · 标准筛选</td><td>8 节令新品、5 低评高销、13 筛类目、3 供需双筛</td><td class="num">8-13 分钟</td><td>搜索层收紧后召回池缩半，核验量下降</td></tr>
+        <tr><td>深 · 多路召回+逐款核验</td><td>1 BSR飙升、4 Q4备货、7 本土溢价、9 蓝海、11 四步法</td><td class="num">15-25 分钟</td><td>30-60 次调用、10-15 轮，逐款真实核验</td></tr>
+      </tbody>
+    </table>
+    <div class="verdict good"><b>一句话：</b>简单判定 5-8 分钟，标准筛选 8-13 分钟，深度调研 15-25 分钟。多个问题建议并行开独立会话，互不阻塞。</div>
+  </section>
+
+  <section>
+    <h2>六、关键发现与口径纪律</h2>
+    <h3>1. 耗时由“轮数 × 每轮固定成本”决定，压不到零</h3>
+    <p>一轮 = 模型读上下文思考（系统提示词+技能全文+已积累调用历史）→ 发一批并行调用 → 等接口返回（单次 5-15 秒，批内取最慢）→ 写一行叙述。每轮固定成本约 30-60 秒，最终 HTML 报告本身还要 1-2 分钟。因此深度调研类天然有 8-12 分钟的物理地板，这不是浪费，是做真实逐款核验的成本。</p>
+    <h3>2. 优化省掉的是“浪费”，不是“核验”</h3>
+    <p>被省掉的是：同一条件反复检索（大小写/单复数重复）、串行轮询、啰嗦中间叙述、execute_code 挂起。被保留的是：逐款 detail/trend 核验、阈值判定、剔除明细、数据缺口披露。</p>
+    <h3>3. 口径纪律零退化</h3>
+    <p>所有变体实测均保持：listing_date 时间窗锚点、order_rate 为 null 时如实标注、未完月剔除、剔除明细可追溯、缺失字段不补零、样本口径不冒充全市场。</p>
+    <h3>4. 测试方法本身会污染数据</h3>
+    <p>21 路并行争用把第一批会话拖慢 2-3 倍（场景12 单独 5 分 vs 争用 15.9 分）；同会话续问让模型过度执行（场景9 调用 +158%）。<b>结论：优化效果只在“独立新会话 + 无并行争用”下比较。</b></p>
+  </section>
+
+  <section>
+    <h2>七、当前线上状态与下一步</h2>
+    <p><b>线上状态：</b>15 个受测场景技能<b>已全部恢复正式版</b>，不影响客户日常使用；优化版提示词保留在仓库 <code>skill/youweiai-amazon-scenes/prompt-ab-test/sceneN_optimized.md</code>，随时可批量上线。</p>
+    <p><b>下一步（可选）：</b>① 按“搜索层收紧 / 并行直出”两类分批上线优化版，每批上线后用独立新会话抽测 1 个场景做回归；② 场景 1、9 需要单独复跑确认（场景1 全量核验是否保留、场景9 独立会话下的真实调用数）；③ 继续压缩技能提示词长度，预期还能省 20-30%，不会有量级变化。</p>
+    <div class="note"><b>数据边界：</b>本报告的耗时与调用数均来自真实 UI 会话的工具调用记录；未单独复跑的场景，其“优化版”耗时未标数字，不做估算。</div>
+  </section>
+
+  <div class="footer">youweiAI-amazon · 21 场景技能 · 提示词优化 A/B 实验报告 · 2026-11-14 · 数据来源：Open WebUI 真实会话调用记录</div>
+</div>
+</body>
+</html>

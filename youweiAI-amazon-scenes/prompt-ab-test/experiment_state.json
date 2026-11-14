@@ -1,0 +1,24 @@
+{
+ "experiment": "prompt-ab-test",
+ "status": "已暂停：浏览器MCP锁死无法发起真实UI会话；线上已恢复正式版，test技能已清理",
+ "variants": {
+  "5A": "分步收敛（先详情后趋势，已检登记）",
+  "5B": "并行批次10-12",
+  "8A": "变体词登记+content延后",
+  "8B": "搜索层三层硬条件收紧",
+  "12A": "同日记录复用",
+  "12B": "三路并行直出报告"
+ },
+ "live_replaced": [
+  "youweiai-amazon-scene-market-five-dim → 12B"
+ ],
+ "restore_files": "prompt-ab-test/online_baseline.json",
+ "baseline": "2026-11-14回归：场景5=31调用/20.7分，场景8=54调用/21.7分，场景12=9调用/5分(单独)",
+ "resume_steps": [
+  "1. 浏览器MCP恢复后，按 variants.json 的方案把对应场景技能content替换为变体（prompt-ab-test/sceneN_A.md 或 sceneN_B.md）",
+  "2. UI发起新会话（问法与基线一致：场景5=美国站女包评论≤199月销≥300；场景8=美国站Halloween dog costume近3个月；场景12=美国站Shoulder Bags 3421075011）",
+  "3. 监控调用数/耗时/口径命中，与 baseline.json 对比",
+  "4. 每测完一个变体立即用 online_baseline.json 恢复正式版",
+  "5. 全部测完选出最优方案推全量21场景"
+ ]
+}

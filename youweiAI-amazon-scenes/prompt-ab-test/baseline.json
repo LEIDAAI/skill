@@ -1,0 +1,28 @@
+{
+ "scene5": {
+  "calls": 31,
+  "duration_min": 20.7,
+  "sorftime": 29,
+  "detail": 14,
+  "trend": 12,
+  "search": 3,
+  "html_kb": 20,
+  "note": "38款全详情+24款趋势"
+ },
+ "scene8": {
+  "calls": 54,
+  "duration_min": 21.7,
+  "sorftime": 52,
+  "search_sync": 4,
+  "detail": 16,
+  "trend": 15,
+  "content": 16,
+  "html_kb": 22,
+  "note": "含大小写重复检索1次"
+ },
+ "scene12": {
+  "calls": 9,
+  "duration_min": 15.9,
+  "note": "并行争用下；单独跑约5分钟。用了同日缓存记录复用"
+ }
+}

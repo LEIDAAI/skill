@@ -1048,6 +1048,15 @@
       "target": "hub:index.html",
       "action": "fix",
       "summary": "修复页面顶部裸文本事故：移除 9e6c652 误拼在 DOCTYPE 前的 16 行 TEMU 专家 sysPrompt；修复并行 A/B 会话 renderGrid 引用已删除变量 curKind 的运行时错误（改为 list 含 scene-* 技能时显示 A/B banner），专家/技能网格恢复渲染"
+    },
+    {
+      "ts": "2026-11-14 20:10:00",
+      "target": "system",
+      "action": "report",
+      "summary": "亚马逊21场景提示词优化A/B结论同步导航：实测banner升级为5条（含续问膨胀教训与场景1保持原样），新增逐场景SCENE_OPT_PERF（21场景基线耗时/调用/采纳方案），技能工作台实测栏与场景卡同步展示，完整报告 youweiAI-amazon-prompt-ab-20261114.html",
+      "snapshots": {
+        "note": "数据口径：基线为2026-11-14上午21路并行回归真实起止时间；优化版仅5场景单独复跑过，未单跑的不估耗时"
+      }
     }
   ]
 }

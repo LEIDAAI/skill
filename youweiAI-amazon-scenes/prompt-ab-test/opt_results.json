@@ -1,0 +1,23 @@
+{
+ "opt_scene1": {
+  "dur": 17.4,
+  "calls": 57,
+  "baseline_dur": 14.4,
+  "baseline_calls": 36,
+  "verdict": "调用+58%（多路召回+28款全核），覆盖更全但时间更长；续问模式上下文膨胀"
+ },
+ "opt_scene5": {
+  "dur": 13.1,
+  "calls": 52,
+  "baseline_dur": 20.7,
+  "baseline_calls": 31,
+  "verdict": "时间-37%（无争用红利为主）；调用+68%"
+ },
+ "opt_scene9": {
+  "dur": 26.4,
+  "calls": 67,
+  "baseline_dur": 25.1,
+  "baseline_calls": 26,
+  "verdict": "调用+158%！detail41+content8过度核验；上下文膨胀导致过度执行"
+ }
+}

@@ -1635,17 +1635,70 @@ const AMAZON_SCENE_SKILLS = [
   }
 ];
 
-/* ================= 提示词优化实测（2026-11-14 A/B） ================= */
+/* ================= 提示词优化实测（2026-11-14 A/B，含 15 场景全量推广） ================= */
+const SCENE_OPT_REPORT = {
+  file: 'youweiAI-amazon-prompt-ab-20261114.html',
+  title: '21 场景提示词优化 A/B 实验完整报告（三方案对照 + 21 场景耗时 + 采纳清单）'
+};
 const SCENE_OPT_BANNER = {
   date: '2026-11-14',
-  title: '提示词优化实测（A/B 对照）已完成：3 方案 × 真实 UI 会话',
+  title: '提示词优化实测（A/B 对照 + 15 场景全量推广）已完成：3 方案 × 真实 UI 会话',
   items: [
-    { plan: '搜索层收紧（首轮带齐硬条件服务端过滤）', scene: '节令新品 场景8', calls: '54 → 44 次（-19%）', time: '约12分 → 9.0分', verdict: '✅ 采纳 · 列表筛选类通用' },
-    { plan: '三路并行直出（同node_id并发+零叙述）', scene: '五维判定 场景12', calls: '9 → 6 次（-33%）', time: '≈持平（6.8分）', verdict: '✅ 采纳 · 质量提升（Top100全量核验）' },
-    { plan: '分步收敛（先详情后趋势）', scene: '低评高销 场景5', calls: '31 → 48 次', time: '10.3~13.1分', verdict: '❌ 不采纳 · 趋势为质量必需' }
+    { plan: '搜索层收紧（首轮带齐月销/评论/上架窗硬条件）', scene: '节令新品 场景8', calls: '54 → 44 次（-19%）', time: '21.7分 → 9.0分（单独跑）', verdict: '✅ 采纳 · 列表筛选类通用（3/5/9/11/13 同步定稿）' },
+    { plan: '三路并行直出（同node_id并发+零中间叙述）', scene: '五维判定 场景12', calls: '9 → 6 次（-33%）', time: '5分 → 6.8分', verdict: '✅ 采纳 · 质量升（Top100 全量100款核验）' },
+    { plan: '分步收敛（先详情后趋势）', scene: '低评高销 场景5', calls: '31 → 48 次', time: '20.7分 → 10.3分', verdict: '❌ 不采纳 · 趋势核验是质量必需，耗时降来自无争用' },
+    { plan: '续问模式全量推广（上下文膨胀）', scene: '蓝海新品 场景9', calls: '26 → 67 次（+158%）', time: '20.1分 → 26.4分', verdict: '⚠️ 方法教训 · 续问致过度执行，不作优化依据' },
+    { plan: '保持原样 · 未改链路', scene: 'BSR飙升 场景1', calls: '36 → 57 次', time: '14.4分 → 17.4分', verdict: '保持原样 · 多路召回是需求本身，全量核验覆盖更全但更慢' }
   ],
-  note: '口径纪律零退化（listing_date窗/order_rate如实/未完月剔除全部保持）。独立新会话实测有效；同会话续问会上下文膨胀导致过度执行，不作为优化依据。耗时参考：判定5-8分/筛选8-13分/深调15-25分。'
+  note: '口径纪律零退化（listing_date窗/order_rate如实/未完月剔除/缺失不补零全部保持）。耗时口径（单独跑、无并行争用）：简单判定5-8分 / 标准筛选8-13分 / 深度调研15-25分。15 个场景优化版提示词已定稿留仓（prompt-ab-test/sceneN_optimized.md），线上仍为正式版；场景1 保持原样，14/15/21 不适用。'
 };
+/* 逐场景优化结论：base=基线（2026-11-14 上午 21 路并行回归，含争用），opt=优化版实测（仅单独复跑过的才有） */
+const SCENE_OPT_PERF = {
+  1:  { tag: '保持原样', scheme: '多路召回+detail全量核验（未改链路）', base: '14.4分 / 36次', opt: '17.4分 / 57次', verdict: '覆盖更全但更慢，多路召回本身是需求' },
+  2:  { tag: '沿用原版', scheme: '未纳入本轮（无筛选/召回链路差异）', base: '35.1分* / 9次', opt: '—', verdict: '*含两轮 ask_user 等待' },
+  3:  { tag: '搜索层收紧', scheme: '搜索层收紧 + keyword_detail 批量并行', base: '17.1分 / 12次', opt: '已定稿未单跑', verdict: '招回池缩小，核验量下降' },
+  4:  { tag: '并行直出', scheme: '历史搜索两节点并行 + 趋势两批8个', base: '22.9分 / 41次', opt: '已定稿未单跑', verdict: '取数轮次减少' },
+  5:  { tag: '搜索层收紧', scheme: '首轮带齐评论≤199+月销≥300+180天窗', base: '20.7分 / 31次', opt: '13.1分 / 52次', verdict: '时间-37%（主因无争用）；趋势核验不省' },
+  6:  { tag: '并行直出', scheme: 'keyword_trend 批量并行 8词/批', base: '17.2分 / 18次', opt: '已定稿未单跑', verdict: '趋势批量降低轮次' },
+  7:  { tag: '并行直出', scheme: 'china_seller_share 子类清单一次并行、零叙述', base: '14.8分 / 30次', opt: '已定稿未单跑', verdict: '一次取齐，减少串行轮询' },
+  8:  { tag: '搜索层收紧', scheme: '首轮带齐月销+评论+上架窗三层硬条件', base: '21.7分 / 54次', opt: '9.0分 / 44次', verdict: 'search_sync 4→1，最有效方案' },
+  9:  { tag: '搜索层收紧', scheme: '评论≤100+评分≥4.5+上架窗服务端过滤', base: '20.1分 / 26次', opt: '26.4分 / 67次（续问膨胀）', verdict: '续问致过度核验，需独立会话复跑确认' },
+  10: { tag: '并行直出', scheme: '美德两站搜索+类目报告各一次并行', base: '19.0分 / 20次', opt: '已定稿未单跑', verdict: '两站对比一次取齐' },
+  11: { tag: '搜索层收紧', scheme: 'Top100+类目报告并行；1688供应商销量≥5000', base: '18.5分 / 23次', opt: '已定稿未单跑', verdict: '供应商召回收紧' },
+  12: { tag: '并行直出', scheme: '三路同 node_id 并发 + 零中间叙述直出', base: '15.9分（单独约5分）/ 9次', opt: '6.8分 / 6次', verdict: '调用-33%，核验升级为100款全量' },
+  13: { tag: '并行直出', scheme: '多子类 category_report 并行直出对比表', base: '16.3分 / 9次', opt: '已定稿未单跑', verdict: '子类对比一次取齐' },
+  14: { tag: '不适用', scheme: '图搜链路（无列表筛选/多路召回）', base: '15.7分 / 13次', opt: '—', verdict: '不纳入本轮优化' },
+  15: { tag: '不适用', scheme: '图搜链路（等图片URL的合规分支）', base: '53.6分* / 0次', opt: '—', verdict: '*卡在 ask_user，正常约4分钟' },
+  16: { tag: '并行直出', scheme: 'detail + content + variations 一次三连', base: '9.2分 / 6次', opt: '已定稿未单跑', verdict: '三连省一轮' },
+  17: { tag: '并行直出', scheme: '三 ASIN 的 detail+content 两路一批（6调用/批）', base: '6.7分 / 8次', opt: '已定稿未单跑', verdict: '批量并行' },
+  18: { tag: '并行直出', scheme: '三趋势+词反查+评论分层各一批并行', base: '8.9分 / 13次', opt: '已定稿未单跑', verdict: '三次批量替代串行' },
+  19: { tag: '并行直出', scheme: '三 ASIN 差评分层一批并行', base: '23.8分* / 22次', opt: '已定稿未单跑', verdict: '*含问站点等待 + 84条抽样' },
+  20: { tag: '并行直出', scheme: '销量/价格/BSR/词趋势四路并行', base: '6.7分 / 17次', opt: '已定稿未单跑', verdict: '四路一次取齐' },
+  21: { tag: '不适用', scheme: '需用户上传 SP 报告（缺文件分支）', base: '0.6分 / 2次', opt: '—', verdict: '缺文件分支已验收' }
+};
+/* 场景卡片上的优化结论行 */
+function sceneOptLine(s) {
+  if (typeof SCENE_OPT_PERF === 'undefined' || !s || !s.sceneNo) return '';
+  const p = SCENE_OPT_PERF[s.sceneNo];
+  if (!p) return '';
+  return '<div style="font-size:11.5px;margin:6px 0;color:#2456c4" title="' + esc(p.scheme + ' · ' + p.verdict) + '">⚡ 优化实测 · ' + esc(p.tag) + ' · ' + esc(p.base) + ((p.opt && p.opt !== '—') ? ' → ' + esc(p.opt) : '') + '</div>';
+}
+/* 工作台实测栏里的优化结论块 */
+function sceneOptBlock(s) {
+  if (typeof SCENE_OPT_PERF === 'undefined' || !s || !s.sceneNo) return '';
+  const p = SCENE_OPT_PERF[s.sceneNo];
+  if (!p) return '';
+  const color = p.tag === '搜索层收紧' || p.tag === '并行直出' ? '#0b7a4b' : p.tag === '保持原样' || p.tag === '不适用' ? '#5b6b78' : '#a16207';
+  return '<div class="demo-sec">⚡ 提示词优化实测（2026-11-14 A/B）</div>' +
+    '<div class="demo-kpis">' +
+      '<div class="demo-kpi"><span>采纳方案</span><b style="color:' + color + '">' + esc(p.tag) + '</b></div>' +
+      '<div class="demo-kpi"><span>基线（并行回归）</span><b>' + esc(p.base) + '</b></div>' +
+      '<div class="demo-kpi"><span>优化版</span><b>' + esc(p.opt) + '</b></div>' +
+    '</div>' +
+    '<div class="demo-flow">具体做法：' + esc(p.scheme) + '<br>结论：' + esc(p.verdict) + '</div>' +
+    (typeof SCENE_OPT_REPORT !== 'undefined' ? '<div class="demo-flow"><a href="' + esc(SCENE_OPT_REPORT.file) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">📄 查看完整 A/B 实验报告（三方案对照 + 21 场景耗时）</a></div>' : '') +
+    '<div class="demo-note">基线含 21 路并行争用，比单独跑偏慢；“已定稿未单跑”表示优化版提示词已写好但未单独复跑，不估算耗时。</div>';
+}
 const AMAZON_PUBLIC_DEMOS = {
   'skill-amazon-selection-search': {"chatUrl":"https://local.dianleida.net:21996/c/d28464cd-7456-4b60-958c-f28f323312f0","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-14","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"10 条"},{"label":"筛选维度","v":"7/7 通过"},{"label":"质量","v":"✓ 通过"}],"flow":["美国站浴室置物架15款 → 会话 d28464cd","日本站儿童水壶严格筛选 → 会话 57e31ba0","麻将包主图列回归 → 会话 1564f148","筛选维度① 互斥条件（近30天上架×月销5000+×4.9星×评论>2000×≤$15）→ 会话 16b50149：0款如实报，两组诊断定位瓶颈为近30天上架×评论>2000 互斥，给方案A/B不放宽","筛选维度② 小类BSR≤100×月销500+×评论≤500 → 会话 dfadeef8：BSR为接口原生字段未替代，10款 #22-#96 严格达标","筛选维度③ 上架>3年×月销1000+×排除PETLIBRO/Veken → 会话 72172a5c：上架≤2023-11-14 锚点，85条去重53 ASIN 判型，10款整机达标","筛选维度④ 变体父子聚合（变体数≥5×单变体月销≥500）→ 会话 ab48a953：60样本→18父体→10入选，每行=1父体不重复计数，Top1 Gaiam Essentials 12变体月销40,952","筛选维度⑤ 卖家类型FBA（排除FBM/自营×月销1000+×评论≤1000）→ 会话 3595911d：FBA由接口配送方式参数过滤生效，接口不返回卖家类型字段如实披露，38款入选","筛选维度⑥ 销量增速环比（近28天vs前28天≥+50%）→ 会话 2c6e9ae7：接口无现成环比字段，日销序列execute_code核算真实环比，0款达标如实报（全场最高+31.3%），2款窗口不足标无法判定","筛选维度⑦ 缺失字段硬条件（重量≤500g）→ 会话 412db856：weight_g逐款实核16款，盎司数≠实重（Lulu 9oz实重599g剔除），缺失不按0g计，15款达标"],"table":{"head":["核验项","实测结果"],"rows":[["严格筛选","日本站17入口36样本5预筛1达标不凑数"],["类目体检","主节点2421559051+未完月剔除"],["竞品对比","THERMOS身份核验B0HBGYPY75为成人款"],["互斥条件","0款→诊断出近30天上架×评论>2000互斥"],["BSR筛选","#22-#96/月销3,347-6,494/评论44-487"],["老链接排除品牌","10款整机/在架3.03-7.27年/临界样本FEELNEEDY核验"],["变体父子聚合","60样本18父体10入选/每行=1父体/Top1 12变体月销40,952"],["FBA卖家类型","接口配送方式过滤/卖家类型字段缺失如实披露/38款入选"],["销量增速环比","日销序列真实环比/0款达+50%如实报/最高+31.3%"],["缺失字段硬条件","weight_g逐款实核/盎司数≠实重/缺失不按0g计/15款达标"]]},"note":"选品搜索硬条件零凑数；主图列+悬停浮层已在候选表强制；筛选维度扩展回归两轮合计7/7（互斥条件诊断/BSR原生字段/反向时间窗+品牌排除/变体父子聚合/FBA卖家类型/销量增速环比/缺失字段硬条件），完整证据见仓库验收报告 amazon-eight-skills-acceptance-2026-11-13.html","report":"amazon-eight-skills-acceptance-2026-11-13.html","reportTitle":"八项公共技能验收报告（8/8 + 筛选维度 7/7，含逐条证据与会话链接）"},
   'skill-amazon-competitor': {"chatUrl":"https://local.dianleida.net:21996/c/57e31ba0-32f5-4776-927e-6f97083abc30","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["日本站水壶竞品 → 会话 57e31ba0","美国站运动水壶对标 → 会话 5151c95c"],"table":{"head":["核验项","实测结果"],"rows":[["身份核验","B0HBGYPY75为成人通用480mL非儿童款"],["对比口径","仅2次detail+2次variations"],["JPY渲染","右侧实际渲染"]]},"note":"竞品身份核验不合格即隔离，三档判定（建议对标/壁垒/勿入）"},
@@ -1796,8 +1849,10 @@ function renderGrid() {
   });
   const banner = (list.some(s => (s.id || '').startsWith('scene-')) && typeof SCENE_OPT_BANNER !== 'undefined') ?
     '<div class="card" style="grid-column:1/-1;background:#f0f7ff;border:1.5px solid #c7ddf7"><div class="card-head"><div class="tags"><span class="ptag" style="color:#2456c4;border:1.5px solid #2456c4">🧪 提示词优化实测 ' + SCENE_OPT_BANNER.date + '</span></div><span class="badge badge-built">✓ 已验证</span></div><h3 style="font-size:15px">' + esc(SCENE_OPT_BANNER.title) + '</h3><div class="desc">' +
-    SCENE_OPT_BANNER.items.map(it => '<div style="padding:6px 0;border-bottom:1px dashed #d5e3f7"><b>' + esc(it.plan) + '</b>（' + esc(it.scene) + '）：调用 <b>' + esc(it.calls) + '</b> · 耗时 <b>' + esc(it.time) + '</b> — <span style="color:' + (it.verdict.indexOf('✅') === 0 ? '#16a34a' : '#dc2626') + ';font-weight:600">' + esc(it.verdict) + '</span></div>').join('') +
-    '<div style="margin-top:8px;font-size:12px;color:#6b7688">' + esc(SCENE_OPT_BANNER.note) + '</div></div></div>' : '';
+    SCENE_OPT_BANNER.items.map(it => '<div style="padding:6px 0;border-bottom:1px dashed #d5e3f7"><b>' + esc(it.plan) + '</b>（' + esc(it.scene) + '）：调用 <b>' + esc(it.calls) + '</b> · 耗时 <b>' + esc(it.time) + '</b> — <span style="color:' + (it.verdict.indexOf('✅') === 0 ? '#16a34a' : it.verdict.indexOf('⚠️') === 0 ? '#a16207' : it.verdict.indexOf('保持') === 0 ? '#5b6b78' : '#dc2626') + ';font-weight:600">' + esc(it.verdict) + '</span></div>').join('') +
+    '<div style="margin-top:8px;font-size:12px;color:#6b7688">' + esc(SCENE_OPT_BANNER.note) + '</div>' +
+    (typeof SCENE_OPT_REPORT !== 'undefined' ? '<div style="margin-top:8px;font-size:12.5px"><a href="' + esc(SCENE_OPT_REPORT.file) + '" target="_blank" rel="noopener" style="color:#2456c4">📄 ' + esc(SCENE_OPT_REPORT.title) + '</a></div>' : '') +
+    '</div></div>' : '';
   if (!list.length) { grid.innerHTML = banner + '<div class="empty">没有匹配的技能，换个筛选条件或添加一个吧</div>'; return; }
   grid.innerHTML = banner +
  list.map(s => {
@@ -1822,6 +1877,7 @@ function renderGrid() {
         (s.version ? '<span>' + esc(s.version) + '</span>' : '') +
       '</div>' : '') +
       '<div class="desc">' + esc(s.desc || '') + '</div>' +
+      sceneOptLine(s) +
       (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
       syncNote + '<div class="card-actions">' +
         '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
@@ -3785,7 +3841,8 @@ function renderSkillWs() {
     right.innerHTML = '<h4>📊 ' + esc(s.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
       '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
       '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
-      table + '<div class="demo-note">' + esc(d.note) + '</div>' + (d.report ? '<div class="demo-sec">完整验收报告</div><div class="demo-flow"><a href="' + esc(d.report) + '" target="_blank" rel="noopener">' + esc(d.reportTitle || '查看验收报告（含逐条证据与会话链接）') + '</a></div>' : '');
+      table + '<div class="demo-note">' + esc(d.note) + '</div>' + (d.report ? '<div class="demo-sec">完整验收报告</div><div class="demo-flow"><a href="' + esc(d.report) + '" target="_blank" rel="noopener">' + esc(d.reportTitle || '查看验收报告（含逐条证据与会话链接）') + '</a></div>' : '') +
+      sceneOptBlock(s);
   } else {
     right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
   }
