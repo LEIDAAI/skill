@@ -3640,7 +3640,7 @@ function renderWsVersions(targetPrefix) {
       '<span style="color:#2b3648">' + esc(e.summary) + '</span>' +
       (e.snapshots ? '<span style="color:#008a37;font-size:10.5px"> · 📸有快照</span>' : '') + '</div>').join('')
       : '<div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">暂无记录</div>';
-    if (selectLatest && list.length) wsRenderVersionContent(list[0]);
+    if (selectLatest && list.length && wsTab === 'prompt' && (wsMode !== 'skill' || wsSkillView === 'prompt')) wsRenderVersionContent(list[0]);
   }, 0);
   return '<div id="' + boxId + '"><div class="ws-desc" style="font-size:11.5px;color:#9aa3b2">加载中…</div></div>';
 }
@@ -3662,6 +3662,32 @@ async function wsShowVersion(i) {
   }
   document.querySelectorAll('#ws-left .ws-ver-item').forEach((item, index) => item.classList.toggle('sel', index === i));
   wsRenderVersionContent(e);
+}
+/* 历史版本快照里的 demo 渲染：兼容新格式（kpis对象/table.head）与旧格式（kpis字符串/table对象数组） */
+function demoSnapshotHtml(d) {
+  let h = '';
+  if (d.title) h += '<div class="demo-sec">实测记录 · ' + esc(d.title) + (d.date ? '（' + esc(d.date) + '）' : '') + '</div>';
+  const kpis = Array.isArray(d.kpis) ? d.kpis : [];
+  if (kpis.length && kpis[0] && typeof kpis[0] === 'object') {
+    h += '<div class="demo-kpis">' + kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label || '') + '</span><b>' + esc(k.v == null ? '' : k.v) + '</b></div>').join('') + '</div>';
+  } else if (kpis.length) {
+    h += '<div class="demo-sec">关键指标</div><div class="demo-flow">' + kpis.map(k => '· ' + esc(k)).join('<br>') + '</div>';
+  }
+  if (Array.isArray(d.flow) && d.flow.length) {
+    h += '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f)).join('<br>') + '</div>';
+  }
+  let head = null, rows = [];
+  if (d.table && Array.isArray(d.table.rows)) { head = d.table.head || []; rows = d.table.rows; }
+  else if (Array.isArray(d.table) && d.table.length && typeof d.table[0] === 'object') {
+    head = Object.keys(d.table[0]); rows = d.table.map(o => head.map(k => o[k] == null ? '' : String(o[k])));
+  }
+  if (head && head.length && rows.length) {
+    h += '<div class="demo-sec">结果数据</div><table class="demo-table"><thead><tr>' + head.map(x => '<th>' + esc(x) + '</th>').join('') +
+      '</tr></thead><tbody>' + rows.map(r => '<tr>' + r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+  }
+  if (d.conclusion) h += '<div class="demo-sec">结论</div><div class="demo-conclusion">' + esc(d.conclusion) + '</div>';
+  if (d.note) h += '<div class="demo-note">' + esc(d.note) + '</div>';
+  return h || '<div class="demo-note">该版本未保存可解析的实测数据</div>';
 }
 function wsRenderVersionContent(e) {
   /* 右侧显示所选版本的快照 */
@@ -3690,7 +3716,12 @@ function wsRenderVersionContent(e) {
   if (snap.demo) {
     let demoObj = null;
     try { demoObj = (typeof snap.demo === 'string') ? JSON.parse(snap.demo.replace(/\n/g, ' ')) : snap.demo; } catch (err) { demoObj = null; }
-    htmlOut += '<div class="demo-sec">该版本实测</div><div class="ws-code" style="max-height:40vh">' + esc(typeof snap.demo === 'string' ? snap.demo.slice(0, 2000) : JSON.stringify(snap.demo, null, 2).slice(0, 2000)) + '</div>';
+    if (demoObj) {
+      htmlOut += '<div class="demo-sec">该版本实测</div>' + demoSnapshotHtml(demoObj);
+    } else {
+      htmlOut += '<div class="demo-sec">该版本实测（原始记录）</div><div class="ws-code" style="max-height:40vh">' +
+        esc(typeof snap.demo === 'string' ? snap.demo.slice(0, 2000) : JSON.stringify(snap.demo, null, 2).slice(0, 2000)) + '</div>';
+    }
   }
   if (snap.note) htmlOut += '<div class="demo-note">' + esc(snap.note) + '</div>';
   if (wsMode === 'expert') htmlOut += '<button class="btn-solid" onclick="setWsTab(\'prompt\')">查看当前完整人设提示词</button>';
@@ -3808,7 +3839,7 @@ function wsOpenGeneric(mode, obj, tab) {
   if (mode === 'skill') {
     wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
     window.__wsVerSel = null;
-    _wsAutoLatestVersion = !(obj.platforms || []).includes('amazon') && (!tab || tab === 'prompt');
+    _wsAutoLatestVersion = false; /* 打开技能不再自动跳到历史版本快照，避免右栏显示旧 demo 的原始 JSON */
     wsTab = tab || 'prompt';
     setWsTabGeneric(wsTab);
   }
