@@ -533,3 +533,17 @@ mcp__1688__monitor_shop_list
 - **纪律复现**：排序字段 dailySales 异常返回 0 自动去 sort 对照（选品搜索 A / 选品报告 A 均触发）；SPU 不支持 storeType → 跨境逐 SKU 补验，无法核验不计达标；mallsNum / 店铺数失真不引用；0 条不造表不造档位，如实给补验路径；实重 / 体积重分开取 max 计费重，不把体积当计费重量；缺项一律标估算，不报真实净利。
 - **待修**：① A2 猫砂盆中文名索引 skuNameZh 检索不收敛（约 15 分钟未出结果，应优先俄文品类词，中文名检索易空易卡）；② 利润测算缺商品时纯文字追问卡 turn（done 卡 false、发送按钮不恢复，应统一 ask_user 追问）。
 - **导航同步**：index.html 七技能 demo 更新为 A/B/C 实测记录，各补 chatUrl 真实会话链接与 report/reportTitle 指向 `ozon-seven-skills-regression-2026-11-14.html`；versions.json 追加一条 `hub:index.html#ozon-public-skills`。
+
+---
+
+## 2026-11-14 Amazon 公共技能筛选维度第二轮（补齐剩余 4 维度）+ 数据块恢复
+
+- **范围**：只动 youweiAI-amazon 公共技能回归与导航页数据恢复；不碰 21 场景技能配置与 OZON/TEMU。
+- **新测 4 个筛选维度（4/4 通过）**：
+  - ④ 变体父子聚合（变体数≥5×单变体月销≥500）：[ab48a953](https://local.dianleida.net:21996/c/ab48a953-98e7-4e8b-b079-bcec111fbf99) — 60样本→18父体→10入选，每行=1父体不重复计数，Top1 Gaiam Essentials 12变体月销40,952
+  - ⑤ 卖家类型FBA（排除FBM/自营）：[3595911d](https://local.dianleida.net:21996/c/3595911d-2ede-4531-b747-b85a9b6d1732) — FBA由接口配送方式参数过滤生效；商品列表接口不返回卖家类型字段如实披露（不硬凑）；38款入选
+  - ⑥ 销量增速环比（近28天vs前28天≥+50%）：[2c6e9ae7](https://local.dianleida.net:21996/c/2c6e9ae7-a018-47ca-b07b-3d05d99a426f) — 接口无现成环比字段，日销序列 execute_code 核算真实环比；0款达标如实报（全场最高+31.3%）；2款上架不足56天标"无法判定"不计入
+  - ⑦ 缺失字段硬条件（重量≤500g）：[412db856](https://local.dianleida.net:21996/c/412db856-5fc3-437a-864d-1925d137f8f3) — weight_g 逐款实核16款；"盎司数≠商品实重"（Lulu 9oz实重599g剔除）；缺失不按0g计；收尾旧ASIN详情刷新空壳改用按名称搜索列表接口修复，缺口如实标注
+- **筛选维度合计 7/7**（第一轮：互斥条件诊断/BSR/反向时间窗+品牌排除）。验收报告 skills/youweiAI-amazon-eight-skills-acceptance-2026-11-13.html 与仓库副本已同步 4 条证据行与页脚。
+- **事故与恢复**：OZON 会话重同步 index.html（7899c9a）时把亚马逊实测数据块（AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS/allSkills 挂载/4处report渲染）整体抹掉——此前预警过的"发布版独有内容重同步丢失"风险成真。已从 99f2bcb 提取数据块恢复合并到最新版（51a97f9 基础上），并修掉 isA1688Skill 未定义引用；浏览器实测技能页 29 项亚马逊技能与选品搜索工作台实测 tab（10问法/7/7）渲染正常。
+- **教训**：hub 源 ozon-skill-hub.html 与发布版 index.html 的分叉再次扩大；任何平台重同步 index.html 前必须先 diff 检查 AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS 数据块是否在源里，不在就先合并回源再同步。
