@@ -982,6 +982,12 @@
       "target": "hub:index.html#amazon-public-skills",
       "action": "update",
       "summary": "八公共技能实测记录校对：替换占位会话链接（另一对话/同会话/德站链接定站→真实会话ID）、选品搜索补浴室置物架对话d28464cd、报告技能补瑜伽垫对话149b6c46、实测日期统一为2026-11-13/14、利润chatUrl改指本轮回归003435c1"
+    },
+    {
+      "ts": "2026-11-14 14:24:49 +0800 +08:00",
+      "target": "hub:index.html#amazon-public-skills",
+      "action": "update",
+      "summary": "公共技能实测记录同步筛选维度扩展回归：选品搜索补互斥条件16b50149、BSR筛选dfadeef8、老链接反向时间窗72172a5c三条证据（问法3→6、表增3行），实测弹窗新增验收报告入口，指向 amazon-eight-skills-acceptance-2026-11-13.html"
     }
   ]
 }
