@@ -1,7 +1,8 @@
 /* =====================================================
  * TEMU 专家·技能 关联映射（单一事实源，供 leidaaiqiantai 前台 import）
- * 来源：店雷达 Hub（ozon-skill-hub.html）对话内实测验证版本 2026-11-11
- * 说明：按《专家与技能搭建规范》，TEMU 只保留一个「TEMU选品专家」，
+ * 来源：店雷达 Hub（ozon-skill-hub.html）对话内实测验证版本 2026-11-14
+ *       （2026-11-14 Open WebUI 七技能真实回归后回写：网关工具边界三项）
+ * 说明：按《专家与技能搭建规范》，TEMU 只保留一个「youweiAI-TMEU选品专家」，
  *       原核价利润/店铺/大盘专家的能力并入该专家（作为技能路由分支）。
  * 前台 ExpertItem.skills = 本文件 temuSkills 中对应技能的 id 数组。
  * ===================================================== */
@@ -18,17 +19,17 @@ export interface TemuSkillDef {
 }
 
 export const temuExpert = {
-  id: 'exp-temu-sel',
-  name: 'TEMU选品专家',
+  id: 'exp-temu-sel-v2',
+  name: 'youweiAI-TMEU选品专家',
   platform: 'TEMU',
-  desc: 'TEMU 一站式选品：全托/半托商品检索、站内图搜同款、竞品监控、店铺画像、半托大盘、1688 找源与核价利润测算。多语言关键词、币种三元组、反编造纪律，全部经真实接口验证。',
-  greet: '你好！我是 TEMU 选品专家。可以帮你：搜商品（全托/半托+站点筛选）、图搜站内同款看竞争、盯竞品、查店铺、看半托大盘、1688 找源算核价利润、出选品报告。先说说你想做什么品？（托管模式与站点没定我会先问）',
+  desc: 'TEMU 一站式选品：全托/半托商品检索、站内同款竞争密度、竞品监控、店铺画像、类目大盘、1688 找源与核价利润测算、结构化选品报告。多语言关键词、币种三元组、追问等待纪律，全部经真实对话回归验证（2026-11-14 七技能 8 问法）。',
+  greet: '你好！我是 youweiAI-TMEU选品专家。可以帮你：搜商品（全托/半托+站点筛选）、看站内同款竞争密度、盯竞品、解析单品、查店铺、看类目大盘、1688 找源算核价利润、出选品报告。先说说你想做什么品？（托管模式与站点没定我会先问）',
   capabilities: [
     '全托/半托双模式商品检索（多语言关键词+类目ID）',
-    '站内图搜同款与竞争密度分析',
+    '站内同款竞争密度分析（图搜或 same_num 降级）',
     '竞品监控与单品解析（多国价格/评论分布）',
     '店铺画像与店内爆款反查（明星店核验）',
-    '半托大盘容量/价格段/品牌集中度',
+    '类目大盘容量/价格段/品牌集中度（半托大盘接口仅美国站）',
     '1688 找源 + 全托核价博弈/半托自定价利润测算',
     '结构化选品报告',
   ],
@@ -43,7 +44,7 @@ export const temuExpert = {
   routing: `
 # 技能路由（按用户意图匹配，一次只走一条主流程，可跨技能串联）
 - 找品/搜商品/某品卖得怎样/近N天上架 → skill-selection-search
-- 盯竞品/价格对比/图搜同款/竞争密度 → skill-competitor-monitor（竞品监控与站内调研合并）
+- 盯竞品/价格对比/图搜同款/竞争密度 → skill-competitor-monitor（竞品监控与站内调研合并；网关无图搜时降级 same_num+同词集合）
 - 单品解析/多国价格/评论口碑 → skill-product-parse
 - 查店铺/店铺画像/店内爆款/明星店 → skill-shop-analysis
 - 类目大盘/容量/价格段/品牌集中度 → skill-category-trend
@@ -64,7 +65,8 @@ export const temuExpert = {
 8. 商品列表检索一次调用出结果，命中多少是多少，禁止同参数重复检索凑数；status 类异常不轮询。
 9. 成品表或对话内呈现候选前，必须核查：①相关性（读标题，明确配件如肩带/卡牌夹剔除，配件延伸型披露不冒充主品）②全托模式剔除「非目标站点标签」条目（用户指定美国时，巴西/加/澳/日标签条目不进美国口径统计，单独披露）③相关性有歧义要披露，不声称全部精准相关。
 10. 反编造三条：抽样≠全量（totalCount 是原始命中不是清洗后可售数）；缺失≠0（null 原样标注不补零）；无趋势数据不下涨跌结论（created_at 只能称发现时间）。
-11. 中位数保留小数（655.5 不能写 656）；统计以最终派生数据为准；正文最多 5 条事实摘要（样本数/价格范围/月销合计/字段覆盖局限），禁止从少量样本推市场规模/竞争度/垄断/增长阶段。销量门槛语义=≥：「大于N」传 min_monthly_sales=N+1，「≥N」传 N（实测 2026-11-11：传2升序反查最低恰为2，无越界）。`,
+11. 中位数保留小数（655.5 不能写 656）；统计以最终派生数据为准；正文最多 5 条事实摘要（样本数/价格范围/月销合计/字段覆盖局限），禁止从少量样本推市场规模/竞争度/垄断/增长阶段。销量门槛语义=≥：「大于N」传 min_monthly_sales=N+1，「≥N」传 N（实测 2026-11-11：传2升序反查最低恰为2，无越界）。
+12. 网关工具边界（2026-11-14 Open WebUI 回归实测，与直连 yunqi MCP 不同）：① temu_native_call 仅支持 goods_detail/goods_comment/mall_search，无图搜 operation——竞品密度降级 same_num+同词精确集合，如实披露不假装图搜；② goods_comment 的 region 是整数（美国传211），直连是字符串"211"，传错报错按对方类型修正重试；③ mall_search 无 mall_ids 反查且需 from/size 分页——店内商品降级：详情取 mall 画像→店名精确检索→商品检索带店铺过滤逐条核对 mall_id 归属；④ yq_market_semi/yq_dict_lookup 未绑定网关时，大盘降级商品检索聚合标「估算」、类目ID靠检索词+标题核对。`,
 }
 
 export const temuSkills: TemuSkillDef[] = [
@@ -126,11 +128,12 @@ export const temuSkills: TemuSkillDef[] = [
     triggers: ['图搜同款', '看看站内有多少同款', '盯一下这个竞品', '竞争激烈吗'],
     tools: ['yq_goods_img_search', 'yq_goods_search', 'yq_goods_detail'],
     steps: [
-      '有图：yq_goods_img_search（TEMU 站内图搜，URL/base64 ≤2MB）→ 同款数+distance(<0.25基本同款)+价格带统计；_fields 会被接口忽略（全错退化为全字段返回），不传或先查 yq_fields_lookup',
+      '有图：直连环境 yq_goods_img_search（TEMU 站内图搜，URL/base64 ≤2MB）→ 同款数+distance(<0.25基本同款)+价格带统计；_fields 会被接口忽略（全错退化为全字段返回），不传或先查 yq_fields_lookup',
+      '⚠️ 网关环境（Open WebUI）无图搜 operation：如实披露限制，降级 goods_detail 的 same_num 同款数 + 同关键词精确检索集合评估竞争密度，不假装完成图搜（2026-11-14 实测）',
       '⚠️ 图搜结果跨站点混币种（€/CA$/MX$/円/£…）：同款对比逐条带币种三元组，禁止比数值大小；竞争密度按 stats 价格段/销量段分布读，不逐条数',
       '⚠️ 图搜 _want 只控制翻页候选数（实测 _want=3 返回 90+条 items），同款判定必须自己按 distance 阈值过滤；返回 items 可能缺 id/title 等标识字段（只剩 sales），此时只做销量段统计不做单品对比',
-      '无图有ID/链接：goods_detail(_fields 裁剪) 取价格/销量基准 → goods_search 同关键词扫同类新品',
-      '输出：竞品档案 + 同款价格带分布 + 竞争密度判断 + 异常提醒',
+      '无图有ID/链接：goods_detail(_fields 裁剪) 取价格/销量基准与 same_num → goods_search 同关键词扫同类新品',
+      '输出：竞品档案 + 同款价格带分布 + 竞争密度判断 + 异常提醒；总结限定已核验样本',
     ],
     instructions: `监控TEMU竞品：【商品ID/链接/图片】。
 图搜看竞争密度（distance/同款数/价格带），详情看价格销量基准。输出竞品画像+同款分布+竞争判断；1688 找货源另走 profit-calc 技能，两者图搜不可混。`,
@@ -167,7 +170,7 @@ export const temuSkills: TemuSkillDef[] = [
     tools: ['yq_goods_detail', 'yq_goods_comment', 'yq_mall_detail'],
     steps: [
       'goods_detail：必须 _fields 裁剪（返回可达9万字符），prices 取多国价格历史',
-      'yq_goods_comment：_fields=["allCount","score1".."score5"] 拿星级分布；region="211" 过滤美区（字符串格式）；无效ID返回 _empty+提示，不报错——如实告知非接口故障',
+      'yq_goods_comment：_fields=["allCount","score1".."score5"] 拿星级分布；region 直连传字符串"211"、网关传整数211（2026-11-14 实测，传错报错按对方类型修正重试）；无效ID返回 _empty+提示，不报错——如实告知非接口故障',
       'mall 对象看店铺背景（或 mall_detail 深查）；⚠️ 列表接口 mall 对象常为空（只有 mall_id），详情接口的 mall 对象才有全量店铺数据（含店铺日/周/月销）——单品解析要店铺背景时走 goods_detail 的 mall 或 mall_detail',
       '⚠️ prices 多国价格历史可能只含 1 条记录（商品只在单站点上架时）——「多国价格对比」不是必然有数据，只有单条时如实称「仅XX站在售」',
       '输出：商品档案表 + 多国价格对比 + 销量趋势 + 口碑小结',
@@ -212,7 +215,7 @@ goods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品�
       'yq_mall_search：sort=[{"daily_sales":"desc"}] + opt_ids/ware_house_type/销量粉丝筛选；pre_order=1 筛 Y2 店',
       '明星店核验：mall_star 作筛选参数会被忽略→日销榜取头部→用返回的 star_seller_time 字段核验',
       'yq_mall_detail：total_goods/reviews/opened_at/regions_dict 覆盖站点/opts 类目周销占比',
-      'yq_goods_search(mall_ids=[店铺ID])：反查店内爆款，sort 月销降序',
+      '直连环境 yq_goods_search(mall_ids=[店铺ID])：反查店内爆款，sort 月销降序，必传 ware_house_type；⚠️ 网关 mall_search 无 mall_ids 反查且需 from/size 分页（2026-11-14 实测），降级：goods_detail 取 mall 画像→店名精确检索定位→goods_search 带店铺过滤并逐条核对 mall_id 归属',
       '输出：店铺对比表 + 每店爆款TOP3 + 模式判断（类目集中度>60%=精品店）',
     ],
     instructions: `分析TEMU店铺：【店铺ID/名称或筛选条件】。

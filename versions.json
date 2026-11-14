@@ -1024,6 +1024,18 @@
       "target": "hub:index.html",
       "action": "restore+update",
       "summary": "恢复被并行重同步抹掉的亚马逊公共技能实测数据块（AMAZON_PUBLIC_DEMOS 8条 + AMAZON_SCENE_SKILLS 21条 + 4处report渲染 + allSkills挂载），选品搜索记录更新为两轮筛选维度7/7（新增变体父子聚合/FBA卖家类型/销量增速环比/缺失字段硬条件4个会话证据）；修复 isA1688Skill 未定义引用"
+    },
+    {
+      "ts": "2026-11-14 18:45:00 +08:00",
+      "target": "expert:exp-temu-sel-v2",
+      "action": "update",
+      "summary": "回归后回写：sysPrompt升级为七技能路由版（与Open WebUI已验证版一致）；竞品监控/商品解析/店铺分析技能prompt回写网关边界（无图搜operation降级same_num、comment region整数、mall_search无mall_ids反查降级路径）"
+    },
+    {
+      "ts": "2026-11-14 18:45:00 +08:00",
+      "target": "map:temu-expert-skill-map.ts",
+      "action": "update",
+      "summary": "路由事实源同步：专家id更新exp-temu-sel-v2、品牌youweiAI-TMEU、disciplines增第12条网关边界、竞品/商品解析/店铺分析steps回写网关降级路径"
     }
   ]
 }
