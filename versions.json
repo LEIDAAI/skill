@@ -1012,6 +1012,12 @@
       "target": "hub:index.html",
       "action": "update",
       "summary": "TEMU平台历史专家(exp-temu-sel/mall/market)退出导航，仅保留exp-temu-sel-v2（对齐amazon处理方式）；跨平台专家云启字样去除"
+    },
+    {
+      "ts": "2026-11-14 17:40:00 +08:00",
+      "target": "hub:index.html",
+      "action": "update",
+      "summary": "跨平台专家与TEMU历史专家描述去上游来源字样；全站对外品牌统一youweiAI-TMEU/youweiAI-amazon"
     }
   ]
 }
