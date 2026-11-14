@@ -1078,6 +1078,12 @@
       "target": "hub:index.html#temu-public-skills",
       "action": "update",
       "summary": "TEMU七技能实测Tab按亚马逊场景样式重建：KPI卡+执行过程+明细表+结论四段，全部数据取自 reports/youweiAI-TMEU-七技能回归验收-20261114.html 真实调用返回（9条问法/关键实参/返回处置/判定），新增结论区（demo-conclusion 绿色结论块）与验收报告链接渲染（源文件同步补齐，此前源缺报告块）；选品搜索明细表按3条问法分列且问法列可点击打开对应会话"
+    },
+    {
+      "ts": "2026-11-14 21:45:00 +08:00",
+      "target": "hub:index.html#skill-workbench",
+      "action": "fix",
+      "summary": "技能工作台不再自动跳到历史版本快照（此前打开 TEMU 技能右栏直接显示旧 demo 的原始 JSON，被误认为实测 Tab 损坏）；版本快照里的 demo 改用 KPI/流程/表格/结论渲染，兼容新旧两种 demo 格式，不再 dump JSON；自动版本选择增加 wsTab/wsSkillView 守卫，避免异步回填覆盖已切到实测的面板"
     }
   ]
 }
