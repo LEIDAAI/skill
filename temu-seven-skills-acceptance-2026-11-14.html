@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>youweiAI-TMEU 七技能第一轮回归验收</title><style>
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f6f8f7;color:#1c2b24;padding:24px;max-width:1280px;margin:0 auto}
+h1{font-size:22px;color:#0d5c3a}
+.meta{font-size:12px;color:#5a7a6a;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);font-size:12.5px}
+th{background:#0d8a52;color:#fff;padding:10px;text-align:left}
+td{padding:10px;border-bottom:1px solid #e8f2ec;vertical-align:top}
+.pass{color:#0d8a52;font-weight:700}
+.part{color:#b45309;font-weight:700}
+a{color:#1668b4}
+.s{font-size:12px;color:#34554a;line-height:1.8;margin-top:14px;background:#fff;border-left:4px solid #0d8a52;padding:12px 16px;border-radius:8px}
+.s b{color:#0d5c3a}
+</style></head><body>
+<h1>youweiAI-TMEU 七技能第一轮回归验收（2026-11-14）</h1>
+<div class="meta">通道：Chrome DevTools 真实 UI 对话 · 9 条问法（8 通过 + 1 部分通过）· 每条均验证实际工具调用、关键实参与最终回答；Open WebUI 网关环境</div>
+<table><tr><th>#</th><th>问法</th><th>对话链接</th><th>实际技能</th><th>关键实参</th><th>判定</th><th>备注（结果与问题）</th></tr>
+<tr><td>1</td><td>A标准：半托德国站近30天上架、月销≥100的家居品，列20款</td><td><a href="https://local.dianleida.net:21996/c/3d3c65fb-0977-4111-8b74-c7fa6e6f2c4c" target="_blank">会话</a></td><td>youweiai-tmeu-selection-search</td><td>ware_house_type=1, regions=76, issued_date 20261015~20261114, min_monthly_sales=100, opt_ids=36补轮, size分页</td><td class="pass">通过</td><td>31条剔除约10条噪音→18款→类目直查600条精选20；€币种齐全；时间窗/≥语义正确</td></tr>
+<tr><td>2</td><td>A2：全托美国站卖得好的宠物饮水机</td><td><a href="https://local.dianleida.net:21996/c/124e2f23-b3a2-4e0d-b75b-42463690d7ac" target="_blank">会话</a></td><td>youweiai-tmeu-selection-search</td><td>ware_house_type=0, regions=211, fuzzy=false诊断, job_derive锁定6整机</td><td class="pass">通过</td><td>首轮17条全噪音如实报0→精确12条→整机6款+6配件分列；全托regions不可验证已披露；预览渲染确认</td></tr>
+<tr><td>3</td><td>B缺参：帮我搜宠物饮水机</td><td><a href="https://local.dianleida.net:21996/c/779fb5f1-9ba9-484c-815c-d8d4750279a4" target="_blank">会话</a></td><td>youweiai-tmeu-selection-search</td><td>ask_user两连问（托管模式→站点）后 ware_house_type=0/1并行, regions=211, opt_ids=320收窄</td><td class="pass">通过</td><td>先追问等待✓复述条件✓；首轮宽词噪音→类目320收窄→逐条核查9款核心</td></tr>
+<tr><td>4</td><td>A：用主图搜站内同款看竞争密度</td><td><a href="https://local.dianleida.net:21996/c/124e2f23-b3a2-4e0d-b75b-42463690d7ac" target="_blank">会话</a></td><td>youweiai-tmeu-competitor-monitor</td><td>temu_native_call goods_detail(id)+temu_search_sync同词精确; same_num=654</td><td class="part">部分通过</td><td>网关无图搜operation→如实披露降级same_num+同词集合；竞争密度限定样本；技能文档需回写图搜边界</td></tr>
+<tr><td>5</td><td>A：解析601100620692784多国价格+评论</td><td><a href="https://local.dianleida.net:21996/c/124e2f23-b3a2-4e0d-b75b-42463690d7ac" target="_blank">会话</a></td><td>youweiai-tmeu-product-parse</td><td>goods_detail(id)+goods_comment(id,region=211整数)</td><td class="pass">通过</td><td>14站点价格带币种+快照日期；哥伦比亚40,937识别为COP非USD；region整数修正重试；老快照超1年披露</td></tr>
+<tr><td>6</td><td>A：店铺634418212711554主营+店内爆款</td><td><a href="https://local.dianleida.net:21996/c/124e2f23-b3a2-4e0d-b75b-42463690d7ac" target="_blank">会话</a></td><td>youweiai-tmeu-shop-analysis</td><td>goods_detail取mall画像→mall_search按店名→goods_search带店铺过滤+逐条核对mall_id; 半托侧_empty核验</td><td class="pass">通过</td><td>先全托后半托✓；网关mall_search无mall_ids→自动降级✓；1900vs1917差17如实披露；缺score不补零</td></tr>
+<tr><td>7</td><td>A：全托供货拿货¥25能不能做</td><td><a href="https://local.dianleida.net:21996/c/124e2f23-b3a2-4e0d-b75b-42463690d7ac" target="_blank">会话</a></td><td>youweiai-tmeu-profit-calc</td><td>用户价¥25直接用；execute_code测算；汇率假设7.0/7.1/7.2敏感性</td><td class="pass">通过</td><td>汇率接口异常→不静默换算；盈亏平衡¥28.6；缺项(变体/包装/运费)标注假设；结论有条件能做+压价风险</td></tr>
+<tr><td>8</td><td>A：半托美国站家居大盘价格段+品牌集中度</td><td><a href="https://local.dianleida.net:21996/c/d7273097-b333-4fe3-bb44-68f1482fcfe8" target="_blank">会话</a></td><td>youweiai-tmeu-category-trend</td><td>yq_market_semi未绑定→降级temu_search_sync聚合29条→剔除10跨类目→17款统计</td><td class="pass">通过</td><td>降级口径全程标注"样本估算"✓；CR5=44.6%/CR10=73.6%；白牌主导；季节因素披露</td></tr>
+<tr><td>9</td><td>A：美国站宠物饮水选品报告值不值得做</td><td><a href="https://local.dianleida.net:21996/c/d7273097-b333-4fe3-bb44-68f1482fcfe8" target="_blank">会话</a></td><td>youweiai-tmeu-report-gen</td><td>temu_search_sync 24条→2核心+2单品解析补证+诊断检索; KPI/明细/证据缺口/结论B+</td><td class="pass">通过</td><td>复用已确认口径不重复追问✓；22条噪音剔除说明；GMV估算标注；非备货承诺免责；P0/P1下一步</td></tr>
+</table>
+<div class="s"><b>网关工具边界三项新发现（与直连 yunqi MCP 不同，须回写技能文档）：</b><br>
+① temu_native_call 无图搜 operation（仅 goods_detail/goods_comment/mall_search）；<br>
+② goods_comment 的 region 是整数不是字符串；<br>
+③ mall_search 无 mall_ids 反查、需 from/size 分页；yq_market_semi/yq_dict_lookup 未绑定网关。<br><br>
+<b>遗留：</b>C类边界问法补充；竞品监控/店铺分析技能文档回写；Hub demo 更新。</div>
+</body></html>

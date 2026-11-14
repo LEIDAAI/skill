@@ -1066,6 +1066,12 @@
       "snapshots": {
         "note": "来源：/api/v1/skills/id/{youweiai-amazon-scene-*}，与本地 skill/youweiAI-amazon-scenes/*.md 相似度1.000"
       }
+    },
+    {
+      "ts": "2026-11-14 20:45:00 +08:00",
+      "target": "hub:index.html#temu-public-skills",
+      "action": "update",
+      "summary": "TEMU七技能实测Tab重写：损坏的「实测数据（格式待整理）」demo全部替换为2026-11-14真实UI回归记录（KPI卡+执行过程+核验细节表+结论+验收报告链接），会话ID行可点击打开Open WebUI对话；渲染器三处（renderSkillWs/renderWsBody技能与专家分支）补window.__currentDemo+linkCols逐行链接支持；验收报告temu-seven-skills-acceptance-2026-11-14.html入库（问法计数修正为9条）"
     }
   ]
 }
