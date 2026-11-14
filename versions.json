@@ -1084,6 +1084,12 @@
       "target": "hub:index.html#skill-workbench",
       "action": "fix",
       "summary": "技能工作台不再自动跳到历史版本快照（此前打开 TEMU 技能右栏直接显示旧 demo 的原始 JSON，被误认为实测 Tab 损坏）；版本快照里的 demo 改用 KPI/流程/表格/结论渲染，兼容新旧两种 demo 格式，不再 dump JSON；自动版本选择增加 wsTab/wsSkillView 守卫，避免异步回填覆盖已切到实测的面板"
+    },
+    {
+      "ts": "2026-11-15 00:40:00 +08:00",
+      "target": "hub:index.html#ozon-seven-skills",
+      "action": "rebuild",
+      "summary": "OZON七技能展示重建（并行TEMU会话30712bc曾用旧副本覆盖index.html）：①提示词Tab由228-460字填空模板改为线上现行正文逐字嵌入（1630-1824字，选品搜索从2473字旧底稿换成1691字现行版）；②命名统一youweiAI-OZON·XXX、专家名youweiAI-OZON选品专家；③实测Tab补结论区+16条真实会话链接+验收报告入口，与TEMU四段式一致。技能正文同步写入两条新纪律（ask_user统一追问防卡turn、skuNameZh中文名两轮不收敛即停）。源ozon-skill-hub.html七技能块已合并回源。线上专家绑定与工具范围未动"
     }
   ]
 }

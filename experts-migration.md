@@ -547,3 +547,11 @@ mcp__1688__monitor_shop_list
 - **筛选维度合计 7/7**（第一轮：互斥条件诊断/BSR/反向时间窗+品牌排除）。验收报告 skills/youweiAI-amazon-eight-skills-acceptance-2026-11-13.html 与仓库副本已同步 4 条证据行与页脚。
 - **事故与恢复**：OZON 会话重同步 index.html（7899c9a）时把亚马逊实测数据块（AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS/allSkills 挂载/4处report渲染）整体抹掉——此前预警过的"发布版独有内容重同步丢失"风险成真。已从 99f2bcb 提取数据块恢复合并到最新版（51a97f9 基础上），并修掉 isA1688Skill 未定义引用；浏览器实测技能页 29 项亚马逊技能与选品搜索工作台实测 tab（10问法/7/7）渲染正常。
 - **教训**：hub 源 ozon-skill-hub.html 与发布版 index.html 的分叉再次扩大；任何平台重同步 index.html 前必须先 diff 检查 AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS 数据块是否在源里，不在就先合并回源再同步。
+
+## 2026-11-15 OZON 七技能 Hub 展示重建（修复并行会话覆盖事故）
+
+- **事故**：并行 TEMU 会话提交 30712bc 用旧副本覆盖 index.html，将 7899c9a 同步的 OZON 第三轮回归 demo（chatUrl/报告入口）冲掉，实测数据回退到 11-08/09/10 旧版。
+- **重建内容**：① 提示词 Tab 从 228-460 字填空模板改为 `/api/v1/skills/id/` 抓取的线上现行正文逐字嵌入（1630-1824 字；选品搜索弃 2473 字旧底稿换 1691 字现行版）；② 命名统一 `youweiAI-OZON·XXX`、专家名 `youweiAI-OZON选品专家`；③ 实测 Tab 与 TEMU 四段式对齐：KPI 卡 + 执行过程 + 明细表 + 绿色结论区，16 条真实会话链接 + 验收报告入口（ozon-seven-skills-regression-2026-11-14.html）。
+- **技能正文补丁**：Open WebUI 七技能正文全部追加两条第三轮暴露的纪律——追问统一 ask_user 表单一次收集（防纯文字追问卡 turn）、中文名 skuNameZh 只作兜底分路且两轮不收敛即停。更新接口必须带 id 字段，否则 400。专家绑定 skillIds(7)/工具范围/knowledge 复核未动。
+- **源同步**：7 个技能定义块已合并回 ozon-skill-hub.html（脚本级替换，逐块核验与发布版一致）；源文件仍缺专家卡段，整体重同步前须先补齐。
+- **环境事故（未解决）**：模型网关宕机——Open WebUI 两条 OpenAI 连接（host.docker.internal:18081、192.168.1.10:8080）均不可达，宿主机 18081 无监听、192.168.1.10 ping/TCP 全断，/api/models 返回空，新会话发消息无法路由模型。与当晚 WorkBuddy 平台侧反复 ETIMEDOUT 192.168.1.10:8080 同源。已修 ui.default_models 坏值（旧 product-selection-assistant → 1688选品助手，备份于容器内 ui_default_models_backup_20261114.json）并重启容器；A2 猫砂盆复测待网关恢复后补跑。
