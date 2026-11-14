@@ -1072,6 +1072,12 @@
       "target": "hub:index.html#temu-public-skills",
       "action": "update",
       "summary": "TEMU七技能实测Tab重写：损坏的「实测数据（格式待整理）」demo全部替换为2026-11-14真实UI回归记录（KPI卡+执行过程+核验细节表+结论+验收报告链接），会话ID行可点击打开Open WebUI对话；渲染器三处（renderSkillWs/renderWsBody技能与专家分支）补window.__currentDemo+linkCols逐行链接支持；验收报告temu-seven-skills-acceptance-2026-11-14.html入库（问法计数修正为9条）"
+    },
+    {
+      "ts": "2026-11-14 21:11:00 +08:00",
+      "target": "hub:index.html#temu-public-skills",
+      "action": "update",
+      "summary": "TEMU七技能实测Tab按亚马逊场景样式重建：KPI卡+执行过程+明细表+结论四段，全部数据取自 reports/youweiAI-TMEU-七技能回归验收-20261114.html 真实调用返回（9条问法/关键实参/返回处置/判定），新增结论区（demo-conclusion 绿色结论块）与验收报告链接渲染（源文件同步补齐，此前源缺报告块）；选品搜索明细表按3条问法分列且问法列可点击打开对应会话"
     }
   ]
 }
