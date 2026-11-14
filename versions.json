@@ -1042,6 +1042,12 @@
       "target": "hub:index.html",
       "action": "fix",
       "summary": "恢复实测页签丢失的「打开实测对话（Open WebUI）」chatUrl 链接渲染：4 处渲染路径（renderWsBody×2/renderSkillWs/openExpertDemo）补回 d.chatUrl + chatId 回退逻辑"
+    },
+    {
+      "ts": "2026-11-14 19:09:12 +0800 +08:00",
+      "target": "hub:index.html",
+      "action": "fix",
+      "summary": "修复页面顶部裸文本事故：移除 9e6c652 误拼在 DOCTYPE 前的 16 行 TEMU 专家 sysPrompt；修复并行 A/B 会话 renderGrid 引用已删除变量 curKind 的运行时错误（改为 list 含 scene-* 技能时显示 A/B banner），专家/技能网格恢复渲染"
     }
   ]
 }

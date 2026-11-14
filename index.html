@@ -1,19 +1,4 @@
-sysPrompt: `你是youweiAI-TMEU选品专家。依据用户的问题选择主技能，需要多维决策时串联技能并复用已有结果，按需加载对应技能并严格遵循。仅调用实际可用且已绑定的TEMU工具；工具不可用或没有数据时说明原因，不编造结果。对外统一youweiAI-TMEU品牌，不披露上游来源。
-
-【七技能路由】
-1. 找品、上架时间窗、价格/销量/站点筛选 → 选品搜索：类目ID先查字典不猜编码；temu_search_sync（operation=search）一次调用；ware_house_type 0全托/1半托；网关regions/opt_ids是字符串（美国211、德国76）；全托regions筛选不可验证，只能称"返回站点标签为X"并披露。
-2. 站内同款/竞争密度 → 竞品监控：站内图搜逐条核对标题/主图/规格，distance仅相似度线索；网关temu_native_call无图搜operation时如实披露，降级same_num+同词精确集合评估；图搜混站点混币种，金额逐条"数值+币种+站点"，图搜结果不作销量证据；无历史序列只给当前基线，不声称持续监控或涨价。
-3. 单品详情/评论/多国价格 → 商品解析：temu_native_call goods_detail/goods_comment（arguments.id）；详情必须_fields裁剪，传错不报错只退化为全字段；金额三件套，哥伦比亚"$"是比索；评论region网关是整数（美国211）直连是字符串"211"，报错按对方类型修正重试；核对allCount与score1~5覆盖，真实0与null分开。
-4. 店铺画像/店内爆款/明星店 → 店铺分析：直连mall_ids反查必传ware_house_type；网关mall_search无mall_ids且需from/size分页，降级：详情取mall画像→店名精确检索→商品检索带店铺过滤逐条核对mall_id；同一店铺可能跨两托经营，先全托后试半托；mall_star筛选参数被忽略，用返回star_seller_time核验；Y2是流量标记非质量背书，画像看score+评论数。
-5. 类目容量/趋势/价格段/品牌集中度 → 类目大盘：半托大盘实测仅美国站可用，其他站点空结果直说不换站重试；全托大盘接口不可用如实告知，降级商品检索聚合标"估算"；GMV不默认美元；数据日期与查询日期分开标。
-6. 利润/能不能做 → 利润测算：全托供货核价与半托自定价两套算法分开列；缺采购/物流/佣金规则不报真实净利只报情景；用户已给拿货价直接用并标用户提供；仅实际找源才调1688图搜，站内图搜不能替代找源；汇率取不到时假设区间做敏感性分析，不静默换算。
-7. 选品报告/值不值得做 → 选品报告：复用本轮已核数据，逐项标注接口/参数/取样范围；KPI卡+明细表+证据与缺口+结论区四段交付；0条不生成机会档位。
-
-【前置确认】托管模式（全托/半托/两者）与目标站点未说明时，先一次性追问并等待（可给可点击选项），确认后复述条件再检索；已确认条件在当前对话复用，不重复问。
-
-【检索口径】销量门槛："大于N"传min_monthly_sales=N+1，"≥N"传N；总命中与实际取样分开报。时间窗：用户指定上架窗与默认近30天互斥，不混写。多语言关键词：默认[英文,中文]数组按商品ID去重合并一次交付；组合条件多时中文词命中率骤降可换英文词并披露。temu_search_sync返回status=processing时直接输出返回的iframe字段，不轮询job_status/job_aggregate；done后本轮检索立即结束，禁止同参重调。
-
-【核验与输出】逐条看标题/类目/主图剔除配件与非目标站点条目并说明，不声称全部相关；缺失不补零，sales总量高但日月周销量为空≠没销量，用总量或评论佐证；原条件0条如实报告并保留条件，放宽诊断单独列标"诊断"不混入主结果；无效ID可能静默空，核对传入数与返回数。交付：有数据实返时正文先3-5句结论（关键数字+风险），再给完整html代码块生成右侧预览：KPI卡+明细表（真实主图悬停320×320白底放大、标题链商品页、实得店铺ID才有店铺链接、价格带币种不同币种不合并排序、按核心指标降序）+证据与缺口+结论区。0条不造表。新数据新预览，不复用旧HTML。`<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -1647,9 +1632,20 @@ const AMAZON_SCENE_SKILLS = [
     desc: '用户供CSV/XLSX：语义分类+来源裁决+Excel对账（Open WebUI 场景技能 youweiai-amazon-scene-sp-search-terms）',
     triggers: ['分析我的SP搜索词报告','场景21'],
     demo: {"title": "实测：SP广告搜索词分析 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景21 · 09:28"}, {"label": "接口调用", "v": "2 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：我导出了SP广告搜索词报告，帮我分类统计给动作建议", "执行链路：无文件时检测/uploads为空→不启动分析不造数据→列明需上传CSV/XLSX+站点+可选阈值", "实测证据：缺文件分支：检测0文件不启动"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ce1ea84f…（Open WebUI 可回溯）"], ["接口调用", "2 次 · view_skill×1、execute_code×1"], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "缺文件分支：检测0文件不启动"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ce1ea84f-5631-4c4f-9e98-899395cdc235"]},
-  },
-
+  }
 ];
+
+/* ================= 提示词优化实测（2026-11-14 A/B） ================= */
+const SCENE_OPT_BANNER = {
+  date: '2026-11-14',
+  title: '提示词优化实测（A/B 对照）已完成：3 方案 × 真实 UI 会话',
+  items: [
+    { plan: '搜索层收紧（首轮带齐硬条件服务端过滤）', scene: '节令新品 场景8', calls: '54 → 44 次（-19%）', time: '约12分 → 9.0分', verdict: '✅ 采纳 · 列表筛选类通用' },
+    { plan: '三路并行直出（同node_id并发+零叙述）', scene: '五维判定 场景12', calls: '9 → 6 次（-33%）', time: '≈持平（6.8分）', verdict: '✅ 采纳 · 质量提升（Top100全量核验）' },
+    { plan: '分步收敛（先详情后趋势）', scene: '低评高销 场景5', calls: '31 → 48 次', time: '10.3~13.1分', verdict: '❌ 不采纳 · 趋势为质量必需' }
+  ],
+  note: '口径纪律零退化（listing_date窗/order_rate如实/未完月剔除全部保持）。独立新会话实测有效；同会话续问会上下文膨胀导致过度执行，不作为优化依据。耗时参考：判定5-8分/筛选8-13分/深调15-25分。'
+};
 const AMAZON_PUBLIC_DEMOS = {
   'skill-amazon-selection-search': {"chatUrl":"https://local.dianleida.net:21996/c/d28464cd-7456-4b60-958c-f28f323312f0","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-14","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"10 条"},{"label":"筛选维度","v":"7/7 通过"},{"label":"质量","v":"✓ 通过"}],"flow":["美国站浴室置物架15款 → 会话 d28464cd","日本站儿童水壶严格筛选 → 会话 57e31ba0","麻将包主图列回归 → 会话 1564f148","筛选维度① 互斥条件（近30天上架×月销5000+×4.9星×评论>2000×≤$15）→ 会话 16b50149：0款如实报，两组诊断定位瓶颈为近30天上架×评论>2000 互斥，给方案A/B不放宽","筛选维度② 小类BSR≤100×月销500+×评论≤500 → 会话 dfadeef8：BSR为接口原生字段未替代，10款 #22-#96 严格达标","筛选维度③ 上架>3年×月销1000+×排除PETLIBRO/Veken → 会话 72172a5c：上架≤2023-11-14 锚点，85条去重53 ASIN 判型，10款整机达标","筛选维度④ 变体父子聚合（变体数≥5×单变体月销≥500）→ 会话 ab48a953：60样本→18父体→10入选，每行=1父体不重复计数，Top1 Gaiam Essentials 12变体月销40,952","筛选维度⑤ 卖家类型FBA（排除FBM/自营×月销1000+×评论≤1000）→ 会话 3595911d：FBA由接口配送方式参数过滤生效，接口不返回卖家类型字段如实披露，38款入选","筛选维度⑥ 销量增速环比（近28天vs前28天≥+50%）→ 会话 2c6e9ae7：接口无现成环比字段，日销序列execute_code核算真实环比，0款达标如实报（全场最高+31.3%），2款窗口不足标无法判定","筛选维度⑦ 缺失字段硬条件（重量≤500g）→ 会话 412db856：weight_g逐款实核16款，盎司数≠实重（Lulu 9oz实重599g剔除），缺失不按0g计，15款达标"],"table":{"head":["核验项","实测结果"],"rows":[["严格筛选","日本站17入口36样本5预筛1达标不凑数"],["类目体检","主节点2421559051+未完月剔除"],["竞品对比","THERMOS身份核验B0HBGYPY75为成人款"],["互斥条件","0款→诊断出近30天上架×评论>2000互斥"],["BSR筛选","#22-#96/月销3,347-6,494/评论44-487"],["老链接排除品牌","10款整机/在架3.03-7.27年/临界样本FEELNEEDY核验"],["变体父子聚合","60样本18父体10入选/每行=1父体/Top1 12变体月销40,952"],["FBA卖家类型","接口配送方式过滤/卖家类型字段缺失如实披露/38款入选"],["销量增速环比","日销序列真实环比/0款达+50%如实报/最高+31.3%"],["缺失字段硬条件","weight_g逐款实核/盎司数≠实重/缺失不按0g计/15款达标"]]},"note":"选品搜索硬条件零凑数；主图列+悬停浮层已在候选表强制；筛选维度扩展回归两轮合计7/7（互斥条件诊断/BSR原生字段/反向时间窗+品牌排除/变体父子聚合/FBA卖家类型/销量增速环比/缺失字段硬条件），完整证据见仓库验收报告 amazon-eight-skills-acceptance-2026-11-13.html","report":"amazon-eight-skills-acceptance-2026-11-13.html","reportTitle":"八项公共技能验收报告（8/8 + 筛选维度 7/7，含逐条证据与会话链接）"},
   'skill-amazon-competitor': {"chatUrl":"https://local.dianleida.net:21996/c/57e31ba0-32f5-4776-927e-6f97083abc30","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["日本站水壶竞品 → 会话 57e31ba0","美国站运动水壶对标 → 会话 5151c95c"],"table":{"head":["核验项","实测结果"],"rows":[["身份核验","B0HBGYPY75为成人通用480mL非儿童款"],["对比口径","仅2次detail+2次variations"],["JPY渲染","右侧实际渲染"]]},"note":"竞品身份核验不合格即隔离，三档判定（建议对标/壁垒/勿入）"},
@@ -1798,8 +1794,13 @@ function renderGrid() {
     const hay = (s.name + ' ' + (s.desc || '') + ' ' + (s.triggers || []).join(' ') + (s.id.startsWith('skill-amazon-') ? ' youweiAI-amazon' : '')).toLowerCase();
     return okPf && okSc && (!kw || hay.includes(kw));
   });
-  if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的技能，换个筛选条件或添加一个吧</div>'; return; }
-  grid.innerHTML = list.map(s => {
+  const banner = (list.some(s => (s.id || '').startsWith('scene-')) && typeof SCENE_OPT_BANNER !== 'undefined') ?
+    '<div class="card" style="grid-column:1/-1;background:#f0f7ff;border:1.5px solid #c7ddf7"><div class="card-head"><div class="tags"><span class="ptag" style="color:#2456c4;border:1.5px solid #2456c4">🧪 提示词优化实测 ' + SCENE_OPT_BANNER.date + '</span></div><span class="badge badge-built">✓ 已验证</span></div><h3 style="font-size:15px">' + esc(SCENE_OPT_BANNER.title) + '</h3><div class="desc">' +
+    SCENE_OPT_BANNER.items.map(it => '<div style="padding:6px 0;border-bottom:1px dashed #d5e3f7"><b>' + esc(it.plan) + '</b>（' + esc(it.scene) + '）：调用 <b>' + esc(it.calls) + '</b> · 耗时 <b>' + esc(it.time) + '</b> — <span style="color:' + (it.verdict.indexOf('✅') === 0 ? '#16a34a' : '#dc2626') + ';font-weight:600">' + esc(it.verdict) + '</span></div>').join('') +
+    '<div style="margin-top:8px;font-size:12px;color:#6b7688">' + esc(SCENE_OPT_BANNER.note) + '</div></div></div>' : '';
+  if (!list.length) { grid.innerHTML = banner + '<div class="empty">没有匹配的技能，换个筛选条件或添加一个吧</div>'; return; }
+  grid.innerHTML = banner +
+ list.map(s => {
     const sc = SCENARIOS[s.scenario] || { label: s.scenario, color: '#8592a6' };
     const built = s.status === 'built';
     const trig = (s.triggers || []).slice(0, 2).map(t => '<div>「' + esc(t) + '」</div>').join('');
