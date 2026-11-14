@@ -1036,6 +1036,12 @@
       "target": "map:temu-expert-skill-map.ts",
       "action": "update",
       "summary": "路由事实源同步：专家id更新exp-temu-sel-v2、品牌youweiAI-TMEU、disciplines增第12条网关边界、竞品/商品解析/店铺分析steps回写网关降级路径"
+    },
+    {
+      "ts": "2026-11-14 18:52:50 +0800 +08:00",
+      "target": "hub:index.html",
+      "action": "fix",
+      "summary": "恢复实测页签丢失的「打开实测对话（Open WebUI）」chatUrl 链接渲染：4 处渲染路径（renderWsBody×2/renderSkillWs/openExpertDemo）补回 d.chatUrl + chatId 回退逻辑"
     }
   ]
 }
