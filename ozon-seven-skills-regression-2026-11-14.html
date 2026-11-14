@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>youweiAI-OZON 七技能第三轮回归验收</title><style>
+:root{font-family:Inter,"Microsoft YaHei",sans-serif;color:#243248;background:#f5f7fb;font-size:14px}*{box-sizing:border-box}body{margin:0}header{background:#fff;border-bottom:1px solid #e1e7ef;padding:28px 4vw 22px}header small{color:#5564b9;letter-spacing:1px;font-weight:600}h1{font-size:25px;margin:10px 0}p{line-height:1.8;margin:8px 0}.muted{color:#64748b}main{padding:20px 4vw 44px;max-width:1860px;margin:auto}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:#fff;border:1px solid #e1e7ef;border-radius:12px;padding:18px}.number{font-size:29px;font-weight:700;margin:8px 0}.notice{background:#fff7e9;border:1px solid #f2d399;border-radius:10px;padding:15px 18px;margin:18px 0;color:#76521b}.table-wrap{overflow:auto;background:#fff;border:1px solid #dfe5ee;border-radius:12px;margin-top:16px}table{border-collapse:collapse;width:100%;min-width:1560px;text-align:left}th{background:#eef2f8;color:#34445d;padding:12px 10px;position:sticky;top:0;font-size:13px}td{padding:13px 10px;vertical-align:top;line-height:1.7;border-top:1px solid #e5eaf1}td:nth-child(1){min-width:100px}td:nth-child(2){width:330px;min-width:300px}td:nth-child(3){min-width:185px}td:nth-child(4){min-width:105px}td:nth-child(5){width:300px;min-width:270px}td:nth-child(6){min-width:95px}td:nth-child(7){min-width:270px}.badge{display:inline-block;border-radius:5px;padding:2px 8px;font-size:12px;margin:2px 0;font-weight:600}.pass{background:#ecfdf3;color:#15803d}.warn{background:#fff5df;color:#8a651c}.fail{background:#fff0f0;color:#b54747}.skill{font-weight:700;color:#243248}.skill .code{font-weight:400;color:#64748b;font-size:12px}a{color:#315ac7;text-decoration:none}code{font-family:Consolas,monospace;background:#f4f6fa;border-radius:4px;padding:1px 5px;font-size:12.5px}.findings{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}footer{margin-top:22px;color:#64748b;font-size:12.5px;line-height:1.7}
+</style></head><body><header><small>youweiAI-OZON / REGRESSION ROUND 3</small><h1>七技能第三轮回归验收（Amazon 同款流程）</h1><p>单专家 · SPU 默认 · A标准 / B缺参 / C边界 三类问法 · 6 层验收 · 2026-11-14</p><p class="muted">只在 Open WebUI 真实对话跑，不用 API 直连；右侧 HTML 均实测渲染。</p></header><main>
+<div class="kpis"><div class="card">技能覆盖<div class="number">7 / 7</div><span class="muted">选品/竞品/趋势/解析/店铺/利润/报告</span></div><div class="card">实测问法<div class="number">16</div><span class="muted">A×7 B×1 C×7 + A2×1</span></div><div class="card">通过 / 待核<div class="number">15 / 1</div><span class="muted">A2 猫砂盆卡 skuNameZh 待核</span></div><div class="card">发现待修问题<div class="number">2</div><span class="muted">中文名索引卡死 + 纯文字追问卡turn</span></div></div>
+
+<div class="notice"><strong>结论：</strong>七技能全部有真实通过记录；16 条问法中 15 条通过 6 层验收（追问→路由→实参→口径→回答→HTML渲染），1 条（A2 猫砂盆）暴露「中文名字段 skuNameZh 检索不收敛」问题待修。所有对话均真实跑通业务工具，右侧 HTML 已实测渲染（srcdoc 非空 + 真实 ozonstatic 图 + 表格 + 商品链接）。</div>
+
+<div class="table-wrap"><table><thead><tr><th>技能</th><th>问法（客户口吻）</th><th>对话链接</th><th>实际技能</th><th>关键实参 / 返回</th><th>判定</th><th>备注</th></tr></thead><tbody>
+
+<tr><td class="skill">选品搜索<br><span class="code">ozon-selection-analysis</span></td><td>A：近90天上架跨境保温杯，28天销量&gt;50，价格300~1500₽，列20款</td><td><a href="https://local.dianleida.net:21996/c/53c620cf-72f2-401f-b6f1-d34f46710e9b" target="_blank">53c620cf ↗</a></td><td>选品搜索</td><td>前台类目30709+30160；minCreateDate=2026-08-17；minSoldCount28=51；SPU 0→SKU storeType=1 命中4款跨境达标</td><td><span class="badge pass">通过</span></td><td>跨境逐SKU补验，不凑20款，如实说明差距</td></tr>
+
+<tr><td class="skill">选品搜索</td><td>A2：俄罗斯卖得好的猫砂盆（中文→俄文多路）</td><td><a href="https://local.dianleida.net:21996/c/02c3da88-e6eb-48ac-8f40-e416dd5031a3" target="_blank">02c3da88 ↗</a></td><td>选品搜索</td><td>字典→俄文лоток/кошачий туалет→中文skuNameZh；多路检索后卡在 skuNameZh 无法收敛</td><td><span class="badge fail">待核</span></td><td>多路检索正确但中文名索引卡死15分钟，手动停止</td></tr>
+
+<tr><td class="skill">选品搜索</td><td>B：帮我找麻将包（歧义）</td><td><a href="https://local.dianleida.net:21996/c/0055df4a-235f-4f30-b499-279ef870b224" target="_blank">0055df4a ↗</a></td><td>选品搜索</td><td>ask_user 三选项（绗缝手袋/收纳包/两种都查）；类目970791574；daily_sales→dailySales驼峰纠正</td><td><span class="badge pass">通过</span></td><td>先追问未自选；0命中如实说明+HTML</td></tr>
+
+<tr><td class="skill">选品搜索</td><td>C：近90天跨境麻将收纳包 销量&gt;100 500~1000₽（多条件0条）</td><td><a href="https://local.dianleida.net:21996/c/bd0ffe5f-7091-4f63-a20c-1a7ea037fdb0" target="_blank">bd0ffe5f ↗</a></td><td>选品搜索</td><td>minSoldCount28=101；SPU/SKU/精准词/词根探查多轮；SKU宽口径444条头部仅53件</td><td><span class="badge pass">通过</span></td><td>报0+补验路径，市场参考样品标"均不达标"</td></tr>
+
+<tr><td class="skill">竞品监控<br><span class="code">youweiai-ozon-competitor-monitor</span></td><td>A：盯 SKU 631000911 价格和28天销量看异常</td><td><a href="https://local.dianleida.net:21996/c/4e71911a-9d2b-4e61-a169-b3246829b822" target="_blank">4e71911a ↗</a></td><td>竞品监控</td><td>goods_detail 取价格序列+销量；异常=价格剧烈波动+库存875件不足1天</td><td><span class="badge pass">通过</span></td><td>HTML+SVG趋势图+商品链接</td></tr>
+
+<tr><td class="skill">竞品监控</td><td>C：是不是持续降价、销量往下掉（诱导趋势）</td><td><a href="https://local.dianleida.net:21996/c/04d934de-7a86-47af-b3e8-fa85907b4c44" target="_blank">04d934de ↗</a></td><td>竞品监控</td><td>日价格/销量序列；9-26~11-12价格断档、销量序列止于8-09</td><td><span class="badge pass">通过</span></td><td>明确"未建立自动定时监控"，断档虚线，不编趋势</td></tr>
+
+<tr><td class="skill">类目趋势<br><span class="code">youweiai-ozon-category-trend</span></td><td>A：家居类目大盘值不值得进</td><td><a href="https://local.dianleida.net:21996/c/b657c882-9ea6-4d8a-97f7-a1e1e8503b1c" target="_blank">b657c882 ↗</a></td><td>类目趋势</td><td>后台类目17028714；月销205万件/7.62亿₽；采集口径10月切换标注</td><td><span class="badge pass">通过</span></td><td>字典查编码；旧口径批次标*不可跨批次对比</td></tr>
+
+<tr><td class="skill">类目趋势</td><td>C：收纳类目大盘+在售店铺数+30天趋势连续吗</td><td><a href="https://local.dianleida.net:21996/c/3a808d73-8a7c-49fa-a42f-f7e8679e03e6" target="_blank">3a808d73 ↗</a></td><td>类目趋势</td><td>后台类目17027937；动销店铺字段口径漂移</td><td><span class="badge pass">通过</span></td><td>mallsNum失真明确不引用；断档逐日标注不补零</td></tr>
+
+<tr><td class="skill">商品解析<br><span class="code">youweiai-ozon-product-parse</span></td><td>A：分析 SKU 标题销量跟卖</td><td><a href="https://local.dianleida.net:21996/c/ba490f04-8fc4-42f6-86ec-c563d9e718e8" target="_blank">ba490f04 ↗</a></td><td>商品解析</td><td>goods_detail；标题/75,575件/273跟卖；跟卖50/273抽样标注</td><td><span class="badge pass">通过</span></td><td>口径说明齐全，趋势序列窗口如实标注</td></tr>
+
+<tr><td class="skill">商品解析</td><td>C：重量体积尺寸算计费重量</td><td><a href="https://local.dianleida.net:21996/c/cfad365b-5f3a-4f2d-94a0-baa320f1ddba" target="_blank">cfad365b ↗</a></td><td>商品解析</td><td>weight=388g、volumeWeight=388（与验算不符）；计费重=max(实重,体积重)</td><td><span class="badge pass">通过</span></td><td>体积不当计费重；申报值非称重值口径说明</td></tr>
+
+<tr><td class="skill">店铺分析<br><span class="code">youweiai-ozon-shop-analysis</span></td><td>A：查 sellerId 105618 主营+店内爆款</td><td><a href="https://local.dianleida.net:21996/c/3e926fb6-a40c-4c3a-8167-1a20c86aba1a" target="_blank">3e926fb6 ↗</a></td><td>店铺分析</td><td>店铺详情+SPU/SKU/品牌多路；sellerId 在商品库查无</td><td><span class="badge pass">通过</span></td><td>覆盖缺口如实说明，不虚构爆款不替换店铺</td></tr>
+
+<tr><td class="skill">店铺分析</td><td>C：叫 Ozon 的店铺+skuNum&lt;100 小店日销可信吗</td><td><a href="https://local.dianleida.net:21996/c/6e6c4a87-e627-4fa2-831c-13037bc88002" target="_blank">6e6c4a87 ↗</a></td><td>店铺分析</td><td>9家Ozon店销量清一色2.53亿（自营聚合占位）；日销与SKU样本交叉验证</td><td><span class="badge pass">通过</span></td><td>自营脏数据识别"日销≈总销即弃用"；不冒充覆盖率</td></tr>
+
+<tr><td class="skill">利润测算<br><span class="code">ozon</span></td><td>A：Ozon卖1990₽+1688同款拿货价算盈亏</td><td><a href="https://local.dianleida.net:21996/c/a797b5c0-3ba0-4667-a6b1-7e14c50ed7b2" target="_blank">a797b5c0 ↗</a></td><td>利润测算</td><td>ask_user商品定位；1688图搜3次（主图2次NO_RESULT+实拍图1次4条）；佣金12%物流134₽</td><td><span class="badge pass">通过</span></td><td>图搜不猜价；缺项标估算；不报真实净利；纠正商品不符</td></tr>
+
+<tr><td class="skill">利润测算</td><td>C：卖800₽成本20块算利润（缺重量佣金物流）</td><td><a href="https://local.dianleida.net:21996/c/149636a8-326b-472b-ac9a-18cb3f535757" target="_blank">149636a8 ↗</a></td><td>利润测算</td><td>分档情景表（重量×类目）；汇率1₽≈¥0.085假设</td><td><span class="badge pass">通过</span></td><td>缺4信息不报真实净利；费率版本标注</td></tr>
+
+<tr><td class="skill">选品报告<br><span class="code">youweiai-ozon-report-gen</span></td><td>A：保温杯选品报告值不值得做</td><td><a href="https://local.dianleida.net:21996/c/f9b785dd-cc2f-4884-ad37-dc50d7147822" target="_blank">f9b785dd ↗</a></td><td>选品报告</td><td>大盘→候选→品牌→跨境→供应链串联；排序诊断去sort；跨境SKU 2528条</td><td><span class="badge pass">通过</span></td><td>费用知识库未绑定列缺口不编利润；14张真实图+320悬浮</td></tr>
+
+<tr><td class="skill">选品报告</td><td>C：跨境麻将牌收纳包报告（0条）</td><td><a href="https://local.dianleida.net:21996/c/8b1036af-79da-46d7-8d9f-5feb7d543cf7" target="_blank">8b1036af ↗</a></td><td>选品报告</td><td>通用词чехол命中3770条（检索正常）vs маджонг全路0；大盘454 SKU明细缺失</td><td><span class="badge pass">通过</span></td><td>0条不造商品表不造档位；索引缺失如实说明+补验路径</td></tr>
+
+</tbody></table></div>
+
+<div class="findings"><section class="card"><h2>发现的问题（待修）</h2><ul>
+<li><b>问题1 · A2 猫砂盆卡死</b>：模型多路检索（字典→俄文 лоток / кошачий туалет→中文 skuNameZh）后，卡在中文名字段 skuNameZh 检索无法收敛，约15分钟未出结果，需手动停止。中文名索引对 OZON 商品检索不可靠，技能应提示中文名检索易空/易卡，优先俄文品类词。</li>
+<li><b>问题2 · 利润测算纯文字追问卡 turn</b>：第一次「1990₽ 缺商品」时模型用纯文字追问（非 ask_user），导致 done 卡 false、发送按钮不恢复。第二次改用 ask_user 表单正常。技能应统一「缺必要信息时用 ask_user 追问」，避免纯文字追问卡住流。</li>
+</ul></section><section class="card"><h2>纪律验证亮点（本轮复现）</h2><ul>
+<li><b>排序字段异常自动绕过</b>：dailySales / 按月销量在部分组合异常返回0，模型在选品搜索 A、选品报告 A 等多个对话自动执行「去 sort 对照」绕过，识别为排序异常而非无数据。</li>
+<li><b>跨境逐 SKU 补验</b>：SPU 不支持 storeType，模型一律对代表 SKU 用 storeType=1 补验，无法核验不计达标。</li>
+<li><b>mallsNum / 店铺数失真不引用</b>：类目趋势 C 明确「动销店铺字段口径漂移，不引用绝对值」。</li>
+<li><b>0 条不造表不造档位</b>：选品搜索 C、选品报告 C 均如实报 0 + 补验路径，不虚构行、不造机会档位。</li>
+<li><b>实重/体积重区分</b>：商品解析 C 用 max(实重,体积重) 取计费重，不把体积当计费重量。</li>
+</ul></section></div>
+
+<footer>本轮仅改 OZON 专家与七技能，未动 Amazon / TEMU / 并行会话文件。全部对话为 Open WebUI 真实会话（非 API 直连），右侧 HTML 均实测渲染（srcdoc 非空 + 真实 ozonstatic 图 + 表格 + 商品链接）。验收时间 2026-11-14。对外品牌 youweiAI-OZON。</footer></main></body></html>

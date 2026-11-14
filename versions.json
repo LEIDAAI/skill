@@ -988,6 +988,12 @@
       "target": "hub:index.html#amazon-public-skills",
       "action": "update",
       "summary": "公共技能实测记录同步筛选维度扩展回归：选品搜索补互斥条件16b50149、BSR筛选dfadeef8、老链接反向时间窗72172a5c三条证据（问法3→6、表增3行），实测弹窗新增验收报告入口，指向 amazon-eight-skills-acceptance-2026-11-13.html"
+    },
+    {
+      "ts": "2026-11-14 16:30:00 +08:00",
+      "target": "hub:index.html#ozon-public-skills",
+      "action": "update",
+      "summary": "OZON七技能第三轮回归（Amazon同款流程，16问法15通过1待核）同步导航：七技能 demo 更新为 A/B/C 三类问法实测记录，各补 chatUrl 真实会话链接与 report/reportTitle 验收报告入口，指向 ozon-seven-skills-regression-2026-11-14.html；发现排序字段 dailySales 异常去 sort 对照、跨境逐 SKU 补验、中文名索引 skuNameZh 不收敛待修"
     }
   ]
 }
