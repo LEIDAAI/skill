@@ -72,11 +72,6 @@
   .vtab:not(.active):hover { background: #d9f2e4; color: #128a42; border-color: #a9e2c4; }
   .vtab .vicon { font-size: 16px; }
 
-  .ktab-btn { padding: 8px 20px; font-size: 14px; border-radius: 10px; }
-  .ktab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(0,91,255,.22); }
-  .ktab-btn:not(.active) { background: #eef4fb; border-color: #d5e3f7; color: var(--muted); }
-  .scene-badge { font-size:10.5px;background:#e8f0fe;color:#2456c4;border-radius:5px;padding:1px 7px;margin-left:6px;vertical-align:2px;font-weight:600 }
-
   /* ===== Search + actions row ===== */
   .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
   .search {
@@ -316,10 +311,6 @@
   </div>
 
   <div id="view-skills" style="display:none">
-  <div class="ktabs" id="ktabs" style="display:flex;gap:10px;margin-bottom:14px">
-    <button class="vtab ktab-btn active" id="ktab-public" onclick="switchKind('public')"><span class="vicon">🌐</span>公共技能</button>
-    <button class="vtab ktab-btn" id="ktab-scene" onclick="switchKind('scene')"><span class="vicon">🎯</span>场景技能 <span style="font-weight:600;font-size:12px;opacity:.8">21</span></button>
-  </div>
   <div class="toolbar">
     <input id="search" class="search" placeholder="搜索技能名称 / 描述 / 触发词…">
     <div class="actions">
@@ -588,33 +579,30 @@ const BASE_SKILLS = [
       '5. 用户未指明销量周期时说明按近28天口径；若接口缺上架日期/销量字段，不声称逐条核验。空结果核对接口健康后如实说明，不拿大盘或泛词候选冒充目标商品。',
     ].join('\n'),
     demo: {
-      chatUrl: 'https://local.dianleida.net:21996/c/53c620cf-72f2-401f-b6f1-d34f46710e9b',
-      title: '实测：第三轮回归 A/B/C（2026-11-14）',
-      date: '2026-11-14',
+      title: '实测：收纳类目跨境选品检索（四路召回+SPU归组）',
+      date: '2026-11-10',
       kpis: [
-        { label: '实测问法', v: '4 条' },
-        { label: '标准问法', v: '保温杯跨境4款' },
-        { label: '歧义追问', v: '✓ ask_user' },
-        { label: '0条边界', v: '✓ 报0+补验路径' }
+        { label: '检索类目', v: '收纳' },
+        { label: '后台类目ID', v: '17027937' },
+        { label: '跨境候选', v: '4,763款' },
+        { label: '筛选口径', v: '28天销量≥30' }
       ],
       flow: [
-        'A 保温杯近90天跨境：前台类目 30709+30160，minCreateDate=2026-08-17，minSoldCount28=51；SPU 不支持跨境→SKU storeType=1 命中 4 款达标，不凑 20 款',
-        'A2 猫砂盆：字典→俄文 лоток/кошачий туалет→中文 skuNameZh 多路检索（中文名索引不收敛，待修）',
-        'B 麻将包：ask_user 三选项先追问未自选；daily_sales→dailySales 驼峰纠正',
-        'C 多条件0条：SKU 宽口径 444 条头部仅 53 件，报 0 + 补验路径，参考样品标「均不达标」'
+        '① <code>yq_dict_lookup</code> 查「收纳」→ 后台类目 17027937（住宅和花园>收纳）',
+        '② <code>yq_ozon_goods_search</code>：category=[17027937] + storeType=1(跨境) + minSoldCount28=30，sort=[{soldSum28:desc}]',
+        '③ 按 SKU 去重 → SPU 归组 → 语义过滤（剔收纳袋误命中的服饰防尘罩）'
       ],
       table: {
-        head: ['问法', '关键实参/结果', '判定'],
+        head: ['#', '商品', 'SKU', '售价₽', '28天销量', '28天销售额₽', '评分'],
         rows: [
-          ['A 保温杯跨境', '30709/30160 + storeType=1 → 4款达标', '✓'],
-          ['A2 猫砂盆', '多路检索卡 skuNameZh', '待核'],
-          ['B 麻将包', 'ask_user追问 + 驼峰字段纠正', '✓'],
-          ['C 多条件', '0条如实报 + 补验路径', '✓']
+          ['1', '真空压缩袋 Vacuum Bag', '4853892229', '314', '8,526', '285.5万', '4.8'],
+          ['2', '收纳盒 24×9.5×9cm', '4866485703', '300', '9,641', '280.7万', '4.9'],
+          ['3', '收缩膜袋 60×70cm', '4939673661', '175', '15,216', '247.4万', '4.9'],
+          ['4', '收纳盒 24×18×11cm 4件装', '3721782737', '571', '3,770', '176.7万', '4.9'],
+          ['5', '收纳箱包 82×44×16cm', '2350488528', '1,209', '1,291', '159.6万', '4.9']
         ]
       },
-      note: '第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；排序字段 dailySales 异常自动去 sort 对照、跨境逐 SKU 补验。',
-      report: 'ozon-seven-skills-regression-2026-11-14.html',
-      reportTitle: 'OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）'
+      note: '数据来源：yq_dict_lookup + yq_ozon_goods_search（2026-11-10 实时调用）。跨境供给充足（4,763款），销量头部为压缩袋/收纳盒类高频复购品；每路命中数已标注，SPU归组后同款变体不重复计。'
     },
     skillMd: OZON_SELECT_MD
   },
@@ -637,7 +625,7 @@ const BASE_SKILLS = [
       '3. 输出监控表：商品/价格/28天销量/评分/跟卖数 + 异常提醒（如降幅>15%）；',
       '4. 说明：本次为单次监控，如需持续跟踪请把结果存档，下次发我对比。',
     ].join('\n'),
-    demo: {"chatUrl":"https://local.dianleida.net:21996/c/4e71911a-9d2b-4e61-a169-b3246829b822","title":"实测：第三轮回归 A/C（2026-11-14）","date":"2026-11-14","kpis":[{"label":"实测问法","v":"2 条"},{"label":"SKU异常","v":"价格波动+库存875"},{"label":"基线纪律","v":"✓ 不称持续监控"}],"flow":["A SKU 631000911：goods_detail 取价格序列+销量，异常=价格剧烈波动+库存875件不足1天+273跟卖","C 趋势判断：日价格序列9-26~11-12断档、销量序列止于8-09，明确未建立自动定时监控，不编趋势"],"table":{"head":["核验项","实测结果"],"rows":[["A 异常定位","182₽次低位+促销广告+库存告急"],["C 基线纪律","只建当前基线不称持续监控"],["数据断档","价格7周空档虚线标注"]]},"note":"第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；有真实序列才算变化，无历史只建基线。","report":"ozon-seven-skills-regression-2026-11-14.html","reportTitle":"OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）"},
+    demo: {"title":"实测：家居类目跨境竞品扫描（近90天新品）","date":"2026-11-09","kpis":[{"label":"检索路径","v":"5路合并"},{"label":"全量候选","v":"24 款"},{"label":"跨境新品最高","v":"636件/月"},{"label":"单链接月销额","v":"₽266.9万"}],"flow":["yq_dict_lookup 查类目ID","goods_search 多路检索（类目+俄文品类词+中文大类词）","SKU去重合并 + 噪音语义过滤","按28天销量排序 + SPU归组"],"table":{"head":["#","商品","价格₽","28天销量","卖家类型"],"rows":[["1","Cultivator 绗缝斜挎包","4,195","636","跨境⚡"],["2","Semybear 斜挎包","672","156","跨境⚡"],["3","低价走量款","280","156","跨境⚡"],["4","一店多铺变体","217","31","跨境⚡"]]},"images":["https://ir-20.ozonstatic.cn/s3/multimedia-1-9/7450858845.jpg"],"note":"数据来源：yq_ozon_goods_search（2026-11-09）。跨境新品起量快，高价款（₽4,195）也能爆。"},
   },
   {
     id: 'category-trend',
@@ -657,7 +645,7 @@ const BASE_SKILLS = [
       '4. 输出：大盘概览 + 热销榜要点 + 价格带机会分析（哪个价位段竞争少销量高）+ 1-3条建议。',
       '金额默认卢布，标注数据来源。',
     ].join('\n'),
-    demo: {"chatUrl":"https://local.dianleida.net:21996/c/b657c882-9ea6-4d8a-97f7-a1e1e8503b1c","title":"实测：第三轮回归 A/C（2026-11-14）","date":"2026-11-14","kpis":[{"label":"实测问法","v":"2 条"},{"label":"家居月销","v":"205万件/7.62亿₽"},{"label":"类目ID","v":"17028714字典查"}],"flow":["A 家居大盘：yq_dict_lookup 查后台类目 17028714，月销205万件/7.62亿₽，采集口径10月切换标注*","C 收纳趋势：动销店铺字段口径漂移不引用，断档逐日标注不补零"],"table":{"head":["核验项","实测结果"],"rows":[["A 类目ID","字典查 17028714 不猜编码"],["C mallsNum失真","动销店铺口径漂移不引用"],["C 日期空洞","9个采样点断档逐日标注"]]},"note":"第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；mallsNum 失真不引用、日期空洞不补零不推趋势。","report":"ozon-seven-skills-regression-2026-11-14.html","reportTitle":"OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）"},
+    demo: {"title":"实测：家居用品类目大盘（后台类目 17028714）","date":"2026-11-09","kpis":[{"label":"月销售额","v":"8.29亿₽"},{"label":"月销量","v":"228万件"},{"label":"SKU总数","v":"15.7万"},{"label":"店铺数","v":"4.6万"}],"flow":["yq_dict_lookup 查后台类目ID","yq_ozon_market_stat 取大盘","分析动销率/流量效率/趋势"],"table":{"head":["指标","数值","解读"],"rows":[["月销售额","8.29亿₽","类目容量充足"],["月销量","228万件","高频刚需"],["SKU总数","15.7万","供给丰富"],["月动销SKU","≈940","动销率仅0.6%⚠️"],["近28天浏览","20.6亿次","流量池大"]]},"note":"数据来源：yq_ozon_market_stat（2026-11-09）。动销率低=长尾货盘巨大，选款比引流重要。"},
   },
   {
     id: 'product-parse',
@@ -677,7 +665,7 @@ const BASE_SKILLS = [
       '3. 输出商品档案：基础信息 + 销量趋势解读（起量点/衰退迹象）+ 跟卖竞争评估 + 定价点评；',
       '4. 给出选品参考建议（值不值得跟进、差异化方向）。',
     ].join('\n'),
-    demo: {"chatUrl":"https://local.dianleida.net:21996/c/ba490f04-8fc4-42f6-86ec-c563d9e718e8","title":"实测：第三轮回归 A/C（2026-11-14）","date":"2026-11-14","kpis":[{"label":"实测问法","v":"2 条"},{"label":"SKU解析","v":"标题/75,575件/273跟卖"},{"label":"计费重量","v":"max(实重,体积重)"}],"flow":["A SKU 631000911：goods_detail 取标题/28天75,575件/273跟卖，跟卖50/273抽样标注","C 计费重量：weight=388g、volumeWeight=388与验算不符，计费重=max(实重,体积重)取388g"],"table":{"head":["核验项","实测结果"],"rows":[["A 跟卖口径","50/273抽样不代表全量"],["C 体积不当计费重","实重/体积重分开取max"],["C 申报值","非称重值口径说明"]]},"note":"第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；体积不当计费重量、缺失如实标注。","report":"ozon-seven-skills-regression-2026-11-14.html","reportTitle":"OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）"},
+    demo: {"title":"实测：标题三字段解析（家居TOP3）","date":"2026-11-09","kpis":[{"label":"标题字段","v":"3个"},{"label":"中文翻译覆盖","v":"约2/3"},{"label":"SPU字段覆盖","v":"部分"},{"label":"实测样本","v":"3款"}],"flow":["yq_ozon_goods_detail 取 skuName/name/skuNameZh","对比翻译覆盖","SPU反查父体"],"table":{"head":["字段","语言","样例"],"rows":[["skuName","俄文","Пакеты для мусора 35 л"],["name","原文(英)","BIG City Life Rubbish Bags 35L"],["skuNameZh","中文","BIG City Life 垃圾袋 35 升（覆盖不全）"]]},"note":"数据来源：yq_ozon_goods_detail（2026-11-09）。skuNameZh缺失时用name英文兜底，不用俄文机翻。"},
   },
   {
     id: 'shop-analysis',
@@ -697,7 +685,7 @@ const BASE_SKILLS = [
       '3. 调 yq_ozon_spu_search 按 sellerId 过滤取其 TOP 商品，看爆款结构；',
       '4. 输出：店铺画像 + 爆款结构（价格带/品类集中度）+ 对标借鉴点 + 建议。',
     ].join('\n'),
-    demo: {"chatUrl":"https://local.dianleida.net:21996/c/3e926fb6-a40c-4c3a-8167-1a20c86aba1a","title":"实测：第三轮回归 A/C（2026-11-14）","date":"2026-11-14","kpis":[{"label":"实测问法","v":"2 条"},{"label":"覆盖缺口","v":"✓ 不虚构爆款"},{"label":"自营脏数据","v":"✓ 过滤2.53亿占位"}],"flow":["A sellerId 105618：店铺详情+SPU/SKU/品牌多路，sellerId 在商品库查无，覆盖缺口如实说明不替换店铺","C 叫Ozon的店：9家销量清一色2.53亿（自营聚合占位），日销与SKU样本交叉验证"],"table":{"head":["核验项","实测结果"],"rows":[["A 覆盖缺口","商品库查无不虚构爆款"],["C 自营脏数据","日销≈总销即弃用"],["C 交叉验证","店铺日销 vs SKU样本分开列"]]},"note":"第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；同名/自营脏数据先核对身份，不冒充覆盖率。","report":"ozon-seven-skills-regression-2026-11-14.html","reportTitle":"OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）"},
+    demo: {"title":"实测：Rhapsody Home Shop 标杆店拆解","date":"2026-11-09","kpis":[{"label":"目标店铺","v":"ID 2892839"},{"label":"日销量","v":"8,738件"},{"label":"SKU数","v":"1,252"},{"label":"店铺等级","v":"Plus"}],"flow":["yq_ozon_mall_search 过滤自营脏数据","yq_ozon_mall_detail 查店铺","goods_search sellerId 反查店内爆款"],"table":{"head":["#","店内爆款","价格₽","28天销量"],"rows":[["1","创可贴","66","60,000"],["2","家居收纳","—","—"],["3","清洁用品","—","—"]]},"images":["https://ir-20.ozonstatic.cn/s3/multimedia-1-b/10228074311.jpg"],"note":"数据来源：yq_ozon_mall_detail + sellerId反查（2026-11-09）。开店1年做到日销8,738件。"},
   },
   {
     id: 'profit-calc',
@@ -717,7 +705,7 @@ const BASE_SKILLS = [
       '3. 输出：单位毛利/毛利率 + 不同售价下的利润敏感性（3档价格）+ 建议售价区间；',
       '4. 所有估算项明确标注「估算」，实际以平台后台账单为准。',
     ].join('\n'),
-    demo: {"chatUrl":"https://local.dianleida.net:21996/c/a797b5c0-3ba0-4667-a6b1-7e14c50ed7b2","title":"实测：第三轮回归 A/C（2026-11-14）","date":"2026-11-14","kpis":[{"label":"实测问法","v":"2 条"},{"label":"图搜不猜价","v":"✓ 1688图搜3次"},{"label":"缺项标估算","v":"✓ 不报真实净利"}],"flow":["A 保温杯1990₽：ask_user商品定位→1688图搜3次（主图2次NO_RESULT+实拍图1次4条），佣金12%物流134₽","C 卖800₽成本20块：分档情景表（重量×类目），汇率1₽≈¥0.085假设，缺4信息不报真实净利"],"table":{"head":["核验项","实测结果"],"rows":[["A 1688找源","图搜3次不靠记忆猜价"],["C 缺重量/佣金","一律标估算不报真实净利"],["C 汇率","标注日期与假设"]]},"note":"第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；缺项标估算、估算与真实净利严格分列。","report":"ozon-seven-skills-regression-2026-11-14.html","reportTitle":"OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）"},
+    demo: {"title":"实测：近60天连衣裙TOP8利润测算","date":"2026-11-08","kpis":[{"label":"利润率区间","v":"38.7%~68.3%"},{"label":"样本","v":"8款"},{"label":"费用来源","v":"佣金物流知识库"},{"label":"拿货来源","v":"1688图搜"}],"flow":["goods_search 取TOP8","1688 global_image_search 找源","ali_offer_sku_prices 拿货价","佣金/国际物流费率套算"],"table":{"head":["#","商品","Ozon售价₽","1688拿货¥","毛利率"],"rows":[["1","连衣裙A","2,533","85","62.3%"],["2","连衣裙B","1,484","62","58.1%"],["3","连衣裙C","1,733","95","45.2%"]]},"note":"数据来源：yq_ozon_goods_search + 1688 MCP + 知识库费率（2026-11-08）。完整链路见利润技能底稿。"},
   },
   {
     id: 'report-gen',
@@ -737,7 +725,7 @@ const BASE_SKILLS = [
       '4. 输出结构化报告：① 总结论（值不值得做）② 机会档位表（高/中/低）③ 重点商品卡片 ④ 风险与假设 ⑤ 下一步动作清单。',
       '金额卢布，数据缺失处标注，末尾列数据来源接口。',
     ].join('\n'),
-    demo: {"chatUrl":"https://local.dianleida.net:21996/c/f9b785dd-cc2f-4884-ad37-dc50d7147822","title":"实测：第三轮回归 A/C（2026-11-14）","date":"2026-11-14","kpis":[{"label":"实测问法","v":"2 条"},{"label":"A完整串联","v":"大盘→候选→跨境→供应链"},{"label":"0条不造档位","v":"✓ 索引缺失如实说明"}],"flow":["A 保温杯：大盘→候选→品牌→跨境SKU 2528条→供应链串联，排序诊断去sort，费用知识库未绑定列缺口不编利润","C 麻将收纳包：通用词чехол命中3770条 vs маджонг全路0，大盘454 SKU明细缺失，0条不造商品表不造档位"],"table":{"head":["核验项","实测结果"],"rows":[["A 跨境补验","storeType=1 命中2528条"],["C 0条边界","不造档位+补验路径"],["C 索引缺失","大盘有明细无如实说明"]]},"note":"第三轮回归（Amazon 同款流程）16 条问法 15 通过 1 待核；SPU不支持条件逐SKU补验，0条不生成机会档位。","report":"ozon-seven-skills-regression-2026-11-14.html","reportTitle":"OZON 七技能第三轮回归验收报告（16问法·15通过1待核·含逐条会话链接）"},
+    demo: {"title":"实测：大码连衣裙选品报告（66款畅销池）","date":"2026-11-09","kpis":[{"label":"全量池","v":"126款"},{"label":"SPU归组","v":"≈45父体"},{"label":"头部5父体份额","v":"≈60%"},{"label":"唯一跑出跨境","v":"BayAli"}],"flow":["四级关键词策略（类目→俄文→英文→中文大类）","双池检索（低销60+畅销66）","SPU归组去重","竞争格局分析"],"table":{"head":["梯队","父体","合计销量","合计销售额₽"],"rows":[["🥇","Sasheline 针织长裙","176件","44.2万"],["🥈","SveTekst 系","386件","50.9万"],["🥉","DeMare 系","266件","48.6万"],["4","通勤晚装系","239件","114.7万"]]},"images":["https://ir-20.ozonstatic.cn/s3/multimedia-1-q/14037199010.jpg"],"note":"数据来源：yq_ozon_goods_search + SPU归组（2026-11-09）。完整预览页已生成（大码裙×3）。"},
   },
 
   /* ============ TEMU ============ */
@@ -851,93 +839,161 @@ const BASE_SKILLS = [
   },
   {
     id: 'skill-selection-search',
-    name: 'TEMU选品搜索',
+    name: 'youweiAI-TMEU·选品搜索',
     slug: '/skill-selection-search',
     platforms: ['temu'],
     scenario: 'product-selection',
     status: 'built',
-    desc: '全托/半托商品检索：关键词+类目ID+时间窗+站点+销量门槛，多语言变体一次交付。',
+    desc: '跨品类检索TEMU全托/半托商品：多条件筛选并交付可预览表格；缺托管模式与站点先追问。',
     triggers: ['帮我找XX','搜XX','近60天上架的跨境XX','XX类目有什么好卖的'],
-    prompt: "搜索TEMU商品：【需求描述】。\n托管模式【全托/半托/都要】| 站点【美国211/德国76/其他】| 类目【查字典拿ID】| 时间窗【issued_date】| 月销门槛【min_monthly_sales】。\n输出 KPI+表格+结论：全托披露站点不可验证；金额带币种三元组；缺失不补零。",
-    tools: ['yq_dict_lookup','yq_goods_search'],
+    prompt: `# youweiAI-TMEU·选品搜索
+跨品类公共技能：按用户确认的条件检索 TEMU 商品，不预设品类、站点或销量阈值。
+## 前置确认（必须等待）
+用户未说明全托/半托/两者、目标站点任一项时，一次性追问缺项并等待回答，不得默认美国站或默认全托。已确认条件在当前对话直接复用，不重复问。用户指定条件属于硬约束，不得为凑条数放宽。
+## 检索口径
+- 销量门槛语义："大于N"传 min_monthly_sales=N+1；"≥N"传 N。总命中数与实际取样条数分开报。
+- 时间窗：用户指定日期窗与默认窗互斥，复述用户窗并按其执行，不混写。
+- 组合条件多时中文词命中率骤降，可改用英文关键词并在结论中披露这一调整。
+- 类目ID不猜，先用字典查询。
+## 工具范围
+TEMU 商品检索/详情/字段查询按当轮可见 schema 调用，不猜参数名。字段不确定先查字段说明；详情按需裁剪字段，传错字段不报错只会退化，拿不准先核对。
+## 结果处理
+- 原条件 0 条：如实报告零结果并保留原条件，放宽条件的诊断结果单独列出并标注"诊断"，不得混入主结果。
+- sales 总量高但日/周/月销量为空：不补 0，用总销量或评论数佐证真实动销。
+- 全托 regions 站点筛选效果不可验证：只能表述为"返回条目站点标签为X"，不得声称"全部符合X站条件"，必须披露这一局限。
+## 交付规范
+有数据实返时，聊天先给 3-5 句结论，再给完整 html 代码块生成右侧预览：KPI卡+明细表（真实主图悬停320x320白底放大、标题链商品页、实得店铺ID才有店铺链接、价格带币种、按核心指标降序）+证据与缺口+结论区。0 条不造表。追问后新数据要生成新预览，不复用旧 HTML。对外统一 youweiAI-TMEU 品牌，不披露上游来源。`,
+    tools: ['yq_dict_lookup','yq_goods_search','yq_fields_lookup'],
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：近60天跨境麻将包（全托+半托·美国211）',\\n      date: '2026-11-09',\\n      kpis: [\\n        { label: '候选→成品', v: '57 → 52 款' },\\n        { label: '全托/半托', v: '10 / 42' },\\n        { label: '价格范围', v: '$4.60~29.31' },\\n        { label: '月销合计', v: '≈2,180件' }\\n      ],\\n      flow: [\\n        '① 追问确认：托管模式=两者都要，站点=美国211（用户点击选择）',\\n        '② <code>yq_dict_lookup</code>：麻将包→无此类目；箱包=731（中文标题「麻将」+类目收窄）',\\n        '③ <code>yq_goods_search</code>×2（ware_house_type=0/1）：issued_date 20260910~1109 + min_monthly_sa"]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：近60天跨境麻将包（全托+半托·美国211）',\\n      date: '2026-11-09',\\n      kpis: [\\n        { label: '候选→成品', v: '57 → 52 款' },\\n        { label: '全托/半托', v: '10 / 42' },\\n        { label: '价格范围', v: '$4.60~29.31' },\\n        { label: '月销合计', v: '≈2,180件' }\\n      ],\\n      flow: [\\n        '① 追问确认：托管模式=两者都要，站点=美国211（用户点击选择）',\\n        '② <code>yq_dict_lookup</code>：麻将包→无此类目；箱包=731（中文标题「麻将」+类目收窄）',\\n        '③ <code>yq_goods_search</code>×2（ware_house_type=0/1）：issued_date 20260910~1109 + min_monthly_sales=10 → 57款',\\n        '④ 相关性核查：剔全托3款非美国标签 + 半托1款肩带配件 → 52款成品'\\n      ],\\n      table: {\\n        head: ['#', '商品', '价格', '站点', '月销', '模式', '店铺'],\\n        rows: [\\n          ['1', '8个麻将垫收纳管 34.6\"PVC', '$21.48', '美国', '311', '半托', 'GlobalGoodsss'],\\n          ['2', '大容量透明PU/PVC拉链收纳包', '$6.21', '美国', '192', '半托', 'Wu Dii'],\\n          ['3', '麻将主题托特包（双面印花）', '$4.89', '美国(标签)', '179', '全托', 'Aazhong'],\\n          ['4', '透明PU PVC拉链收纳袋', '$11.28', '美国', '117', '半托', 'Hong Ching Electric Co'],\\n          ['5', '趣味麻将设计PVC手提袋', '$12.94', '美国(标签)', '123', '全托', 'XJPYMCC']\\n        ]\\n      },\\n      note: '发现：①「麻将包」在 TEMU=美式麻将爱好者周边（Gift for Mahjong Lovers），非国内麻将牌袋单一概念；② 76% 新品集中美国站（全托按标签计）；③ 透明PVC拉链包是唯一双模式都在跑的款型；④ 9 家店铺多款铺货（NovaDaily Shop×4），店群矩阵打法明显。数据来源：yq_goods_search×2 + yq_mall_search 批量反查店铺名（2026-11-09 实时调用）。'\\n    }"}
   },
   {
     id: 'skill-competitor-monitor',
-    name: 'TEMU竞品监控',
+    name: 'youweiAI-TMEU·竞品监控',
     slug: '/skill-competitor-monitor',
     platforms: ['temu'],
     scenario: 'competitor',
     status: 'built',
-    desc: '站内图搜同款+竞品价格销量跟踪：distance 相似度、同款统计、价格内卷度、新品动态。',
+    desc: '跨品类核对TEMU竞品：站内图搜同款、价格销量基线与真实历史变化；图搜混币种逐条披露。',
     triggers: ['图搜同款','看看站内有多少同款','盯一下这个竞品','竞争激烈吗'],
-    prompt: "监控TEMU竞品：【商品ID/链接/图片】。\n图搜看竞争密度（distance/同款数/价格带），详情看价格销量基准。输出竞品画像+同款分布+竞争判断；1688 找货源另走 profit-calc 技能，两者图搜不可混。",
-    tools: ['yq_goods_img_search','yq_goods_search','yq_goods_detail'],
+    prompt: `# youweiAI-TMEU·竞品监控
+适用于所有品类，不预设商品、站点、价格或销量阈值。
+## 前置确认
+从当前对话复用已确认条件；缺托管模式（全托/半托/两者）或目标站点时，一次追问缺项并等待，不调用检索，不重复追问。缺商品ID/链接/图片则同时索取。
+## 工具范围和执行
+仅用TEMU商品详情、站内图搜、必要的同类商品检索；工具名和参数以本轮可见schema为准。已知网关temu_native_call可用goods_detail，arguments.id来自真实输入；字段不清先查字段工具；详情按需_fields裁剪。
+有图用站内图搜核对同款，必须逐条检查标题/主图/规格，distance仅为相似度线索，不以固定阈值断言同款。不调用供货图搜。无图用ID取当前基线；没有历史序列只输出当前快照，不能声称已持续监控或价格上涨。
+图搜混站点混币种（€/CA$/MX$/円/£），金额逐条数值+币种+站点，按可比规格及同币种分组，不比较不同币种数值。图搜结果不作销量证据。全托站点筛选不可验证，披露且将非目标标签条目分开。缺失不补零，销量周期不得混用。
+## 零结果及交付
+保留原条件零结果，异常如实记录，放宽诊断必须单独说明且不能擅自修改硬条件；不轮询processing状态、不重复同参凑数。只有工具实际返回result_id/预览地址才生成对应表格入口。总结限定已核验样本，不推断全类目竞争密度；对外仅使用youweiAI-TMEU品牌，不披露上游来源。`,
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：麻将垫收纳管主图反扫站内同款',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '图搜命中', v: '1 个同款' },\\n        { label: 'distance', v: '0.203（基本同款）' },\\n        { label: '对方销量', v: '130 件' },\\n        { label: '价格段', v: '$0~50 区间' }\\n      ],\\n      flow: [\\n        '① <code>yq_goods_img_search</code>：image=[TOP1商品主图URL] + _want=3',\\n        '② 返回 1 个同款：distance=0.203，sales=130，价格落在 c100_500 段（$10~50）',\\n        '③ 结合 goods_search：该款型已见 2 个店铺跟进（GlobalGoodsss 311件/月 + VivaDFindss 38件/月）'\\n   "]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：麻将垫收纳管主图反扫站内同款',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '图搜命中', v: '1 个同款' },\\n        { label: 'distance', v: '0.203（基本同款）' },\\n        { label: '对方销量', v: '130 件' },\\n        { label: '价格段', v: '$0~50 区间' }\\n      ],\\n      flow: [\\n        '① <code>yq_goods_img_search</code>：image=[TOP1商品主图URL] + _want=3',\\n        '② 返回 1 个同款：distance=0.203，sales=130，价格落在 c100_500 段（$10~50）',\\n        '③ 结合 goods_search：该款型已见 2 个店铺跟进（GlobalGoodsss 311件/月 + VivaDFindss 38件/月）'\\n      ],\\n      table: {\\n        head: ['#', '同款', 'distance', '销量', '判断'],\\n        rows: [\\n          ['1', '麻将垫收纳管（另一店铺）', '0.203', '130', '基本同款，已跟进'],\\n          ['2', '本品自身（TOP1）', '—', '311', '基准款']\\n        ]\\n      },\\n      note: '口径：distance 越小越像（<0.25 基本同款）；img_search 的 _fields 只认少数列（id/price 传了会被忽略）。数据来源：yq_goods_img_search（2026-11-11 实时调用）。'\\n    }"}
   },
   {
     id: 'skill-product-parse',
-    name: 'TEMU商品解析',
+    name: 'youweiAI-TMEU·商品解析',
     slug: '/skill-product-parse',
     platforms: ['temu'],
     scenario: 'product',
     status: 'built',
-    desc: '单品深挖：多国价格历史、销量趋势、店铺背景、评论星级分布、同款数量。',
+    desc: '跨品类解析TEMU单品：站点价格、销量周期、评论分布及店铺背景；金额三件套口径。',
     triggers: ['解析这个商品','这个链接卖得怎么样','看看评论','多国价格对比'],
-    prompt: "解析TEMU商品：【商品ID或链接search_key后的数字】。\ngoods_detail 必须裁剪字段；评论星级分布一次拿全；输出单品画像+多国价格+趋势+口碑，金额带币种三元组。",
-    tools: ['yq_goods_detail','yq_goods_comment','yq_mall_detail'],
+    prompt: `# youweiAI-TMEU·商品解析
+跨品类公共技能：用户给商品ID/链接要求单品、评论或多国价格分析时使用。
+## 前置
+复用当前会话已确认模式及站点；未说明全托/半托/两者、目标站点时追问缺项并等待。ID从用户链接或真实检索提取，不猜固定ID长度，不把店铺ID当商品ID。
+## 工具与字段
+仅TEMU详情、评论和必要的店铺详情。网关temu_native_call已知operation=goods_detail/goods_comment，arguments.id；字段名不清先字段查询。评论region实测用字符串，例如美国"211"，以当前schema为准。详情用_fields裁剪实际存在字段；_fields传错不报错只会退化为全字段返回，拿不准先核对。
+金额必须"数值+币种+站点"三件套；哥伦比亚站点的"$"是哥伦比亚比索不是美元。prices仅一条只说明当前返回一条，不推出仅一国在售。缺日周月销保留缺失，sales总销量不能代替月销；无历史不做涨跌推断。全托站点筛选不可证实时明确披露，非目标标签单独列。
+评论先核对allCount与score1~score5的实际覆盖，真实0和null分别表示；负面比例声明分母和星级定义，不把星级计数冒充评论原文主题。样本少标不足。
+## 输出与异常
+输出真实商品档案表、站点价格表、周期销量及缺项；原生返回无result_id时用正文小表，不编造iframe。查无或空返回如实告知，不编造字段、不擅放宽ID。对外品牌只用youweiAI-TMEU。没有真实调用与最终回答不得称已验证。`,
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：TOP1 麻将垫收纳管评论基线',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '商品', v: '607217457663910' },\\n        { label: '评论总数', v: '1 条' },\\n        { label: '星级分布', v: '5星×1' },\\n        { label: '上架天数', v: '34 天' }\\n      ],\\n      flow: [\\n        '① <code>yq_goods_comment</code>：id=607217457663910 + _fields=[allCount,score1..score5]',\\n        '② 返回 allCount=1，5星1条（新品上架月余，评论基线极低）',\\n        '③ 解读：月销311件 vs 评论1条——TEMU 新品评论沉淀慢，评分维度暂无法作筛选依据'\\n      ],\\n      table: {\\n        head: ["]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：TOP1 麻将垫收纳管评论基线',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '商品', v: '607217457663910' },\\n        { label: '评论总数', v: '1 条' },\\n        { label: '星级分布', v: '5星×1' },\\n        { label: '上架天数', v: '34 天' }\\n      ],\\n      flow: [\\n        '① <code>yq_goods_comment</code>：id=607217457663910 + _fields=[allCount,score1..score5]',\\n        '② 返回 allCount=1，5星1条（新品上架月余，评论基线极低）',\\n        '③ 解读：月销311件 vs 评论1条——TEMU 新品评论沉淀慢，评分维度暂无法作筛选依据'\\n      ],\\n      table: {\\n        head: ['星级', '数量'],\\n        rows: [\\n          ['5星', '1'],\\n          ['1~4星', '0（缺失=无，不补零）']\\n        ]\\n      },\\n      note: '新品评论基线低是 TEMU 常态：选品表里评分列大量为「—」属正常，不编造评分。数据来源：yq_goods_comment（2026-11-11 实时调用）。'\\n    }"}
   },
   {
     id: 'skill-shop-analysis',
-    name: 'TEMU店铺分析',
+    name: 'youweiAI-TMEU·店铺分析',
     slug: '/skill-shop-analysis',
     platforms: ['temu'],
     scenario: 'shop',
     status: 'built',
-    desc: '店铺画像与爆款反查：SKU规模/评论/开店时间/覆盖站点/类目周销占比 + 明星店核验 + mall_ids 反查店内爆款。',
+    desc: '跨品类核验TEMU店铺：身份画像、店内商品、周期销量与明星店标记；单模式查询须两托分别核。',
     triggers: ['查一下这家店','这个店铺怎么样','找标杆店铺','明星店'],
-    prompt: "分析TEMU店铺：【店铺ID/名称或筛选条件】。\n明星店用 star_seller_time 返回字段核验（mall_star 筛选无效）；opts.weekly_sales_ratio 直接给类目占比；批量取店名用 yq_mall_search(ids=[...]) 一次拿全。",
-    tools: ['yq_mall_search','yq_mall_detail','yq_goods_search'],
+    prompt: `# youweiAI-TMEU·店铺分析
+跨品类公共能力：查店铺、标杆店、店内爆款或明星店时使用。
+## 确认
+复用当前会话确认条件，缺全托/半托/两者及目标站点则追问缺项并等待；店名重名时先核对店铺ID/链接与主营类目，不自行认领同名店。
+## 工具范围
+仅TEMU店铺检索/详情、店内商品检索及必要字典/字段查询。检索必填from/size等按schema；店内商品用mall_ids并必传ware_house_type（0全托1半托）；同一店铺可能跨全托/半托经营，先查全托后试半托，单一模式查询会漏，不能把另一模式查无说成整店无货。批量ids无效项会静默跳过，比较输入与返回ID逐项列缺失。
+mall_star作筛选参数会被忽略，用返回star_seller_time核验明星店标记，不能以当日时间戳推定成为明星日期；Y2是流量标记不是质量背书，画像必须看score和评论数，低样本不下质量结论。核对total_goods/reviews/opened_at/regions_dict与各销量周期；类目占比需明确分母与周期，不用TOP3样本推全店经营模式。
+## 输出
+店铺身份画像、字段覆盖及爆款小表；价格为数值+币种+站点，缺失不补零，全托站点筛选不可验证需披露。非目标站点及配件条目分开。零结果保留原条件，放宽只作单列诊断且需用户授权硬条件变更；无真实result_id不伪造预览。对外只用youweiAI-TMEU品牌。`,
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：麻将包店铺批量反查 + 标杆店对照',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '批量反查', v: '45 家店铺' },\\n        { label: '标杆店', v: 'shiny party' },\\n        { label: '日销量', v: '9,134件' },\\n        { label: '新锐店铺', v: 'GlobalGoodsss' }\\n      ],\\n      flow: [\\n        '① <code>yq_mall_search</code>：ids=[45个mall_id] + _fields=[\"id\",\"name\"] → 店铺名一次拿全',\\n        '② <code>yq_mall_search</code>：ids=[shiny party + GlobalGoodsss] 对照两店画像',\\n        '③ shiny party：1705 SKU/12.1万评论/4.8分/日销9134（明星店"]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：麻将包店铺批量反查 + 标杆店对照',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '批量反查', v: '45 家店铺' },\\n        { label: '标杆店', v: 'shiny party' },\\n        { label: '日销量', v: '9,134件' },\\n        { label: '新锐店铺', v: 'GlobalGoodsss' }\\n      ],\\n      flow: [\\n        '① <code>yq_mall_search</code>：ids=[45个mall_id] + _fields=[\"id\",\"name\"] → 店铺名一次拿全',\\n        '② <code>yq_mall_search</code>：ids=[shiny party + GlobalGoodsss] 对照两店画像',\\n        '③ shiny party：1705 SKU/12.1万评论/4.8分/日销9134（明星店）；GlobalGoodsss：87 SKU/月销869（麻将垫收纳管单品店，TOP1贡献36%）'\\n      ],\\n      table: {\\n        head: ['店铺', 'SKU', '评论', '日销', '模式判断'],\\n        rows: [\\n          ['shiny party(56492256536)', '1,705', '120,921', '9,134', '明星老店·节日礼品聚焦'],\\n          ['GlobalGoodsss(634418224961898)', '87', '16', '46', '新品单爆款店·麻将垫管贡献36%']\\n        ]\\n      },\\n      note: '单爆款集中度=TOP1月销311/全店月销869≈36%：新店靠单一潜力款起盘的典型样本，可作供货对标。数据来源：yq_mall_search（2026-11-11 实时调用）。'\\n    }"}
   },
   {
     id: 'skill-category-trend',
-    name: 'TEMU类目大盘',
+    name: 'youweiAI-TMEU·类目大盘',
     slug: '/skill-category-trend',
     platforms: ['temu'],
     scenario: 'category',
     status: 'built',
-    desc: '半托大盘站点×类目下钻：容量/每日趋势/二级类目结构/价格段/销量段 + 品牌集中度；全托降级估算。',
+    desc: '核验TEMU类目容量、日期序列、价格段及覆盖范围；全托仅作样本估算，market_fully不可用须降级披露。',
     triggers: ['这个类目能不能进','大盘怎么样','美国站容量','价格段分析'],
-    prompt: "分析TEMU类目大盘：【站点+类目名】。\n半托 market_semi 下钻；全托降级 goods_search 聚合（market_fully 不可用，如实告知）；GMV 一律美元；趋势日期空洞注明区间；mallsNum 类字段近期失真勿引用。",
-    tools: ['yq_market_semi','yq_brand_search','yq_dict_lookup','yq_goods_search'],
+    prompt: `# youweiAI-TMEU·类目大盘
+跨品类公共能力，不固定品类ID或商品场景。
+## 前置
+复用当前对话条件；缺托管模式（全托/半托/两者）和目标站点时追问缺项并等待。类目词查字典，不猜编码。用户指定日期时复述并核对接口支持，不混写默认近30天和指定日期。
+## 工具范围
+只用TEMU字典/字段查询、半托大盘、品牌检索，必要时商品检索样本。半托大盘area站点文字和optId按文档，实测仅美国站可用、其他站点可能无数据，空结果如实保留，不改到美国冒充目标站点，不反复换站点名重试。全托大盘接口双重死锁不可用（optId白名单拒绝+白名单值报错），明确告知并降级为商品检索聚合，只能标"样本估算"，不把样本合计称全市场容量，不反复换参数重试。
+返回stats/daily_stats/opt_stats/price_sections/sales_sections等先核对字段含义、金额币种和周期；GMV不能默认美元。数据日期与查询日期分别标明。分段合计与总量不一致需列出口径不一致，不强行拼图。品牌榜核对排序参数及显式字段，品牌集中度必须同范围完整分母。日期序列有空洞披露；无序列不下增长结论，店铺数异常不引用。
+## 输出
+真实大盘表、可用日期趋势和覆盖局限；数值+币种+站点，缺失不补零。只在证据支持时给建议，不强制入场结论。无真实预览地址不编造iframe；原条件零结果与授权放宽诊断分开。对外只用youweiAI-TMEU。`,
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：美国站半托家居类目下钻（复测）',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '大盘范围', v: '美国站×家居(36)' },\\n        { label: '月GMV', v: '$1.46亿' },\\n        { label: '月销量', v: '2,602万件' },\\n        { label: '客单价', v: '≈$5.6' }\\n      ],\\n      flow: [\\n        '① <code>yq_market_semi</code>：area=美国站，optId=36 → 数据日期 2026-11-07',\\n        '② stats：892万商品/19.4万店/月销2602万件/$1.46亿GMV',\\n        '③ 二级类目：家居装饰 394.8万件/8.5万店 居首；节日饰品 198.3万件/5.3万店（圣诞洼地）'\\n      ],\\n      table: {\\n        head: ['维度', '"]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：美国站半托家居类目下钻（复测）',\\n      date: '2026-11-11',\\n      kpis: [\\n        { label: '大盘范围', v: '美国站×家居(36)' },\\n        { label: '月GMV', v: '$1.46亿' },\\n        { label: '月销量', v: '2,602万件' },\\n        { label: '客单价', v: '≈$5.6' }\\n      ],\\n      flow: [\\n        '① <code>yq_market_semi</code>：area=美国站，optId=36 → 数据日期 2026-11-07',\\n        '② stats：892万商品/19.4万店/月销2602万件/$1.46亿GMV',\\n        '③ 二级类目：家居装饰 394.8万件/8.5万店 居首；节日饰品 198.3万件/5.3万店（圣诞洼地）'\\n      ],\\n      table: {\\n        head: ['维度', '数值', '解读'],\\n        rows: [\\n          ['商品数/店铺数', '892.2万 / 19.41万', '每店约46 SKU'],\\n          ['月销量/月GMV', '2,602万件 / $1.46亿', '客单价 $5.6'],\\n          ['动销店铺', '89,091（45.9%）', '过半店铺月内有出单'],\\n          ['零销量商品', '639.8万（71.7%）', '铺货淹没严重'],\\n          ['价格洼地', '10-15$段：166万商品/GMV $7.06亿', '中价位段贡献高GMV']\\n        ]\\n      },\\n      note: '复测与 11-09 锚点（$1.51亿/2629.7万件）同量级，口径稳定。注意 market_semi 数据日期为 11-07（非当日），输出须标注数据日期。数据来源：yq_market_semi（2026-11-11 实时调用）。'\\n    }"}
   },
   {
     id: 'skill-profit-calc',
-    name: 'TEMU利润测算',
+    name: 'youweiAI-TMEU·利润测算',
     slug: '/skill-profit-calc',
     platforms: ['temu'],
     scenario: 'profit',
     status: 'built',
-    desc: '站内售价实查 + 1688 双引擎找源 + 阶梯拿货价 → 全托核价博弈/半托自定价双口径测算与敏感性分析。',
+    desc: '区分全托供货核价与半托自定价两套算法；基于实际成本和可核验假设计算，缺成本只报情景。',
     triggers: ['算利润','能不能做','供货价报多少','核价空间'],
-    prompt: "测算TEMU供货利润：商品【ID/链接/图片】| 1688拿货价【¥，或让图搜找源】| 重量【无则用1688参考重】。\n全托=核价博弈（底线+倒推区间）；半托=自定价（逐项成本+敏感性）。售价拿货必须接口实查，估算项标「估算」，结论给「能不能做」判断。",
-    tools: ['yq_goods_detail','yq_goods_img_search','image_search','global_image_search','ali_offer_sku_prices','ali_offer_realtime_detail'],
+    prompt: `# youweiAI-TMEU·利润测算
+跨品类公共技能，不固化产品、物流费率、损耗比例或核价比例。
+## 确认并等待
+复用当前会话的全托/半托/两者及目标站点；缺项先追问等待。确认商品、采购量/规格、采购或生产成本、包装、运输、税费、结算口径及是否实际需要找源。用户已提供可信拿货价时直接使用并标用户提供，不能强制再查供货。
+## 工具最小范围
+TEMU详情核对目标站点零售及商品规格。仅实际需要货源时调用供货侧图搜，必要时查SKU阶梯价；不可把TEMU站内图搜当供货图搜——站内图搜是竞争分析，找源用1688。以实际schema为准。候选卡片已有阶梯价、起订、资质和重量则复用，缺项再查。比对件数/规格/包装，最低单价不等于同规格采购成本。
+## 双口径
+全托：卖家收入取实际供货核定价/报价，不把消费者零售当供货收入，不预设零售40%~60%推供货价。贡献利润=实际供货收入-采购/生产-包装-卖家承担的国内运输/仓储-实际责任损耗等。核定价缺失时列盈亏平衡价及用户指定报价情景，不给"确定能做"结论。
+半托：按实际结算方式确认收入、卖家承担的头程/仓储/尾程、平台费、税、广告及退货。不得同时扣除已包含在结算收入中的费用；净利润与尚缺费用的贡献利润分别标注。
+金额逐项数值+币种+站点，跨币换算注明汇率、日期及来源；用户假设/接口值/用户提供/缺失分栏。没有汇率不静默换算，无重量不以体积密度编造；估算项必须注明假设并做敏感性，不填伪零。缺采购/物流/佣金规则不报真实净利，只报情景。
+## 输出
+成本与缺项表、公式、盈亏平衡点及可算范围。没有真实调用不称实查；零结果/异常保留，不编造货源或利润；无实际预览地址不造iframe。对外只用youweiAI-TMEU品牌。`,
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：德国站马桶清洁片供货核价全链路',\\n      date: '2026-11-09',\\n      kpis: [\\n        { label: 'TEMU 售价', v: '€5.05 德国站' },\\n        { label: '1688 拿货', v: '¥2.5~3.5 阶梯' },\\n        { label: '参考重量', v: '65g/10片' },\\n        { label: '核价结论', v: '✅ 有空间' }\\n      ],\\n      flow: [\\n        '① <code>yq_goods_detail</code>(裁剪)：KJM马桶清洁片 → 德国站 €5.05/日销2228',\\n        '② <code>image_search</code>(1688寻源)：3 精准货源（officialScore 0.74~0.80，跨境专供）',\\n        '③ <code>ali_offer_sku_prices</code>：阶梯 3件¥3.5/100件¥3.0/200件¥"]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：德国站马桶清洁片供货核价全链路',\\n      date: '2026-11-09',\\n      kpis: [\\n        { label: 'TEMU 售价', v: '€5.05 德国站' },\\n        { label: '1688 拿货', v: '¥2.5~3.5 阶梯' },\\n        { label: '参考重量', v: '65g/10片' },\\n        { label: '核价结论', v: '✅ 有空间' }\\n      ],\\n      flow: [\\n        '① <code>yq_goods_detail</code>(裁剪)：KJM马桶清洁片 → 德国站 €5.05/日销2228',\\n        '② <code>image_search</code>(1688寻源)：3 精准货源（officialScore 0.74~0.80，跨境专供）',\\n        '③ <code>ali_offer_sku_prices</code>：阶梯 3件¥3.5/100件¥3.0/200件¥2.5',\\n        '④ <code>ali_offer_realtime_detail</code>：供应商「跨境出口专供=是」「下游平台含 temu」',\\n        '⑤ 测算：底线=拿货¥7.5(30片)+头程¥1.0~1.5+5%备损≈¥9.5；倒推核价区间¥15.6~23.4（零售40%~60%估）→ 有空间'\\n      ],\\n      table: {\\n        head: ['测算项', '数值', '口径'],\\n        rows: [\\n          ['TEMU 站内零售', '€5.05 ≈ ¥39', '接口实查（汇率7.75标注）'],\\n          ['1688 拿货(万件级)', '¥2.5/10片 ≈ ¥7.5/30片', '阶梯价实查（≥200件档）'],\\n          ['全托供货价底线', '≈ ¥9.0~9.5/30片', '拿货+头程(估算)+5%备损'],\\n          ['倒推核价区间', '¥15.6~23.4', '零售40%~60%，经验估算'],\\n          ['结论', '✅ 有核价空间', '底线 < 区间下限']\\n        ]\\n      },\\n      note: '1688 详情页「主要下游平台含 temu」= 该货源本就服务 TEMU 卖家的强信号。数据来源：yunqi + 1688 MCP 五接口联动（2026-11-09 实时调用）。'\\n    }"}
   },
   {
     id: 'skill-report-gen',
-    name: 'TEMU选品报告',
+    name: 'youweiAI-TMEU·选品报告',
     slug: '/skill-report-gen',
     platforms: ['temu'],
     scenario: 'report',
     status: 'built',
-    desc: '终点站技能：串联大盘+搜索+深挖+利润，输出结构化选品决策报告。',
+    desc: '跨品类汇总TEMU市场证据生成选品决策报告：分档判定、证据缺口披露、事实与估算分离。',
     triggers: ['出个报告','值不值得做','给个选品建议','这个品帮我决策一下'],
-    prompt: "生成TEMU选品报告，主题：【类目/产品】。\n内部串联：大盘→候选→深挖→利润；先确认托管模式与站点。输出结构化报告（结论+档位表+商品卡+风险+行动清单），末尾列数据来源与查询日期；反编造三条贯穿全文。",
-    tools: ['串联以上全部技能'],
+    prompt: `# youweiAI-TMEU·选品报告
+跨品类公共技能：汇总TEMU市场证据生成选品决策报告，不固定品类或结论倾向。
+## 前置确认
+复用当前会话已确认的全托/半托/站点；缺项一次性追问并等待。明确报告用途与目标品类，不预设值不值得做的结论。
+## 证据采集
+- 时间窗：用户指定上架窗与默认近30天互斥，二选一执行并在报告口径区写明。
+- 类目ID先查字典；无效ID可能静默返回空，必须核对传入数与返回数，缺失逐项列出。
+- 0条不生成机会档位，如实报告零结果及补验路径。
+- 汇总各技能结果时只引用本轮真实调用数据，标注每项证据的接口、参数和取样范围；历史会话数据须注明非本轮实测。
+## 报告结构
+聊天正文先给3-5句结论（含关键数字与风险），再给完整html代码块生成右侧预览。报告四段：KPI卡（核心指标+口径徽标）、明细表（真实主图悬停320x320白底放大、标题链商品页、价格带币种、按核心指标降序）、证据与缺口（接口/参数/取样/缺失字段逐项）、结论区（分档判定+下一步，事实与估算分开）。
+## 纪律
+不编造数据、不把样本推断为全市场、不为凑数放宽硬条件；估算必须标"估算"并给出估算方法。对外统一youweiAI-TMEU品牌，不披露上游来源。`,
+    tools: ['串联以上六项技能'],
     demo: {"title":"实测数据（格式待整理）","date":"","kpis":[],"flow":[],"table":{"head":["原始数据"],"rows":[["{\\n      title: '实测：麻将包选品决策报告（表格版）',\\n      date: '2026-11-09',\\n      kpis: [\\n        { label: '成品样本', v: '52 款（57剔除5）' },\\n        { label: '月销合计', v: '≈2,180件' },\\n        { label: '价格中位', v: '$8~13 区间' },\\n        { label: '站点结构', v: '美国标签约3/4' }\\n      ],\\n      flow: [\\n        '① 追问 → 全托+半托合并 / 美国211',\\n        '② 检索（selection-search）+ 相关性核查剔除 → 52 款成品表',\\n        '③ 结构观察：三条产品线（印花时尚包/透明PVC收纳包/麻将垫收纳管）',\\n        '④ 出报告表格（reports/temu-mahjong-bag-60d-us211-v2.html）'\\n      ],\\n      table: {\\n        head"]]},"note":"demo解析未完成，原始数据已保留","_raw":"{\\n      title: '实测：麻将包选品决策报告（表格版）',\\n      date: '2026-11-09',\\n      kpis: [\\n        { label: '成品样本', v: '52 款（57剔除5）' },\\n        { label: '月销合计', v: '≈2,180件' },\\n        { label: '价格中位', v: '$8~13 区间' },\\n        { label: '站点结构', v: '美国标签约3/4' }\\n      ],\\n      flow: [\\n        '① 追问 → 全托+半托合并 / 美国211',\\n        '② 检索（selection-search）+ 相关性核查剔除 → 52 款成品表',\\n        '③ 结构观察：三条产品线（印花时尚包/透明PVC收纳包/麻将垫收纳管）',\\n        '④ 出报告表格（reports/temu-mahjong-bag-60d-us211-v2.html）'\\n      ],\\n      table: {\\n        head: ['产品线', '代表款', '价格', '月销', '特征'],\\n        rows: [\\n          ['麻将印花时尚包', '托特包 Aazhong', '$4.89', '179', '全托低价走量'],\\n          ['透明PVC收纳包', 'Wu Dii 款', '$6.21', '192', '唯一双模式都在跑'],\\n          ['麻将垫收纳管', 'GlobalGoodsss 8件装', '$21.48', '311', '半托大件高客单']\\n        ]\\n      },\\n      note: '结论口径：小众高粘性爱好者品类（美式麻将），圣诞礼物季驱动；月销200~320即细分头部；结论仅基于本轮52款样本，不代表全类目规模。完整表格见 reports/temu-mahjong-bag-60d-us211-v2.html。'\\n    }"}
   },
   {
@@ -1201,7 +1257,7 @@ const BASE_SKILLS = [
     ],
     "zipData": {
       "agents/openai.yaml": "interface:\n  display_name: \"近30天销量飙升新爆款\"\n  short_description: \"按类目销售额TOP10%与近7天订单增长筛选跨境货源，标注疑似同款多铺\"\n  default_prompt: \"使用 $dld-sales-surge-new，帮我找1688近30天销量飙升、适合跨境铺货的箱包新爆款货源。\"\n  icon_small: \"./icon.png\"\n  icon_large: \"./icon.png\"\n",
-      "assets/report-template.html": "<!DOCTYPE html>\r\n<html lang=\"zh-CN\">\r\n<head>\r\n<meta charset=\"UTF-8\">\r\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n<title>店雷达报告</title>\r\n<!--\r\n  店雷达 · MCP 报告模板（样式 A：编辑部 · 纸张感）\r\n  ------------------------------------------------------------------\r\n  用法：只改下面 <script> 里的 REPORT 对象，CSS 和渲染逻辑不要动。\r\n  · 头部、背景是固定的；正文由 REPORT 里的字段驱动，有就渲染，没有就整块不输出。\r\n  · blocks 按数组顺序自上而下渲染，支持三种 type：\r\n      fields → 键值对（自动两列、长值自动通栏）\r\n      table  → 表格（列由 columns 定义，type: index/num/tags/product/text）\r\n      text   → 段落（数组，每项一段，可含 HTML）\r\n  · 想换主色，只改 :root 里的 --brand / --brand-soft 两个变量。\r\n  ------------------------------------------------------------------\r\n-->\r\n<style>\r\n  :root{\r\n    --bg:#ffffff; --ink:#0e1f16; --ink2:#3d4d44; --ink3:#6b7a71;\r\n    --line:#e2ebe5; --line2:#eef5f0;\r\n    --brand:#00993a;        /* 主色：文字强调 / 线条 / 标签 */\r\n    --brand-soft:#effaf3;   /* 主色浅底 */\r\n  }\r\n  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}\r\n  html,body{margin:0;padding:0}\r\n  body{\r\n    background:#fff;color:var(--ink);\r\n    font:15px/1.65 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Hiragino Sans GB\",\"Microsoft YaHei\",sans-serif;\r\n    -webkit-font-smoothing:antialiased;\r\n  }\r\n  /* ---------- 固定背景层 ---------- */\r\n  .bg{\r\n    position:fixed;inset:0;z-index:0;pointer-events:none;\r\n    background-image:\r\n      linear-gradient(to right, rgba(14,31,22,.05) 1px, transparent 1px),\r\n      linear-gradient(to bottom, rgba(14,31,22,.05) 1px, transparent 1px);\r\n    background-size:26px 26px;\r\n    -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.10) 58%, transparent 88%);\r\n    mask-image:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.10) 58%, transparent 88%);\r\n  }\r\n  /* ---------- 固定头部 ---------- */\r\n  .topbar{\r\n    position:fixed;top:0;left:0;right:0;height:58px;z-index:50;\r\n    background:rgba(255,255,255,.84);\r\n    -webkit-backdrop-filter:saturate(180%) blur(14px);\r\n    backdrop-filter:saturate(180%) blur(14px);\r\n    border-bottom:1px solid var(--line);\r\n  }\r\n  .topbar-in{max-width:880px;margin:0 auto;height:100%;padding:0 20px;display:flex;align-items:center;gap:14px}\r\n  .brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.02em;white-space:nowrap}\r\n  .brand .mark{display:block;height:20px;width:auto}\r\n  .brand .bt{font-size:12px;color:var(--ink2);font-weight:500}\r\n  .top-title{\r\n    flex:1;min-width:0;font-size:12.5px;color:var(--ink2);\r\n    opacity:0;transform:translateY(5px);transition:opacity .22s ease,transform .22s ease;\r\n    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\r\n  }\r\n  .top-title.on{opacity:1;transform:none}\r\n  .pill{\r\n    margin-left:auto;font-size:11px;letter-spacing:.06em;color:var(--brand);\r\n    border:1px solid #c9edd8;background:var(--brand-soft);padding:3px 9px;white-space:nowrap;\r\n  }\r\n  /* ---------- 正文 ---------- */\r\n  main{position:relative;z-index:1;padding-top:58px}\r\n  .wrap{max-width:880px;margin:0 auto;padding:34px 20px 80px}\r\n\r\n  .hero{padding:10px 0 22px;border-bottom:2px solid var(--brand)}\r\n  .kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);font-weight:600;margin-bottom:12px}\r\n  h1{margin:0;font-size:30px;line-height:1.28;font-weight:700;letter-spacing:-.015em}\r\n  .desc{margin:12px 0 0;font-size:14px;color:var(--ink2);max-width:60ch}\r\n  .metaline{margin-top:16px;display:flex;flex-wrap:wrap;gap:4px 22px;font-size:12.5px;color:var(--ink3)}\r\n  .metaline b{color:var(--ink2);font-weight:500}\r\n\r\n  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}\r\n  .m{background:#fff;padding:16px 14px}\r\n  .mk{font-size:11px;color:var(--ink3);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\r\n  .mv{font-size:21px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:6px;word-break:break-all}\r\n  .mv small{font-size:12px;font-weight:400;color:var(--ink3);margin-left:3px}\r\n\r\n  .block{margin-top:34px}\r\n  h2{margin:0 0 6px;font-size:14px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:9px}\r\n  h2::before{content:\"\";width:3px;height:13px;background:var(--brand);flex:0 0 auto}\r\n  .cap{margin:0 0 14px 12px;font-size:12.5px;color:var(--ink3)}\r\n\r\n  /* 字段：按值长度自动通栏 */\r\n  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 28px}\r\n  .fld{padding:10px 0;border-bottom:1px solid var(--line2);display:flex;gap:14px;align-items:baseline;min-width:0}\r\n  .fk{font-size:12.5px;color:var(--ink3);flex:0 0 auto;white-space:nowrap}\r\n  .fv{font-size:13.5px;margin-left:auto;text-align:right;word-break:break-word;min-width:0}\r\n  .fld.wide{grid-column:1/-1}\r\n  .fld.wide .fv{text-align:left;margin-left:auto;flex:1}\r\n\r\n  /* 表格 */\r\n  .tablewrap{overflow-x:auto;border-top:1px solid var(--line);-webkit-overflow-scrolling:touch}\r\n  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:680px}\r\n  thead th{\r\n    font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:.05em;\r\n    text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);\r\n    white-space:nowrap;background:#fff;\r\n  }\r\n  tbody td{padding:12px 10px;border-bottom:1px solid var(--line2);vertical-align:middle}\r\n  tbody tr:hover td{background:#f6fdf9}\r\n  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}\r\n  .rank{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:12.5px}\r\n  tbody tr:nth-child(-n+3) .rank{color:var(--brand);font-weight:700}\r\n  .pname{display:flex;align-items:center;gap:10px;min-width:230px}\r\n  .thumb,.thumb-img{\r\n    width:40px;height:40px;flex:0 0 auto;border:1px solid #e6efe9;\r\n    background:linear-gradient(135deg,#f3f8f4,#e4efe8);\r\n    display:grid;place-items:center;font-size:10.5px;color:#7d8f84;letter-spacing:.05em;\r\n  }\r\n  .thumb-img{object-fit:cover;display:block}\r\n  .pname .t{font-size:13px;line-height:1.45}\r\n  .pname .id{font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-top:2px}\r\n  .tag{display:inline-block;font-size:11px;padding:1px 6px;border:1px solid #c9edd8;color:var(--brand);background:var(--brand-soft);margin:1px 3px 1px 0;white-space:nowrap}\r\n\r\n  /* 段落 */\r\n  .prose p{margin:0 0 12px;font-size:14px;color:var(--ink2);line-height:1.85}\r\n  .prose p:last-child{margin-bottom:0}\r\n  .prose b{color:var(--ink);font-weight:600}\r\n\r\n  /* 说明 / 空态 */\r\n  .notes{margin:0;padding:16px 18px;list-style:none;background:#f8fcf9;border:1px solid var(--line);border-left:3px solid var(--brand)}\r\n  .notes li{font-size:13px;color:var(--ink2);line-height:1.75;padding-left:14px;position:relative}\r\n  .notes li+li{margin-top:8px}\r\n  .notes li::before{content:\"\";position:absolute;left:0;top:.72em;width:5px;height:1px;background:var(--brand)}\r\n  .notes code,.prose code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:var(--line2);padding:1px 5px;color:var(--ink2)}\r\n  .empty{padding:18px;border:1px solid var(--line);border-left:3px solid var(--brand);background:#f8fcf9;font-size:13px;color:var(--ink3)}\r\n\r\n  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink3);line-height:1.8}\r\n  footer b{color:var(--ink2);font-weight:500}\r\n\r\n  @media (max-width:600px){\r\n    .wrap{padding:24px 16px 64px}\r\n    h1{font-size:23px}\r\n    .hero{padding:6px 0 18px}\r\n    .metrics{grid-template-columns:repeat(2,1fr);margin-top:20px}\r\n    .mv{font-size:18px}\r\n    .fields{grid-template-columns:1fr;gap:0}\r\n    .fld{display:block;padding:9px 0}\r\n    .fk{display:block;white-space:normal;margin-bottom:2px}\r\n    .fv{margin-left:0;text-align:left}\r\n  }\r\n</style>\r\n</head>\r\n<body>\r\n<div class=\"bg\"></div>\r\n\r\n<header class=\"topbar\">\r\n  <div class=\"topbar-in\">\r\n    <div class=\"brand\"><img class=\"mark\" src=\"data:image/png;base64,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\" alt=\"店雷达\"><span class=\"bt\">报告</span></div>\r\n    <div class=\"top-title\" id=\"topTitle\"></div>\r\n    <div class=\"pill\" id=\"pill\" style=\"display:none\"></div>\r\n  </div>\r\n</header>\r\n\r\n<main>\r\n<div class=\"wrap\">\r\n  <section class=\"hero\">\r\n    <div class=\"kicker\" id=\"kicker\"></div>\r\n    <h1 id=\"title\"></h1>\r\n    <p class=\"desc\" id=\"desc\" style=\"display:none\"></p>\r\n    <div class=\"metaline\" id=\"metaline\"></div>\r\n  </section>\r\n\r\n  <div class=\"metrics\" id=\"metrics\" style=\"display:none\"></div>\r\n\r\n  <div id=\"blocks\"></div>\r\n\r\n  <section class=\"block\" id=\"notesWrap\" style=\"display:none\">\r\n    <h2>数据说明</h2>\r\n    <ul class=\"notes\" id=\"notes\"></ul>\r\n  </section>\r\n\r\n  <footer id=\"footer\" style=\"display:none\"></footer>\r\n</div>\r\n</main>\r\n\r\n<script>\r\n/* =====================================================================\r\n   ↓↓↓ 唯一需要改的地方：把接口返回的内容映射到这个对象里 ↓↓↓\r\n   字段缺省即不渲染；数组为空即整块不输出。\r\n   ===================================================================== */\r\nconst REPORT = {\n  \"kicker\": \"1688 · CROSS-BORDER SELECTION\",\n  \"title\": \"近30天销量飙升新爆款\",\n  \"desc\": \"等待写入实际查询结果。\",\n  \"meta\": [],\n  \"metrics\": [],\n  \"blocks\": [],\n  \"notes\": [],\n  \"footer\": \"店雷达 MCP · 只读选品\"\n};\n/* =====================================================================\r\n   以下为渲染逻辑，不需要改\r\n   ===================================================================== */\r\n(function(){\r\n  const R = REPORT || {};\r\n  const esc = s => String(s == null ? \"\" : s).replace(/[&<>\"]/g, c => ({ \"&\": \"&amp;\", \"<\": \"&lt;\", \">\": \"&gt;\", '\"': \"&quot;\" }[c]));\r\n  const el = id => document.getElementById(id);\r\n  const show = (node, on) => { if (node) node.style.display = on ? \"\" : \"none\"; };\r\n\r\n  if (R.title) document.title = \"店雷达 · \" + R.title;\r\n\r\n  /* hero */\r\n  if (R.kicker) el(\"kicker\").textContent = R.kicker; else el(\"kicker\").remove();\r\n  el(\"title\").textContent = R.title || \"店雷达报告\";\r\n  if (R.desc) { el(\"desc\").textContent = R.desc; show(el(\"desc\"), true); }\r\n  if (R.meta && R.meta.length) {\r\n    el(\"metaline\").innerHTML = R.meta.filter(m => m && m.k).map(m => `<span>${esc(m.k)} <b>${esc(m.v)}</b></span>`).join(\"\");\r\n  }\r\n  if (R.badge) { el(\"pill\").textContent = R.badge; show(el(\"pill\"), true); }\r\n\r\n  /* metrics */\r\n  if (R.metrics && R.metrics.length) {\r\n    el(\"metrics\").innerHTML = R.metrics.filter(m => m && m.k).map(m =>\r\n      `<div class=\"m\"><div class=\"mk\">${esc(m.k)}</div><div class=\"mv\">${esc(m.v)}${m.u ? `<small>${esc(m.u)}</small>` : \"\"}</div></div>`\r\n    ).join(\"\");\r\n    show(el(\"metrics\"), true);\r\n  }\r\n\r\n  /* cells */\r\n  function cell(col, row, i) {\r\n    const t = col.type || \"text\", v = row[col.key];\r\n    if (t === \"index\") return `<td class=\"rank\">${i + 1}</td>`;\r\n    if (t === \"num\") return `<td class=\"num\">${esc(col.prefix || \"\")}${esc(v)}</td>`;\r\n    if (t === \"tags\") return `<td>${(Array.isArray(v) ? v : []).map(x => `<span class=\"tag\">${esc(x)}</span>`).join(\"\")}</td>`;\r\n    if (t === \"product\") {\r\n      const img = row.img\r\n        ? `<img class=\"thumb-img\" src=\"${esc(row.img)}\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none';this.nextElementSibling.style.display='grid'\">`\r\n        : \"\";\r\n      const fb = `<div class=\"thumb\"${row.img ? ' style=\"display:none\"' : \"\"}>${esc(row.thumb || \"\")}</div>`;\r\n      return `<td><div class=\"pname\">${img}${fb}<div><div class=\"t\">${esc(v)}</div>${row.id ? `<div class=\"id\">ID ${esc(row.id)}</div>` : \"\"}</div></div></td>`;\r\n    }\r\n    return `<td>${esc(v)}</td>`;\r\n  }\r\n\r\n  function tableHTML(b) {\r\n    const cols = b.columns || [], rows = b.rows || [];\r\n    if (!cols.length) return \"\";\r\n    if (!rows.length) return `<div class=\"empty\">本次未返回记录。</div>`;\r\n    return `<div class=\"tablewrap\"><table>\r\n      <thead><tr>${cols.map(c => `<th class=\"${c.type === \"num\" ? \"num\" : \"\"}\">${esc(c.k)}</th>`).join(\"\")}</tr></thead>\r\n      <tbody>${rows.map((r, i) => `<tr>${cols.map(c => cell(c, r, i)).join(\"\")}</tr>`).join(\"\")}</tbody>\r\n    </table></div>`;\r\n  }\r\n\r\n  function blockHTML(b) {\r\n    if (!b) return \"\";\r\n    let body = \"\";\r\n    if (b.type === \"fields\" && b.items && b.items.length) {\r\n      body = `<div class=\"fields\">` + b.items.filter(f => f && f.k).map(f => {\r\n        const wide = String(f.v == null ? \"\" : f.v).length > 24 ? \" wide\" : \"\";\r\n        return `<div class=\"fld${wide}\"><div class=\"fk\">${esc(f.k)}</div><div class=\"fv\">${esc(f.v)}</div></div>`;\r\n      }).join(\"\") + `</div>`;\r\n    } else if (b.type === \"table\") {\r\n      body = tableHTML(b);\r\n    } else if (b.type === \"text\" && b.items && b.items.length) {\r\n      body = `<div class=\"prose\">` + b.items.map(t => `<p>${t}</p>`).join(\"\") + `</div>`;\r\n    }\r\n    if (!body) return \"\";\r\n    return `<section class=\"block\">${b.title ? `<h2>${esc(b.title)}</h2>` : \"\"}${b.cap ? `<p class=\"cap\">${esc(b.cap)}</p>` : \"\"}${body}</section>`;\r\n  }\r\n\r\n  if (R.blocks && R.blocks.length) {\r\n    el(\"blocks\").innerHTML = R.blocks.map(blockHTML).join(\"\");\r\n  }\r\n\r\n  /* notes + footer */\r\n  if (R.notes && R.notes.length) {\r\n    el(\"notes\").innerHTML = R.notes.map(n => `<li>${n}</li>`).join(\"\");\r\n    show(el(\"notesWrap\"), true);\r\n  }\r\n  if (R.footer) { el(\"footer\").innerHTML = `<b>数据说明</b>　${esc(R.footer)}`; show(el(\"footer\"), true); }\r\n\r\n  /* 滚动时头部显示标题 */\r\n  const h1 = el(\"title\"), tt = el(\"topTitle\");\r\n  tt.textContent = R.title || \"\";\r\n  const onScroll = () => tt.classList.toggle(\"on\", h1.getBoundingClientRect().bottom < 52);\r\n  window.addEventListener(\"scroll\", onScroll, { passive: true });\r\n  onScroll();\r\n})();\r\n<\/script>\r\n</body>\r\n</html>\r\n",
+      "assets/report-template.html": "<!DOCTYPE html>\r\n<html lang=\"zh-CN\">\r\n<head>\r\n<meta charset=\"UTF-8\">\r\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n<title>店雷达报告</title>\r\n<!--\r\n  店雷达 · MCP 报告模板（样式 A：编辑部 · 纸张感）\r\n  ------------------------------------------------------------------\r\n  用法：只改下面 <script> 里的 REPORT 对象，CSS 和渲染逻辑不要动。\r\n  · 头部、背景是固定的；正文由 REPORT 里的字段驱动，有就渲染，没有就整块不输出。\r\n  · blocks 按数组顺序自上而下渲染，支持三种 type：\r\n      fields → 键值对（自动两列、长值自动通栏）\r\n      table  → 表格（列由 columns 定义，type: index/num/tags/product/text）\r\n      text   → 段落（数组，每项一段，可含 HTML）\r\n  · 想换主色，只改 :root 里的 --brand / --brand-soft 两个变量。\r\n  ------------------------------------------------------------------\r\n-->\r\n<style>\r\n  :root{\r\n    --bg:#ffffff; --ink:#0e1f16; --ink2:#3d4d44; --ink3:#6b7a71;\r\n    --line:#e2ebe5; --line2:#eef5f0;\r\n    --brand:#00993a;        /* 主色：文字强调 / 线条 / 标签 */\r\n    --brand-soft:#effaf3;   /* 主色浅底 */\r\n  }\r\n  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}\r\n  html,body{margin:0;padding:0}\r\n  body{\r\n    background:#fff;color:var(--ink);\r\n    font:15px/1.65 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Hiragino Sans GB\",\"Microsoft YaHei\",sans-serif;\r\n    -webkit-font-smoothing:antialiased;\r\n  }\r\n  /* ---------- 固定背景层 ---------- */\r\n  .bg{\r\n    position:fixed;inset:0;z-index:0;pointer-events:none;\r\n    background-image:\r\n      linear-gradient(to right, rgba(14,31,22,.05) 1px, transparent 1px),\r\n      linear-gradient(to bottom, rgba(14,31,22,.05) 1px, transparent 1px);\r\n    background-size:26px 26px;\r\n    -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.10) 58%, transparent 88%);\r\n    mask-image:linear-gradient(to bottom, rgba(0,0,0,.85), rgba(0,0,0,.10) 58%, transparent 88%);\r\n  }\r\n  /* ---------- 固定头部 ---------- */\r\n  .topbar{\r\n    position:fixed;top:0;left:0;right:0;height:58px;z-index:50;\r\n    background:rgba(255,255,255,.84);\r\n    -webkit-backdrop-filter:saturate(180%) blur(14px);\r\n    backdrop-filter:saturate(180%) blur(14px);\r\n    border-bottom:1px solid var(--line);\r\n  }\r\n  .topbar-in{max-width:880px;margin:0 auto;height:100%;padding:0 20px;display:flex;align-items:center;gap:14px}\r\n  .brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.02em;white-space:nowrap}\r\n  .brand .mark{display:block;height:20px;width:auto}\r\n  .brand .bt{font-size:12px;color:var(--ink2);font-weight:500}\r\n  .top-title{\r\n    flex:1;min-width:0;font-size:12.5px;color:var(--ink2);\r\n    opacity:0;transform:translateY(5px);transition:opacity .22s ease,transform .22s ease;\r\n    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\r\n  }\r\n  .top-title.on{opacity:1;transform:none}\r\n  .pill{\r\n    margin-left:auto;font-size:11px;letter-spacing:.06em;color:var(--brand);\r\n    border:1px solid #c9edd8;background:var(--brand-soft);padding:3px 9px;white-space:nowrap;\r\n  }\r\n  /* ---------- 正文 ---------- */\r\n  main{position:relative;z-index:1;padding-top:58px}\r\n  .wrap{max-width:880px;margin:0 auto;padding:34px 20px 80px}\r\n\r\n  .hero{padding:10px 0 22px;border-bottom:2px solid var(--brand)}\r\n  .kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brand);font-weight:600;margin-bottom:12px}\r\n  h1{margin:0;font-size:30px;line-height:1.28;font-weight:700;letter-spacing:-.015em}\r\n  .desc{margin:12px 0 0;font-size:14px;color:var(--ink2);max-width:60ch}\r\n  .metaline{margin-top:16px;display:flex;flex-wrap:wrap;gap:4px 22px;font-size:12.5px;color:var(--ink3)}\r\n  .metaline b{color:var(--ink2);font-weight:500}\r\n\r\n  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}\r\n  .m{background:#fff;padding:16px 14px}\r\n  .mk{font-size:11px;color:var(--ink3);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\r\n  .mv{font-size:21px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin-top:6px;word-break:break-all}\r\n  .mv small{font-size:12px;font-weight:400;color:var(--ink3);margin-left:3px}\r\n\r\n  .block{margin-top:34px}\r\n  h2{margin:0 0 6px;font-size:14px;font-weight:700;letter-spacing:.04em;display:flex;align-items:center;gap:9px}\r\n  h2::before{content:\"\";width:3px;height:13px;background:var(--brand);flex:0 0 auto}\r\n  .cap{margin:0 0 14px 12px;font-size:12.5px;color:var(--ink3)}\r\n\r\n  /* 字段：按值长度自动通栏 */\r\n  .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0 28px}\r\n  .fld{padding:10px 0;border-bottom:1px solid var(--line2);display:flex;gap:14px;align-items:baseline;min-width:0}\r\n  .fk{font-size:12.5px;color:var(--ink3);flex:0 0 auto;white-space:nowrap}\r\n  .fv{font-size:13.5px;margin-left:auto;text-align:right;word-break:break-word;min-width:0}\r\n  .fld.wide{grid-column:1/-1}\r\n  .fld.wide .fv{text-align:left;margin-left:auto;flex:1}\r\n\r\n  /* 表格 */\r\n  .tablewrap{overflow-x:auto;border-top:1px solid var(--line);-webkit-overflow-scrolling:touch}\r\n  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:680px}\r\n  thead th{\r\n    font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:.05em;\r\n    text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);\r\n    white-space:nowrap;background:#fff;\r\n  }\r\n  tbody td{padding:12px 10px;border-bottom:1px solid var(--line2);vertical-align:middle}\r\n  tbody tr:hover td{background:#f6fdf9}\r\n  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}\r\n  .rank{font-variant-numeric:tabular-nums;color:var(--ink3);font-size:12.5px}\r\n  tbody tr:nth-child(-n+3) .rank{color:var(--brand);font-weight:700}\r\n  .pname{display:flex;align-items:center;gap:10px;min-width:230px}\r\n  .thumb,.thumb-img{\r\n    width:40px;height:40px;flex:0 0 auto;border:1px solid #e6efe9;\r\n    background:linear-gradient(135deg,#f3f8f4,#e4efe8);\r\n    display:grid;place-items:center;font-size:10.5px;color:#7d8f84;letter-spacing:.05em;\r\n  }\r\n  .thumb-img{object-fit:cover;display:block}\r\n  .pname .t{font-size:13px;line-height:1.45}\r\n  .pname .id{font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums;margin-top:2px}\r\n  .tag{display:inline-block;font-size:11px;padding:1px 6px;border:1px solid #c9edd8;color:var(--brand);background:var(--brand-soft);margin:1px 3px 1px 0;white-space:nowrap}\r\n\r\n  /* 段落 */\r\n  .prose p{margin:0 0 12px;font-size:14px;color:var(--ink2);line-height:1.85}\r\n  .prose p:last-child{margin-bottom:0}\r\n  .prose b{color:var(--ink);font-weight:600}\r\n\r\n  /* 说明 / 空态 */\r\n  .notes{margin:0;padding:16px 18px;list-style:none;background:#f8fcf9;border:1px solid var(--line);border-left:3px solid var(--brand)}\r\n  .notes li{font-size:13px;color:var(--ink2);line-height:1.75;padding-left:14px;position:relative}\r\n  .notes li+li{margin-top:8px}\r\n  .notes li::before{content:\"\";position:absolute;left:0;top:.72em;width:5px;height:1px;background:var(--brand)}\r\n  .notes code,.prose code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;background:var(--line2);padding:1px 5px;color:var(--ink2)}\r\n  .empty{padding:18px;border:1px solid var(--line);border-left:3px solid var(--brand);background:#f8fcf9;font-size:13px;color:var(--ink3)}\r\n\r\n  footer{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink3);line-height:1.8}\r\n  footer b{color:var(--ink2);font-weight:500}\r\n\r\n  @media (max-width:600px){\r\n    .wrap{padding:24px 16px 64px}\r\n    h1{font-size:23px}\r\n    .hero{padding:6px 0 18px}\r\n    .metrics{grid-template-columns:repeat(2,1fr);margin-top:20px}\r\n    .mv{font-size:18px}\r\n    .fields{grid-template-columns:1fr;gap:0}\r\n    .fld{display:block;padding:9px 0}\r\n    .fk{display:block;white-space:normal;margin-bottom:2px}\r\n    .fv{margin-left:0;text-align:left}\r\n  }\r\n</style>\r\n</head>\r\n<body>\r\n<div class=\"bg\"></div>\r\n\r\n<header class=\"topbar\">\r\n  <div class=\"topbar-in\">\r\n    <div class=\"brand\"><img class=\"mark\" src=\"logo.png\" alt=\"店雷达\"><span class=\"bt\">报告</span></div>\r\n    <div class=\"top-title\" id=\"topTitle\"></div>\r\n    <div class=\"pill\" id=\"pill\" style=\"display:none\"></div>\r\n  </div>\r\n</header>\r\n\r\n<main>\r\n<div class=\"wrap\">\r\n  <section class=\"hero\">\r\n    <div class=\"kicker\" id=\"kicker\"></div>\r\n    <h1 id=\"title\"></h1>\r\n    <p class=\"desc\" id=\"desc\" style=\"display:none\"></p>\r\n    <div class=\"metaline\" id=\"metaline\"></div>\r\n  </section>\r\n\r\n  <div class=\"metrics\" id=\"metrics\" style=\"display:none\"></div>\r\n\r\n  <div id=\"blocks\"></div>\r\n\r\n  <section class=\"block\" id=\"notesWrap\" style=\"display:none\">\r\n    <h2>数据说明</h2>\r\n    <ul class=\"notes\" id=\"notes\"></ul>\r\n  </section>\r\n\r\n  <footer id=\"footer\" style=\"display:none\"></footer>\r\n</div>\r\n</main>\r\n\r\n<script>\r\n/* =====================================================================\r\n   ↓↓↓ 唯一需要改的地方：把接口返回的内容映射到这个对象里 ↓↓↓\r\n   字段缺省即不渲染；数组为空即整块不输出。\r\n   ===================================================================== */\r\nconst REPORT = {\n  \"kicker\": \"1688 · CROSS-BORDER SELECTION\",\n  \"title\": \"近30天销量飙升新爆款\",\n  \"desc\": \"等待写入实际查询结果。\",\n  \"meta\": [],\n  \"metrics\": [],\n  \"blocks\": [],\n  \"notes\": [],\n  \"footer\": \"店雷达 MCP · 只读选品\"\n};\n/* =====================================================================\r\n   以下为渲染逻辑，不需要改\r\n   ===================================================================== */\r\n(function(){\r\n  const R = REPORT || {};\r\n  const esc = s => String(s == null ? \"\" : s).replace(/[&<>\"]/g, c => ({ \"&\": \"&amp;\", \"<\": \"&lt;\", \">\": \"&gt;\", '\"': \"&quot;\" }[c]));\r\n  const el = id => document.getElementById(id);\r\n  const show = (node, on) => { if (node) node.style.display = on ? \"\" : \"none\"; };\r\n\r\n  if (R.title) document.title = \"店雷达 · \" + R.title;\r\n\r\n  /* hero */\r\n  if (R.kicker) el(\"kicker\").textContent = R.kicker; else el(\"kicker\").remove();\r\n  el(\"title\").textContent = R.title || \"店雷达报告\";\r\n  if (R.desc) { el(\"desc\").textContent = R.desc; show(el(\"desc\"), true); }\r\n  if (R.meta && R.meta.length) {\r\n    el(\"metaline\").innerHTML = R.meta.filter(m => m && m.k).map(m => `<span>${esc(m.k)} <b>${esc(m.v)}</b></span>`).join(\"\");\r\n  }\r\n  if (R.badge) { el(\"pill\").textContent = R.badge; show(el(\"pill\"), true); }\r\n\r\n  /* metrics */\r\n  if (R.metrics && R.metrics.length) {\r\n    el(\"metrics\").innerHTML = R.metrics.filter(m => m && m.k).map(m =>\r\n      `<div class=\"m\"><div class=\"mk\">${esc(m.k)}</div><div class=\"mv\">${esc(m.v)}${m.u ? `<small>${esc(m.u)}</small>` : \"\"}</div></div>`\r\n    ).join(\"\");\r\n    show(el(\"metrics\"), true);\r\n  }\r\n\r\n  /* cells */\r\n  function cell(col, row, i) {\r\n    const t = col.type || \"text\", v = row[col.key];\r\n    if (t === \"index\") return `<td class=\"rank\">${i + 1}</td>`;\r\n    if (t === \"num\") return `<td class=\"num\">${esc(col.prefix || \"\")}${esc(v)}</td>`;\r\n    if (t === \"tags\") return `<td>${(Array.isArray(v) ? v : []).map(x => `<span class=\"tag\">${esc(x)}</span>`).join(\"\")}</td>`;\r\n    if (t === \"product\") {\r\n      const img = row.img\r\n        ? `<img class=\"thumb-img\" src=\"${esc(row.img)}\" alt=\"\" loading=\"lazy\" onerror=\"this.style.display='none';this.nextElementSibling.style.display='grid'\">`\r\n        : \"\";\r\n      const fb = `<div class=\"thumb\"${row.img ? ' style=\"display:none\"' : \"\"}>${esc(row.thumb || \"\")}</div>`;\r\n      return `<td><div class=\"pname\">${img}${fb}<div><div class=\"t\">${esc(v)}</div>${row.id ? `<div class=\"id\">ID ${esc(row.id)}</div>` : \"\"}</div></div></td>`;\r\n    }\r\n    return `<td>${esc(v)}</td>`;\r\n  }\r\n\r\n  function tableHTML(b) {\r\n    const cols = b.columns || [], rows = b.rows || [];\r\n    if (!cols.length) return \"\";\r\n    if (!rows.length) return `<div class=\"empty\">本次未返回记录。</div>`;\r\n    return `<div class=\"tablewrap\"><table>\r\n      <thead><tr>${cols.map(c => `<th class=\"${c.type === \"num\" ? \"num\" : \"\"}\">${esc(c.k)}</th>`).join(\"\")}</tr></thead>\r\n      <tbody>${rows.map((r, i) => `<tr>${cols.map(c => cell(c, r, i)).join(\"\")}</tr>`).join(\"\")}</tbody>\r\n    </table></div>`;\r\n  }\r\n\r\n  function blockHTML(b) {\r\n    if (!b) return \"\";\r\n    let body = \"\";\r\n    if (b.type === \"fields\" && b.items && b.items.length) {\r\n      body = `<div class=\"fields\">` + b.items.filter(f => f && f.k).map(f => {\r\n        const wide = String(f.v == null ? \"\" : f.v).length > 24 ? \" wide\" : \"\";\r\n        return `<div class=\"fld${wide}\"><div class=\"fk\">${esc(f.k)}</div><div class=\"fv\">${esc(f.v)}</div></div>`;\r\n      }).join(\"\") + `</div>`;\r\n    } else if (b.type === \"table\") {\r\n      body = tableHTML(b);\r\n    } else if (b.type === \"text\" && b.items && b.items.length) {\r\n      body = `<div class=\"prose\">` + b.items.map(t => `<p>${t}</p>`).join(\"\") + `</div>`;\r\n    }\r\n    if (!body) return \"\";\r\n    return `<section class=\"block\">${b.title ? `<h2>${esc(b.title)}</h2>` : \"\"}${b.cap ? `<p class=\"cap\">${esc(b.cap)}</p>` : \"\"}${body}</section>`;\r\n  }\r\n\r\n  if (R.blocks && R.blocks.length) {\r\n    el(\"blocks\").innerHTML = R.blocks.map(blockHTML).join(\"\");\r\n  }\r\n\r\n  /* notes + footer */\r\n  if (R.notes && R.notes.length) {\r\n    el(\"notes\").innerHTML = R.notes.map(n => `<li>${n}</li>`).join(\"\");\r\n    show(el(\"notesWrap\"), true);\r\n  }\r\n  if (R.footer) { el(\"footer\").innerHTML = `<b>数据说明</b>　${esc(R.footer)}`; show(el(\"footer\"), true); }\r\n\r\n  /* 滚动时头部显示标题 */\r\n  const h1 = el(\"title\"), tt = el(\"topTitle\");\r\n  tt.textContent = R.title || \"\";\r\n  const onScroll = () => tt.classList.toggle(\"on\", h1.getBoundingClientRect().bottom < 52);\r\n  window.addEventListener(\"scroll\", onScroll, { passive: true });\r\n  onScroll();\r\n})();\r\n<\/script>\r\n</body>\r\n</html>\r\n",
       "icon.png": "（二进制图片文件，内容未嵌入）",
       "manifest.yaml": "name: dld-sales-surge-new\nslug: dld-sales-surge-new\nversion: \"1.0.0\"\nicon: \"icon.png\"\ndisplay_name: \"近30天销量飙升新爆款\"\ndisplay_name_en: \"Dianleida Sales Surge Sourcing\"\ndescription: \"通过跨境选品库筛选类目销售额TOP10%、近7天订单增长至少10%的潜力新爆款。\"\ncategory: business-operations\nauthor:\n  name: dianleida\n  website: \"https://www.dianleida.net\"\ndependencies:\n  mcp:\n    - name: \"店雷达 MCP\"\n      label: \"dld\"\n      required: true\n      website: \"https://www.dianleida.net/mcp\"\n",
       "references/connector.md": "# 连接与调用保护\n\n识别店雷达/dld服务，发现 `cross_border_product_search_list` 并读当前schema。当前聊天工具目录未显示时，不能断言服务未配置或不可用；若环境允许并且用户已授权调用，可通过既有MCP客户端或标准MCP传输读取已配置服务的tools/list与tools/call。使用实际返回的名称和schema，不构造不存在的聊天工具。不要绕过MCP改调业务REST，不将客户端临时排障路径写死为技能的前置要求。\n\n无法加载目标接口时说明具体观察到的限制，保留已取得数据，不自动索要密钥或重写配置。本技能不包含凭据，不在日志、报告或对话复述完整密钥URL。\n\n本场景只调用跨境选品库；不为补图片、链接或供应商字段自动调用详情、SKU、榜单、监控等工具，不创建定时任务或执行采购操作。报错时区分鉴权、点数不足、网络和业务契约错误，停止自动业务重试；正常空结果不算服务故障，也不自动切换其他库。\n\n缓存相同基准条件下的已取得页。首查及边界页验证后告知预计补页数量；N=10000无边界同分扩展时取齐前1000条共10次成功业务调用，第1页与第10页已经算在其中，不能重复计费获取。工具发现与本地计算不计业务调用。\n\n沿用原包的单轮10次成功业务调用保护：需要第11次时先交付已取得范围，披露次数并询问是否继续；用户已经明确授权更大调用预算时按其授权执行，无需重复确认。未满10次且为完成已授权场景所需的缺页，继续执行。用户明确要求扩样可继续补页，但不得把扩样授权理解成无限调用。\n\n最终按工具披露实际成功调用次数。参考文档记载一次成功业务调用1点，本包未独立核验服务端扣点流水；没有回执时用“成功调用N次；按公开口径预计N点，实际扣点以店雷达服务端为准”，不推断失败调用一定免费。初始化、tools/list不计业务次数。\n",
@@ -1222,7 +1278,6 @@ const selectedExportIds = new Set();
 let customSkills = [];
 try { customSkills = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { customSkills = []; }
 let curPlatform = 'all';
-let curKind = 'public';
 let curScenario = 'all';
 let curSearch = '';
 
@@ -1243,14 +1298,9 @@ function isCurrentAmazonSkill(skill) {
 }
 customSkills = customSkills.filter(isCurrentAmazonSkill);
 function allSkills() {
-  const pubDemos = typeof AMAZON_PUBLIC_DEMOS!=='undefined' ? AMAZON_PUBLIC_DEMOS : {};
-  const sceneSkills = (typeof AMAZON_SCENE_SKILLS!=='undefined'?AMAZON_SCENE_SKILLS:[]).map(s => Object.assign({}, s, { demo: Object.assign({}, s.demo, { chatUrl: 'https://local.dianleida.net:21996/c/' + s.chatId }) }));
-  const byId = new Map(BASE_SKILLS.concat(sceneSkills).map(s => {
-    if (pubDemos[s.id] && !s.demo) s.demo = pubDemos[s.id];
-    return [s.id, s];
-  }));
-  sharedSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!isA1688Skill(s) && !(s.platforms || []).includes('amazon')) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
-  customSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!isA1688Skill(s) && !(s.platforms || []).includes('amazon') && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
+  const byId = new Map(BASE_SKILLS.map(s => [s.id, s]));
+  sharedSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon')) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
+  customSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon') && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
   return [...byId.values()].sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
 }
 function setSyncLabel(text, detail) {
@@ -1370,22 +1420,14 @@ function renderChips() {
   });
   box.innerHTML = html;
 }
-function switchKind(k) {
-  curKind = k;
-  document.getElementById('ktab-public').classList.toggle('active', k === 'public');
-  document.getElementById('ktab-scene').classList.toggle('active', k === 'scene');
-  renderChips(); renderGrid(); renderMeta();
-}
-function isSceneSkill(s) { return s.kind === 'scene' || /^scene-/.test(s.id || ''); }
 function renderGrid() {
   const grid = document.getElementById('grid');
   const kw = curSearch.trim().toLowerCase();
   const list = allSkills().filter(s => {
-    const okKind = curKind === 'all' ? true : (curKind === 'scene' ? isSceneSkill(s) : !isSceneSkill(s));
     const okPf = curPlatform === 'all' || (s.platforms || []).includes(curPlatform);
     const okSc = curScenario === 'all' || s.scenario === curScenario;
     const hay = (s.name + ' ' + (s.desc || '') + ' ' + (s.triggers || []).join(' ') + (s.id.startsWith('skill-amazon-') ? ' youweiAI-amazon' : '')).toLowerCase();
-    return okKind && okPf && okSc && (!kw || hay.includes(kw));
+    return okPf && okSc && (!kw || hay.includes(kw));
   });
   if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的技能，换个筛选条件或添加一个吧</div>'; return; }
   grid.innerHTML = list.map(s => {
@@ -1404,7 +1446,7 @@ function renderGrid() {
         '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span>' + (s.id.startsWith('skill-amazon-') ? '<span class="source-amazon" title="youweiAI-amazon">youweiAI-amazon</span>' : '') + '</div>' +
         '<span class="badge ' + (built ? 'badge-built' : 'badge-plan') + '">' + (built ? '✓ 已建成' : '待建 · 指令可用') + '</span>' +
       '</div>' +
-      '<h3>' + (s.sceneNo ? '<span class="scene-badge">场景' + s.sceneNo + '</span> ' : '') + (s.isZip ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 7px;margin-right:6px;vertical-align:2px">📦包</span>' : '') + esc(s.name) + '</h3>' +
+      '<h3>' + (s.isZip ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 7px;margin-right:6px;vertical-align:2px">📦包</span>' : '') + esc(s.name) + '</h3>' +
       (s.slug || s.version ? '<div class="card-sub">' +
         (s.slug ? '<span class="slug">' + esc(s.slug) + '</span>' : '') +
         (s.version ? '<span>' + esc(s.version) + '</span>' : '') +
@@ -1413,7 +1455,6 @@ function renderGrid() {
       (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
       syncNote + '<div class="card-actions">' +
         '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
-        (s.demo ? '<button class="btn-plain" data-action="demo">📊 实测</button>' : '') +
         '<button class="btn-plain" data-action="workbench">🔍 工作台</button>' +
         (s.custom ? '<button class="btn-plain" data-action="promote" title="提交到技能仓库，其他电脑可见">' + (sync && sync.status === 'failed' ? '重试 Git 同步' : '同步 Git') + '</button>' : '') +
         (s.skillMd ? '<button class="btn-plain" data-action="view">技能全文</button>' : '') +
@@ -1511,15 +1552,7 @@ document.getElementById('grid').addEventListener('click', e => {
   const skill = allSkills().find(s => s.id === card.dataset.id);
   if (!skill) return;
   const act = btn.dataset.action;
-  if (act === 'copy') {
-    if (!isA1688Skill(skill)) copyText(skill.prompt || '');
-    else if (!a1688DefinitionsReady) toast('1688 技能内容正在加载，请稍后再复制');
-    else loadA1688SkillDocument(skill).then(text => {
-      if (text) copyText(skill.prompt);
-      else toast('1688 技能全文加载失败，暂不能复制');
-    });
-    return;
-  }
+  if (act === 'copy') copyText(skill.prompt || '');
   if (act === 'archive' && skill.archiveBase64) {
     const bytes = Uint8Array.from(atob(skill.archiveBase64), c => c.charCodeAt(0));
     const url = URL.createObjectURL(new Blob([bytes], { type: 'application/zip' }));
@@ -2661,16 +2694,16 @@ const BASE_EXPERTS = [
   },
   {
     id: 'exp-temu-sel-v2',
-    name: 'TEMU选品专家',
+    name: 'youweiAI-TMEU选品专家',
     platforms: ["temu"],
-    status: 'undefined',
-    desc: 'TEMU全托/半托选品一站式：多路检索、竞品监控、类目大盘、商品解析、店铺分析、1688联动利润测算。',
-    greet: '你好！我是TEMU选品专家。多路检索找品、盯竞品、看大盘、解析商品、分析店铺、联动1688算利润都可以。',
-    abilities: ["多路关键词检索","竞品监控","类目大盘","商品解析与评论","店铺分析与明星店","1688联动利润"],
+    status: 'built',
+    desc: 'TEMU全托/半托选品一站式：多条件检索、竞品监控、类目大盘、商品解析、店铺分析、1688联动利润测算与选品报告。',
+    greet: '你好！我是youweiAI-TMEU选品专家。多条件检索找品、盯竞品、看大盘、解析商品、分析店铺、联动1688算利润、出选品报告都可以。',
+    abilities: ["多条件关键词检索","竞品监控","类目大盘","商品解析与评论","店铺分析与明星店","1688联动利润","选品报告"],
     refPrompts: ["找TEMU家居类目全托好卖的品","近60天跨境麻将包数据","解析这个TEMU商品","这个品1688拿货多少钱"],
-    skills: ["TEMU选品搜索","TEMU竞品监控","TEMU商品解析","TEMU店铺分析","TEMU类目大盘","TEMU利润测算","TEMU选品报告"],
+    skills: ["youweiAI-TMEU·选品搜索","youweiAI-TMEU·竞品监控","youweiAI-TMEU·商品解析","youweiAI-TMEU·店铺分析","youweiAI-TMEU·类目大盘","youweiAI-TMEU·利润测算","youweiAI-TMEU·选品报告"],
     mcpTools: ["yq_goods_search","yq_goods_detail","yq_goods_comment","yq_mall_search","yq_mall_detail","yq_market_semi","global_image_search","ali_offer_sku_prices"],
-    sysPrompt: "你是TEMU选品专家。\\n\\n【技能路由】选品搜索→竞品监控→商品解析→店铺分析→类目大盘→利润测算→选品报告。\\n\\n【实测纪律】1.goods_search必传from/size/fuzzy/ware_house_type/sold_out 2.goods_detail必须_fields裁剪 3.币种三元组，region=45哥伦比亚$是比索 4.销量≥100000日月周为空≠没销量 5.market_fully降级=goods_search聚合 6.mall_star筛选无效用star_seller_time核验 7.1688图搜用1688 MCP 8.反编造三条"
+    sysPrompt: "你是youweiAI-TMEU选品专家。\\n\\n【技能路由】选品搜索→竞品监控→商品解析→店铺分析→类目大盘→利润测算→选品报告。\\n\\n【实测纪律】1.goods_search必传from/size/fuzzy/ware_house_type/sold_out 2.goods_detail必须_fields裁剪，传错退化为全字段不报错 3.币种三元组，哥伦比亚$是比索 4.销量≥100000日月周为空≠没销量 5.market_fully双重死锁不可用→如实告知降级聚合标估算 6.market_semi仅美国站，其他站点空结果直说 7.mall_star筛选无效用star_seller_time核验 8.店内商品先全托后试半托防漏 9.缺托管模式与站点先追问等待，大于N传N+1 10.找源用1688图搜，站内图搜仅竞争分析 11.反编造三条，对外统一youweiAI-TMEU品牌不披露上游来源"
   },
   {
     id: 'exp-amazon-sel-v2',
@@ -2710,362 +2743,10 @@ const BASE_EXPERTS = [
 
 ];
 
-const AMAZON_SCENE_SKILLS = [
-  {
-    id: 'scene-bsr-riser',
-    name: '场景1·BSR飙升潜力款',
-    slug: '/scene-bsr-riser',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 1,
-    chatId: 'a15ba861-7314-445b-9ff4-485d70cb3f40',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '找BSR排名上升最快、有真实涨幅证据的商品（Open WebUI 场景技能 youweiai-amazon-scene-bsr-riser）',
-    triggers: ['BSR上升的狗玩具有哪些','场景1'],
-    demo: {"title": "实测：BSR飙升潜力款 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景1 · 08:59"}, {"label": "接口调用", "v": "36 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站 women handbag 女包里 BSR 排名上升最快的商品", "执行链路：KPI+BSR明细表（36次调用：类目核对+候选逐款详情+BSR日级趋势防单月脉冲）", "实测证据：找到唯一真实上升款并核BSR日级序列"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a15ba861…（Open WebUI 可回溯）"], ["接口调用", "36 次 · sorftime_product_detail×22、sorftime_product_trend×8、sorftime_product_search×2、view_skill×1"], ["报告体量", "HTML 17KB · 表格1张 · 主图9张"], ["质量核验", "找到唯一真实上升款并核BSR日级序列"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/a15ba861-7314-445b-9ff4-485d70cb3f40"]},
-  },
-
-  {
-    id: 'scene-fbm-small-batch-test',
-    name: '场景2·FBM小批测款法',
-    slug: '/scene-fbm-small-batch-test',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 2,
-    chatId: '5afe1deb-32f0-448c-bb2e-e7bbe5155ef6',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '1688订单数>2筛类目，按采购价分档选款，轻小件优先（Open WebUI 场景技能 youweiai-amazon-scene-fbm-small-batch-test）',
-    triggers: ['帮我用FBM测款逻辑选品','场景2'],
-    demo: {"title": "实测：FBM小批测款法 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景2 · 09:00"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "44KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站家居收纳，FBM小批测款：订单数>2，按采购价分档，轻小件优先", "执行链路：ask_user两轮（站点/类目）→1688召回856款→11款分档建议（缺参分支实测通过）", "实测证据：ask_user问站点类目→1688分档→11款建议首测"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5afe1deb…（Open WebUI 可回溯）"], ["接口调用", "9 次 · dld_product_search_list×4、view_skill×3、get_current_timestamp×2"], ["报告体量", "HTML 44KB · 表格3张 · 主图51张"], ["质量核验", "ask_user问站点类目→1688分档→11款建议首测"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/5afe1deb-32f0-448c-bb2e-e7bbe5155ef6"]},
-  },
-
-  {
-    id: 'scene-keyword-supply-demand',
-    name: '场景3·关键词选品·供需双筛',
-    slug: '/scene-keyword-supply-demand',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 3,
-    chatId: 'a815f59f-59cb-48a8-967e-a0cc9ce4392e',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '搜索量/购买率/卖家数A模式或PPC/供需比B模式批量筛词（Open WebUI 场景技能 youweiai-amazon-scene-keyword-supply-demand）',
-    triggers: ['这批关键词帮我供需双筛','场景3'],
-    demo: {"title": "实测：关键词选品·供需双筛 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景3 · 09:00"}, {"label": "接口调用", "v": "12 次"}, {"label": "HTML报告", "v": "43KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：satchel bag等三词做A/B双模式筛选", "执行链路：逐词keyword_detail+词下商品核验；接口缺供需比/卖家数时A严格0命中、B不可判定（不造数）", "实测证据：逐词核验+字段缺失如实标不可判定"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a815f59f…（Open WebUI 可回溯）"], ["接口调用", "12 次 · sorftime_keyword_detail×4、sorftime_keyword_search_from_name×3、sorftime_keyword_search_results×3、view_skill×1"], ["报告体量", "HTML 43KB · 表格4张 · 主图3张"], ["质量核验", "逐词核验+字段缺失如实标不可判定"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/a815f59f-59cb-48a8-967e-a0cc9ce4392e"]},
-  },
-
-  {
-    id: 'scene-q4-last-year-reference',
-    name: '场景4·去年Q4旺季备货',
-    slug: '/scene-q4-last-year-reference',
-    platforms: ['amazon'],
-    scenario: 'category',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 4,
-    chatId: '0add0f1a-163c-4860-a80d-28c31b89f290',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '历史Q4快照锁定热卖池，品层+词层双证据给备货建议（Open WebUI 场景技能 youweiai-amazon-scene-q4-last-year-reference）',
-    triggers: ['参考去年Q4选今年备货款','场景4'],
-    demo: {"title": "实测：去年Q4旺季备货 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景4 · 09:01"}, {"label": "接口调用", "v": "41 次"}, {"label": "HTML报告", "v": "24KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包参考去年Q4走势选今年Q4备货款", "执行链路：品层17款SalesVolume 2025Q4序列+词层3词同比只用完结月；正增长款逐行清点", "实测证据：17款Q4趋势全覆盖+keyword_trend词层补齐"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "0add0f1a…（Open WebUI 可回溯）"], ["接口调用", "41 次 · sorftime_product_trend×32、sorftime_keyword_trend×4、sorftime_product_search_from_history×2、view_skill×1"], ["报告体量", "HTML 24KB · 表格2张 · 主图16张"], ["质量核验", "17款Q4趋势全覆盖+keyword_trend词层补齐"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/0add0f1a-163c-4860-a80d-28c31b89f290"]},
-  },
-
-  {
-    id: 'scene-low-review-high-sales',
-    name: '场景5·找评论少销量高的商品',
-    slug: '/scene-low-review-high-sales',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 5,
-    chatId: '80fd01aa-9a6e-4769-9b2a-e3eb48b90cc2',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '低评论+高月销新起量款，逐条详情+趋势双重核验（Open WebUI 场景技能 youweiai-amazon-scene-low-review-high-sales）',
-    triggers: ['找评论不到200月销超300的款','场景5'],
-    demo: {"title": "实测：找评论少销量高的商品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景5 · 09:01"}, {"label": "接口调用", "v": "31 次"}, {"label": "HTML报告", "v": "20KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包：评论≤199、月销≥300的新起款", "执行链路：搜索40→品类复核38→逐条详情剔除16→24款严格达标→全部拉月销走势（爬坡13/稳定4/回落7）", "实测证据：38款全详情+24款全趋势"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "80fd01aa…（Open WebUI 可回溯）"], ["接口调用", "31 次 · sorftime_product_detail×14、sorftime_product_trend×12、sorftime_product_search×3、view_skill×1"], ["报告体量", "HTML 20KB · 表格2张 · 主图15张"], ["质量核验", "38款全详情+24款全趋势"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/80fd01aa-9a6e-4769-9b2a-e3eb48b90cc2"]},
-  },
-
-  {
-    id: 'scene-rising-keyword-niche',
-    name: '场景6·搜索量上升利基品',
-    slug: '/scene-rising-keyword-niche',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 6,
-    chatId: 'e82a5bd8-fbbd-4c21-85a1-b3d831bc461d',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '趋势上行+竞争未饱和的利基词与代表商品（Open WebUI 场景技能 youweiai-amazon-scene-rising-keyword-niche）',
-    triggers: ['找搜索量上升的利基词','场景6'],
-    demo: {"title": "实测：搜索量上升利基品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景6 · 09:02"}, {"label": "接口调用", "v": "18 次"}, {"label": "HTML报告", "v": "19KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包找搜索量上升、竞争低的利基词", "执行链路：逐词趋势核验+6真利基词竞争详情+8款代表商品全带主图悬停", "实测证据：15词池→7上行8下行口径闭环"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "e82a5bd8…（Open WebUI 可回溯）"], ["接口调用", "18 次 · sorftime_keyword_search_from_name×7、sorftime_product_detail×6、view_skill×1、sorftime_keyword_extends×1"], ["报告体量", "HTML 19KB · 表格3张 · 主图7张"], ["质量核验", "15词池→7上行8下行口径闭环"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/e82a5bd8-fbbd-4c21-85a1-b3d831bc461d"]},
-  },
-
-  {
-    id: 'scene-local-premium-market',
-    name: '场景7·本土溢价市场',
-    slug: '/scene-local-premium-market',
-    platforms: ['amazon'],
-    scenario: 'category',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 7,
-    chatId: '3538cc31-a682-4acf-bc2f-cf895156704b',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '筛中国卖家份额低的本土主导市场（仅原生份额快照可判定）（Open WebUI 场景技能 youweiai-amazon-scene-local-premium-market）',
-    triggers: ['哪些类目本土卖家主导','场景7'],
-    demo: {"title": "实测：本土溢价市场 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景7 · 09:02"}, {"label": "接口调用", "v": "30 次"}, {"label": "HTML报告", "v": "6KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：扫美国站女包细分市场筛本土主导高溢价市场", "执行链路：china_seller_share快照逐子类核对；无快照的标待核不冒充判定；Wallets同名异号节点标映射待核", "实测证据：5类快照判定+6类无快照标待核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "3538cc31…（Open WebUI 可回溯）"], ["接口调用", "30 次 · sorftime_category_search_from_product_name×15、sorftime_category_report×5、execute_code×3、sorftime_category_name_search×2"], ["报告体量", "HTML 6KB · 表格2张 · 主图1张"], ["质量核验", "5类快照判定+6类无快照标待核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/3538cc31-a682-4acf-bc2f-cf895156704b"]},
-  },
-
-  {
-    id: 'scene-seasonal-new-ideas',
-    name: '场景8·节令新品灵感',
-    slug: '/scene-seasonal-new-ideas',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 8,
-    chatId: '0811435a-2990-47e9-b00b-eefc6a144b7f',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '节令词近3个月上架+起量+低评论的新品与上新窗口（Open WebUI 场景技能 youweiai-amazon-scene-seasonal-new-ideas）',
-    triggers: ['万圣节狗装新品哪些起量了','场景8'],
-    demo: {"title": "实测：节令新品灵感 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景8 · 09:03"}, {"label": "接口调用", "v": "54 次"}, {"label": "HTML报告", "v": "22KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站Halloween dog costume近3个月上架新品哪些起量且评论低", "执行链路：关键词+3个月上架窗+评论≤200+月销≥300命中37条→28款目标形态+TOP6趋势核验", "实测证据：37命中→28目标款硬条件零违规"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "0811435a…（Open WebUI 可回溯）"], ["接口调用", "54 次 · sorftime_product_detail×16、sorftime_product_content×16、sorftime_product_trend×15、sorftime_search_sync×4"], ["报告体量", "HTML 22KB · 表格2张 · 主图15张"], ["质量核验", "37命中→28目标款硬条件零违规"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/0811435a-2990-47e9-b00b-eefc6a144b7f"]},
-  },
-
-  {
-    id: 'scene-blue-ocean-new',
-    name: '场景9·蓝海新品',
-    slug: '/scene-blue-ocean-new',
-    platforms: ['amazon'],
-    scenario: 'product-selection',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 9,
-    chatId: 'de5ead54-b2f8-4248-9093-441b84505665',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '低评论+高评分+上架窗内的新品严选（Open WebUI 场景技能 youweiai-amazon-scene-blue-ocean-new）',
-    triggers: ['找蓝海新品','场景9'],
-    demo: {"title": "实测：蓝海新品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景9 · 09:03"}, {"label": "接口调用", "v": "26 次"}, {"label": "HTML报告", "v": "28KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包蓝海新品：评论≤100评分≥4.5上架≤6个月", "执行链路：主类目0命中如实报→5子类44条→39款逐条详情用listing_date复核→31入选8剔除", "实测证据：39款全详情+listing_date严窗"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "de5ead54…（Open WebUI 可回溯）"], ["接口调用", "26 次 · sorftime_product_detail×19、sorftime_search_sync×2、job_query×2、view_skill×1"], ["报告体量", "HTML 28KB · 表格2张 · 主图20张"], ["质量核验", "39款全详情+listing_date严窗"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/de5ead54-b2f8-4248-9093-441b84505665"]},
-  },
-
-  {
-    id: 'scene-cross-site-copy',
-    name: '场景10·跨站点爆款复制',
-    slug: '/scene-cross-site-copy',
-    platforms: ['amazon'],
-    scenario: 'category',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 10,
-    chatId: '3beb573f-af88-4933-aea0-c20fe44b8cfd',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '美站热销新品映射目标站同词根竞争对比（Open WebUI 场景技能 youweiai-amazon-scene-cross-site-copy）',
-    triggers: ['美国站爆款德国站能做吗','场景10'],
-    demo: {"title": "实测：跨站点爆款复制 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景10 · 09:04"}, {"label": "接口调用", "v": "20 次"}, {"label": "HTML报告", "v": "25KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站women handbag热销新品对比德国站Handtasche竞争", "执行链路：美站Top10热销新品→德国站4类目节点重搜替代污染词根→供需缺口量化", "实测证据：两站真实数据+30.3倍搜索差结论"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "3beb573f…（Open WebUI 可回溯）"], ["接口调用", "20 次 · sorftime_search_sync×8、sorftime_product_search_from_name×4、sorftime_keyword_detail×2、job_query×2"], ["报告体量", "HTML 25KB · 表格1张 · 主图25张"], ["质量核验", "两站真实数据+30.3倍搜索差结论"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/3beb573f-af88-4933-aea0-c20fe44b8cfd"]},
-  },
-
-  {
-    id: 'scene-subcat-four-step',
-    name: '场景11·小类深度调研四步法',
-    slug: '/scene-subcat-four-step',
-    platforms: ['amazon'],
-    scenario: 'category',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 11,
-    chatId: 'ca695ab1-0812-47d4-820c-f4557a9cd265',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '热销榜→小类调研→1688找厂→投入决策完整链路（Open WebUI 场景技能 youweiai-amazon-scene-subcat-four-step）',
-    triggers: ['深度调研一个小类','场景11'],
-    demo: {"title": "实测：小类深度调研四步法 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景11 · 09:05"}, {"label": "接口调用", "v": "23 次"}, {"label": "HTML报告", "v": "21KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站斜挎包小类四步法深度调研", "执行链路：Crossbody Top100→类目报告→1688达标供应商（5,604~161,020件）→FBA实得费情景公式", "实测证据：严格新品0命中如实+1688供应商3家"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ca695ab1…（Open WebUI 可回溯）"], ["接口调用", "23 次 · sorftime_product_detail×5、dld_product_search_list×5、sorftime_product_content×4、dld_product_info×2"], ["报告体量", "HTML 21KB · 表格4张 · 主图11张"], ["质量核验", "严格新品0命中如实+1688供应商3家"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ca695ab1-0812-47d4-820c-f4557a9cd265"]},
-  },
-
-  {
-    id: 'scene-market-five-dim',
-    name: '场景12·市场环境五维判定',
-    slug: '/scene-market-five-dim',
-    platforms: ['amazon'],
-    scenario: 'category',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 12,
-    chatId: '78fedf02-9ecf-4b68-be29-a88942e5e14a',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '规模/增长/集中度/价格带/风险五维进不进决策（Open WebUI 场景技能 youweiai-amazon-scene-market-five-dim）',
-    triggers: ['这个类目能不能进','场景12'],
-    demo: {"title": "实测：市场环境五维判定 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景12 · 09:05"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "21KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站Shoulder Bags市场环境五维判定", "执行链路：category_report+trend24月+Top100精算五维；样本205,011自校验吻合；Monica不存在按真实结构呈现", "实测证据：样本自校验100%吻合+缺项标不可判定"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "78fedf02…（Open WebUI 可回溯）"], ["接口调用", "9 次 · view_skill×2、search_chats×2、search_knowledge_bases×1、get_current_timestamp×1"], ["报告体量", "HTML 21KB · 表格3张 · 主图16张"], ["质量核验", "样本自校验100%吻合+缺项标不可判定"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/78fedf02-9ecf-4b68-be29-a88942e5e14a"]},
-  },
-
-  {
-    id: 'scene-filter-subcategory',
-    name: '场景13·筛细分类目',
-    slug: '/scene-filter-subcategory',
-    platforms: ['amazon'],
-    scenario: 'category',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 13,
-    chatId: '77fc55cf-ba84-4710-bc13-4af84565af30',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '预算约束下多子类五维对比找切入点（Open WebUI 场景技能 youweiai-amazon-scene-filter-subcategory）',
-    triggers: ['预算有限选哪个细分类目','场景13'],
-    demo: {"title": "实测：筛细分类目 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景13 · 09:06"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "12KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：预算5000元内美站女包筛细分类目切入", "执行链路：无效节点先类目名纠正→接口无数据降级Top20样本并声明→合计逐行相加核对0分差", "实测证据：三类目合计与KPI 0分差"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "77fc55cf…（Open WebUI 可回溯）"], ["接口调用", "9 次 · sorftime_category_report×5、view_skill×1、sorftime_category_name_search×1、sorftime_get_time×1"], ["报告体量", "HTML 12KB · 表格2张 · 主图0张"], ["质量核验", "三类目合计与KPI 0分差"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/77fc55cf-ba84-4710-bc13-4af84565af30"]},
-  },
-
-  {
-    id: 'scene-1688-image-profit',
-    name: '场景14·1688图搜拿货+毛利',
-    slug: '/scene-1688-image-profit',
-    platforms: ['amazon'],
-    scenario: 'profit',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 14,
-    chatId: 'afbafcf1-5b0e-4596-b8cb-46ac61d884be',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '选中亚款图搜1688找同款，逐SKU拿货价测毛利（Open WebUI 场景技能 youweiai-amazon-scene-1688-image-profit）',
-    triggers: ['这个款1688拿货多少毛利多少','场景14'],
-    demo: {"title": "实测：1688图搜拿货+毛利 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景14 · 09:09"}, {"label": "接口调用", "v": "13 次"}, {"label": "HTML报告", "v": "16KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包在1688图搜找同款并测算毛利", "执行链路：product_detail基线→真实主图图搜→逐SKU报价→情景汇率演示口径（无来源汇率不出现）", "实测证据：图搜一次过+4款SKU全核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "afbafcf1…（Open WebUI 可回溯）"], ["接口调用", "13 次 · dld_ali_offer_sku_prices×4、dld_ali_offer_realtime_detail×4、view_skill×1、sorftime_product_detail×1"], ["报告体量", "HTML 16KB · 表格3张 · 主图5张"], ["质量核验", "图搜一次过+4款SKU全核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/afbafcf1-5b0e-4596-b8cb-46ac61d884be"]},
-  },
-
-  {
-    id: 'scene-reverse-image-source',
-    name: '场景15·外网图搜1688货源',
-    slug: '/scene-reverse-image-source',
-    platforms: ['amazon'],
-    scenario: 'profit',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 15,
-    chatId: '5e33f935-62da-4909-b197-25cda1ce3a48',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '给一张外网商品图反向找1688厂家货源（Open WebUI 场景技能 youweiai-amazon-scene-reverse-image-source）',
-    triggers: ['这张图帮我找1688货源','场景15'],
-    demo: {"title": "实测：外网图搜1688货源 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景15 · 09:11"}, {"label": "接口调用", "v": "0 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：用这张亚马逊主图图搜1688找同款货源", "执行链路：接口失败时不编造如实终止（400×2/500/incomplete全留痕）；接口恢复后同参数一次过：4货源+4SKU核到，相似分0.911/0.850", "实测证据：失败分支+成功分支双验证"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5e33f935…（Open WebUI 可回溯）"], ["接口调用", "0 次 · "], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "失败分支+成功分支双验证"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/5e33f935-62da-4909-b197-25cda1ce3a48"]},
-  },
-
-  {
-    id: 'scene-asin-parse-follow',
-    name: '场景16·ASIN详情解析·跟款',
-    slug: '/scene-asin-parse-follow',
-    platforms: ['amazon'],
-    scenario: 'product',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 16,
-    chatId: '2ce9995e-9316-4ea6-94e2-34480c91b779',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '五点/参数/变体解析+跟款上架评估（Open WebUI 场景技能 youweiai-amazon-scene-asin-parse-follow）',
-    triggers: ['解析这个ASIN评估跟款','场景16'],
-    demo: {"title": "实测：ASIN详情解析·跟款 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景16 · 09:15"}, {"label": "接口调用", "v": "6 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：解析美站这个ASIN的五点参数变体，评估跟款上架", "执行链路：product_detail+content+variations；五点拆解、尺寸双口径并列、跟款专利红线明确", "实测证据：12子体+费用直读+红线提示"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "2ce9995e…（Open WebUI 可回溯）"], ["接口调用", "6 次 · view_skill×1、sorftime_product_detail×1、sorftime_product_content×1、sorftime_product_variations×1"], ["报告体量", "HTML 17KB · 表格4张 · 主图3张"], ["质量核验", "12子体+费用直读+红线提示"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/2ce9995e-9316-4ea6-94e2-34480c91b779"]},
-  },
-
-  {
-    id: 'scene-listing-selling-points',
-    name: '场景17·Listing卖点渗透率',
-    slug: '/scene-listing-selling-points',
-    platforms: ['amazon'],
-    scenario: 'product',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 17,
-    chatId: 'ef91f5e1-5c45-49d9-b799-8070aa4c9a6c',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '材质/功能词横向统计找差异化卖点（Open WebUI 场景技能 youweiai-amazon-scene-listing-selling-points）',
-    triggers: ['这批竞品卖点词渗透率怎么样','场景17'],
-    demo: {"title": "实测：Listing卖点渗透率 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景17 · 09:17"}, {"label": "接口调用", "v": "8 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：分析3个女包ASIN的Listing卖点渗透率", "执行链路：3款详情/内容：标题+五点为分母，五点缺失款单列口径，属性表命中单独标源不混入", "实测证据：分母分源+五点缺失剔分母"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ef91f5e1…（Open WebUI 可回溯）"], ["接口调用", "8 次 · sorftime_product_content×3、sorftime_product_detail×3、view_skill×1、get_current_timestamp×1"], ["报告体量", "HTML 17KB · 表格3张 · 主图4张"], ["质量核验", "分母分源+五点缺失剔分母"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ef91f5e1-5c45-49d9-b799-8070aa4c9a6c"]},
-  },
-
-  {
-    id: 'scene-listing-diagnosis',
-    name: '场景18·Listing诊断',
-    slug: '/scene-listing-diagnosis',
-    platforms: ['amazon'],
-    scenario: 'product',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 18,
-    chatId: '55a0eec5-d436-4721-b1b8-3d22c34957e1',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '销量波动归因+8维评分+优化后Listing对比（Open WebUI 场景技能 youweiai-amazon-scene-listing-diagnosis）',
-    triggers: ['我的Listing为什么掉量','场景18'],
-    demo: {"title": "实测：Listing诊断 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景18 · 09:24"}, {"label": "接口调用", "v": "13 次"}, {"label": "HTML报告", "v": "23KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：诊断美国站在售Listing销量波动，8维评分给优化建议", "执行链路：三趋势+20反查词+84条评论分层；促销脉冲非自然增长定性；Woot接管Buybox证据链", "实测证据：促销脉冲定性+8维61分"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "55a0eec5…（Open WebUI 可回溯）"], ["接口调用", "13 次 · sorftime_product_trend×3、review_fetch×3、view_skill×2、sorftime_product_detail×1"], ["报告体量", "HTML 23KB · 表格6张 · 主图1张"], ["质量核验", "促销脉冲定性+8维61分"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/55a0eec5-d436-4721-b1b8-3d22c34957e1"]},
-  },
-
-  {
-    id: 'scene-review-pain-points',
-    name: '场景19·竞品差评找改进点',
-    slug: '/scene-review-pain-points',
-    platforms: ['amazon'],
-    scenario: 'review',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 19,
-    chatId: 'd01a28bc-f00d-4446-b0e4-0f37735f6fbd',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '1-3星差评归类+摘原话+区分产品/运营问题（Open WebUI 场景技能 youweiai-amazon-scene-review-pain-points）',
-    triggers: ['同类产品被买家骂在哪','场景19'],
-    demo: {"title": "实测：竞品差评找改进点 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景19 · 09:25"}, {"label": "接口调用", "v": "22 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：看3个女包竞品的1-3星差评找开发改进点", "执行链路：ask_user站点→3款差评分层抽样：问题归类排序、买家原话摘录、产品vs运营问题区分", "实测证据：差评样本分层+原文可核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d01a28bc…（Open WebUI 可回溯）"], ["接口调用", "22 次 · sorftime_product_reviews×7、sorftime_product_detail×3、review_fetch×3、sorftime_product_content×3"], ["报告体量", "HTML 17KB · 表格6张 · 主图4张"], ["质量核验", "差评样本分层+原文可核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/d01a28bc-f00d-4446-b0e4-0f37735f6fbd"]},
-  },
-
-  {
-    id: 'scene-sales-change-reason',
-    name: '场景20·竞品销量变化归因',
-    slug: '/scene-sales-change-reason',
-    platforms: ['amazon'],
-    scenario: 'competitor',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 20,
-    chatId: 'd0c53080-2c01-40b5-8923-d5df07783c68',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '价格→BSR→流量词→评论逐步归因，无证据标推测（Open WebUI 场景技能 youweiai-amazon-scene-sales-change-reason）',
-    triggers: ['竞品销量为什么变化','场景20'],
-    demo: {"title": "实测：竞品销量变化归因 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景20 · 09:26"}, {"label": "接口调用", "v": "17 次"}, {"label": "HTML报告", "v": "20KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：分析美国站这个ASIN最近三个月销量为什么变化", "执行链路：SalesVolume月度序列+价格/BSR日级/5词趋势/两期类目快照三角对照；\"11月不可折算日均\"三处声明", "实测证据：不折日均+归因逐步有证据"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d0c53080…（Open WebUI 可回溯）"], ["接口调用", "17 次 · sorftime_keyword_trend×6、sorftime_product_trend×4、sorftime_category_report×2、view_skill×1"], ["报告体量", "HTML 20KB · 表格3张 · 主图1张"], ["质量核验", "不折日均+归因逐步有证据"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/d0c53080-2c01-40b5-8923-d5df07783c68"]},
-  },
-
-  {
-    id: 'scene-sp-search-terms',
-    name: '场景21·SP广告搜索词分析',
-    slug: '/scene-sp-search-terms',
-    platforms: ['amazon'],
-    scenario: 'report',
-    kind: 'scene',
-    status: 'built',
-    sceneNo: 21,
-    chatId: 'ce1ea84f-5631-4c4f-9e98-899395cdc235',
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
-    desc: '用户供CSV/XLSX：语义分类+来源裁决+Excel对账（Open WebUI 场景技能 youweiai-amazon-scene-sp-search-terms）',
-    triggers: ['分析我的SP搜索词报告','场景21'],
-    demo: {"title": "实测：SP广告搜索词分析 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景21 · 09:28"}, {"label": "接口调用", "v": "2 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：我导出了SP广告搜索词报告，帮我分类统计给动作建议", "执行链路：无文件时检测/uploads为空→不启动分析不造数据→列明需上传CSV/XLSX+站点+可选阈值", "实测证据：缺文件分支：检测0文件不启动"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ce1ea84f…（Open WebUI 可回溯）"], ["接口调用", "2 次 · view_skill×1、execute_code×1"], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "缺文件分支：检测0文件不启动"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ce1ea84f-5631-4c4f-9e98-899395cdc235"]},
-  },
-
-];
-
-/* Amazon 八公共技能实测数据（2026-11-13/14 回归，会话ID可回溯） */
-const AMAZON_PUBLIC_DEMOS = {
-  'skill-amazon-selection-search': {"chatUrl":"https://local.dianleida.net:21996/c/d28464cd-7456-4b60-958c-f28f323312f0","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-14","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"6 条"},{"label":"筛选维度","v":"3/3 通过"},{"label":"质量","v":"✓ 通过"}],"flow":["美国站浴室置物架15款 → 会话 d28464cd","日本站儿童水壶严格筛选 → 会话 57e31ba0","麻将包主图列回归 → 会话 1564f148","筛选维度① 互斥条件（近30天上架×月销5000+×4.9星×评论>2000×≤$15）→ 会话 16b50149：0款如实报，两组诊断定位瓶颈为近30天上架×评论>2000 互斥，给方案A/B不放宽","筛选维度② 小类BSR≤100×月销500+×评论≤500 → 会话 dfadeef8：BSR为接口原生字段未替代，10款 #22-#96 严格达标","筛选维度③ 上架>3年×月销1000+×排除PETLIBRO/Veken → 会话 72172a5c：上架≤2023-11-14 锚点，85条去重53 ASIN 判型，10款整机达标"],"table":{"head":["核验项","实测结果"],"rows":[["严格筛选","日本站17入口36样本5预筛1达标不凑数"],["类目体检","主节点2421559051+未完月剔除"],["竞品对比","THERMOS身份核验B0HBGYPY75为成人款"],["互斥条件","0款→诊断出近30天上架×评论>2000互斥"],["BSR筛选","#22-#96/月销3,347-6,494/评论44-487"],["老链接排除品牌","10款整机/在架3.03-7.27年/临界样本FEELNEEDY核验"]]},"note":"选品搜索硬条件零凑数；主图列+悬停浮层已在候选表强制；筛选维度扩展回归3/3（互斥条件诊断/BSR原生字段/反向时间窗+品牌排除），完整证据见仓库验收报告 amazon-eight-skills-acceptance-2026-11-13.html","report":"amazon-eight-skills-acceptance-2026-11-13.html","reportTitle":"八项公共技能验收报告（8/8 + 筛选维度 3/3，含逐条证据与会话链接）"},
-  'skill-amazon-competitor': {"chatUrl":"https://local.dianleida.net:21996/c/57e31ba0-32f5-4776-927e-6f97083abc30","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["日本站水壶竞品 → 会话 57e31ba0","美国站运动水壶对标 → 会话 5151c95c"],"table":{"head":["核验项","实测结果"],"rows":[["身份核验","B0HBGYPY75为成人通用480mL非儿童款"],["对比口径","仅2次detail+2次variations"],["JPY渲染","右侧实际渲染"]]},"note":"竞品身份核验不合格即隔离，三档判定（建议对标/壁垒/勿入）"},
-  'skill-amazon-keyword': {"chatUrl":"https://local.dianleida.net:21996/c/fca842d3-99f1-46f5-9127-67b4fd70f56e","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["空气炸锅德站 → 会话 b625d34c","Dog Brush美站 → 会话 fca842d3"],"table":{"head":["核验项","实测结果"],"rows":[["关键词挖掘","Heißluftfritteuse主词月搜13.1万"],["CPC","€0.34"],["组合词","Anthaft组合0收录如实报0"]]},"note":"本轮实返不借用上轮数据；0收录如实报0不造数"},
-  'skill-amazon-category-trend': {"chatUrl":"https://local.dianleida.net:21996/c/29344035-a99c-4e64-9d47-845d735a7e0d","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["露营灯类目 → 会话 29344035","Top100榜单+主图悬停 → 同会话续问"],"table":{"head":["核验项","实测结果"],"rows":[["节点","Electric Lanterns 21222469011"],["规模","1,473,733件/-9.6%"],["集中度","Top3卖家45.7%复核一致"],["未完月","2026-11剔除"]]},"note":"19维体检：集中度复核一致、未完月剔除、右侧渲染+悬停通过"},
-  'skill-amazon-product-parse': {"chatUrl":"https://local.dianleida.net:21996/c/d882ed2c-6c46-41aa-b45d-1fe1f17272d3","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["美国站HydroJug文案诊断 → 会话 d882ed2c","德站Owala链接定站 → 会话 德国站Listing优化分析"],"table":{"head":["核验项","实测结果"],"rows":[["身份","HydroJug Sport 32oz 小类BSR#3"],["变体","父体135变体并列"],["日期","listing_date与online_date冲突并列"],["悬停","320×320实测弹出"]]},"note":"估计值标注+双日期冲突并列+标题诊断词表"},
-  'skill-amazon-profit-calc': {"chatUrl":"https://local.dianleida.net:21996/c/003435c1-c0a7-4011-91d1-bb28370ada53","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-14","kpis":[{"label":"实测日期","v":"2026-11-14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["水杯利润 → 会话 003435c1","B0DGHBV6XS → 会话 1ee337cd"],"table":{"head":["核验项","实测结果"],"rows":[["三段ask_user","站点→类目→尺寸档"],["情景估算","佣金$3/FBA$4.95-5.71"],["毛利","$11.28-12.04标估算"],["接口口径","$17.62/62.95%标非净利"]]},"note":"缺ASIN不造接口费用；缺采购/头程留空；估算与真实净利严格分列"},
-  'skill-amazon-report-gen': {"chatUrl":"https://local.dianleida.net:21996/c/4a93d799-dc9b-4806-9a0a-c3da7b56621e","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["宠物喂食器 → 会话 4a93d799","德国站瑜伽垫 → 会话 149b6c46"],"table":{"head":["核验项","实测结果"],"rows":[["站点","Automatic Feeders 2975260011"],["矛盾处理","Top5<Top3份额矛盾整组弃用"],["评论","分层核读290条"],["渲染","KPI+悬停通过"]]},"note":"报告数据矛盾整组弃用不硬凑；Top100入库+近90天新品+评论分层"},
-  'skill-amazon-seller-analysis': {"chatUrl":"https://local.dianleida.net:21996/c/a038c620-d641-447c-a8db-fd31f1fe97a9","title":"实测：公共技能回归（2026-11-13/14）","date":"2026-11-13","kpis":[{"label":"实测日期","v":"2026-11-13/14"},{"label":"实测问法","v":"2 条"},{"label":"质量","v":"✓ 通过"}],"flow":["Anker美国站 → 会话 a038c620","RAYMYLO → 会话 a134f8f5"],"table":{"head":["核验项","实测结果"],"rows":[["身份","AnkerDirect=FANTASIA TRADING LLC"],["规模","1304在售/209款进Top100"],["GMV","月$6068万（估）"],["样本口径","Top60≈54% GMV明示"]]},"note":"店铺身份核验+样本口径声明；不把Top60样本冒充全店"},
-};
-
-
 // 已合并的平台只展示当前专家；历史定义留作版本参考，不再混入导航。
 const ACTIVE_EXPERT_SKILLS = {
   'exp-ozon-sel': null,
-  'exp-1688-sel': ['skill-1688-conditional-search', 'skill-1688-billboard', 'skill-1688-new-products', 'skill-1688-image-search', 'skill-1688-product-deep-dive', 'skill-1688-shop-verification', 'skill-1688-monitor-read', 'skill-1688-profit-scenario'],
+  'exp-1688-sel-v2': ['skill-1688-conditional-search', 'skill-1688-billboard', 'skill-1688-new-products', 'skill-1688-image-search', 'skill-1688-product-deep-dive', 'skill-1688-shop-verification', 'skill-1688-monitor-read', 'skill-1688-profit-scenario'],
   'exp-temu-sel-v2': ['skill-selection-search', 'skill-competitor-monitor', 'skill-product-parse', 'skill-shop-analysis', 'skill-category-trend', 'skill-profit-calc', 'skill-report-gen'],
   'exp-amazon-sel-v2': ['skill-amazon-selection-search', 'skill-amazon-competitor', 'skill-amazon-keyword', 'skill-amazon-category-trend', 'skill-amazon-product-parse', 'skill-amazon-profit-calc', 'skill-amazon-report-gen', 'skill-amazon-seller-analysis']
 };
@@ -3073,7 +2754,7 @@ function allExperts() {
   const activeIds = new Set(Object.keys(ACTIVE_EXPERT_SKILLS));
   const retiredIds = new Set(BASE_EXPERTS.filter(e => !activeIds.has(e.id)).map(e => e.id));
   const byId = new Map();
-  BASE_EXPERTS.filter(e => activeIds.has(e.id)).concat(customExperts.filter(e => !retiredIds.has(e.id) && !activeIds.has(e.id) && (!(e.platforms || []).includes('amazon') || e.id === 'exp-amazon-sel-v2'))).forEach(e => {
+  BASE_EXPERTS.filter(e => activeIds.has(e.id)).concat(customExperts.filter(e => !retiredIds.has(e.id) && !activeIds.has(e.id) && (!(e.platforms || []).includes('amazon') || e.id === 'exp-amazon-sel-v2') && (!(e.platforms || []).includes('temu') || e.id === 'exp-temu-sel-v2'))).forEach(e => {
     const skillIds = ACTIVE_EXPERT_SKILLS[e.id];
     const skills = skillIds ? skillIds.map(id => allSkills().find(s => s.id === id)).filter(Boolean).map(s => s.name) : e.skills;
     byId.set(e.id, Object.assign({}, e, { skills, skillIds, status: activeIds.has(e.id) ? 'built' : e.status }));
@@ -3260,7 +2941,7 @@ function renderKbList() {
     const okPf = curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform);
     const okSc = curKbScenario === 'all' || (d.scenarios || []).includes(curKbScenario);
     const hay = (d.name + ' ' + (d.desc || '')).toLowerCase();
-    return okKind && okPf && okSc && (!kw || hay.includes(kw));
+    return okPf && okSc && (!kw || hay.includes(kw));
   });
   if (!list.length) { box.innerHTML = '<div class="empty">没有匹配的知识库</div>'; return; }
   box.innerHTML = list.map(kbCard).join('');
@@ -3630,9 +3311,9 @@ function renderWsBody() {
       right.innerHTML = subTabs + '<h4>📊 ' + esc(cur.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
         '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
         '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
-        table + '<div class="demo-note">' + esc(d.note) + '</div>' + (d.report ? '<div class="demo-sec">完整验收报告</div><div class="demo-flow"><a href="' + esc(d.report) + '" target="_blank" rel="noopener">' + esc(d.reportTitle || '查看验收报告（含逐条证据与会话链接）') + '</a></div>' : '');
+        table + '<div class="demo-note">' + esc(d.note) + '</div>';
     } else {
-      right.innerHTML = subTabs + '<h4>⚡ ' + esc(cur.name) + (isA1688Skill(cur) ? ' · 完整执行规范（SKILL.md）' : ' · 调用提示词') + '</h4><div class="ws-code">' + esc(isA1688Skill(cur) && !cur.skillMd ? '正在读取完整技能文档…' : cur.prompt || '（未配置）') + '</div>';
+      right.innerHTML = subTabs + '<h4>⚡ ' + esc(cur.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(cur.prompt || '（未配置）') + '</div>';
     }
     return;
   }
@@ -3656,7 +3337,7 @@ function renderWsBody() {
   right.innerHTML = '<h4>实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' + tabBtns +
     '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
     '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
-    table + '<div class="demo-note">' + esc(d.note) + '</div>' + (d.report ? '<div class="demo-sec">完整验收报告</div><div class="demo-flow"><a href="' + esc(d.report) + '" target="_blank" rel="noopener">' + esc(d.reportTitle || '查看验收报告（含逐条证据与会话链接）') + '</a></div>' : '');
+    table + '<div class="demo-note">' + esc(d.note) + '</div>';
 }
 let wsDemoWhich = 'main';
 /* ===================== 技能/知识库 工作台 ===================== */
@@ -3667,7 +3348,7 @@ function wsOpenGeneric(mode, obj, tab) {
   if (mode === 'skill') {
     wsExpert = obj; wsSkillIdx = -1; wsSkillView = 'prompt';
     window.__wsVerSel = null;
-    _wsAutoLatestVersion = !isA1688Skill(obj) && !(obj.platforms || []).includes('amazon') && (!tab || tab === 'prompt');
+    _wsAutoLatestVersion = !(obj.platforms || []).includes('amazon') && (!tab || tab === 'prompt');
     wsTab = tab || 'prompt';
     setWsTabGeneric(wsTab);
   }
@@ -3687,88 +3368,9 @@ function closeWorkbenchGeneric() {
   document.getElementById('ws').classList.remove('open');
   document.body.style.overflow = '';
 }
-/* 1688 的映射和 SKILL.md 是线上调用指令的事实源，避免内嵌卡片随其他平台更新回退。 */
-let a1688DefinitionsReady = false;
-let a1688DefinitionsError = '';
-const a1688DocumentRequests = new Map();
-function isA1688Skill(skill) { return /^skill-1688-/.test(skill && skill.id || ''); }
-function formatA1688Demo(demo, pending) {
-  const table = demo.table || [];
-  const head = [...new Set(table.flatMap(row => Object.keys(row)))];
-  return {
-    title: demo.title,
-    date: demo.date,
-    kpis: (demo.kpis || []).map((value, index) => ({ label: '指标 ' + (index + 1), v: value })),
-    flow: demo.flow || [],
-    table: { head, rows: table.map(row => head.map(key => row[key] == null ? '—' : row[key])) },
-    note: (demo.note || '') + (pending ? ' 本轮三类触发待验；此处仅展示历史单路径证据。' : ''),
-    source: demo.source || ''
-  };
-}
-async function loadA1688SkillDocument(skill) {
-  if (skill.skillMd) return skill.skillMd;
-  if (a1688DocumentRequests.has(skill.id)) return a1688DocumentRequests.get(skill.id);
-  const request = fetch('./1688-skills/' + encodeURIComponent(skill.id) + '/SKILL.md', { cache: 'no-cache' })
-    .then(response => {
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      return response.text();
-    }).then(text => {
-      if (!text.includes('# 1688')) throw new Error('技能文档内容不完整');
-      skill.skillMd = text;
-      skill.prompt = text.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, '').trim();
-      skill.a1688DocumentError = '';
-      refreshAll();
-      if (wsExpert && wsExpert.id === skill.id && wsTab === 'prompt' && !window.__wsVerSel) renderSkillWs();
-      if (wsExpert && wsMode === 'expert' && wsTab === 'skill' && wsExpert.skillIds && wsExpert.skillIds[wsSkillIdx] === skill.id) renderWsBody();
-      return text;
-    }).catch(error => {
-      skill.a1688DocumentError = String(error.message || error);
-      if (wsExpert && wsExpert.id === skill.id && wsTab === 'prompt') renderSkillWs();
-      return null;
-    }).finally(() => a1688DocumentRequests.delete(skill.id));
-  a1688DocumentRequests.set(skill.id, request);
-  return request;
-}
-async function loadA1688Definitions() {
-  try {
-    const { a1688Expert, a1688Skills } = await import('./1688-expert-skill-map.js');
-    a1688Skills.forEach((definition, index) => {
-      const skill = BASE_SKILLS.find(item => item.id === definition.id);
-      if (!skill) return;
-      Object.assign(skill, {
-        name: definition.name, desc: definition.desc, triggers: definition.triggers,
-        tools: definition.tools, steps: definition.steps, prompt: definition.instructions,
-        demo: formatA1688Demo(definition.demo, index >= 3)
-      });
-    });
-    const expert = BASE_EXPERTS.find(item => item.id === a1688Expert.id);
-    if (expert) Object.assign(expert, {
-      name: a1688Expert.name, desc: a1688Expert.desc, greet: a1688Expert.greet,
-      abilities: a1688Expert.capabilities, refPrompts: a1688Expert.refPrompts,
-      skills: a1688Skills.map(skill => skill.name),
-      mcpTools: [...new Set(a1688Skills.flatMap(skill => skill.tools))],
-      sysPrompt: '你是' + a1688Expert.name + '。' + a1688Expert.desc + '\n\n' + a1688Expert.routing + '\n\n' + a1688Expert.disciplines
-    });
-    a1688DefinitionsReady = true;
-    a1688Skills.forEach(definition => {
-      const skill = BASE_SKILLS.find(item => item.id === definition.id);
-      if (skill) loadA1688SkillDocument(skill);
-    });
-    refreshAll(); refreshExperts();
-    if (wsExpert && wsExpert.id === a1688Expert.id && wsMode === 'expert') {
-      wsExpert = allExperts().find(item => item.id === a1688Expert.id);
-      renderWsLeft(); renderWsBody();
-    } else if (isA1688Skill(wsExpert)) renderSkillWs();
-  } catch (error) {
-    a1688DefinitionsError = String(error.message || error);
-    console.error('1688 映射加载失败:', error);
-    if (isA1688Skill(wsExpert)) renderSkillWs();
-  }
-}
 /* 技能工作台渲染 */
 function renderSkillWs() {
   const s = wsExpert;
-  if (isA1688Skill(s) && a1688DefinitionsReady && !s.skillMd && !s.a1688DocumentError && !a1688DocumentRequests.has(s.id)) loadA1688SkillDocument(s);
   document.getElementById('ws-title').innerHTML = '⚡ ' + esc(s.name) +
     ' <span class="demo-badge">' + esc((s.platforms || []).map(k => (PLATFORMS[k] || { label: k }).label).join('/')) + '</span>' +
     (s.status === 'built' ? '<span class="demo-badge" style="background:#e7f6ed;color:#008a37">✓ 已建成</span>' : '');
@@ -3783,7 +3385,7 @@ function renderSkillWs() {
     ((s.tools || []).length ? '<div class="ws-sec">内置工具</div><div>' + s.tools.map(t => '<span class="ws-tool" style="font-size:11.5px;padding:3px 9px;margin:2px 3px 2px 0;display:inline-block">' + esc(t) + '</span>').join('') + '</div>' : '') +
     (s.version ? '<div class="ws-sec">版本</div><div class="ws-desc">v' + esc(s.version) + ' · ' + esc(s.author || '') + '</div>' : '') +
     '<div class="ws-sec">操作</div>' +
-    '<button class="btn-solid" style="width:100%"' + (isA1688Skill(s) && !s.skillMd ? ' disabled title="等待完整技能文档加载"' : '') + ' onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>' +
+    '<button class="btn-solid" style="width:100%" onclick="copyText(wsExpert.prompt);toast(\'调用指令已复制\')">📋 复制调用指令</button>' +
     '<div class="ws-sec">版本记录</div>' + renderWsVersions('skill:' + wsExpert.id);
   /* 中栏：执行步骤 + 输出说明 */
   document.getElementById('ws-mid').innerHTML =
@@ -3798,16 +3400,11 @@ function renderSkillWs() {
     (s.outputExample ? '<div class="ws-sec">输出示例</div><div class="ws-code" style="max-height:280px">' + esc(s.outputExample) + '</div>' : '');
   /* 右栏：提示词或实测 */
   const right = document.getElementById('ws-right');
-  if (isA1688Skill(s) && !a1688DefinitionsReady) {
-    right.innerHTML = '<h4>1688 技能内容</h4><div class="ws-code">' + esc(a1688DefinitionsError ? '映射加载失败：' + a1688DefinitionsError + '。请刷新页面后重试。' : '正在读取完整的 1688 技能映射…') + '</div>';
-  } else if (wsTab === 'demo' && s.demo) {
+  if (wsTab === 'demo' && s.demo) {
     const d = s.demo;
     const hasImg = d.images && d.images.length;
     const heads = (hasImg ? ['图'] : []).concat(d.table.head);
-    const chatUrl = d.chatUrl || (s.chatId ? 'https://local.dianleida.net:21996/c/' + s.chatId : '');
-  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div>' +
-      (chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '') +
-      '<table class="demo-table"><thead><tr>' +
+    const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
       heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
       d.table.rows.map((r, ri) => '<tr>' +
         (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
@@ -3815,11 +3412,9 @@ function renderSkillWs() {
     right.innerHTML = '<h4>📊 ' + esc(s.name) + ' · 实测记录 <span class="demo-badge">✓ 真实接口 ' + esc(d.date) + '</span></h4>' +
       '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>' +
       '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.map(f => esc(f).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>')).join('<br>') + '</div>' +
-      table + '<div class="demo-note">' + esc(d.note) + '</div>' + (d.report ? '<div class="demo-sec">完整验收报告</div><div class="demo-flow"><a href="' + esc(d.report) + '" target="_blank" rel="noopener">' + esc(d.reportTitle || '查看验收报告（含逐条证据与会话链接）') + '</a></div>' : '');
-  } else if (isA1688Skill(s) && !s.skillMd) {
-    right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 完整执行规范</h4><div class="ws-code">' + esc(s.a1688DocumentError ? 'SKILL.md 加载失败：' + s.a1688DocumentError + '。请刷新页面后重试。' : '正在读取 SKILL.md 的参数、执行步骤、实测和降级规则…') + '</div>';
+      table + '<div class="demo-note">' + esc(d.note) + '</div>';
   } else {
-    right.innerHTML = '<h4>⚡ ' + esc(s.name) + (isA1688Skill(s) ? ' · 完整执行规范（SKILL.md）' : ' · 调用提示词') + '</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
+    right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 调用提示词</h4><div class="ws-code">' + esc(s.prompt || '（未配置）') + '</div>';
   }
 }
 let __wsZipSel = null;
@@ -3934,8 +3529,6 @@ function openExpertDemo(expert, which) {
       (expert.demoShop ? '<button class="ds-btn' + (which === 'shop' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'shop\')">店铺实测</button>' : '') +
       (expert.demoMarket ? '<button class="ds-btn' + (which === 'market' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'market\')">大盘实测</button>' : '') +
       '</div>' : '';
-  const chatUrl = d.chatUrl || (expert.chatId ? 'https://local.dianleida.net:21996/c/' + expert.chatId : '');
-  const chatLinkHtml = chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '';
   const kpis = '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>';
   const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
   const hasImg = d.images && d.images.length;
@@ -3948,8 +3541,8 @@ function openExpertDemo(expert, which) {
         const cls = (d.linkCols || []).includes(ci) ? ' class="title-link"' : '';
         return '<td' + cls + '>' + esc(c) + '</td>';
       }).join('') + '</tr>').join('') + '</tbody></table>';
-  const note = '<div class="demo-note">' + esc(d.note) + '</div>' + (d.report ? '<div class="demo-sec">完整验收报告</div><div class="demo-flow"><a href="' + esc(d.report) + '" target="_blank" rel="noopener">' + esc(d.reportTitle || '查看验收报告（含逐条证据与会话链接）') + '</a></div>' : '');
-  document.getElementById('modal-content').innerHTML = demoTabs + chatLinkHtml + kpis + flow + table + note;
+  const note = '<div class="demo-note">' + esc(d.note) + '</div>';
+  document.getElementById('modal-content').innerHTML = demoTabs + kpis + flow + table + note;
   modal.classList.add('open');
 }
 
@@ -4091,7 +3684,6 @@ initializeHubSync();
     pv.style.left = x + 'px'; pv.style.top = y + 'px';
   });
 })();
-loadA1688Definitions();
 </script>
 </body>
 </html>
