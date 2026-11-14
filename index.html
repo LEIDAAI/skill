@@ -72,6 +72,11 @@
   .vtab:not(.active):hover { background: #d9f2e4; color: #128a42; border-color: #a9e2c4; }
   .vtab .vicon { font-size: 16px; }
 
+  .ktab-btn { padding: 8px 20px; font-size: 14px; border-radius: 10px; }
+  .ktab-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(0,91,255,.22); }
+  .ktab-btn:not(.active) { background: #eef4fb; border-color: #d5e3f7; color: var(--muted); }
+  .scene-badge { font-size:10.5px;background:#e8f0fe;color:#2456c4;border-radius:5px;padding:1px 7px;margin-left:6px;vertical-align:2px;font-weight:600 }
+
   /* ===== Search + actions row ===== */
   .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
   .search {
@@ -311,6 +316,10 @@
   </div>
 
   <div id="view-skills" style="display:none">
+  <div class="ktabs" id="ktabs" style="display:flex;gap:10px;margin-bottom:14px">
+    <button class="vtab ktab-btn active" id="ktab-public" onclick="switchKind('public')"><span class="vicon">🌐</span>公共技能</button>
+    <button class="vtab ktab-btn" id="ktab-scene" onclick="switchKind('scene')"><span class="vicon">🎯</span>场景技能 <span style="font-weight:600;font-size:12px;opacity:.8">21</span></button>
+  </div>
   <div class="toolbar">
     <input id="search" class="search" placeholder="搜索技能名称 / 描述 / 触发词…">
     <div class="actions">
@@ -1210,6 +1219,7 @@ const selectedExportIds = new Set();
 let customSkills = [];
 try { customSkills = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { customSkills = []; }
 let curPlatform = 'all';
+let curKind = 'public';
 let curScenario = 'all';
 let curSearch = '';
 
@@ -1230,7 +1240,12 @@ function isCurrentAmazonSkill(skill) {
 }
 customSkills = customSkills.filter(isCurrentAmazonSkill);
 function allSkills() {
-  const byId = new Map(BASE_SKILLS.map(s => [s.id, s]));
+  const pubDemos = typeof AMAZON_PUBLIC_DEMOS!=='undefined' ? AMAZON_PUBLIC_DEMOS : {};
+  const sceneSkills = (typeof AMAZON_SCENE_SKILLS!=='undefined'?AMAZON_SCENE_SKILLS:[]).map(s => Object.assign({}, s, { demo: Object.assign({}, s.demo, { chatUrl: 'https://local.dianleida.net:21996/c/' + s.chatId }) }));
+  const byId = new Map(BASE_SKILLS.concat(sceneSkills).map(s => {
+    if (pubDemos[s.id] && !s.demo) s.demo = pubDemos[s.id];
+    return [s.id, s];
+  }));
   sharedSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!isA1688Skill(s) && !(s.platforms || []).includes('amazon')) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
   customSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!isA1688Skill(s) && !(s.platforms || []).includes('amazon') && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
   return [...byId.values()].sort((a, b) => (a.status === 'built' ? 0 : 1) - (b.status === 'built' ? 0 : 1));
@@ -1352,14 +1367,22 @@ function renderChips() {
   });
   box.innerHTML = html;
 }
+function switchKind(k) {
+  curKind = k;
+  document.getElementById('ktab-public').classList.toggle('active', k === 'public');
+  document.getElementById('ktab-scene').classList.toggle('active', k === 'scene');
+  renderChips(); renderGrid(); renderMeta();
+}
+function isSceneSkill(s) { return s.kind === 'scene' || /^scene-/.test(s.id || ''); }
 function renderGrid() {
   const grid = document.getElementById('grid');
   const kw = curSearch.trim().toLowerCase();
   const list = allSkills().filter(s => {
+    const okKind = curKind === 'all' ? true : (curKind === 'scene' ? isSceneSkill(s) : !isSceneSkill(s));
     const okPf = curPlatform === 'all' || (s.platforms || []).includes(curPlatform);
     const okSc = curScenario === 'all' || s.scenario === curScenario;
     const hay = (s.name + ' ' + (s.desc || '') + ' ' + (s.triggers || []).join(' ') + (s.id.startsWith('skill-amazon-') ? ' youweiAI-amazon' : '')).toLowerCase();
-    return okPf && okSc && (!kw || hay.includes(kw));
+    return okKind && okPf && okSc && (!kw || hay.includes(kw));
   });
   if (!list.length) { grid.innerHTML = '<div class="empty">没有匹配的技能，换个筛选条件或添加一个吧</div>'; return; }
   grid.innerHTML = list.map(s => {
@@ -1378,7 +1401,7 @@ function renderGrid() {
         '<div class="tags">' + ptags + '<span class="stag" style="background:' + sc.color + '">' + sc.label + '</span>' + (s.id.startsWith('skill-amazon-') ? '<span class="source-amazon" title="youweiAI-amazon">youweiAI-amazon</span>' : '') + '</div>' +
         '<span class="badge ' + (built ? 'badge-built' : 'badge-plan') + '">' + (built ? '✓ 已建成' : '待建 · 指令可用') + '</span>' +
       '</div>' +
-      '<h3>' + (s.isZip ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 7px;margin-right:6px;vertical-align:2px">📦包</span>' : '') + esc(s.name) + '</h3>' +
+      '<h3>' + (s.sceneNo ? '<span class="scene-badge">场景' + s.sceneNo + '</span> ' : '') + (s.isZip ? '<span style="font-size:11px;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 7px;margin-right:6px;vertical-align:2px">📦包</span>' : '') + esc(s.name) + '</h3>' +
       (s.slug || s.version ? '<div class="card-sub">' +
         (s.slug ? '<span class="slug">' + esc(s.slug) + '</span>' : '') +
         (s.version ? '<span>' + esc(s.version) + '</span>' : '') +
@@ -1387,6 +1410,7 @@ function renderGrid() {
       (trig ? '<div class="triggers"><b>触发示例</b>' + trig + '</div>' : '') +
       syncNote + '<div class="card-actions">' +
         '<button class="btn-solid" data-action="copy">📋 复制调用指令</button>' +
+        (s.demo ? '<button class="btn-plain" data-action="demo">📊 实测</button>' : '') +
         '<button class="btn-plain" data-action="workbench">🔍 工作台</button>' +
         (s.custom ? '<button class="btn-plain" data-action="promote" title="提交到技能仓库，其他电脑可见">' + (sync && sync.status === 'failed' ? '重试 Git 同步' : '同步 Git') + '</button>' : '') +
         (s.skillMd ? '<button class="btn-plain" data-action="view">技能全文</button>' : '') +
@@ -2683,6 +2707,358 @@ const BASE_EXPERTS = [
 
 ];
 
+const AMAZON_SCENE_SKILLS = [
+  {
+    id: 'scene-bsr-riser',
+    name: '场景1·BSR飙升潜力款',
+    slug: '/scene-bsr-riser',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 1,
+    chatId: 'a15ba861-7314-445b-9ff4-485d70cb3f40',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '找BSR排名上升最快、有真实涨幅证据的商品（Open WebUI 场景技能 youweiai-amazon-scene-bsr-riser）',
+    triggers: ['BSR上升的狗玩具有哪些','场景1'],
+    demo: {"title": "实测：BSR飙升潜力款 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景1 · 08:59"}, {"label": "接口调用", "v": "36 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站 women handbag 女包里 BSR 排名上升最快的商品", "执行链路：KPI+BSR明细表（36次调用：类目核对+候选逐款详情+BSR日级趋势防单月脉冲）", "实测证据：找到唯一真实上升款并核BSR日级序列"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a15ba861…（Open WebUI 可回溯）"], ["接口调用", "36 次 · sorftime_product_detail×22、sorftime_product_trend×8、sorftime_product_search×2、view_skill×1"], ["报告体量", "HTML 17KB · 表格1张 · 主图9张"], ["质量核验", "找到唯一真实上升款并核BSR日级序列"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/a15ba861-7314-445b-9ff4-485d70cb3f40"]},
+  },
+
+  {
+    id: 'scene-fbm-small-batch-test',
+    name: '场景2·FBM小批测款法',
+    slug: '/scene-fbm-small-batch-test',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 2,
+    chatId: '5afe1deb-32f0-448c-bb2e-e7bbe5155ef6',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '1688订单数>2筛类目，按采购价分档选款，轻小件优先（Open WebUI 场景技能 youweiai-amazon-scene-fbm-small-batch-test）',
+    triggers: ['帮我用FBM测款逻辑选品','场景2'],
+    demo: {"title": "实测：FBM小批测款法 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景2 · 09:00"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "44KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站家居收纳，FBM小批测款：订单数>2，按采购价分档，轻小件优先", "执行链路：ask_user两轮（站点/类目）→1688召回856款→11款分档建议（缺参分支实测通过）", "实测证据：ask_user问站点类目→1688分档→11款建议首测"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5afe1deb…（Open WebUI 可回溯）"], ["接口调用", "9 次 · dld_product_search_list×4、view_skill×3、get_current_timestamp×2"], ["报告体量", "HTML 44KB · 表格3张 · 主图51张"], ["质量核验", "ask_user问站点类目→1688分档→11款建议首测"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/5afe1deb-32f0-448c-bb2e-e7bbe5155ef6"]},
+  },
+
+  {
+    id: 'scene-keyword-supply-demand',
+    name: '场景3·关键词选品·供需双筛',
+    slug: '/scene-keyword-supply-demand',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 3,
+    chatId: 'a815f59f-59cb-48a8-967e-a0cc9ce4392e',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '搜索量/购买率/卖家数A模式或PPC/供需比B模式批量筛词（Open WebUI 场景技能 youweiai-amazon-scene-keyword-supply-demand）',
+    triggers: ['这批关键词帮我供需双筛','场景3'],
+    demo: {"title": "实测：关键词选品·供需双筛 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景3 · 09:00"}, {"label": "接口调用", "v": "12 次"}, {"label": "HTML报告", "v": "43KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：satchel bag等三词做A/B双模式筛选", "执行链路：逐词keyword_detail+词下商品核验；接口缺供需比/卖家数时A严格0命中、B不可判定（不造数）", "实测证据：逐词核验+字段缺失如实标不可判定"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a815f59f…（Open WebUI 可回溯）"], ["接口调用", "12 次 · sorftime_keyword_detail×4、sorftime_keyword_search_from_name×3、sorftime_keyword_search_results×3、view_skill×1"], ["报告体量", "HTML 43KB · 表格4张 · 主图3张"], ["质量核验", "逐词核验+字段缺失如实标不可判定"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/a815f59f-59cb-48a8-967e-a0cc9ce4392e"]},
+  },
+
+  {
+    id: 'scene-q4-last-year-reference',
+    name: '场景4·去年Q4旺季备货',
+    slug: '/scene-q4-last-year-reference',
+    platforms: ['amazon'],
+    scenario: 'category',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 4,
+    chatId: '0add0f1a-163c-4860-a80d-28c31b89f290',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '历史Q4快照锁定热卖池，品层+词层双证据给备货建议（Open WebUI 场景技能 youweiai-amazon-scene-q4-last-year-reference）',
+    triggers: ['参考去年Q4选今年备货款','场景4'],
+    demo: {"title": "实测：去年Q4旺季备货 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景4 · 09:01"}, {"label": "接口调用", "v": "41 次"}, {"label": "HTML报告", "v": "24KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包参考去年Q4走势选今年Q4备货款", "执行链路：品层17款SalesVolume 2025Q4序列+词层3词同比只用完结月；正增长款逐行清点", "实测证据：17款Q4趋势全覆盖+keyword_trend词层补齐"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "0add0f1a…（Open WebUI 可回溯）"], ["接口调用", "41 次 · sorftime_product_trend×32、sorftime_keyword_trend×4、sorftime_product_search_from_history×2、view_skill×1"], ["报告体量", "HTML 24KB · 表格2张 · 主图16张"], ["质量核验", "17款Q4趋势全覆盖+keyword_trend词层补齐"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/0add0f1a-163c-4860-a80d-28c31b89f290"]},
+  },
+
+  {
+    id: 'scene-low-review-high-sales',
+    name: '场景5·找评论少销量高的商品',
+    slug: '/scene-low-review-high-sales',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 5,
+    chatId: '80fd01aa-9a6e-4769-9b2a-e3eb48b90cc2',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '低评论+高月销新起量款，逐条详情+趋势双重核验（Open WebUI 场景技能 youweiai-amazon-scene-low-review-high-sales）',
+    triggers: ['找评论不到200月销超300的款','场景5'],
+    demo: {"title": "实测：找评论少销量高的商品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景5 · 09:01"}, {"label": "接口调用", "v": "31 次"}, {"label": "HTML报告", "v": "20KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包：评论≤199、月销≥300的新起款", "执行链路：搜索40→品类复核38→逐条详情剔除16→24款严格达标→全部拉月销走势（爬坡13/稳定4/回落7）", "实测证据：38款全详情+24款全趋势"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "80fd01aa…（Open WebUI 可回溯）"], ["接口调用", "31 次 · sorftime_product_detail×14、sorftime_product_trend×12、sorftime_product_search×3、view_skill×1"], ["报告体量", "HTML 20KB · 表格2张 · 主图15张"], ["质量核验", "38款全详情+24款全趋势"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/80fd01aa-9a6e-4769-9b2a-e3eb48b90cc2"]},
+  },
+
+  {
+    id: 'scene-rising-keyword-niche',
+    name: '场景6·搜索量上升利基品',
+    slug: '/scene-rising-keyword-niche',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 6,
+    chatId: 'e82a5bd8-fbbd-4c21-85a1-b3d831bc461d',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '趋势上行+竞争未饱和的利基词与代表商品（Open WebUI 场景技能 youweiai-amazon-scene-rising-keyword-niche）',
+    triggers: ['找搜索量上升的利基词','场景6'],
+    demo: {"title": "实测：搜索量上升利基品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景6 · 09:02"}, {"label": "接口调用", "v": "18 次"}, {"label": "HTML报告", "v": "19KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包找搜索量上升、竞争低的利基词", "执行链路：逐词趋势核验+6真利基词竞争详情+8款代表商品全带主图悬停", "实测证据：15词池→7上行8下行口径闭环"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "e82a5bd8…（Open WebUI 可回溯）"], ["接口调用", "18 次 · sorftime_keyword_search_from_name×7、sorftime_product_detail×6、view_skill×1、sorftime_keyword_extends×1"], ["报告体量", "HTML 19KB · 表格3张 · 主图7张"], ["质量核验", "15词池→7上行8下行口径闭环"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/e82a5bd8-fbbd-4c21-85a1-b3d831bc461d"]},
+  },
+
+  {
+    id: 'scene-local-premium-market',
+    name: '场景7·本土溢价市场',
+    slug: '/scene-local-premium-market',
+    platforms: ['amazon'],
+    scenario: 'category',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 7,
+    chatId: '3538cc31-a682-4acf-bc2f-cf895156704b',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '筛中国卖家份额低的本土主导市场（仅原生份额快照可判定）（Open WebUI 场景技能 youweiai-amazon-scene-local-premium-market）',
+    triggers: ['哪些类目本土卖家主导','场景7'],
+    demo: {"title": "实测：本土溢价市场 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景7 · 09:02"}, {"label": "接口调用", "v": "30 次"}, {"label": "HTML报告", "v": "6KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：扫美国站女包细分市场筛本土主导高溢价市场", "执行链路：china_seller_share快照逐子类核对；无快照的标待核不冒充判定；Wallets同名异号节点标映射待核", "实测证据：5类快照判定+6类无快照标待核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "3538cc31…（Open WebUI 可回溯）"], ["接口调用", "30 次 · sorftime_category_search_from_product_name×15、sorftime_category_report×5、execute_code×3、sorftime_category_name_search×2"], ["报告体量", "HTML 6KB · 表格2张 · 主图1张"], ["质量核验", "5类快照判定+6类无快照标待核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/3538cc31-a682-4acf-bc2f-cf895156704b"]},
+  },
+
+  {
+    id: 'scene-seasonal-new-ideas',
+    name: '场景8·节令新品灵感',
+    slug: '/scene-seasonal-new-ideas',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 8,
+    chatId: '0811435a-2990-47e9-b00b-eefc6a144b7f',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '节令词近3个月上架+起量+低评论的新品与上新窗口（Open WebUI 场景技能 youweiai-amazon-scene-seasonal-new-ideas）',
+    triggers: ['万圣节狗装新品哪些起量了','场景8'],
+    demo: {"title": "实测：节令新品灵感 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景8 · 09:03"}, {"label": "接口调用", "v": "54 次"}, {"label": "HTML报告", "v": "22KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站Halloween dog costume近3个月上架新品哪些起量且评论低", "执行链路：关键词+3个月上架窗+评论≤200+月销≥300命中37条→28款目标形态+TOP6趋势核验", "实测证据：37命中→28目标款硬条件零违规"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "0811435a…（Open WebUI 可回溯）"], ["接口调用", "54 次 · sorftime_product_detail×16、sorftime_product_content×16、sorftime_product_trend×15、sorftime_search_sync×4"], ["报告体量", "HTML 22KB · 表格2张 · 主图15张"], ["质量核验", "37命中→28目标款硬条件零违规"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/0811435a-2990-47e9-b00b-eefc6a144b7f"]},
+  },
+
+  {
+    id: 'scene-blue-ocean-new',
+    name: '场景9·蓝海新品',
+    slug: '/scene-blue-ocean-new',
+    platforms: ['amazon'],
+    scenario: 'product-selection',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 9,
+    chatId: 'de5ead54-b2f8-4248-9093-441b84505665',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '低评论+高评分+上架窗内的新品严选（Open WebUI 场景技能 youweiai-amazon-scene-blue-ocean-new）',
+    triggers: ['找蓝海新品','场景9'],
+    demo: {"title": "实测：蓝海新品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景9 · 09:03"}, {"label": "接口调用", "v": "26 次"}, {"label": "HTML报告", "v": "28KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包蓝海新品：评论≤100评分≥4.5上架≤6个月", "执行链路：主类目0命中如实报→5子类44条→39款逐条详情用listing_date复核→31入选8剔除", "实测证据：39款全详情+listing_date严窗"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "de5ead54…（Open WebUI 可回溯）"], ["接口调用", "26 次 · sorftime_product_detail×19、sorftime_search_sync×2、job_query×2、view_skill×1"], ["报告体量", "HTML 28KB · 表格2张 · 主图20张"], ["质量核验", "39款全详情+listing_date严窗"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/de5ead54-b2f8-4248-9093-441b84505665"]},
+  },
+
+  {
+    id: 'scene-cross-site-copy',
+    name: '场景10·跨站点爆款复制',
+    slug: '/scene-cross-site-copy',
+    platforms: ['amazon'],
+    scenario: 'category',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 10,
+    chatId: '3beb573f-af88-4933-aea0-c20fe44b8cfd',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '美站热销新品映射目标站同词根竞争对比（Open WebUI 场景技能 youweiai-amazon-scene-cross-site-copy）',
+    triggers: ['美国站爆款德国站能做吗','场景10'],
+    demo: {"title": "实测：跨站点爆款复制 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景10 · 09:04"}, {"label": "接口调用", "v": "20 次"}, {"label": "HTML报告", "v": "25KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站women handbag热销新品对比德国站Handtasche竞争", "执行链路：美站Top10热销新品→德国站4类目节点重搜替代污染词根→供需缺口量化", "实测证据：两站真实数据+30.3倍搜索差结论"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "3beb573f…（Open WebUI 可回溯）"], ["接口调用", "20 次 · sorftime_search_sync×8、sorftime_product_search_from_name×4、sorftime_keyword_detail×2、job_query×2"], ["报告体量", "HTML 25KB · 表格1张 · 主图25张"], ["质量核验", "两站真实数据+30.3倍搜索差结论"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/3beb573f-af88-4933-aea0-c20fe44b8cfd"]},
+  },
+
+  {
+    id: 'scene-subcat-four-step',
+    name: '场景11·小类深度调研四步法',
+    slug: '/scene-subcat-four-step',
+    platforms: ['amazon'],
+    scenario: 'category',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 11,
+    chatId: 'ca695ab1-0812-47d4-820c-f4557a9cd265',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '热销榜→小类调研→1688找厂→投入决策完整链路（Open WebUI 场景技能 youweiai-amazon-scene-subcat-four-step）',
+    triggers: ['深度调研一个小类','场景11'],
+    demo: {"title": "实测：小类深度调研四步法 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景11 · 09:05"}, {"label": "接口调用", "v": "23 次"}, {"label": "HTML报告", "v": "21KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站斜挎包小类四步法深度调研", "执行链路：Crossbody Top100→类目报告→1688达标供应商（5,604~161,020件）→FBA实得费情景公式", "实测证据：严格新品0命中如实+1688供应商3家"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ca695ab1…（Open WebUI 可回溯）"], ["接口调用", "23 次 · sorftime_product_detail×5、dld_product_search_list×5、sorftime_product_content×4、dld_product_info×2"], ["报告体量", "HTML 21KB · 表格4张 · 主图11张"], ["质量核验", "严格新品0命中如实+1688供应商3家"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ca695ab1-0812-47d4-820c-f4557a9cd265"]},
+  },
+
+  {
+    id: 'scene-market-five-dim',
+    name: '场景12·市场环境五维判定',
+    slug: '/scene-market-five-dim',
+    platforms: ['amazon'],
+    scenario: 'category',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 12,
+    chatId: '78fedf02-9ecf-4b68-be29-a88942e5e14a',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '规模/增长/集中度/价格带/风险五维进不进决策（Open WebUI 场景技能 youweiai-amazon-scene-market-five-dim）',
+    triggers: ['这个类目能不能进','场景12'],
+    demo: {"title": "实测：市场环境五维判定 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景12 · 09:05"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "21KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站Shoulder Bags市场环境五维判定", "执行链路：category_report+trend24月+Top100精算五维；样本205,011自校验吻合；Monica不存在按真实结构呈现", "实测证据：样本自校验100%吻合+缺项标不可判定"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "78fedf02…（Open WebUI 可回溯）"], ["接口调用", "9 次 · view_skill×2、search_chats×2、search_knowledge_bases×1、get_current_timestamp×1"], ["报告体量", "HTML 21KB · 表格3张 · 主图16张"], ["质量核验", "样本自校验100%吻合+缺项标不可判定"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/78fedf02-9ecf-4b68-be29-a88942e5e14a"]},
+  },
+
+  {
+    id: 'scene-filter-subcategory',
+    name: '场景13·筛细分类目',
+    slug: '/scene-filter-subcategory',
+    platforms: ['amazon'],
+    scenario: 'category',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 13,
+    chatId: '77fc55cf-ba84-4710-bc13-4af84565af30',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '预算约束下多子类五维对比找切入点（Open WebUI 场景技能 youweiai-amazon-scene-filter-subcategory）',
+    triggers: ['预算有限选哪个细分类目','场景13'],
+    demo: {"title": "实测：筛细分类目 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景13 · 09:06"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "12KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：预算5000元内美站女包筛细分类目切入", "执行链路：无效节点先类目名纠正→接口无数据降级Top20样本并声明→合计逐行相加核对0分差", "实测证据：三类目合计与KPI 0分差"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "77fc55cf…（Open WebUI 可回溯）"], ["接口调用", "9 次 · sorftime_category_report×5、view_skill×1、sorftime_category_name_search×1、sorftime_get_time×1"], ["报告体量", "HTML 12KB · 表格2张 · 主图0张"], ["质量核验", "三类目合计与KPI 0分差"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/77fc55cf-ba84-4710-bc13-4af84565af30"]},
+  },
+
+  {
+    id: 'scene-1688-image-profit',
+    name: '场景14·1688图搜拿货+毛利',
+    slug: '/scene-1688-image-profit',
+    platforms: ['amazon'],
+    scenario: 'profit',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 14,
+    chatId: 'afbafcf1-5b0e-4596-b8cb-46ac61d884be',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '选中亚款图搜1688找同款，逐SKU拿货价测毛利（Open WebUI 场景技能 youweiai-amazon-scene-1688-image-profit）',
+    triggers: ['这个款1688拿货多少毛利多少','场景14'],
+    demo: {"title": "实测：1688图搜拿货+毛利 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景14 · 09:09"}, {"label": "接口调用", "v": "13 次"}, {"label": "HTML报告", "v": "16KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包在1688图搜找同款并测算毛利", "执行链路：product_detail基线→真实主图图搜→逐SKU报价→情景汇率演示口径（无来源汇率不出现）", "实测证据：图搜一次过+4款SKU全核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "afbafcf1…（Open WebUI 可回溯）"], ["接口调用", "13 次 · dld_ali_offer_sku_prices×4、dld_ali_offer_realtime_detail×4、view_skill×1、sorftime_product_detail×1"], ["报告体量", "HTML 16KB · 表格3张 · 主图5张"], ["质量核验", "图搜一次过+4款SKU全核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/afbafcf1-5b0e-4596-b8cb-46ac61d884be"]},
+  },
+
+  {
+    id: 'scene-reverse-image-source',
+    name: '场景15·外网图搜1688货源',
+    slug: '/scene-reverse-image-source',
+    platforms: ['amazon'],
+    scenario: 'profit',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 15,
+    chatId: '5e33f935-62da-4909-b197-25cda1ce3a48',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '给一张外网商品图反向找1688厂家货源（Open WebUI 场景技能 youweiai-amazon-scene-reverse-image-source）',
+    triggers: ['这张图帮我找1688货源','场景15'],
+    demo: {"title": "实测：外网图搜1688货源 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景15 · 09:11"}, {"label": "接口调用", "v": "0 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：用这张亚马逊主图图搜1688找同款货源", "执行链路：接口失败时不编造如实终止（400×2/500/incomplete全留痕）；接口恢复后同参数一次过：4货源+4SKU核到，相似分0.911/0.850", "实测证据：失败分支+成功分支双验证"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5e33f935…（Open WebUI 可回溯）"], ["接口调用", "0 次 · "], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "失败分支+成功分支双验证"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/5e33f935-62da-4909-b197-25cda1ce3a48"]},
+  },
+
+  {
+    id: 'scene-asin-parse-follow',
+    name: '场景16·ASIN详情解析·跟款',
+    slug: '/scene-asin-parse-follow',
+    platforms: ['amazon'],
+    scenario: 'product',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 16,
+    chatId: '2ce9995e-9316-4ea6-94e2-34480c91b779',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '五点/参数/变体解析+跟款上架评估（Open WebUI 场景技能 youweiai-amazon-scene-asin-parse-follow）',
+    triggers: ['解析这个ASIN评估跟款','场景16'],
+    demo: {"title": "实测：ASIN详情解析·跟款 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景16 · 09:15"}, {"label": "接口调用", "v": "6 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：解析美站这个ASIN的五点参数变体，评估跟款上架", "执行链路：product_detail+content+variations；五点拆解、尺寸双口径并列、跟款专利红线明确", "实测证据：12子体+费用直读+红线提示"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "2ce9995e…（Open WebUI 可回溯）"], ["接口调用", "6 次 · view_skill×1、sorftime_product_detail×1、sorftime_product_content×1、sorftime_product_variations×1"], ["报告体量", "HTML 17KB · 表格4张 · 主图3张"], ["质量核验", "12子体+费用直读+红线提示"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/2ce9995e-9316-4ea6-94e2-34480c91b779"]},
+  },
+
+  {
+    id: 'scene-listing-selling-points',
+    name: '场景17·Listing卖点渗透率',
+    slug: '/scene-listing-selling-points',
+    platforms: ['amazon'],
+    scenario: 'product',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 17,
+    chatId: 'ef91f5e1-5c45-49d9-b799-8070aa4c9a6c',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '材质/功能词横向统计找差异化卖点（Open WebUI 场景技能 youweiai-amazon-scene-listing-selling-points）',
+    triggers: ['这批竞品卖点词渗透率怎么样','场景17'],
+    demo: {"title": "实测：Listing卖点渗透率 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景17 · 09:17"}, {"label": "接口调用", "v": "8 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：分析3个女包ASIN的Listing卖点渗透率", "执行链路：3款详情/内容：标题+五点为分母，五点缺失款单列口径，属性表命中单独标源不混入", "实测证据：分母分源+五点缺失剔分母"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ef91f5e1…（Open WebUI 可回溯）"], ["接口调用", "8 次 · sorftime_product_content×3、sorftime_product_detail×3、view_skill×1、get_current_timestamp×1"], ["报告体量", "HTML 17KB · 表格3张 · 主图4张"], ["质量核验", "分母分源+五点缺失剔分母"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ef91f5e1-5c45-49d9-b799-8070aa4c9a6c"]},
+  },
+
+  {
+    id: 'scene-listing-diagnosis',
+    name: '场景18·Listing诊断',
+    slug: '/scene-listing-diagnosis',
+    platforms: ['amazon'],
+    scenario: 'product',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 18,
+    chatId: '55a0eec5-d436-4721-b1b8-3d22c34957e1',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '销量波动归因+8维评分+优化后Listing对比（Open WebUI 场景技能 youweiai-amazon-scene-listing-diagnosis）',
+    triggers: ['我的Listing为什么掉量','场景18'],
+    demo: {"title": "实测：Listing诊断 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景18 · 09:24"}, {"label": "接口调用", "v": "13 次"}, {"label": "HTML报告", "v": "23KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：诊断美国站在售Listing销量波动，8维评分给优化建议", "执行链路：三趋势+20反查词+84条评论分层；促销脉冲非自然增长定性；Woot接管Buybox证据链", "实测证据：促销脉冲定性+8维61分"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "55a0eec5…（Open WebUI 可回溯）"], ["接口调用", "13 次 · sorftime_product_trend×3、review_fetch×3、view_skill×2、sorftime_product_detail×1"], ["报告体量", "HTML 23KB · 表格6张 · 主图1张"], ["质量核验", "促销脉冲定性+8维61分"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/55a0eec5-d436-4721-b1b8-3d22c34957e1"]},
+  },
+
+  {
+    id: 'scene-review-pain-points',
+    name: '场景19·竞品差评找改进点',
+    slug: '/scene-review-pain-points',
+    platforms: ['amazon'],
+    scenario: 'review',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 19,
+    chatId: 'd01a28bc-f00d-4446-b0e4-0f37735f6fbd',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '1-3星差评归类+摘原话+区分产品/运营问题（Open WebUI 场景技能 youweiai-amazon-scene-review-pain-points）',
+    triggers: ['同类产品被买家骂在哪','场景19'],
+    demo: {"title": "实测：竞品差评找改进点 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景19 · 09:25"}, {"label": "接口调用", "v": "22 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：看3个女包竞品的1-3星差评找开发改进点", "执行链路：ask_user站点→3款差评分层抽样：问题归类排序、买家原话摘录、产品vs运营问题区分", "实测证据：差评样本分层+原文可核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d01a28bc…（Open WebUI 可回溯）"], ["接口调用", "22 次 · sorftime_product_reviews×7、sorftime_product_detail×3、review_fetch×3、sorftime_product_content×3"], ["报告体量", "HTML 17KB · 表格6张 · 主图4张"], ["质量核验", "差评样本分层+原文可核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/d01a28bc-f00d-4446-b0e4-0f37735f6fbd"]},
+  },
+
+  {
+    id: 'scene-sales-change-reason',
+    name: '场景20·竞品销量变化归因',
+    slug: '/scene-sales-change-reason',
+    platforms: ['amazon'],
+    scenario: 'competitor',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 20,
+    chatId: 'd0c53080-2c01-40b5-8923-d5df07783c68',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '价格→BSR→流量词→评论逐步归因，无证据标推测（Open WebUI 场景技能 youweiai-amazon-scene-sales-change-reason）',
+    triggers: ['竞品销量为什么变化','场景20'],
+    demo: {"title": "实测：竞品销量变化归因 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景20 · 09:26"}, {"label": "接口调用", "v": "17 次"}, {"label": "HTML报告", "v": "20KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：分析美国站这个ASIN最近三个月销量为什么变化", "执行链路：SalesVolume月度序列+价格/BSR日级/5词趋势/两期类目快照三角对照；\"11月不可折算日均\"三处声明", "实测证据：不折日均+归因逐步有证据"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d0c53080…（Open WebUI 可回溯）"], ["接口调用", "17 次 · sorftime_keyword_trend×6、sorftime_product_trend×4、sorftime_category_report×2、view_skill×1"], ["报告体量", "HTML 20KB · 表格3张 · 主图1张"], ["质量核验", "不折日均+归因逐步有证据"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/d0c53080-2c01-40b5-8923-d5df07783c68"]},
+  },
+
+  {
+    id: 'scene-sp-search-terms',
+    name: '场景21·SP广告搜索词分析',
+    slug: '/scene-sp-search-terms',
+    platforms: ['amazon'],
+    scenario: 'report',
+    kind: 'scene',
+    status: 'built',
+    sceneNo: 21,
+    chatId: 'ce1ea84f-5631-4c4f-9e98-899395cdc235',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    desc: '用户供CSV/XLSX：语义分类+来源裁决+Excel对账（Open WebUI 场景技能 youweiai-amazon-scene-sp-search-terms）',
+    triggers: ['分析我的SP搜索词报告','场景21'],
+    demo: {"title": "实测：SP广告搜索词分析 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景21 · 09:28"}, {"label": "接口调用", "v": "2 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：我导出了SP广告搜索词报告，帮我分类统计给动作建议", "执行链路：无文件时检测/uploads为空→不启动分析不造数据→列明需上传CSV/XLSX+站点+可选阈值", "实测证据：缺文件分支：检测0文件不启动"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ce1ea84f…（Open WebUI 可回溯）"], ["接口调用", "2 次 · view_skill×1、execute_code×1"], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "缺文件分支：检测0文件不启动"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ce1ea84f-5631-4c4f-9e98-899395cdc235"]},
+  },
+
+];
+
+/* Amazon 八公共技能实测数据（2026-11-13/14 回归，会话ID可回溯） */
+const AMAZON_PUBLIC_DEMOS = {
+  'skill-amazon-selection-search': {"chatUrl":"https://local.dianleida.net:21996/c/57e31ba0-32f5-4776-927e-6f97083abc30","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["日本站儿童水壶 → 会话 57e31ba0", "麻将包主图列回归 → 会话 c/1564f148"], "table": {"head": ["核验项", "实测结果"], "rows": [["严格筛选", "日本站17入口36样本5预筛1达标不凑数"], ["类目体检", "主节点2421559051+未完月剔除"], ["竞品对比", "THERMOS身份核验B0HBGYPY75为成人款"]]}, "note": "选品搜索硬条件零凑数；主图列+悬停浮层已在候选表强制"},
+  'skill-amazon-competitor': {"chatUrl":"https://local.dianleida.net:21996/c/57e31ba0-32f5-4776-927e-6f97083abc30","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["日本站水壶竞品 → 会话 57e31ba0", "运动水壶竞品 → 会话 另一对话"], "table": {"head": ["核验项", "实测结果"], "rows": [["身份核验", "B0HBGYPY75为成人通用480mL非儿童款"], ["对比口径", "仅2次detail+2次variations"], ["JPY渲染", "右侧实际渲染"]]}, "note": "竞品身份核验不合格即隔离，三档判定（建议对标/壁垒/勿入）"},
+  'skill-amazon-keyword': {"chatUrl":"https://local.dianleida.net:21996/c/fca842d3-99f1-46f5-9127-67b4fd70f56e","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["空气炸锅德站 → 会话 b625d34c", "Dog Brush美站 → 会话 fca842d3"], "table": {"head": ["核验项", "实测结果"], "rows": [["关键词挖掘", "Heißluftfritteuse主词月搜13.1万"], ["CPC", "€0.34"], ["组合词", "Anthaft组合0收录如实报0"]]}, "note": "本轮实返不借用上轮数据；0收录如实报0不造数"},
+  'skill-amazon-category-trend': {"chatUrl":"https://local.dianleida.net:21996/c/29344035-a99c-4e64-9d47-845d735a7e0d","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["露营灯类目 → 会话 29344035", "Electric Lanterns → 会话 同会话"], "table": {"head": ["核验项", "实测结果"], "rows": [["节点", "Electric Lanterns 21222469011"], ["规模", "1,473,733件/-9.6%"], ["集中度", "Top3卖家45.7%复核一致"], ["未完月", "2026-11剔除"]]}, "note": "19维体检：集中度复核一致、未完月剔除、右侧渲染+悬停通过"},
+  'skill-amazon-product-parse': {"chatUrl":"https://local.dianleida.net:21996/c/d882ed2c-6c46-41aa-b45d-1fe1f17272d3","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["Listing解析 → 会话 d882ed2c", "Owala FreeSip → 会话 德站链接定站"], "table": {"head": ["核验项", "实测结果"], "rows": [["身份", "HydroJug Sport 32oz 小类BSR#3"], ["变体", "父体135变体并列"], ["日期", "listing_date与online_date冲突并列"], ["悬停", "320×320实测弹出"]]}, "note": "估计值标注+双日期冲突并列+标题诊断词表"},
+  'skill-amazon-profit-calc': {"chatUrl":"https://local.dianleida.net:21996/c/1ee337cd-46de-4778-917f-07df93c08de1","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-14", "kpis": [{"label": "实测日期", "v": "2026-11-14"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["水杯利润 → 会话 003435c1", "B0DGHBV6XS → 会话 1ee337cd"], "table": {"head": ["核验项", "实测结果"], "rows": [["三段ask_user", "站点→类目→尺寸档"], ["情景估算", "佣金$3/FBA$4.95-5.71"], ["毛利", "$11.28-12.04标估算"], ["接口口径", "$17.62/62.95%标非净利"]]}, "note": "缺ASIN不造接口费用；缺采购/头程留空；估算与真实净利严格分列"},
+  'skill-amazon-report-gen': {"chatUrl":"https://local.dianleida.net:21996/c/4a93d799-dc9b-4806-9a0a-c3da7b56621e","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "1 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["宠物喂食器 → 会话 4a93d799"], "table": {"head": ["核验项", "实测结果"], "rows": [["站点", "Automatic Feeders 2975260011"], ["矛盾处理", "Top5<Top3份额矛盾整组弃用"], ["评论", "分层核读290条"], ["渲染", "KPI+悬停通过"]]}, "note": "报告数据矛盾整组弃用不硬凑；Top100入库+近90天新品+评论分层"},
+  'skill-amazon-seller-analysis': {"chatUrl":"https://local.dianleida.net:21996/c/a038c620-d641-447c-a8db-fd31f1fe97a9","title": "实测：公共技能回归（2026-11-13/14）", "date": "2026-11-13", "kpis": [{"label": "实测日期", "v": "2026-11-13"}, {"label": "实测问法", "v": "2 条"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["Anker美国站 → 会话 a038c620", "RAYMYLO → 会话 a134f8f5"], "table": {"head": ["核验项", "实测结果"], "rows": [["身份", "AnkerDirect=FANTASIA TRADING LLC"], ["规模", "1304在售/209款进Top100"], ["GMV", "月$6068万（估）"], ["样本口径", "Top60≈54% GMV明示"]]}, "note": "店铺身份核验+样本口径声明；不把Top60样本冒充全店"},
+};
+
+
 // 已合并的平台只展示当前专家；历史定义留作版本参考，不再混入导航。
 const ACTIVE_EXPERT_SKILLS = {
   'exp-ozon-sel': null,
@@ -2881,7 +3257,7 @@ function renderKbList() {
     const okPf = curKbPlatform === 'all' || (d.platforms || []).includes(curKbPlatform);
     const okSc = curKbScenario === 'all' || (d.scenarios || []).includes(curKbScenario);
     const hay = (d.name + ' ' + (d.desc || '')).toLowerCase();
-    return okPf && okSc && (!kw || hay.includes(kw));
+    return okKind && okPf && okSc && (!kw || hay.includes(kw));
   });
   if (!list.length) { box.innerHTML = '<div class="empty">没有匹配的知识库</div>'; return; }
   box.innerHTML = list.map(kbCard).join('');
@@ -3425,7 +3801,10 @@ function renderSkillWs() {
     const d = s.demo;
     const hasImg = d.images && d.images.length;
     const heads = (hasImg ? ['图'] : []).concat(d.table.head);
-    const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div><table class="demo-table"><thead><tr>' +
+    const chatUrl = d.chatUrl || (s.chatId ? 'https://local.dianleida.net:21996/c/' + s.chatId : '');
+  const table = '<div class="demo-sec">结果数据 · ' + esc(d.title) + '</div>' +
+      (chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '') +
+      '<table class="demo-table"><thead><tr>' +
       heads.map(h => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' +
       d.table.rows.map((r, ri) => '<tr>' +
         (hasImg ? '<td>' + (d.images[ri] ? '<img class="demo-thumb" loading="lazy" src="' + esc(d.images[ri]) + '" onerror="this.style.opacity=0.15">' : '') + '</td>' : '') +
@@ -3552,6 +3931,8 @@ function openExpertDemo(expert, which) {
       (expert.demoShop ? '<button class="ds-btn' + (which === 'shop' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'shop\')">店铺实测</button>' : '') +
       (expert.demoMarket ? '<button class="ds-btn' + (which === 'market' ? ' on' : '') + '" onclick="openExpertDemo(window.__currentDemoOwner, \'market\')">大盘实测</button>' : '') +
       '</div>' : '';
+  const chatUrl = d.chatUrl || (expert.chatId ? 'https://local.dianleida.net:21996/c/' + expert.chatId : '');
+  const chatLinkHtml = chatUrl ? '<div style="margin:6px 0"><a href="' + esc(chatUrl) + '" target="_blank" rel="noopener" style="font-size:12.5px;color:#2456c4">🔗 打开实测对话（Open WebUI）</a></div>' : '';
   const kpis = '<div class="demo-kpis">' + d.kpis.map(k => '<div class="demo-kpi"><span>' + esc(k.label) + '</span><b>' + esc(k.v) + '</b></div>').join('') + '</div>';
   const flow = '<div class="demo-sec">执行过程</div><div class="demo-flow">' + d.flow.join('<br>') + '</div>';
   const hasImg = d.images && d.images.length;
@@ -3565,7 +3946,7 @@ function openExpertDemo(expert, which) {
         return '<td' + cls + '>' + esc(c) + '</td>';
       }).join('') + '</tr>').join('') + '</tbody></table>';
   const note = '<div class="demo-note">' + esc(d.note) + '</div>';
-  document.getElementById('modal-content').innerHTML = demoTabs + kpis + flow + table + note;
+  document.getElementById('modal-content').innerHTML = demoTabs + chatLinkHtml + kpis + flow + table + note;
   modal.classList.add('open');
 }
 
