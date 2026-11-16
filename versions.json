@@ -1090,6 +1090,15 @@
       "target": "hub:index.html#ozon-seven-skills",
       "action": "rebuild",
       "summary": "OZON七技能展示重建（并行TEMU会话30712bc曾用旧副本覆盖index.html）：①提示词Tab由228-460字填空模板改为线上现行正文逐字嵌入（1630-1824字，选品搜索从2473字旧底稿换成1691字现行版）；②命名统一youweiAI-OZON·XXX、专家名youweiAI-OZON选品专家；③实测Tab补结论区+16条真实会话链接+验收报告入口，与TEMU四段式一致。技能正文同步写入两条新纪律（ask_user统一追问防卡turn、skuNameZh中文名两轮不收敛即停）。源ozon-skill-hub.html七技能块已合并回源。线上专家绑定与工具范围未动"
+    },
+    {
+      "ts": "2026-11-16 10:15:00",
+      "target": "system",
+      "action": "deploy",
+      "summary": "亚马逊21场景优化版提示词上线：场景8/12用A/B胜出B方案（scene8_B/scene12_B），场景3/4/5/6/7/9/10/11/13/16/17/18/19/20用sceneN_optimized定稿版，共16个场景生效；场景1保持原样、2/14/15/21无筛选链路不适用。上线前21场景原正文备份tmp/scene_skills_backup_20261116.json，逐场景GET复核相似度1.000。Chrome扩展通道独立新会话抽测：场景5（17.9分，80→41→17款，17款全趋势核验）、场景8（13.2分，三词20×3召回→前20详情全核→7达标+2观察档），口径纪律无退化",
+      "snapshots": {
+        "note": "回滚：PATCH对应owui id content=备份文件对应场景content即可"
+      }
     }
   ]
 }

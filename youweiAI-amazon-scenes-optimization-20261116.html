@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>亚马逊21场景优化·上线与优先级报告 2026-11-16</title>
+<style>
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f3f5f7;color:#1f2937;margin:0;padding:20px;font-size:13.5px;line-height:1.6;}
+  .wrap{max-width:1180px;margin:0 auto;background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  h1{font-size:20px;margin:0 0 4px;} h2{font-size:16px;margin:22px 0 8px;border-left:4px solid #0e7a4b;padding-left:8px;}
+  .meta{color:#6b7280;font-size:12.5px;margin-bottom:14px;}
+  .kpis{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;}
+  .kpi{flex:1;min-width:150px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;text-align:center;}
+  .kpi .num{font-size:24px;font-weight:700;color:#0e7a4b;} .kpi .lbl{font-size:12px;color:#374151;margin-top:2px;} .kpi .sub{font-size:11px;color:#9ca3af;margin-top:2px;}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.8px;}
+  th{background:#0e7a4b;color:#fff;padding:7px 8px;text-align:left;position:sticky;top:0;}
+  td{padding:6px 8px;border-bottom:1px solid #e5e7eb;} tr:hover td{background:#f0faf5;}
+  .tag{display:inline-block;border-radius:4px;padding:1px 8px;font-size:12px;margin-right:4px;border:1px solid;}
+  .t-live{background:#e8f5ee;color:#0e7a4b;border-color:#bfe3cf;} .t-orig{background:#eef2f7;color:#475569;border-color:#d3dce6;}
+  .t-hot{background:#fff7e6;color:#b45309;border-color:#f5d9a6;}
+  .note{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 14px;margin:10px 0;font-size:12.8px;color:#475569;}
+  .ok{color:#0e7a4b;font-weight:600;} .warn{color:#b45309;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>亚马逊 21 场景提示词优化 · 上线状态与使用优先级</h1>
+  <div class="meta">生成：2026-11-16 10:15 · 优化版上线 16/21 · 独立会话抽测 2/2 通过 · 回滚备份 tmp/scene_skills_backup_20261116.json</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="num">16 / 21</div><div class="lbl">优化版已上线</div><div class="sub">8/12 用 A/B 胜出 B 方案，其余 14 用定稿 optimized</div></div>
+    <div class="kpi"><div class="num">2 / 2</div><div class="lbl">上线后独立会话抽测</div><div class="sub">场景5（17.9分）、场景8（13.2分）口径零退化</div></div>
+    <div class="kpi"><div class="num">-19% ~ -59%</div><div class="lbl">已验证场景的调用/耗时收益</div><div class="sub">场景8：54→44次、21.7→9.0分（A/B 实测）</div></div>
+    <div class="kpi"><div class="num">5 / 21</div><div class="lbl">不适用或保持原样</div><div class="sub">1 保持原样；2/14/15/21 无筛选链路</div></div>
+  </div>
+
+  <h2>一、上线动作与验收</h2>
+  <table>
+    <tr><th>批次</th><th>场景</th><th>上线内容</th><th>复核</th></tr>
+    <tr><td>第一批（已验证优先）</td><td>8 节令新品、12 五维判定</td><td>scene8_B.md / scene12_B.md（A/B 实验胜出方案）</td><td class="ok">GET 相似度 1.000 ✅</td></tr>
+    <tr><td>第二三批（定稿推广）</td><td>3/4/5/6/7/9/10/11/13/16/17/18/19/20</td><td>sceneN_optimized.md 定稿版</td><td class="ok">GET 相似度 1.000 ✅（14/14）</td></tr>
+    <tr><td>不动</td><td>1（多路召回是需求本身）、2/14/15/21（无筛选/图搜/缺文件链路）</td><td>保持原版</td><td>—</td></tr>
+  </table>
+
+  <h2>二、上线后独立新会话抽测（Chrome 扩展通道 · 真实 UI 会话）</h2>
+  <table>
+    <tr><th>场景</th><th>会话</th><th>耗时</th><th>过程与结果</th><th>判定</th></tr>
+    <tr><td>场景5 低评高销</td><td>afe707ef</td><td>17.9 分</td><td>80 原始 → 41 去重 → <b>17 款严格达标</b>；17 款全部完成趋势核验（8 持续爬坡 / 3 企稳 / 1 回落）；2 款上架日期冲突转诊断层；缺月销不补零</td><td class="ok">✅ 优化版生效、口径零退化</td></tr>
+    <tr><td>场景8 节令新品</td><td>3f4a181d</td><td>13.2 分</td><td>三词 20×3 召回 39 款 → 前 20 详情两批并行（10+10）→ <b>7 款严格达标 + 2 观察档</b>（listing_date 冲突并列披露）；ASIN 级趋势 8 款缺_return 自动降级父体趋势补爬坡证据</td><td class="ok">✅ 搜索层收紧生效（首轮一轮带齐硬条件）</td></tr>
+  </table>
+  <div class="note">抽测问法即 A/B 实验同款问法（女包低评高销 / Halloween Dog 节令新品），与基线口径直接可比。耗时高于 A/B 理想值（9.0 分）是因为今日核验深度为详情全核 20 款 + 父体趋势补证，属于质量加深而非效率退化。</div>
+
+  <h2>三、21 场景使用优先级（时间 × 质量 × 用户帮助）</h2>
+  <table>
+    <tr><th>优先</th><th>场景</th><th>耗时档</th><th>采纳优化</th><th>线上状态</th><th>适用用户/时机</th></tr>
+    <tr><td><span class="tag t-hot">极高 P0</span></td><td>8 节令新品灵感</td><td>9~13 分</td><td>搜索层收紧（A/B 验证耗时 -59%）</td><td><span class="tag t-live">优化版已上线</span></td><td>节令前 1-2 个月找新品的所有卖家；收益最大、复用最高</td></tr>
+    <tr><td><span class="tag t-hot">极高 P0</span></td><td>12 市场环境五维判定</td><td>6.8 分（最快深档）</td><td>三路并行直出（调用 -33%）</td><td><span class="tag t-live">优化版已上线</span></td><td>任何进场/扩量决策前的体检，6.8 分钟拿到五维结论</td></tr>
+    <tr><td>P1</td><td>5 低评高销</td><td>13~18 分</td><td>保留趋势核验（分步收敛已否决）</td><td><span class="tag t-live">优化版已上线+实测✅</span></td><td>找蓝海起量款的核心场景</td></tr>
+    <tr><td>P1</td><td>3 关键词供需双筛</td><td>8~13 分</td><td>搜索层收紧</td><td><span class="tag t-live">优化版已上线</span></td><td>手里有词表要批量筛的运营</td></tr>
+    <tr><td>P1</td><td>13 筛细分类目</td><td>8~13 分</td><td>搜索层收紧</td><td><span class="tag t-live">优化版已上线</span></td><td>大类里找细分切入</td></tr>
+    <tr><td>P1</td><td>6 搜索量上升利基品</td><td>8~13 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>利基词+商品双输出</td></tr>
+    <tr><td>P1</td><td>16 ASIN 解析跟款</td><td>5~8 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>单 ASIN 快速跟款评估</td></tr>
+    <tr><td>P1</td><td>18 Listing 诊断</td><td>8~13 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>在售链接诊断+改写对比</td></tr>
+    <tr><td>P1</td><td>19 竞品差评找改进点</td><td>8~13 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>产品改进/差异化选品</td></tr>
+    <tr><td>P2</td><td>9 蓝海新品</td><td>15~26 分</td><td>搜索层收紧（续问污染已修，建议再独立复跑 1 次）</td><td><span class="tag t-live">优化版已上线</span></td><td>低评高分新蓝海，深度档</td></tr>
+    <tr><td>P2</td><td>4 去年 Q4 备货</td><td>15~25 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>Q4 备货决策（当季应景）</td></tr>
+    <tr><td>P2</td><td>11 小类四步调研</td><td>15~25 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>细分类目深度进场报告</td></tr>
+    <tr><td>P2</td><td>7 本土溢价市场 / 10 跨站点复制 / 20 销量归因</td><td>15~25 分</td><td>三路并行直出</td><td><span class="tag t-live">优化版已上线</span></td><td>特定策略型需求</td></tr>
+    <tr><td>P2</td><td>17 卖点渗透率 / 1 BSR 飙升</td><td>8~17 分</td><td>并行直出 / 原样</td><td><span class="tag t-live">上线</span><span class="tag t-orig">1 为原版</span></td><td>多 ASIN 对比 / 追涨款</td></tr>
+    <tr><td>P3</td><td>14 图搜拿货毛利 / 15 外网图搜寻源</td><td>5~8 分</td><td>不适用（图搜链路）</td><td><span class="tag t-orig">原版</span></td><td>单品核价、反查 1688</td></tr>
+    <tr><td>P3</td><td>2 FBM 测款 / 21 SP 广告词</td><td>≤8 分 / 0.6 分</td><td>不适用</td><td><span class="tag t-orig">原版</span></td><td>测款验证 / 需上传 SP 报告</td></tr>
+  </table>
+
+  <h2>四、给客户的时间口径（更新）</h2>
+  <table>
+    <tr><th>档位</th><th>场景</th><th>口径</th></tr>
+    <tr><td><b>快（5-8 分）</b></td><td>12 五维、16 跟款、14/15 图搜、2 测款</td><td>单点判断，随时可跑</td></tr>
+    <tr><td><b>中（8-13 分）</b></td><td>8 节令、3 供需、6 利基、13 细分、17/18/19</td><td>标准筛选，优化后一轮带齐条件</td></tr>
+    <tr><td><b>深（15-26 分）</b></td><td>5 低评高销（13-18）、9 蓝海、1/4/7/10/11/20</td><td>逐款详情+趋势全核，覆盖优先于速度</td></tr>
+  </table>
+
+  <h2>五、遗留与建议</h2>
+  <div class="note">
+    ① 场景 9 建议近期用独立会话再复跑 1 次（此前 +158% 是续问污染假象，优化版已上线但需干净数据背书）；② 1688 八个公共技能的导航实测 Tab 仍是 raw JSON，建议下次按 TEMU 样式重建；③ 优化版上线未做 Hub 导航改动（SCENE_OPT_PERF 表保持"已定稿未单跑"字样的 13 个场景现已上线，下次改导航时一并更新状态列）。
+  </div>
+  <div class="meta" style="margin-top:16px">数据来源：2026-11-14 A/B 实验（prompt-ab-test/）、2026-11-16 上线复核与两次独立会话抽测、reports/youweiAI-amazon-prompt-ab-20261114.html</div>
+</div>
+</body>
+</html>
