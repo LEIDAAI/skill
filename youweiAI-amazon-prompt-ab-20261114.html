@@ -60,7 +60,7 @@
 
   <header class="hero">
     <h1>youweiAI-amazon · 21 场景提示词优化 A/B 实验报告</h1>
-    <div class="sub">实验日期 2026-11-14 · 全部走真实 UI 会话（Open WebUI + 浏览器扩展通道）· 数据源为当次真实接口返回</div>
+    <div class="sub">实验日期 2026-11-14 · 全部走真实 UI 会话（Open WebUI + 浏览器扩展通道）· 数据源为当次真实接口返回</div><div style="background:#0e7a4b;color:#fff;border-radius:6px;padding:6px 14px;margin-top:8px;font-size:13px">📣 本报告已由 2026-11-16 上线报告接力：<b>16/21 优化版已上线、抽测 2/2 通过</b> —— 最新状态见下方绿框或 <a href="youweiAI-amazon-scenes-optimization-20261116.html" style="color:#ffe08a;font-weight:700">点此查看 11-16 优先级报告</a></div></div>
     <div class="chips">
       <span class="chip">3 组 A/B 对照</span>
       <span class="chip">15 场景优化方案定稿</span>
@@ -188,6 +188,19 @@
     <p><b>线上状态：</b>15 个受测场景技能<b>已全部恢复正式版</b>，不影响客户日常使用；优化版提示词保留在仓库 <code>skill/youweiai-amazon-scenes/prompt-ab-test/sceneN_optimized.md</code>，随时可批量上线。</p>
     <p><b>下一步（可选）：</b>① 按“搜索层收紧 / 并行直出”两类分批上线优化版，每批上线后用独立新会话抽测 1 个场景做回归；② 场景 1、9 需要单独复跑确认（场景1 全量核验是否保留、场景9 独立会话下的真实调用数）；③ 继续压缩技能提示词长度，预期还能省 20-30%，不会有量级变化。</p>
     <div class="note"><b>数据边界：</b>本报告的耗时与调用数均来自真实 UI 会话的工具调用记录；未单独复跑的场景，其“优化版”耗时未标数字，不做估算。</div>
+  </section>
+
+  
+  <section style="border:2px solid #0e7a4b;border-radius:10px;padding:16px 20px;margin:18px 0;background:#f2fbf6;">
+    <h2 style="color:#0e7a4b;margin:0 0 10px">🔴 最新进展（2026-11-16 10:30 更新）——本文第七节"线上状态"已被下面内容取代</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin:8px 0">
+      <tr style="background:#0e7a4b;color:#fff"><th style="padding:6px 10px;text-align:left">事项</th><th style="padding:6px 10px;text-align:left">2026-11-16 状态</th></tr>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid #d9e8df"><b>优化版上线</b></td><td style="padding:6px 10px;border-bottom:1px solid #d9e8df"><b class="ok">✅ 16/21 已上线</b>（API 逐场景写入，GET 复核相似度 1.000）：场景 8、12 用本文 A/B 胜出 B 方案；场景 3/4/5/6/7/9/10/11/13/16/17/18/19/20 用定稿 optimized 版；场景 1 保持原样（多路召回是需求）；2/14/15/21 不适用（无筛选/图搜/缺文件链路）。原正文备份可随时回滚。</td></tr>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid #d9e8df"><b>上线后抽测</b></td><td style="padding:6px 10px;border-bottom:1px solid #d9e8df"><b class="ok">✅ 2/2 通过</b>（Chrome 扩展通道·独立新会话·真实 UI）：场景5 = 17.9 分，80→41→17 款严格达标、17 款全趋势核验、口径零退化；场景8 = 13.2 分，三词 20×3 召回→前 20 详情两批并行→7 达标+2 观察档，搜索层收紧生效。</td></tr>
+      <tr><td style="padding:6px 10px;border-bottom:1px solid #d9e8df"><b>实测覆盖</b></td><td style="padding:6px 10px;border-bottom:1px solid #d9e8df"><span class="warn">⚠️ 13 个场景"上线未单跑"</span>：优化机制已经场景 8/12 验证有效，但 3/4/6/7/9/10/11/13/16/17/18/19/20 各自的提示词还没有独立会话回归数据（场景 9 尤其需要干净复跑替换本文"续问膨胀"数据）。补齐后本文与优先级报告将同步更新为 21/21 全实测。</td></tr>
+      <tr><td style="padding:6px 10px"><b>最终交付</b></td><td style="padding:6px 10px"><b>最新报告 →</b> <a href="youweiAI-amazon-scenes-optimization-20261116.html" style="color:#0b6b43;font-weight:700">youweiAI-amazon-scenes-optimization-20261116.html</a>（时间×质量×用户帮助三级优先级表 + 客户耗时口径 快5-8分/中8-13分/深15-26分 + 抽测会话ID）。<br>抽测会话：场景5 <code>afe707ef-ad12-4bf0-a8cf-259dff632d7c</code> · 场景8 <code>3f4a181d-84cc-4a4e-b070-64a8a25b077d</code></td></tr>
+    </table>
+    <p style="font-size:12px;color:#5b6b78;margin:6px 0 0">本文其余章节保留 2026-11-14 实验原貌（方案对照/基线耗时/口径纪律），作为优化依据存档。</p>
   </section>
 
   <div class="footer">youweiAI-amazon · 21 场景技能 · 提示词优化 A/B 实验报告 · 2026-11-14 · 数据来源：Open WebUI 真实会话调用记录</div>
