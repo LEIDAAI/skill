@@ -1153,6 +1153,15 @@
       "snapshots": {
         "note": "回滚：index.html 取本次发布父提交 blob；线上专家/技能 content 见 tmp/temu_opt_evidence_20261116.json（system 与 7 技能逐字归档）。"
       }
+    },
+    {
+      "ts": "2026-11-16 18:54:18 +08:00",
+      "target": "hub:index.html#temu-seven-skills-demo",
+      "action": "fix",
+      "summary": "TEMU 七技能实测 Tab 口径修正：线上强刷核验发现 11-16 的 22 条真实会话明细已发布，但同弹窗的 KPI、执行过程、结论与对话入口仍是 11-14 旧数据，与明细自相矛盾。现按本轮 22 条记录逐技能重算 KPI（会话数、通过/部分或未完成）与执行过程、结论，对话入口改指本轮明确问法会话，逐行会话链接与报告入口保持。线上专家/技能正文与报告未改，失败会话与基础设施缺陷仍如实保留。本次只覆盖 index.html、versions.json、experts-migration.md，并行文件保持远端。",
+      "snapshots": {
+        "note": "回滚：index.html 取本次发布父提交 blob；线上专家/技能 content 见 tmp/temu_opt_evidence_20261116.json（system 与 7 技能逐字归档）。"
+      }
     }
   ]
 }
