@@ -1135,6 +1135,15 @@
       "snapshots": {
         "note": "最终判定见新报告和三份ozon-ui-retest-*-2026-11-16.json；done、业务完成与实际预览交互分别记录。"
       }
+    },
+    {
+      "ts": "2026-11-16 16:45:00 +08:00",
+      "target": "hub:index.html#ozon-seven-skills + skills:ozon-selection-analysis,report-gen",
+      "action": "optimize",
+      "summary": "OZON选品/报告技能大样本性能优化（A+B）：选品搜索新增大样本取样与输出门禁——N>50区分取样量与展示量，明细表最多逐行展开前50行，其余以execute_code计算的汇总统计呈现并写明取样/展示口径，用户要全量再每次50条分批；from翻页失效须显式声明并改用互不相交的价格/销量分段，结论写明命中total/切片次数/去重唯一SPU数/分段口径；具体品类词大样本先做语义过滤，不用宽类目组合凑数冒充目标品类。报告技能同步精简版大样本分级输出。线上两技能正文更新后fetch归档、逐字同步源ozon-skill-hub.html与发布版skill/index.html的prompt/skillMd；导航66条实测明细与报告证据保持远端原样未动。本次精准发布仅覆盖index.html、归档json、versions.json，其余并行文件保持远端。",
+      "snapshots": {
+        "note": "回滚：index.html与归档json取本次发布父提交blob；线上技能PATCH回选品fe585eea/报告8e03f00f对应content。"
+      }
     }
   ]
 }
