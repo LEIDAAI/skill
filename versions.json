@@ -2,6 +2,12 @@
   "note": "变更版本历史摘要。旧亚马逊多专家、四/七技能及双源方案仅供追溯，不可作为当前调用指南；当前公开名称 youweiAI-amazon，八技能单专家迁移规划见 experts-migration.md。品牌脱敏后的历史 target 和快照文字不代表当前实际服务绑定，也不代表本轮重新实测。",
   "entries": [
     {
+      "ts": "2026-11-16 14:06:53",
+      "target": "report:amazon-29skills-evidence",
+      "action": "ui",
+      "summary": "整合为单一客户演示页，29技能各出现一次；四步旅程筛选与问题/帮助/问法合一，34条实测在弹窗分批保留；旧手册跳转统一入口。Chrome真实页面验证29按钮/34记录无错、无横向溢出和控制台错误，离线分类5/7/3/6/8验证通过。"
+    },
+    {
       "ts": "2026-11-16 11:51:28",
       "target": "report:amazon-29skills-evidence",
       "action": "ui",
