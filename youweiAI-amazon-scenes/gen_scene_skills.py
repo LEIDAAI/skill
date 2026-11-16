@@ -6,6 +6,10 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 scenes = json.load(open(os.path.join(BASE, 'scenes-full.json'), encoding='utf-8'))
 by_idx = {s['idx']: s for s in scenes}
 
+# 各场景「必填项与追问」区块（由 tmp/backfill_required_block.py 从线上导出，保证重生成不丢）
+_rb_path = os.path.join(os.path.dirname(os.path.dirname(BASE)), 'tmp', 'required_blocks.json')
+_REQUIRED_BLOCKS = json.load(open(_rb_path, encoding='utf-8')) if os.path.exists(_rb_path) else {}
+
 # 输出形态规范（所有场景共用，强制 HTML 报告）
 OUTPUT_SPEC = """## ★ 输出形态（最高优先级：HTML 报告 → 右侧预览面板）
 **本节优先于下文「口径」中一切关于"表格""做成表格""表格列"的描述——那些"表格"一律指本节 HTML 报告内的表格，不是对话里的 markdown 表格。**
@@ -233,6 +237,10 @@ for idx, cfg in CFG.items():
     prompt = s['prompt'].strip()
     lines = []
     lines.append(f"# youweiAI-amazon-场景-{name}\n")
+    # ★ 必填项与追问区块：必须紧跟标题之后（线上 29 技能均为该顺序），从 required_blocks.json 取本场景专属版本
+    _rb = _REQUIRED_BLOCKS.get(str(idx))
+    if _rb:
+        lines.append(_rb.rstrip('\n') + "\n")
     lines.append(f"## 触发（本场景技能，执行时按需调用已绑定的公共技能与工具）")
     lines.append(f'- 原始问法：{trigger}')
     lines.append(f'- 变体问法按语义匹配本场景；用户未给站点先问一次站点。\n')
