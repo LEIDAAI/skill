@@ -1099,6 +1099,15 @@
       "snapshots": {
         "note": "回滚：PATCH对应owui id content=备份文件对应场景content即可"
       }
+    },
+    {
+      "ts": "2026-11-16 10:42:00",
+      "target": "system",
+      "action": "ui",
+      "summary": "导航视图Tab重排：技能置首并设为默认视图（专家/知识库依次），页面加载即显示53个技能网格；顺序与初始active同步调整",
+      "snapshots": {
+        "note": "用户要求把技能tab放第一个；浏览器Chrome扩展通道实测通过"
+      }
     }
   ]
 }
