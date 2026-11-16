@@ -555,3 +555,11 @@ mcp__1688__monitor_shop_list
 - **技能正文补丁**：Open WebUI 七技能正文全部追加两条第三轮暴露的纪律——追问统一 ask_user 表单一次收集（防纯文字追问卡 turn）、中文名 skuNameZh 只作兜底分路且两轮不收敛即停。更新接口必须带 id 字段，否则 400。专家绑定 skillIds(7)/工具范围/knowledge 复核未动。
 - **源同步**：7 个技能定义块已合并回 ozon-skill-hub.html（脚本级替换，逐块核验与发布版一致）；源文件仍缺专家卡段，整体重同步前须先补齐。
 - **环境事故（未解决）**：模型网关宕机——Open WebUI 两条 OpenAI 连接（host.docker.internal:18081、192.168.1.10:8080）均不可达，宿主机 18081 无监听、192.168.1.10 ping/TCP 全断，/api/models 返回空，新会话发消息无法路由模型。与当晚 WorkBuddy 平台侧反复 ETIMEDOUT 192.168.1.10:8080 同源。已修 ui.default_models 坏值（旧 product-selection-assistant → 1688选品助手，备份于容器内 ui_default_models_backup_20261114.json）并重启容器；A2 猫砂盆复测待网关恢复后补跑。
+
+
+## 2026-11-16 · Amazon 29技能实测入口与证据弹窗
+
+- 本次发布仅更新 `youweiAI-amazon-29skills-handbook.html`、`youweiAI-amazon-prompt-ab-20261114.html`，并追加本版本与迁移记录。
+- 两页面提供29技能入口、34条分批证据记录；原A/B报告新增分类筛选与搜索。
+- 历史基线、独立A/B、上线抽测分开呈现；场景15历史寻源成功与最新待补输入分开；场景21带文件完整分析分支仍待验。
+- 两页面离线DOM验证全通过（沿用本轮已完成验证记录）；Chrome扩展未连接，尚未完成真实浏览器验收。
