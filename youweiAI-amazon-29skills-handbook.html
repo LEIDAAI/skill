@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>youweiAI-amazon 选品决策系统 · 29技能讲解手册（客户版）</title>
+<style>
+  :root{--green:#0e7a4b;--ink:#1f2937;--ink2:#374151;--ink3:#6b7280;--line:#e5e7eb;--bg:#f3f5f7;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:20px;font-size:13.5px;line-height:1.65;}
+  .wrap{max-width:1180px;margin:0 auto;background:#fff;border-radius:12px;padding:28px 30px;box-shadow:0 1px 6px rgba(0,0,0,.07);}
+  header{border-bottom:3px solid var(--green);padding-bottom:14px;margin-bottom:18px;}
+  h1{font-size:22px;margin:0 0 6px;}
+  .sub{color:var(--ink3);font-size:12.8px;}
+  .sub b{color:var(--green);}
+  h2{font-size:17px;margin:26px 0 10px;padding-left:10px;border-left:5px solid var(--green);}
+  h2 .cnt{font-size:12.5px;color:var(--ink3);font-weight:normal;margin-left:8px;}
+  h3{font-size:14.5px;margin:16px 0 8px;color:#0b5d3a;}
+  .kpis{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 4px;}
+  .kpi{flex:1;min-width:150px;background:#f8fafc;border:1px solid var(--line);border-radius:9px;padding:11px 13px;text-align:center;}
+  .kpi .num{font-size:23px;font-weight:800;color:var(--green);}
+  .kpi .lbl{font-size:12px;color:var(--ink2);margin-top:2px;}
+  table{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:13px;}
+  th{background:var(--green);color:#fff;padding:7px 10px;text-align:left;font-weight:600;}
+  td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:nth-child(even) td{background:#fafcfa;}
+  tr:hover td{background:#eff8f3;}
+  td b{color:#0b5d3a;}
+  .q{color:#2456c4;font-size:12.3px;background:#f0f6ff;border-radius:5px;padding:1px 7px;display:inline-block;margin-top:2px;}
+  .badge{display:inline-block;border-radius:5px;padding:1px 9px;font-size:12px;font-weight:700;margin-right:6px;}
+  .b-pub{background:#e8f0ff;color:#2456c4;border:1px solid #c7d9f7;}
+  .b-dir{background:#fff3e8;color:#b45309;border:1px solid #f5d9a6;}
+  .b-find{background:#e8f5ee;color:#0e7a4b;border:1px solid #bfe3cf;}
+  .b-verify{background:#f3e8ff;color:#7c3aed;border:1px solid #dccbfa;}
+  .b-opt{background:#ffe8ef;color:#be185d;border:1px solid #f7c6d8;}
+  .b-ads{background:#e0f2fe;color:#0369a1;border:1px solid #b9e3fb;}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+  .step{flex:1;min-width:180px;background:#f8fafc;border:1px solid var(--line);border-radius:9px;padding:10px 12px;}
+  .step .no{font-weight:800;color:var(--green);font-size:15px;}
+  .step .t{font-weight:700;margin:2px 0;}
+  .step .d{font-size:12.3px;color:var(--ink2);}
+  .note{background:#fffdf5;border:1px dashed #e7c982;border-radius:9px;padding:10px 16px;margin:12px 0;font-size:12.8px;color:#7a5c12;}
+  .slogan{background:linear-gradient(135deg,#0e7a4b,#0b5d3a);color:#fff;border-radius:10px;padding:16px 20px;margin:18px 0 6px;font-size:14.5px;line-height:1.7;}
+  .slogan b{color:#ffe08a;}
+  .footer{color:var(--ink3);font-size:12px;margin-top:16px;text-align:center;}
+  @media print{body{background:#fff;padding:0}.wrap{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>youweiAI-amazon 选品决策系统 · 技能讲解手册</h1>
+  <div class="sub">8 个<b>公共技能</b>（基础能力）+ 21 个<b>场景技能</b>（成品打法）= 29 个入口 · 全部卖家精灵真实接口 · 出可交互证据报告 · 2026-11-16</div>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="num">8</div><div class="lbl">公共技能 · 基础能力</div></div>
+  <div class="kpi"><div class="num">21</div><div class="lbl">场景技能 · 成品打法</div></div>
+  <div class="kpi"><div class="num">5-8 / 8-13 / 15-26</div><div class="lbl">耗时口径（分）· 快 / 中 / 深</div></div>
+  <div class="kpi"><div class="num">100%</div><div class="lbl">真实链路验收覆盖</div></div>
+</div>
+
+<h2>怎么用这套系统：选品四步旅程</h2>
+<div class="flow">
+  <div class="step"><div class="no">①</div><div class="t">看方向（该不该做）</div><div class="d">五维判定 · 筛细分类目 · 类目体检 · 利基词</div></div>
+  <div class="step"><div class="no">②</div><div class="t">找款（做什么）</div><div class="t">低评高销 · 节令新品 · 蓝海 · BSR飙升</div></div>
+  <div class="step"><div class="no">③</div><div class="t">算账（能不能赚）</div><div class="d">1688图搜拿货 · 利润测算 · FBM测款</div></div>
+  <div class="step"><div class="no">④</div><div class="t">打赢（怎么优化）</div><div class="d">Listing诊断 · 差评改进 · 广告词 · 归因</div></div>
+</div>
+
+<h2>一、公共技能（8 个）<span class="cnt">基础能力 · 单独可用 · 也是场景的底层零件</span></h2>
+<table>
+  <tr><th style="width:150px">技能</th><th>做什么</th><th>对客户的帮助 / 示例问法</th></tr>
+  <tr><td><b>选品搜索</b></td><td>按站点、类目、价格、月销、评分、上架时间多条件搜商品出候选表</td><td>找品需求的第一站<br><span class="q">"瑜伽垫月销500+的找一下"</span></td></tr>
+  <tr><td><b>竞品分析</b></td><td>给 ASIN / 链接 / 品牌，查费用、流量、趋势、多品对比</td><td>上新前摸清对手的打法<br><span class="q">"分析这个 ASIN 的竞品"</span></td></tr>
+  <tr><td><b>关键词挖掘</b></td><td>种子词扩词、ASIN 反查流量词、热词榜、长尾词、CPC 竞争度</td><td>知道买家搜什么、哪个词值得投<br><span class="q">"这个类目有什么长尾词"</span></td></tr>
+  <tr><td><b>类目体检</b></td><td>类目规模、Top3/5 集中度、旺季趋势、新品机会</td><td>进场前判断值不值得做<br><span class="q">"露营灯类目 Top100 分析"</span></td></tr>
+  <tr><td><b>商品解析与评论洞察</b></td><td>单品五点 / A+ / 评论痛点与卖点归类</td><td>看懂一个款：好评学什么、差评避什么<br><span class="q">"这个商品评价怎么样"</span></td></tr>
+  <tr><td><b>卖家店铺分析</b></td><td>店铺背景、店内爆款、按类目 / 中国卖家筛卖家</td><td>摸对手底细与规模<br><span class="q">"Anker 在美国站卖得怎么样"</span></td></tr>
+  <tr><td><b>利润测算</b></td><td>ASIN 售价、FBA 费、佣金、毛利空间（接口口径，成本缺口如实单列）</td><td>上架前算清平台抽多少、我剩多少<br><span class="q">"这个 ASIN 毛利空间多少"</span></td></tr>
+  <tr><td><b>选品报告</b></td><td>终点技能：串联以上能力出结构化选品决策书</td><td>零散查询变成能开会的决策依据<br><span class="q">"这个类目出个选品报告"</span></td></tr>
+</table>
+
+<h2>二、场景技能（21 个）<span class="cnt">按客户打法对号入座 · 每个都是完整决策方案</span></h2>
+
+<h3><span class="badge b-dir">A组 · 看方向</span>该不该做、做哪一块（5 个）</h3>
+<table>
+  <tr><th style="width:170px">场景</th><th>做什么</th><th>帮助 / 示例问法</th></tr>
+  <tr><td><b>12 市场五维判定</b></td><td>五个维度体检类目，输出"进 / 不进"结论</td><td>开发前 7 分钟避坑（最快深档）<br><span class="q">"这个类目能不能进"</span></td></tr>
+  <tr><td><b>13 筛细分类目</b></td><td>大类逐个子类比指标，剔差荐优推荐 3 个</td><td>预算有限找最合适切入点<br><span class="q">"20-60 美元的细分类目推荐"</span></td></tr>
+  <tr><td><b>11 小类深度调研四步法</b></td><td>热销榜→小类调研→产业带找厂→投入决策</td><td>一站到底的进场报告，直连供应链<br><span class="q">"四步法深度调研斜挎包小类"</span></td></tr>
+  <tr><td><b>6 搜索量上升利基品</b></td><td>找搜索量在涨、竞争度低的词和商品</td><td>抢在竞争者之前占住上升赛道<br><span class="q">"搜索量上升的利基关键词"</span></td></tr>
+  <tr><td><b>7 本土溢价市场</b></td><td>筛中国卖家占比低、本土主导的高价市场</td><td>找大卖还没杀进来的溢价空间<br><span class="q">"女包里本土卖家主导的高溢价细分"</span></td></tr>
+</table>
+
+<h3><span class="badge b-find">B组 · 找款</span>跟谁打、打哪款（7 个）</h3>
+<table>
+  <tr><th style="width:170px">场景</th><th>做什么</th><th>帮助 / 示例问法</th></tr>
+  <tr><td><b>5 低评高销</b></td><td>评论少月销高的款，逐款趋势验证新起还是稳定</td><td>蓝海跟款第一场景（最新实测：17 款全趋势核验）<br><span class="q">"评论≤199、月销≥300 的商品"</span></td></tr>
+  <tr><td><b>8 节令新品灵感</b></td><td>节令词近 3 月上架、已起量、评论低的款（优化后 9~13 分）</td><td>万圣节 / 圣诞前 1-2 月抄近道（A/B 验证耗时 -59%）<br><span class="q">"Halloween Dog 近 3 月上新的起量款"</span></td></tr>
+  <tr><td><b>9 蓝海新品</b></td><td>评论≤100、评分≥4.5、有上量空间的新品</td><td>低竞争高口碑的入场券<br><span class="q">"女包蓝海新品找一下"</span></td></tr>
+  <tr><td><b>1 BSR 飙升潜力款</b></td><td>子类 Top100 排名快速爬升的新款</td><td>蹭大盘上升期的顺风款<br><span class="q">"BSR 上升最快的新品"</span></td></tr>
+  <tr><td><b>10 跨站点爆款复制</b></td><td>美国热销款查德国站同词根竞争</td><td>一份调研定欧洲站能不能复制<br><span class="q">"美站热销新品对比德站 Handtasche"</span></td></tr>
+  <tr><td><b>3 关键词供需双筛</b></td><td>词表批量过"搜索量 / 购买率 / 卖家数"硬门槛</td><td>手里一堆词时批量淘汰<br><span class="q">"搜索量>5000、购买率>3% 的词选品"</span></td></tr>
+  <tr><td><b>4 去年 Q4 备货参考</b></td><td>去年 Q4 热卖 + 今年可复制的款</td><td>备货季直接抄去年答案（当季应景）<br><span class="q">"去年 Q4 热卖今年可参考的女包"</span></td></tr>
+</table>
+
+<h3><span class="badge b-verify">C组 · 验证能不能赚</span>算账与试水（3 个）</h3>
+<table>
+  <tr><th style="width:170px">场景</th><th>做什么</th><th>帮助 / 示例问法</th></tr>
+  <tr><td><b>14 1688 图搜拿货 + 毛利</b></td><td>选中亚马逊款图搜 1688 同款，逐 SKU 拿货价反算毛利</td><td>5 分钟知道"拿货 ¥9.5 卖 $29.99 赚不赚"<br><span class="q">"这款 1688 拿货多少毛利多少"</span></td></tr>
+  <tr><td><b>15 外网图搜寻源</b></td><td>给一张图（不限平台）反查 1688 厂家同款</td><td>只有对手截图也能找到源头厂<br><span class="q">"这张图帮我找 1688 货源"</span></td></tr>
+  <tr><td><b>2 FBM 小批测款</b></td><td>订单>2 的 FBM 款按采购价分档，给首批测款清单</td><td>不压重货小资金试水<br><span class="q">"用 FBM 测款逻辑选品"</span></td></tr>
+</table>
+
+<h3><span class="badge b-opt">D组 · 上架后优化</span>跟款之后怎么打赢（4 个）</h3>
+<table>
+  <tr><th style="width:170px">场景</th><th>做什么</th><th>帮助 / 示例问法</th></tr>
+  <tr><td><b>16 ASIN 解析跟款</b></td><td>五点 / 参数 / 变体全解析，评估跟款价值</td><td>决定抄不抄、怎么差异化<br><span class="q">"解析这个 ASIN 评估跟款"</span></td></tr>
+  <tr><td><b>17 Listing 卖点渗透率</b></td><td>批量统计竞品材质词 / 功能词出现率</td><td>没人写的卖点 = 差异化机会<br><span class="q">"这批竞品的卖点横向统计"</span></td></tr>
+  <tr><td><b>18 Listing 诊断</b></td><td>8 维评分 + 问题清单 + 优化后新旧对比</td><td>在售链接卖不动时对症下药<br><span class="q">"诊断这个在售 ASIN"</span></td></tr>
+  <tr><td><b>19 竞品差评找改进点</b></td><td>竞品 1-3 星差评归类摘原话，分产品 / 物流问题</td><td>拿改进清单直接和工厂谈<br><span class="q">"这几个竞品被骂在哪"</span></td></tr>
+</table>
+
+<h3><span class="badge b-ads">E组 · 复盘与广告</span>为什么、怎么投（2 个）</h3>
+<table>
+  <tr><th style="width:170px">场景</th><th>做什么</th><th>帮助 / 示例问法</th></tr>
+  <tr><td><b>20 竞品销量变化归因</b></td><td>异动月 + 流量词 + 大盘对照 → 归因结论</td><td>对手爆量 / 跌量，知道学还是等<br><span class="q">"这个竞品销量为什么变化"</span></td></tr>
+  <tr><td><b>21 SP 广告搜索词分析</b></td><td>上传广告报告，语义分类 + 保留 / 控费 / 否定建议</td><td>广告费花在哪、砍哪一表看清<br><span class="q">"我导出的搜索词报告帮我分类"</span>（需上传 CSV/XLSX）</td></tr>
+</table>
+
+<div class="slogan">
+  <b>一句话总结：</b>8 个公共技能是"问什么都能答"的基础盘；21 个场景是"照着打法直接出决策"的成品模板——从看方向、找款、算账到上架优化复盘，选品全流程每一步都有对应入口。<b>全部真实接口数据、缺失不编造、每份结论可溯源</b>。
+</div>
+
+<div class="note"><b>给客户的三张底牌：</b>① 速度敢承诺——简单判定 5-8 分 / 标准筛选 8-13 分 / 深度调研 15-26 分（真实实测口径）；② 质量敢溯源——21 场景 + 8 公共全部真实链路验收，每个数字能追到接口返回；③ 持续在变快——执行效率经 A/B 对照优化（耗时最高 -59%），16 个场景已上线新版。</div>
+
+<div class="footer">youweiAI-amazon · 29 技能讲解手册 · 2026-11-16 · 配套报告：A/B 实验（11-14）+ 上线与优先级（11-16）</div>
+</div>
+</body>
+</html>
