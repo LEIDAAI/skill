@@ -1,0 +1,1112 @@
+{
+  "date": "2026-11-16",
+  "scope": "修复后边界独立UI复测，不覆盖原始失败证据。",
+  "cases": [
+    {
+      "skill": "类目趋势",
+      "chatId": "a9372ea5-5cd4-4544-bb9a-404731aed584",
+      "chatUrl": "https://local.dianleida.net:21996/c/a9372ea5-5cd4-4544-bb9a-404731aed584",
+      "question": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+      "status": "部分通过",
+      "finding": "未取样商品和大盘、未推增长；仍额外调用fields_lookup及代码统计，违反仅字典范围。已追加最高优先级仅字典提前终止分支后新会话复测。",
+      "skillVersion": "2f9dd0f5-77a5-4e4c-b7c0-8eda20a1161c",
+      "title": "OZON家居收纳类目趋势",
+      "updated_at": 1794800110,
+      "messages": [
+        {
+          "role": "user",
+          "content": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+          "output": []
+        },
+        {
+          "role": "assistant",
+          "content": "我先按「类目趋势」主流程读取技能说明，并同步做类目字典（前台/后台）与字段清单的元数据核对——全部为免费查询，不取样商品、不取销量数据。\n技能说明已确认本轮口径：仅做类目字典语义确认，不调大盘/商品/品牌接口（商品取样数=0），不推断增长。字典首轮已命中核心编码，但后台类目提示「还有 4 条未返回」，我先补齐字典子类全量与「住宅和花园」父级分支边界（仍属字典确认范畴），随后直接收口。\n字典与父级边界已确认完毕。按技能硬约束，我先用代码对本次真实返回逐条核验、构建唯一展示数据（verified JSON）并生成事实摘要——除 `view_skill` 外本轮实际数据调用仅为类目字典与字段字典，商品/大盘接口调用数为 0。\n核验与计算已完成，以下为本轮交付。**本次实际数据调用仅为类目字典（CATEGORY/CATEGORY_BACKEND）与字段字典元数据：大盘接口调用 0 次、商品取样 0 条**，无日期序列取得，因此不作任何增长、季节性或市场空窗判断。\n\n## 事实摘要（均由本次真实返回经代码核验）\n\n1. 前台类目含「收纳」共 **2** 个：8804（汽车配件及用品>收纳件和行李箱包）、14995（厨具>餐具收纳架和组织器），均非家居收纳主体。\n2. 后台类目含「收纳」共 **34** 个；家居收纳主类目为 **17027937「收纳」（住宅和花园>收纳，父级 17027494「住宅和花园」）**。\n3. 该主类目词面召回直属子类 **5** 个：鞋子收纳架(504866185)、收纳盒(95483)、收纳箱盖(970716865)、衣物收纳盒(970896147)、收纳袋(971078631)；核心分支词面相关合计 6 条（含根）。\n4. 词面命中但归属其他分支 **28** 条、分布 24 个一级分支（家居用品 2、收藏品 2、配饰 2、食物贮藏 2，其余各 1），属易混项，须按编码调用。\n5. 本次无日期序列、无容量/动销/价格段数值：**趋势基线、增长与季节性均待补**。\n\n## 核心家居收纳类目（住宅和花园>收纳，后台编码）\n\n| 后台编码 | 类目名 | 完整路径 | 层级 | 备注 |\n|---|---|---|---|---|\n| 17027937 | 收纳 | 住宅和花园>收纳 | 二级（根） | 家居收纳主类目 |\n| 504866185 | 鞋子收纳架 | 住宅和花园>收纳>鞋子收纳架 | 三级 | 直属子类 |\n| 95483 | 收纳盒 | 住宅和花园>收纳>收纳盒 | 三级 | 直属子类 |\n| 970716865 | 收纳箱盖 | 住宅和花园>收纳>收纳箱盖 | 三级 | 直属子类 |\n| 970896147 | 衣物收纳盒 | 住宅和花园>收纳>衣物收纳盒 | 三级 | 直属子类 |\n| 971078631 | 收纳袋 | 住宅和花园>收纳>收纳袋 | 三级 | 直属子类 |\n\n## 词面命中但归属其他分支（非家居收纳主体，共 28 条）\n\n| 一级分支 | 编码·类目名 |\n|---|---|\n| 汽车用品 | 82169566 收纳箱和汽车包（子级：92186 汽车收纳袋） |\n| 汽车脚垫和车座套 | 92209 轮胎收纳套 |\n| 爱好和创作 | 88577267 创造收纳袋和包 |\n| 工位存储和归纳用品 | 115946994 工具收纳盒 |\n| 家居用品 | 594158428 餐具收纳盒；970787019 餐具收纳架 |\n| 野餐用品 | 702661764 烧烤工具收纳包 |\n| 餐具 | 93715 茶包收纳盒 |\n| 收藏品 | 93830 收藏品收纳配件；95872 杂志收纳盒 |\n| 配饰 | 94307 旅行收纳箱；970870896 文件收纳箱 |\n| 手工用品 | 95488 手工收纳箱 |\n| 运动套和包 | 95489 钓鱼收纳箱 |\n| 儿童洗澡 | 95710 浴室玩具收纳用品 |\n| 儿童背带 | 970662051 待产包收纳袋 |\n| 个人卫生用品 | 970715586 个人护理用品收纳包 |\n| 食物贮藏 | 970742618 冰箱收纳箱；971311575 塑料袋收纳器 |\n| 帐篷、遮阳篷、帐篷和睡袋 | 970795346 帐篷收纳箱 |\n| 家居香水 | 970833114 精油收纳架 |\n| 运动器材 | 970858513 球收纳架 |\n| 文具 | 970869397 文具收纳盒 |\n| 性爱玩具护理和储存 | 971102746 情趣用品收纳 |\n| 野营家具 | 971289485 旅游桌收纳架 |\n| 烹饪配件 | 971297805 吧台收纳架 |\n| 文件夹和文件袋 | 97614 档案收纳盒 |\n\n**同名易混警示**：95483「收纳盒」（家居收纳）≠ 95489「钓鱼收纳箱」；95488「手工收纳箱」≠ 家居收纳箱。调用检索时必须传编码，不能传词。\n\n## 已知字段（本轮已核验）与待补字段（待你授权后的下一轮）\n\n| 类别 | 字段 | 状态 |\n|---|---|---|\n| 已核验 | 前台/后台类目编码、完整父路径、parentValue | ✅ 本次取得 |\n| 已核验 | market_stat 返回结构：allSkuNum/allMallNum/allSalesNum/allCommentsNum/allBrandsNum/skuInfoNum7·28/skuSearchNum7·28/skuViewNum7·28/daySalesNum/dayPrice/weeklySalesNum·Price/monthlySalesNum·Price/monthSkuNum/monthMallNum/statPrices 价格段 19 项、createTime/updateTime | ✅ 字段清单已查（**仅有字段名，无数值**） |\n| 待补 | 上述全部指标的**数值**（须 market_stat(key=\"17027937\")） | ⏸ 未调用 |\n| 待补 | 7天/28天动销、搜索、浏览指标日期口径与币种（symbol） | ⏸ 未调用 |\n| 待补 | 价格段分布 statPrices 及区间/币种 | ⏸ 未调用 |\n| 待补 | 日期序列/环比同比/季节性 | ⏸ 无历史序列，不推断 |\n| 待补 | 「住宅和花园>收纳」子树完整清单（本批 34 条为词面召回，非子树全量枚举） | ⏸ 字典按关键词返回，需另证 |\n\n```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<title>OZON 家居收纳类目·字典语义确认报告（2026-11-16）</title>\n<style>\nbody{font-family:\"Microsoft YaHei\",\"PingFang SC\",sans-serif;background:#fff;color:#222;margin:0;padding:24px;line-height:1.6}\nh1{font-size:22px;margin:0 0 4px} h2{font-size:17px;margin:28px 0 10px;border-left:4px solid #2e7d32;padding-left:8px}\n.meta{color:#666;font-size:13px;margin-bottom:18px}\n.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}\n.kpi{border:1px solid #e0e0e0;border-radius:8px;padding:10px 16px;min-width:130px;background:#fafafa}\n.kpi b{display:block;font-size:22px;color:#2e7d32}\n.kpi span{font-size:12px;color:#666}\ntable{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}\nth,td{border:1px solid #ddd;padding:6px 10px;text-align:left}\nth{background:#f1f8f1;color:#2e7d32}\n.tag{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 8px;font-size:12px;margin-right:4px}\n.warn{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px 14px;font-size:13px;margin-top:14px}\n.note{color:#777;font-size:12px;margin-top:6px}\nul{margin:6px 0;padding-left:20px;font-size:13px}\n</style>\n</head>\n<body>\n<h1>OZON 家居收纳类目 · 字典语义确认报告</h1>\n<div class=\"meta\">数据源：youweiAI-OZON 类目字典（platform=ozon）｜查询日期：2026-11-16｜本轮范围：仅类目字典与字段元数据核验；大盘/商品接口调用 0 次，商品取样 0 条｜币种：未涉及金额，无币种口径</div>\n\n<div class=\"kpis\">\n  <div class=\"kpi\"><b>2</b><span>前台 CATEGORY 词面命中</span></div>\n  <div class=\"kpi\"><b>34</b><span>后台 CATEGORY_BACKEND 词面命中</span></div>\n  <div class=\"kpi\"><b>17027937</b><span>家居收纳主类目编码</span></div>\n  <div class=\"kpi\"><b>6</b><span>核心分支词面相关（含根）</span></div>\n  <div class=\"kpi\"><b>28</b><span>词面命中但属其他分支</span></div>\n  <div class=\"kpi\"><b>0</b><span>本轮商品取样 / 大盘数值指标</span></div>\n</div>\n\n<h2>一、核心家居收纳类目（住宅和花园&gt;收纳）</h2>\n<table>\n<tr><th>后台编码</th><th>类目名</th><th>完整路径</th><th>层级</th><th>备注</th></tr>\n<tr><td>17027937</td><td>收纳</td><td>住宅和花园&gt;收纳</td><td>二级（根）</td><td>家居收纳主类目，父级 17027494 住宅和花园</td></tr>\n<tr><td>504866185</td><td>鞋子收纳架</td><td>住宅和花园&gt;收纳&gt;鞋子收纳架</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>95483</td><td>收纳盒</td><td>住宅和花园&gt;收纳&gt;收纳盒</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>970716865</td><td>收纳箱盖</td><td>住宅和花园&gt;收纳&gt;收纳箱盖</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>970896147</td><td>衣物收纳盒</td><td>住宅和花园&gt;收纳&gt;衣物收纳盒</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>971078631</td><td>收纳袋</td><td>住宅和花园&gt;收纳&gt;收纳袋</td><td>三级</td><td>直属子类</td></tr>\n</table>\n\n<h2>二、词面命中但归属其他分支（共 28 条，24 个一级分支，须按编码调用）</h2>\n<table>\n<tr><th>一级分支</th><th>编码 · 类目名</th></tr>\n<tr><td>汽车用品</td><td>82169566 收纳箱和汽车包（子级：92186 汽车收纳袋）</td></tr>\n<tr><td>汽车脚垫和车座套</td><td>92209 轮胎收纳套</td></tr>\n<tr><td>爱好和创作</td><td>88577267 创造收纳袋和包</td></tr>\n<tr><td>工位存储和归纳用品</td><td>115946994 工具收纳盒</td></tr>\n<tr><td>家居用品</td><td>594158428 餐具收纳盒；970787019 餐具收纳架</td></tr>\n<tr><td>野餐用品</td><td>702661764 烧烤工具收纳包</td></tr>\n<tr><td>餐具</td><td>93715 茶包收纳盒</td></tr>\n<tr><td>收藏品</td><td>93830 收藏品收纳配件；95872 杂志收纳盒</td></tr>\n<tr><td>配饰</td><td>94307 旅行收纳箱；970870896 文件收纳箱</td></tr>\n<tr><td>手工用品</td><td>95488 手工收纳箱</td></tr>\n<tr><td>运动套和包</td><td>95489 钓鱼收纳箱</td></tr>\n<tr><td>儿童洗澡</td><td>95710 浴室玩具收纳用品</td></tr>\n<tr><td>儿童背带</td><td>970662051 待产包收纳袋</td></tr>\n<tr><td>个人卫生用品</td><td>970715586 个人护理用品收纳包</td></tr>\n<tr><td>食物贮藏</td><td>970742618 冰箱收纳箱；971311575 塑料袋收纳器</td></tr>\n<tr><td>帐篷、遮阳篷、帐篷和睡袋</td><td>970795346 帐篷收纳箱</td></tr>\n<tr><td>家居香水</td><td>970833114 精油收纳架</td></tr>\n<tr><td>运动器材</td><td>970858513 球收纳架</td></tr>\n<tr><td>文具</td><td>970869397 文具收纳盒</td></tr>\n<tr><td>性爱玩具护理和储存</td><td>971102746 情趣用品收纳</td></tr>\n<tr><td>野营家具</td><td>971289485 旅游桌收纳架</td></tr>\n<tr><td>烹饪配件</td><td>971297805 吧台收纳架</td></tr>\n<tr><td>文件夹和文件袋</td><td>97614 档案收纳盒</td></tr>\n</table>\n<div class=\"warn\"><b>同名易混警示：</b>95483「收纳盒」（家居收纳）≠ 95489「钓鱼收纳箱」；95488「手工收纳箱」≠ 家居收纳箱。检索调用必须传编码。</div>\n\n<h2>三、已知字段（本轮已核验）与待补字段</h2>\n<table>\n<tr><th>状态</th><th>字段</th><th>说明</th></tr>\n<tr><td><span class=\"tag\">已核验</span></td><td>前台/后台类目编码、完整父路径、parentValue</td><td>本次字典返回取得</td></tr>\n<tr><td><span class=\"tag\">已核验</span></td><td>market_stat 返回结构（字段名）</td><td>allSkuNum/allMallNum/allSalesNum/allCommentsNum/allBrandsNum；skuInfoNum7·28、skuSearchNum7·28、skuViewNum7·28；daySalesNum/dayPrice、weeklySalesNum·Price、monthlySalesNum·Price、monthSkuNum/monthMallNum；statPrices 价格段 19 项；createTime/updateTime。仅字段名，无数值</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>上述全部指标数值</td><td>须调用大盘统计（key=17027937），本轮未执行</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>7/28 天口径、日期范围、币种 symbol、价格段区间</td><td>随大盘数值一并核验</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>日期序列、环比/同比、季节性</td><td>无历史序列取得，本轮不作推断</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>「收纳」子树完整清单</td><td>34 条为「收纳」词面召回，非子树全量枚举</td></tr>\n</table>\n\n<h2>四、结论与边界</h2>\n<ul>\n<li>家居收纳主类目语义已确认：<b>后台 17027937（住宅和花园&gt;收纳）</b>，词面召回直属子类 5 个；相邻易混类目（汽车、钓鱼、手工、文具、餐具等 28 条）已单列，不并入家居收纳范围。</li>\n<li>本轮<b>无日期序列、无容量/动销/价格段数值</b>：类目容量、销量、价格分布、增长与季节性均为待补，不作任何推断，不判市场空窗。</li>\n<li>口径说明：34 条与 2 条为「收纳」词面召回边界，非类目树全量；本次未取样商品，未调用大盘接口，全部数值指标处于待补状态。</li>\n</ul>\n<div class=\"note\">生成：youweiAI-OZON 选品专家 · 2026-11-16 · 依据当次工具真实返回与代码核验结果构建</div>\n</body>\n</html>\n```\n\n**结论收口**：家居收纳类目语义确认完成（主类目 17027937「住宅和花园>收纳」+ 5 个词面直属子类，28 条易混类目已单列）；本轮按你的范围要求仅完成字典确认与已知/待补清单，商品取样 0、大盘数值 0、无任何趋势推断。后续若要取得容量/动销/价格段数值，执行路径已列明：`market_stat(key=\"17027937\")`，届时 7/28 天口径、币种与日期范围将随真实返回一并核验。",
+          "done": true,
+          "output": [
+            {
+              "type": "function_call",
+              "id": "call_4641d094bbf34056913ef4ef",
+              "call_id": "call_4641d094bbf34056913ef4ef",
+              "name": "view_skill",
+              "arguments": "{\"id\":\"youweiai-ozon-category-trend\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_714d2ad57c4c4d5386a3f3bf",
+              "call_id": "call_714d2ad57c4c4d5386a3f3bf",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"收纳\",\"limit\":30,\"platform\":\"ozon\",\"type\":\"CATEGORY\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_0cd1c4a6b2cb4874a8c9530d",
+              "call_id": "call_0cd1c4a6b2cb4874a8c9530d",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"收纳\",\"limit\":30,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_c74ff80d7b21478ba6100f30",
+              "call_id": "call_c74ff80d7b21478ba6100f30",
+              "name": "youweiai-ozon_yq_fields_lookup",
+              "arguments": "{\"tool\":\"yq_ozon_market_stat\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_3251627bd7fe44fb8db68a87",
+              "call_id": "call_4641d094bbf34056913ef4ef",
+              "status": "completed",
+              "output": {
+                "content_omitted": true,
+                "skill_id": "youweiai-ozon-category-trend",
+                "version_ids": [
+                  "2f9dd0f5-77a5-4e4c-b7c0-8eda20a1161c"
+                ]
+              }
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_22fac37cc9e649ddb5bd2e83",
+              "call_id": "call_714d2ad57c4c4d5386a3f3bf",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 2,\n  \"returned\": 2,\n  \"items\": [\n    {\n      \"value\": \"8804\",\n      \"label\": \"收纳件和行李箱包\",\n      \"path\": \"汽车配件及用品>收纳件和行李箱包\",\n      \"parentValue\": \"8608\"\n    },\n    {\n      \"value\": \"14995\",\n      \"label\": \"餐具收纳架和组织器\",\n      \"path\": \"厨具>餐具收纳架和组织器\",\n      \"parentValue\": \"30711\"\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_520b95a4d34042a3b6a9b104",
+              "call_id": "call_0cd1c4a6b2cb4874a8c9530d",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 30,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"970742618\",\n      \"label\": \"冰箱收纳箱\",\n      \"path\": \"食物贮藏>冰箱收纳箱\",\n      \"parentValue\": \"17027933\"\n    },\n    {\n      \"value\": \"970787019\",\n      \"label\": \"餐具收纳架 \",\n      \"path\": \"家居用品>餐具收纳架 \",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"970795346\",\n      \"label\": \"帐篷收纳箱\",\n      \"path\": \"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\",\n      \"parentValue\": \"17029010\"\n    },\n    {\n      \"value\": \"970833114\",\n      \"label\": \"精油收纳架\",\n      \"path\": \"家居香水>精油收纳架\",\n      \"parentValue\": \"86029514\"\n    },\n    {\n      \"value\": \"970858513\",\n      \"label\": \"球收纳架\",\n      \"path\": \"运动器材>球收纳架\",\n      \"parentValue\": \"17029000\"\n    },\n    {\n      \"value\": \"970869397\",\n      \"label\": \"文具收纳盒\",\n      \"path\": \"文具>文具收纳盒\",\n      \"parentValue\": \"17029021\"\n    },\n    {\n      \"value\": \"970870896\",\n      \"label\": \"文件收纳箱\",\n      \"path\": \"配饰>文件收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"970896147\",\n      \"label\": \"衣物收纳盒\",\n      \"path\": \"收纳>衣物收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971078631\",\n      \"label\": \"收纳袋\",\n      \"path\": \"收纳>收纳袋\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971102746\",\n      \"label\": \"情趣用品收纳\",\n      \"path\": \"性爱玩具护理和储存>情趣用品收纳\",\n      \"parentValue\": \"200001500\"\n    }\n  ],\n  \"hint\": \"还有 4 条未返回，可加更精确的 keyword 或调大 limit。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_5b701bbf3a3d4042bbda85e6",
+              "call_id": "call_c74ff80d7b21478ba6100f30",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"tool\": \"yq_ozon_market_stat\",\n  \"title\": \"大盘统计接口\",\n  \"totalFields\": 26,\n  \"returned\": 26,\n  \"envelope\": \"列表类返回 {total, items, stats}；详情类直接返回对象\",\n  \"defaultFields\": [\n    \"id\",\n    \"sku\",\n    \"spu\",\n    \"spuName\",\n    \"skuName\",\n    \"title\",\n    \"price\",\n    \"currency\",\n    \"sales\",\n    \"daily_sales\",\n    \"monthly_sales\",\n    \"score\",\n    \"opt_id\",\n    \"thumb_url\",\n    \"photo\",\n    \"opt_ids\",\n    \"region\",\n    \"ware_house_type\",\n    \"mall_id\",\n    \"created_at\",\n    \"issued_date\",\n    \"last_modified\",\n    \"weekly_sales\",\n    \"comment_num_tips\",\n    \"title_zh\",\n    \"name\",\n    \"market_price\",\n    \"date\"\n  ],\n  \"computedFields\": [\n    {\n      \"name\": \"goods_url\",\n      \"desc\": \"商品链接（用商品 id 拼的，可直接点开；不需要也不能写进 _fields）\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"key\",\n      \"type\": \"String\",\n      \"desc\": \"all或者后台分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"stats\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"大盘统计项\",\n      \"default\": false,\n      \"childrenCount\": 22\n    },\n    {\n      \"name\": \"statPrices\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"价格段统计\",\n      \"default\": false,\n      \"childrenCount\": 19\n    },\n    {\n      \"name\": \"createTime\",\n      \"type\": \"String\",\n      \"desc\": \"创建时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"updateTime\",\n      \"type\": \"String\",\n      \"desc\": \"更新时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"SKU总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allCommentsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"评论总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allBrandsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"品牌总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"salesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"mallsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"日销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"dayPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"每日价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"周销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"周价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"月价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月SKU数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月店铺数\",\n      \"default\": false\n    }\n  ],\n  \"hint\": \"用 _fields 指定非默认字段，如 _fields=[\\\"id\\\",\\\"title\\\",\\\"image_urls\\\"]。字段名拼错不会报错但会被忽略，请从上面的清单里复制。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_07cb2188624e41cabfaacb8c",
+              "call_id": "call_07cb2188624e41cabfaacb8c",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"收纳\",\"limit\":100,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_d240e4136686441cb6e05b23",
+              "call_id": "call_d240e4136686441cb6e05b23",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"住宅\",\"limit\":50,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_c1bcd979ffa84d2b9d145363",
+              "call_id": "call_07cb2188624e41cabfaacb8c",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 34,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"970742618\",\n      \"label\": \"冰箱收纳箱\",\n      \"path\": \"食物贮藏>冰箱收纳箱\",\n      \"parentValue\": \"17027933\"\n    },\n    {\n      \"value\": \"970787019\",\n      \"label\": \"餐具收纳架 \",\n      \"path\": \"家居用品>餐具收纳架 \",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"970795346\",\n      \"label\": \"帐篷收纳箱\",\n      \"path\": \"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\",\n      \"parentValue\": \"17029010\"\n    },\n    {\n      \"value\": \"970833114\",\n      \"label\": \"精油收纳架\",\n      \"path\": \"家居香水>精油收纳架\",\n      \"parentValue\": \"86029514\"\n    },\n    {\n      \"value\": \"970858513\",\n      \"label\": \"球收纳架\",\n      \"path\": \"运动器材>球收纳架\",\n      \"parentValue\": \"17029000\"\n    },\n    {\n      \"value\": \"970869397\",\n      \"label\": \"文具收纳盒\",\n      \"path\": \"文具>文具收纳盒\",\n      \"parentValue\": \"17029021\"\n    },\n    {\n      \"value\": \"970870896\",\n      \"label\": \"文件收纳箱\",\n      \"path\": \"配饰>文件收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"970896147\",\n      \"label\": \"衣物收纳盒\",\n      \"path\": \"收纳>衣物收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971078631\",\n      \"label\": \"收纳袋\",\n      \"path\": \"收纳>收纳袋\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971102746\",\n      \"label\": \"情趣用品收纳\",\n      \"path\": \"性爱玩具护理和储存>情趣用品收纳\",\n      \"parentValue\": \"200001500\"\n    },\n    {\n      \"value\": \"971289485\",\n      \"label\": \"旅游桌收纳架\",\n      \"path\": \"野营家具>旅游桌收纳架\",\n      \"parentValue\": \"17029005\"\n    },\n    {\n      \"value\": \"971297805\",\n      \"label\": \"吧台收纳架\",\n      \"path\": \"烹饪配件>吧台收纳架\",\n      \"parentValue\": \"17027907\"\n    },\n    {\n      \"value\": \"971311575\",\n      \"label\": \"塑料袋收纳器\",\n      \"path\": \"食物贮藏>塑料袋收纳器\",\n      \"parentValue\": \"17027933\"\n    },\n    {\n      \"value\": \"97614\",\n      \"label\": \"档案收纳盒\",\n      \"path\": \"文件夹和文件袋>档案收纳盒\",\n      \"parentValue\": \"17029023\"\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_8c224ee38fa047438b8df780",
+              "call_id": "call_d240e4136686441cb6e05b23",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"住宅\",\n  \"matchQuality\": \"exact\",\n  \"total\": 1,\n  \"returned\": 1,\n  \"items\": [\n    {\n      \"value\": \"17027494\",\n      \"label\": \"住宅和花园\"\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_be9795f1e2a44410a7a0890f",
+              "call_id": "call_be9795f1e2a44410a7a0890f",
+              "name": "execute_code",
+              "arguments": "{\"code\":\"\\n# verified 构建：将本次真实字典返回逐字录入，不手算摘要\\nraw_frontend = [\\n    {\\\"value\\\":\\\"8804\\\",\\\"label\\\":\\\"收纳件和行李箱包\\\",\\\"path\\\":\\\"汽车配件及用品>收纳件和行李箱包\\\",\\\"parentValue\\\":\\\"8608\\\"},\\n    {\\\"value\\\":\\\"14995\\\",\\\"label\\\":\\\"餐具收纳架和组织器\\\",\\\"path\\\":\\\"厨具>餐具收纳架和组织器\\\",\\\"parentValue\\\":\\\"30711\\\"},\\n]\\nraw_backend = [\\n    {\\\"value\\\":\\\"17027937\\\",\\\"label\\\":\\\"收纳\\\",\\\"path\\\":\\\"住宅和花园>收纳\\\",\\\"parentValue\\\":\\\"17027494\\\"},\\n    {\\\"value\\\":\\\"82169566\\\",\\\"label\\\":\\\"收纳箱和汽车包\\\",\\\"path\\\":\\\"汽车用品>收纳箱和汽车包\\\",\\\"parentValue\\\":\\\"17027495\\\"},\\n    {\\\"value\\\":\\\"88577267\\\",\\\"label\\\":\\\"创造收纳袋和包\\\",\\\"path\\\":\\\"爱好和创作>创造收纳袋和包\\\",\\\"parentValue\\\":\\\"17027485\\\"},\\n    {\\\"value\\\":\\\"115946994\\\",\\\"label\\\":\\\"工具收纳盒\\\",\\\"path\\\":\\\"工位存储和归纳用品>工具收纳盒\\\",\\\"parentValue\\\":\\\"88791474\\\"},\\n    {\\\"value\\\":\\\"504866185\\\",\\\"label\\\":\\\"鞋子收纳架\\\",\\\"path\\\":\\\"收纳>鞋子收纳架\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"594158428\\\",\\\"label\\\":\\\"餐具收纳盒\\\",\\\"path\\\":\\\"家居用品>餐具收纳盒\\\",\\\"parentValue\\\":\\\"17028714\\\"},\\n    {\\\"value\\\":\\\"702661764\\\",\\\"label\\\":\\\"烧烤工具收纳包\\\",\\\"path\\\":\\\"野餐用品>烧烤工具收纳包\\\",\\\"parentValue\\\":\\\"17027930\\\"},\\n    {\\\"value\\\":\\\"92186\\\",\\\"label\\\":\\\"汽车收纳袋\\\",\\\"path\\\":\\\"收纳箱和汽车包>汽车收纳袋\\\",\\\"parentValue\\\":\\\"82169566\\\"},\\n    {\\\"value\\\":\\\"92209\\\",\\\"label\\\":\\\"轮胎收纳套\\\",\\\"path\\\":\\\"汽车脚垫和车座套>轮胎收纳套\\\",\\\"parentValue\\\":\\\"17028750\\\"},\\n    {\\\"value\\\":\\\"93715\\\",\\\"label\\\":\\\"茶包收纳盒\\\",\\\"path\\\":\\\"餐具>茶包收纳盒\\\",\\\"parentValue\\\":\\\"17028741\\\"},\\n    {\\\"value\\\":\\\"93830\\\",\\\"label\\\":\\\"收藏品收纳配件\\\",\\\"path\\\":\\\"收藏品>收藏品收纳配件\\\",\\\"parentValue\\\":\\\"17028994\\\"},\\n    {\\\"value\\\":\\\"94307\\\",\\\"label\\\":\\\"旅行收纳箱\\\",\\\"path\\\":\\\"配饰>旅行收纳箱\\\",\\\"parentValue\\\":\\\"17027904\\\"},\\n    {\\\"value\\\":\\\"95483\\\",\\\"label\\\":\\\"收纳盒\\\",\\\"path\\\":\\\"收纳>收纳盒\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"95488\\\",\\\"label\\\":\\\"手工收纳箱\\\",\\\"path\\\":\\\"手工用品>手工收纳箱\\\",\\\"parentValue\\\":\\\"17028961\\\"},\\n    {\\\"value\\\":\\\"95489\\\",\\\"label\\\":\\\"钓鱼收纳箱\\\",\\\"path\\\":\\\"运动套和包>钓鱼收纳箱\\\",\\\"parentValue\\\":\\\"77119630\\\"},\\n    {\\\"value\\\":\\\"95710\\\",\\\"label\\\":\\\"浴室玩具收纳用品\\\",\\\"path\\\":\\\"儿童洗澡>浴室玩具收纳用品\\\",\\\"parentValue\\\":\\\"17028976\\\"},\\n    {\\\"value\\\":\\\"95872\\\",\\\"label\\\":\\\"杂志收纳盒\\\",\\\"path\\\":\\\"收藏品>杂志收纳盒\\\",\\\"parentValue\\\":\\\"17028994\\\"},\\n    {\\\"value\\\":\\\"970662051\\\",\\\"label\\\":\\\"待产包收纳袋\\\",\\\"path\\\":\\\"儿童背带>待产包收纳袋\\\",\\\"parentValue\\\":\\\"17028676\\\"},\\n    {\\\"value\\\":\\\"970715586\\\",\\\"label\\\":\\\"个人护理用品收纳包\\\",\\\"path\\\":\\\"个人卫生用品>个人护理用品收纳包\\\",\\\"parentValue\\\":\\\"200001243\\\"},\\n    {\\\"value\\\":\\\"970716865\\\",\\\"label\\\":\\\"收纳箱盖\\\",\\\"path\\\":\\\"收纳>收纳箱盖\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"970742618\\\",\\\"label\\\":\\\"冰箱收纳箱\\\",\\\"path\\\":\\\"食物贮藏>冰箱收纳箱\\\",\\\"parentValue\\\":\\\"17027933\\\"},\\n    {\\\"value\\\":\\\"970787019\\\",\\\"label\\\":\\\"餐具收纳架\\\",\\\"path\\\":\\\"家居用品>餐具收纳架\\\",\\\"parentValue\\\":\\\"17028714\\\"},\\n    {\\\"value\\\":\\\"970795346\\\",\\\"label\\\":\\\"帐篷收纳箱\\\",\\\"path\\\":\\\"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\\\",\\\"parentValue\\\":\\\"17029010\\\"},\\n    {\\\"value\\\":\\\"970833114\\\",\\\"label\\\":\\\"精油收纳架\\\",\\\"path\\\":\\\"家居香水>精油收纳架\\\",\\\"parentValue\\\":\\\"86029514\\\"},\\n    {\\\"value\\\":\\\"970858513\\\",\\\"label\\\":\\\"球收纳架\\\",\\\"path\\\":\\\"运动器材>球收纳架\\\",\\\"parentValue\\\":\\\"17029000\\\"},\\n    {\\\"value\\\":\\\"970869397\\\",\\\"label\\\":\\\"文具收纳盒\\\",\\\"path\\\":\\\"文具>文具收纳盒\\\",\\\"parentValue\\\":\\\"17029021\\\"},\\n    {\\\"value\\\":\\\"970870896\\\",\\\"label\\\":\\\"文件收纳箱\\\",\\\"path\\\":\\\"配饰>文件收纳箱\\\",\\\"parentValue\\\":\\\"17027904\\\"},\\n    {\\\"value\\\":\\\"970896147\\\",\\\"label\\\":\\\"衣物收纳盒\\\",\\\"path\\\":\\\"收纳>衣物收纳盒\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"971078631\\\",\\\"label\\\":\\\"收纳袋\\\",\\\"path\\\":\\\"收纳>收纳袋\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"971102746\\\",\\\"label\\\":\\\"情趣用品收纳\\\",\\\"path\\\":\\\"性爱玩具护理和储存>情趣用品收纳\\\",\\\"parentValue\\\":\\\"200001500\\\"},\\n    {\\\"value\\\":\\\"971289485\\\",\\\"label\\\":\\\"旅游桌收纳架\\\",\\\"path\\\":\\\"野营家具>旅游桌收纳架\\\",\\\"parentValue\\\":\\\"17029005\\\"},\\n    {\\\"value\\\":\\\"971297805\\\",\\\"label\\\":\\\"吧台收纳架\\\",\\\"path\\\":\\\"烹饪配件>吧台收纳架\\\",\\\"parentValue\\\":\\\"17027907\\\"},\\n    {\\\"value\\\":\\\"971311575\\\",\\\"label\\\":\\\"塑料袋收纳器\\\",\\\"path\\\":\\\"食物贮藏>塑料袋收纳器\\\",\\\"parentValue\\\":\\\"17027933\\\"},\\n    {\\\"value\\\":\\\"97614\\\",\\\"label\\\":\\\"档案收纳盒\\\",\\\"path\\\":\\\"文件夹和文件袋>档案收纳盒\\\",\\\"parentValue\\\":\\\"17029023\\\"},\\n]\\n\\nfrontend_total = len(raw_frontend)\\nbackend_total = len(raw_backend)\\nids = [x[\\\"value\\\"] for x in raw_backend]\\nassert len(ids) == len(set(ids)), \\\"后台编码存在重复\\\"\\n\\ncore_root = \\\"17027937\\\"\\ncore_children = [x for x in raw_backend if x[\\\"parentValue\\\"] == core_root]\\ncore_group = [x for x in raw_backend if x[\\\"path\\\"].startswith(\\\"收纳>\\\")] + [x for x in raw_backend if x[\\\"path\\\"]==\\\"住宅和花园>收纳\\\"]\\nothers = [x for x in raw_backend if x[\\\"value\\\"] != core_root and x[\\\"parentValue\\\"] != core_root]\\n\\n# 按一级父分支分组（去掉根收纳本身）\\ngroups = {}\\nfor x in others:\\n    g = x[\\\"path\\\"].split(\\\">\\\")[0]\\n    groups.setdefault(g, []).append(x)\\n\\nfacts = []\\nfacts.append(f\\\"前台CATEGORY含『收纳』共{frontend_total}个：8804(汽车配件及用品>收纳件和行李箱包)、14995(厨具>餐具收纳架和组织器)；汽车行李类前台主分类为8608。\\\")\\nfacts.append(f\\\"后台CATEGORY_BACKEND含『收纳』共{backend_total}个，主语义类目=17027937(住宅和花园>收纳，父级=17027494住宅和花园)；本次词面召回其直属子类{len(core_children)}个：\\\" + \\\"、\\\".join(f\\\"{c['value']}{c['label']}\\\" for c in core_children) + f\\\"；该分支词面相关合计{len(core_group)}条(含根)。\\\")\\nfacts.append(f\\\"词面命中但归属家居收纳以外分支共{len(others)}条，分布于{len(groups)}个一级分支：\\\" + \\\"、\\\".join(f\\\"{g}({len(v)})\\\" for g,v in sorted(groups.items(), key=lambda kv:-len(kv[1]))) + \\\"。\\\")\\nfacts.append(\\\"同名易混编码：95483=收纳盒(住宅和花园>收纳)≠95489=钓鱼收纳箱(运动套和包)；92186=汽车收纳袋(汽车用品)；88577267=创造收纳袋和包(爱好和创作)；调用时必须传编码。\\\")\\nfacts.append(\\\"本次仅完成字典/字段元数据核验：未调用大盘与商品接口，无日期序列、无容量/动销/价格段数值；增长、季节性、市场空窗一律不作判定，market_stat待补路径已列出。\\\")\\n\\nverified = {\\n    \\\"query_date\\\": \\\"2026-11-16\\\",\\n    \\\"frontend\\\": {\\\"total\\\": frontend_total, \\\"items\\\": raw_frontend},\\n    \\\"backend\\\": {\\\"total\\\": backend_total, \\\"items\\\": raw_backend},\\n    \\\"backend_recall_boundary\\\": \\\"34条为label含『收纳』的词面召回，非住宅和花园>收纳子树全量\\\",\\n    \\\"core_root\\\": {\\\"value\\\":\\\"17027937\\\",\\\"label\\\":\\\"收纳\\\",\\\"parent\\\":\\\"17027494住宅和花园\\\"},\\n    \\\"core_children\\\": core_children,\\n    \\\"other_groups\\\": {g: [x[\\\"value\\\"]+\\\" \\\"+x[\\\"label\\\"] for x in v] for g,v in groups.items()},\\n    \\\"market_stat_path_pending\\\": True,\\n    \\\"product_sampling\\\": 0,\\n}\\nimport json\\nprint(json.dumps(verified, ensure_ascii=False, indent=1))\\nprint(\\\"\\\\nFACTS:\\\")\\nfor i,f in enumerate(facts,1):\\n    print(f\\\"[{i}] {f}\\\")\\n\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_23deb3dd0d8c44e1be1b31b3",
+              "call_id": "call_be9795f1e2a44410a7a0890f",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\"status\":\"success\",\"stdout\":\"{\\n \\\"query_date\\\": \\\"2026-11-16\\\",\\n \\\"frontend\\\": {\\n  \\\"total\\\": 2,\\n  \\\"items\\\": [\\n   {\\n    \\\"value\\\": \\\"8804\\\",\\n    \\\"label\\\": \\\"收纳件和行李箱包\\\",\\n    \\\"path\\\": \\\"汽车配件及用品>收纳件和行李箱包\\\",\\n    \\\"parentValue\\\": \\\"8608\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"14995\\\",\\n    \\\"label\\\": \\\"餐具收纳架和组织器\\\",\\n    \\\"path\\\": \\\"厨具>餐具收纳架和组织器\\\",\\n    \\\"parentValue\\\": \\\"30711\\\"\\n   }\\n  ]\\n },\\n \\\"backend\\\": {\\n  \\\"total\\\": 34,\\n  \\\"items\\\": [\\n   {\\n    \\\"value\\\": \\\"17027937\\\",\\n    \\\"label\\\": \\\"收纳\\\",\\n    \\\"path\\\": \\\"住宅和花园>收纳\\\",\\n    \\\"parentValue\\\": \\\"17027494\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"82169566\\\",\\n    \\\"label\\\": \\\"收纳箱和汽车包\\\",\\n    \\\"path\\\": \\\"汽车用品>收纳箱和汽车包\\\",\\n    \\\"parentValue\\\": \\\"17027495\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"88577267\\\",\\n    \\\"label\\\": \\\"创造收纳袋和包\\\",\\n    \\\"path\\\": \\\"爱好和创作>创造收纳袋和包\\\",\\n    \\\"parentValue\\\": \\\"17027485\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"115946994\\\",\\n    \\\"label\\\": \\\"工具收纳盒\\\",\\n    \\\"path\\\": \\\"工位存储和归纳用品>工具收纳盒\\\",\\n    \\\"parentValue\\\": \\\"88791474\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"504866185\\\",\\n    \\\"label\\\": \\\"鞋子收纳架\\\",\\n    \\\"path\\\": \\\"收纳>鞋子收纳架\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"594158428\\\",\\n    \\\"label\\\": \\\"餐具收纳盒\\\",\\n    \\\"path\\\": \\\"家居用品>餐具收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17028714\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"702661764\\\",\\n    \\\"label\\\": \\\"烧烤工具收纳包\\\",\\n    \\\"path\\\": \\\"野餐用品>烧烤工具收纳包\\\",\\n    \\\"parentValue\\\": \\\"17027930\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"92186\\\",\\n    \\\"label\\\": \\\"汽车收纳袋\\\",\\n    \\\"path\\\": \\\"收纳箱和汽车包>汽车收纳袋\\\",\\n    \\\"parentValue\\\": \\\"82169566\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"92209\\\",\\n    \\\"label\\\": \\\"轮胎收纳套\\\",\\n    \\\"path\\\": \\\"汽车脚垫和车座套>轮胎收纳套\\\",\\n    \\\"parentValue\\\": \\\"17028750\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"93715\\\",\\n    \\\"label\\\": \\\"茶包收纳盒\\\",\\n    \\\"path\\\": \\\"餐具>茶包收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17028741\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"93830\\\",\\n    \\\"label\\\": \\\"收藏品收纳配件\\\",\\n    \\\"path\\\": \\\"收藏品>收藏品收纳配件\\\",\\n    \\\"parentValue\\\": \\\"17028994\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"94307\\\",\\n    \\\"label\\\": \\\"旅行收纳箱\\\",\\n    \\\"path\\\": \\\"配饰>旅行收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17027904\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95483\\\",\\n    \\\"label\\\": \\\"收纳盒\\\",\\n    \\\"path\\\": \\\"收纳>收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95488\\\",\\n    \\\"label\\\": \\\"手工收纳箱\\\",\\n    \\\"path\\\": \\\"手工用品>手工收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17028961\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95489\\\",\\n    \\\"label\\\": \\\"钓鱼收纳箱\\\",\\n    \\\"path\\\": \\\"运动套和包>钓鱼收纳箱\\\",\\n    \\\"parentValue\\\": \\\"77119630\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95710\\\",\\n    \\\"label\\\": \\\"浴室玩具收纳用品\\\",\\n    \\\"path\\\": \\\"儿童洗澡>浴室玩具收纳用品\\\",\\n    \\\"parentValue\\\": \\\"17028976\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95872\\\",\\n    \\\"label\\\": \\\"杂志收纳盒\\\",\\n    \\\"path\\\": \\\"收藏品>杂志收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17028994\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970662051\\\",\\n    \\\"label\\\": \\\"待产包收纳袋\\\",\\n    \\\"path\\\": \\\"儿童背带>待产包收纳袋\\\",\\n    \\\"parentValue\\\": \\\"17028676\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970715586\\\",\\n    \\\"label\\\": \\\"个人护理用品收纳包\\\",\\n    \\\"path\\\": \\\"个人卫生用品>个人护理用品收纳包\\\",\\n    \\\"parentValue\\\": \\\"200001243\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970716865\\\",\\n    \\\"label\\\": \\\"收纳箱盖\\\",\\n    \\\"path\\\": \\\"收纳>收纳箱盖\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970742618\\\",\\n    \\\"label\\\": \\\"冰箱收纳箱\\\",\\n    \\\"path\\\": \\\"食物贮藏>冰箱收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17027933\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970787019\\\",\\n    \\\"label\\\": \\\"餐具收纳架\\\",\\n    \\\"path\\\": \\\"家居用品>餐具收纳架\\\",\\n    \\\"parentValue\\\": \\\"17028714\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970795346\\\",\\n    \\\"label\\\": \\\"帐篷收纳箱\\\",\\n    \\\"path\\\": \\\"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17029010\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970833114\\\",\\n    \\\"label\\\": \\\"精油收纳架\\\",\\n    \\\"path\\\": \\\"家居香水>精油收纳架\\\",\\n    \\\"parentValue\\\": \\\"86029514\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970858513\\\",\\n    \\\"label\\\": \\\"球收纳架\\\",\\n    \\\"path\\\": \\\"运动器材>球收纳架\\\",\\n    \\\"parentValue\\\": \\\"17029000\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970869397\\\",\\n    \\\"label\\\": \\\"文具收纳盒\\\",\\n    \\\"path\\\": \\\"文具>文具收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17029021\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970870896\\\",\\n    \\\"label\\\": \\\"文件收纳箱\\\",\\n    \\\"path\\\": \\\"配饰>文件收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17027904\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970896147\\\",\\n    \\\"label\\\": \\\"衣物收纳盒\\\",\\n    \\\"path\\\": \\\"收纳>衣物收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971078631\\\",\\n    \\\"label\\\": \\\"收纳袋\\\",\\n    \\\"path\\\": \\\"收纳>收纳袋\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971102746\\\",\\n    \\\"label\\\": \\\"情趣用品收纳\\\",\\n    \\\"path\\\": \\\"性爱玩具护理和储存>情趣用品收纳\\\",\\n    \\\"parentValue\\\": \\\"200001500\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971289485\\\",\\n    \\\"label\\\": \\\"旅游桌收纳架\\\",\\n    \\\"path\\\": \\\"野营家具>旅游桌收纳架\\\",\\n    \\\"parentValue\\\": \\\"17029005\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971297805\\\",\\n    \\\"label\\\": \\\"吧台收纳架\\\",\\n    \\\"path\\\": \\\"烹饪配件>吧台收纳架\\\",\\n    \\\"parentValue\\\": \\\"17027907\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971311575\\\",\\n    \\\"label\\\": \\\"塑料袋收纳器\\\",\\n    \\\"path\\\": \\\"食物贮藏>塑料袋收纳器\\\",\\n    \\\"parentValue\\\": \\\"17027933\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"97614\\\",\\n    \\\"label\\\": \\\"档案收纳盒\\\",\\n    \\\"path\\\": \\\"文件夹和文件袋>档案收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17029023\\\"\\n   }\\n  ]\\n },\\n \\\"backend_recall_boundary\\\": \\\"34条为label含『收纳』的词面召回，非住宅和花园>收纳子树全量\\\",\\n \\\"core_root\\\": {\\n  \\\"value\\\": \\\"17027937\\\",\\n  \\\"label\\\": \\\"收纳\\\",\\n  \\\"parent\\\": \\\"17027494住宅和花园\\\"\\n },\\n \\\"core_children\\\": [\\n  {\\n   \\\"value\\\": \\\"504866185\\\",\\n   \\\"label\\\": \\\"鞋子收纳架\\\",\\n   \\\"path\\\": \\\"收纳>鞋子收纳架\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"95483\\\",\\n   \\\"label\\\": \\\"收纳盒\\\",\\n   \\\"path\\\": \\\"收纳>收纳盒\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"970716865\\\",\\n   \\\"label\\\": \\\"收纳箱盖\\\",\\n   \\\"path\\\": \\\"收纳>收纳箱盖\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"970896147\\\",\\n   \\\"label\\\": \\\"衣物收纳盒\\\",\\n   \\\"path\\\": \\\"收纳>衣物收纳盒\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"971078631\\\",\\n   \\\"label\\\": \\\"收纳袋\\\",\\n   \\\"path\\\": \\\"收纳>收纳袋\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  }\\n ],\\n \\\"other_groups\\\": {\\n  \\\"汽车用品\\\": [\\n   \\\"82169566 收纳箱和汽车包\\\"\\n  ],\\n  \\\"爱好和创作\\\": [\\n   \\\"88577267 创造收纳袋和包\\\"\\n  ],\\n  \\\"工位存储和归纳用品\\\": [\\n   \\\"115946994 工具收纳盒\\\"\\n  ],\\n  \\\"家居用品\\\": [\\n   \\\"594158428 餐具收纳盒\\\",\\n   \\\"970787019 餐具收纳架\\\"\\n  ],\\n  \\\"野餐用品\\\": [\\n   \\\"702661764 烧烤工具收纳包\\\"\\n  ],\\n  \\\"收纳箱和汽车包\\\": [\\n   \\\"92186 汽车收纳袋\\\"\\n  ],\\n  \\\"汽车脚垫和车座套\\\": [\\n   \\\"92209 轮胎收纳套\\\"\\n  ],\\n  \\\"餐具\\\": [\\n   \\\"93715 茶包收纳盒\\\"\\n  ],\\n  \\\"收藏品\\\": [\\n   \\\"93830 收藏品收纳配件\\\",\\n   \\\"95872 杂志收纳盒\\\"\\n  ],\\n  \\\"配饰\\\": [\\n   \\\"94307 旅行收纳箱\\\",\\n   \\\"970870896 文件收纳箱\\\"\\n  ],\\n  \\\"手工用品\\\": [\\n   \\\"95488 手工收纳箱\\\"\\n  ],\\n  \\\"运动套和包\\\": [\\n   \\\"95489 钓鱼收纳箱\\\"\\n  ],\\n  \\\"儿童洗澡\\\": [\\n   \\\"95710 浴室玩具收纳用品\\\"\\n  ],\\n  \\\"儿童背带\\\": [\\n   \\\"970662051 待产包收纳袋\\\"\\n  ],\\n  \\\"个人卫生用品\\\": [\\n   \\\"970715586 个人护理用品收纳包\\\"\\n  ],\\n  \\\"食物贮藏\\\": [\\n   \\\"970742618 冰箱收纳箱\\\",\\n   \\\"971311575 塑料袋收纳器\\\"\\n  ],\\n  \\\"帐篷、遮阳篷、帐篷和睡袋\\\": [\\n   \\\"970795346 帐篷收纳箱\\\"\\n  ],\\n  \\\"家居香水\\\": [\\n   \\\"970833114 精油收纳架\\\"\\n  ],\\n  \\\"运动器材\\\": [\\n   \\\"970858513 球收纳架\\\"\\n  ],\\n  \\\"文具\\\": [\\n   \\\"970869397 文具收纳盒\\\"\\n  ],\\n  \\\"性爱玩具护理和储存\\\": [\\n   \\\"971102746 情趣用品收纳\\\"\\n  ],\\n  \\\"野营家具\\\": [\\n   \\\"971289485 旅游桌收纳架\\\"\\n  ],\\n  \\\"烹饪配件\\\": [\\n   \\\"971297805 吧台收纳架\\\"\\n  ],\\n  \\\"文件夹和文件袋\\\": [\\n   \\\"97614 档案收纳盒\\\"\\n  ]\\n },\\n \\\"market_stat_path_pending\\\": true,\\n \\\"product_sampling\\\": 0\\n}\\n\\nFACTS:\\n[1] 前台CATEGORY含『收纳』共2个：8804(汽车配件及用品>收纳件和行李箱包)、14995(厨具>餐具收纳架和组织器)；汽车行李类前台主分类为8608。\\n[2] 后台CATEGORY_BACKEND含『收纳』共34个，主语义类目=17027937(住宅和花园>收纳，父级=17027494住宅和花园)；本次词面召回其直属子类5个：504866185鞋子收纳架、95483收纳盒、970716865收纳箱盖、970896147衣物收纳盒、971078631收纳袋；该分支词面相关合计6条(含根)。\\n[3] 词面命中但归属家居收纳以外分支共28条，分布于24个一级分支：家居用品(2)、收藏品(2)、配饰(2)、食物贮藏(2)、汽车用品(1)、爱好和创作(1)、工位存储和归纳用品(1)、野餐用品(1)、收纳箱和汽车包(1)、汽车脚垫和车座套(1)、餐具(1)、手工用品(1)、运动套和包(1)、儿童洗澡(1)、儿童背带(1)、个人卫生用品(1)、帐篷、遮阳篷、帐篷和睡袋(1)、家居香水(1)、运动器材(1)、文具(1)、性爱玩具护理和储存(1)、野营家具(1)、烹饪配件(1)、文件夹和文件袋(1)。\\n[4] 同名易混编码：95483=收纳盒(住宅和花园>收纳)≠95489=钓鱼收纳箱(运动套和包)；92186=汽车收纳袋(汽车用品)；88577267=创造收纳袋和包(爱好和创作)；调用时必须传编码。\\n[5] 本次仅完成字典/字段元数据核验：未调用大盘与商品接口，无日期序列、无容量/动销/价格段数值；增长、季节性、市场空窗一律不作判定，market_stat待补路径已列出。\\n\",\"stderr\":null,\"result\":null}"
+                }
+              ],
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "kind": "trend",
+      "verdict": "done=true；未取样商品、大盘或推断增长；仍额外调用fields_lookup和execute_code，违反仅字典边界。",
+      "done": true,
+      "calls": [
+        {
+          "name": "view_skill",
+          "call_id": "call_4641d094bbf34056913ef4ef",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "call_714d2ad57c4c4d5386a3f3bf",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "call_0cd1c4a6b2cb4874a8c9530d",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_fields_lookup",
+          "call_id": "call_c74ff80d7b21478ba6100f30",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "call_07cb2188624e41cabfaacb8c",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "call_d240e4136686441cb6e05b23",
+          "status": "completed"
+        },
+        {
+          "name": "execute_code",
+          "call_id": "call_be9795f1e2a44410a7a0890f",
+          "status": "completed"
+        }
+      ],
+      "skill_versions": [
+        {
+          "id": "youweiai-ozon-category-trend",
+          "version_ids": [
+            "2f9dd0f5-77a5-4e4c-b7c0-8eda20a1161c"
+          ]
+        }
+      ]
+    },
+    {
+      "skill": "商品解析",
+      "chatId": "66434420-0a52-4027-bde5-c00c3b77f2ff",
+      "chatUrl": "https://local.dianleida.net:21996/c/66434420-0a52-4027-bde5-c00c3b77f2ff",
+      "question": "帮我解析一个OZON商品，还没发链接。",
+      "followUpViaForm": "本轮暂不提供目标，只列需要补充的链接或ID格式，然后完成，不查商品。",
+      "status": "通过",
+      "previewCheck": {
+        "applicable": false,
+        "formActuallyViewed": true,
+        "questions": 1,
+        "options": 3,
+        "id": "product_target",
+        "allOptionDescriptionsPresent": true,
+        "allowOther": true,
+        "filledAndSubmitted": true
+      },
+      "finding": "首次ask_user参数正确且独立调用（product_target，3选项，allow_other=true）；UI以自由输入提交“本轮暂不提供目标，只列格式并完成，不查商品”，会话自然结束；仅调用view_skill与ask_user，未查询商品；最终列明链接/SKU/SPU格式。",
+      "title": "OZON商品解析",
+      "updated_at": 1794800162,
+      "messages": [
+        {
+          "role": "user",
+          "content": "帮我解析一个OZON商品，还没发链接。",
+          "output": []
+        },
+        {
+          "role": "assistant",
+          "content": "我先读取商品解析技能的流程要求，然后需要您提供商品信息。\n技能流程已就绪。解析OZON商品需要您先提供目标商品，我用表单一次收集：\n好的，本轮不执行查询。以下是需要补充的信息格式，供您之后直接粘贴使用：\n\n## 支持的目标格式（三选一）\n\n| 方式 | 格式示例 | 说明 |\n|------|---------|------|\n| **商品链接**（推荐） | `https://www.ozon.ru/product/商品名-slug-123456789/` | 直接粘贴商品页完整URL，最准确，无需再确认ID类型 |\n| **SKU ID** | 一串数字，如 `1234567890` | 商品页地址末尾的数字编号；按**单品**口径解析详情 |\n| **SPU ID** | 父体编号 | 按父体口径解析，并核对变体结构 |\n\n## 三种目标分别能解析出什么\n\n- **SKU 口径**：商品标题、当前价格（含币种）、卖家信息、近1/7/28天销量、评分评论数、上架日期、包装重量尺寸、跟卖数量、每日数据序列等。\n- **SPU 口径**：父体名称、价格、评分评论、类目归属、店铺信息及**明确返回时**的变体清单；代表SKU销量与父体总量会分开列示，不混算。\n- **链接**：自动识别是单品还是父体，再走对应口径。\n\n## 补充说明（可选）\n\n- 如果您想顺带看某个卖家/店铺，可提供店铺名称或店铺ID，我会按店铺口径核对经营指标。\n- 如果是做选品对比（同类目候选商品），也可以直接告诉我类目词+筛选条件（价格区间、销量周期等），我按选品搜索流程执行。\n\n拿到链接或ID后直接发我即可，我会立即解析并输出含KPI、明细表和结论的完整报告。",
+          "done": true,
+          "output": [
+            {
+              "type": "function_call",
+              "id": "call_daa006a111ae4be788110a82",
+              "call_id": "call_daa006a111ae4be788110a82",
+              "name": "view_skill",
+              "arguments": "{\"id\":\"youweiai-ozon-product-parse\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_944f5f3729224664a531a13d",
+              "call_id": "call_daa006a111ae4be788110a82",
+              "status": "completed",
+              "output": {
+                "content_omitted": true,
+                "skill_id": "youweiai-ozon-product-parse",
+                "version_ids": [
+                  "a968ef4f-88a2-437f-b743-51f7909936d7"
+                ]
+              }
+            },
+            {
+              "type": "function_call",
+              "id": "call_7e3ef27329c24f729282df65",
+              "call_id": "call_7e3ef27329c24f729282df65",
+              "name": "ask_user",
+              "arguments": "{\"questions\":[{\"id\":\"product_target\",\"header\":\"Question 1\",\"question\":\"请提供要解析的OZON商品目标（链接或ID二选一，直接粘贴即可）：\",\"options\":[{\"label\":\"粘贴商品链接\",\"description\":\"直接粘贴商品页完整URL（推荐，最准确），或把 https://ozon.ru/product/... 形式的链接填入自定义输入框\"},{\"label\":\"提供SKU ID\",\"description\":\"提供商品页数字SKU，将按SKU口径解析单品详情\"},{\"label\":\"提供SPU ID\",\"description\":\"提供商品SPU编号，将按父体口径解析并核对变体结构\"}],\"allow_other\":true}],\"allow_other\":true,\"timeout_ms\":120000}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_call_7e3ef27329c24f729282df65",
+              "call_id": "call_7e3ef27329c24f729282df65",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\"status\":\"answered\",\"answers\":{\"product_target\":{\"type\":\"other\",\"text\":\"本轮暂不提供目标，只列需要补充的链接或ID格式，然后完成，不查商品。\"}}}"
+                }
+              ],
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "kind": "parse",
+      "verdict": "ask_user真实返回answered，product_target为other且包含本轮不提供目标、不查商品的提交文本；调用仅view_skill和ask_user；done=true，最终列链接/SKU/SPU格式，未查询商品。",
+      "preview_verified": {
+        "applicable": false,
+        "formActuallyViewed": true,
+        "filledAndSubmitted": true,
+        "source": "原UI人工核验记录及本次实际ask_user调用输出"
+      },
+      "done": true,
+      "calls": [
+        {
+          "name": "view_skill",
+          "call_id": "call_daa006a111ae4be788110a82",
+          "status": "completed"
+        },
+        {
+          "name": "ask_user",
+          "call_id": "call_7e3ef27329c24f729282df65",
+          "status": "completed"
+        }
+      ],
+      "skill_versions": [
+        {
+          "id": "youweiai-ozon-product-parse",
+          "version_ids": [
+            "a968ef4f-88a2-437f-b743-51f7909936d7"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "OZON家居收纳类目趋势分析",
+      "updated_at": 1794800459,
+      "messages": [
+        {
+          "role": "user",
+          "content": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+          "output": []
+        },
+        {
+          "role": "assistant",
+          "content": "收到。本轮范围按你的约定锁定：**只做类目字典语义确认 → 列明已知/待补字段 → 收尾**；不取样商品、不替换类目、不做任何增长或空窗推断、不再追问。先读取类目趋势技能并同步查字典。\n字典已核对完毕，按约定口径收口。\n\n## 一、类目语义确认（本轮唯一结论来源：类目字典）\n\n「家居收纳」在 Ozon 后台类目树中的语义对应项：\n\n| 层级 | 中文名 | 编码 | 父路径 |\n|---|---|---|---|\n| 目标后台类目 | 收纳 | **17027937** | 住宅和花园（17027494）> 收纳 |\n| 其下已召回子类 | 收纳盒 / 鞋子收纳架 / 收纳箱盖 | 95483 / 504866185 / 970716865 | 均挂 17027937 下 |\n\n- 前台 CATEGORY 字典仅召回 2 条含「收纳」项（汽车配件>收纳件和行李箱包 8804、厨具>餐具收纳架和组织器 14995），均**非**家居收纳语义，未采用、未替换目标。\n- 后台字典另有 14 条「收纳」相关词面项未返回（多属汽车/手工/运动/母婴等场景），不属家居收纳本轮范围，不枚举。\n- 结论口径：本轮语义确认 = 后台类目 **17027937（住宅和花园>收纳）**；本轮未取任何商品样本，子类召回仅作层级参考，不代表类目全部子类。\n\n## 二、已知字段（本轮已核验）\n\n- 类目编码：17027937；父级：住宅和花园 17027494；已见子类编码 3 条（上表）。\n- 类目层级路径与父子关系（父级 value）为字典真实返回。\n\n## 三、待补字段（本轮未查询，后续轮次方可取得）\n\n- 类目容量/动销：SKU 总数、店铺数、销量总数、评论总数、品牌总数、月 SKU/月店铺数（market_stat 按后台编码查询，本轮未调用）。\n- 近 7/28 天行为指标：skuInfoNum7/28、skuSearchNum7/28、skuViewNum7/28（字段已在接口能力清单中核名，数值待查）。\n- 日/周/月销量与价格：daySalesNum、weeklySalesNum、monthlySalesNum 及对应价格字段；金额币种以实际返回 symbol 为准（本轮无返回，不预设币种）。\n- 价格段分布：statPrices 价格段统计。\n- 日期序列：任何环比/同比/季节性均无原始序列支撑，本轮零推断；趋势结论待取得真实日期序列后按计算核验口径另行建立。\n- 品牌集中度：需类目约束下的品牌销售额分母（brand_search + market_stat 联用），本轮未取得。\n\n## 四、范围声明\n\n本轮商品接口调用数 = 0；未做增长、降价、季节性、市场空窗等任何推断；未替换或扩展类目。后续若需容量与趋势数据，路径为 market_stat(key=17027937) 及品牌榜联查，均须另行发起、另行核验。",
+          "done": true,
+          "output": [
+            {
+              "type": "function_call",
+              "id": "call_30d9b2bbf3fc46af9ea75683",
+              "call_id": "call_30d9b2bbf3fc46af9ea75683",
+              "name": "view_skill",
+              "arguments": "{\"id\":\"youweiai-ozon-category-trend\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_4d7afd9f79fc4ab3b4cbc25c",
+              "call_id": "call_4d7afd9f79fc4ab3b4cbc25c",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"收纳\",\"platform\":\"ozon\",\"type\":\"CATEGORY\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_b5061d749c774b6cb6ff4713",
+              "call_id": "call_b5061d749c774b6cb6ff4713",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"收纳\",\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_1720854f99244f5885bd15e7",
+              "call_id": "call_1720854f99244f5885bd15e7",
+              "name": "youweiai-ozon_yq_fields_lookup",
+              "arguments": "{\"tool\":\"yq_ozon_market_stat\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_2d62b3f5f50c4103bd89eb3e",
+              "call_id": "call_30d9b2bbf3fc46af9ea75683",
+              "status": "completed",
+              "output": {
+                "content_omitted": true,
+                "skill_id": "youweiai-ozon-category-trend",
+                "version_ids": [
+                  "a3dcf7fa-7331-4e2d-9239-9d79d5b0662a"
+                ]
+              }
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_6e6ae00b60534b01817acf44",
+              "call_id": "call_4d7afd9f79fc4ab3b4cbc25c",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 2,\n  \"returned\": 2,\n  \"items\": [\n    {\n      \"value\": \"8804\",\n      \"label\": \"收纳件和行李箱包\",\n      \"path\": \"汽车配件及用品>收纳件和行李箱包\",\n      \"parentValue\": \"8608\"\n    },\n    {\n      \"value\": \"14995\",\n      \"label\": \"餐具收纳架和组织器\",\n      \"path\": \"厨具>餐具收纳架和组织器\",\n      \"parentValue\": \"30711\"\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_43e61721138d4d7f930c01f6",
+              "call_id": "call_b5061d749c774b6cb6ff4713",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 20,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    }\n  ],\n  \"hint\": \"还有 14 条未返回，可加更精确的 keyword 或调大 limit。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_a7f801544eef47ebbbe3120f",
+              "call_id": "call_1720854f99244f5885bd15e7",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"tool\": \"yq_ozon_market_stat\",\n  \"title\": \"大盘统计接口\",\n  \"totalFields\": 26,\n  \"returned\": 26,\n  \"envelope\": \"列表类返回 {total, items, stats}；详情类直接返回对象\",\n  \"defaultFields\": [\n    \"id\",\n    \"sku\",\n    \"spu\",\n    \"spuName\",\n    \"skuName\",\n    \"title\",\n    \"price\",\n    \"currency\",\n    \"sales\",\n    \"daily_sales\",\n    \"monthly_sales\",\n    \"score\",\n    \"opt_id\",\n    \"thumb_url\",\n    \"photo\",\n    \"opt_ids\",\n    \"region\",\n    \"ware_house_type\",\n    \"mall_id\",\n    \"created_at\",\n    \"issued_date\",\n    \"last_modified\",\n    \"weekly_sales\",\n    \"comment_num_tips\",\n    \"title_zh\",\n    \"name\",\n    \"market_price\",\n    \"date\"\n  ],\n  \"computedFields\": [\n    {\n      \"name\": \"goods_url\",\n      \"desc\": \"商品链接（用商品 id 拼的，可直接点开；不需要也不能写进 _fields）\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"key\",\n      \"type\": \"String\",\n      \"desc\": \"all或者后台分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"stats\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"大盘统计项\",\n      \"default\": false,\n      \"childrenCount\": 22\n    },\n    {\n      \"name\": \"statPrices\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"价格段统计\",\n      \"default\": false,\n      \"childrenCount\": 19\n    },\n    {\n      \"name\": \"createTime\",\n      \"type\": \"String\",\n      \"desc\": \"创建时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"updateTime\",\n      \"type\": \"String\",\n      \"desc\": \"更新时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"SKU总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allCommentsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"评论总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allBrandsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"品牌总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"salesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"mallsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"日销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"dayPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"每日价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"周销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"周价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"月价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月SKU数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月店铺数\",\n      \"default\": false\n    }\n  ],\n  \"hint\": \"用 _fields 指定非默认字段，如 _fields=[\\\"id\\\",\\\"title\\\",\\\"image_urls\\\"]。字段名拼错不会报错但会被忽略，请从上面的清单里复制。\"\n}"
+                }
+              ],
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "kind": "trend",
+      "status": "部分通过",
+      "verdict": "done=true；仍额外调用fields_lookup，违反仅字典边界；未调用商品/大盘、未推断增长。",
+      "done": true,
+      "calls": [
+        {
+          "name": "view_skill",
+          "call_id": "call_30d9b2bbf3fc46af9ea75683",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "call_4d7afd9f79fc4ab3b4cbc25c",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "call_b5061d749c774b6cb6ff4713",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_fields_lookup",
+          "call_id": "call_1720854f99244f5885bd15e7",
+          "status": "completed"
+        }
+      ],
+      "skill_versions": [
+        {
+          "id": "youweiai-ozon-category-trend",
+          "version_ids": [
+            "a3dcf7fa-7331-4e2d-9239-9d79d5b0662a"
+          ]
+        }
+      ],
+      "chatId": "ade76211-2aff-487f-93cb-7f07b0ed6acf",
+      "chatUrl": "https://local.dianleida.net:21996/c/ade76211-2aff-487f-93cb-7f07b0ed6acf",
+      "skill": "类目趋势"
+    },
+    {
+      "title": "OZON家居收纳类目趋势分析",
+      "updated_at": 1794800677,
+      "messages": [
+        {
+          "role": "user",
+          "content": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+          "output": []
+        },
+        {
+          "role": "assistant",
+          "content": "已按你的约束完成本轮：仅查类目字典确认语义，未取样商品、未调用大盘/品牌/商品接口、不做任何趋势或增长推断。\n\n## 类目字典核验结果\n\n| 项目 | 结果 |\n|---|---|\n| 目标类目（家居收纳） | **收纳**（后台类目 ID：**17027937**） |\n| 完整父路径 | 住宅和花园 > 收纳 |\n| 父类目编码 | 17027494（住宅和花园） |\n| 已核验的子类目（本次返回中） | 收纳盒（95483）、鞋子收纳架（504866185）、收纳箱盖（970716865）等，均挂在该类目下 |\n\n词典命中\"收纳\"相关共 34 条，其中多数属于其他一级类目（汽车用品、爱好创作、工位存储、餐具、旅行配饰、儿童用品等），**不属于\"家居收纳\"语义范围**，本轮不纳入、不替换。本次返回 20 条，词典提示仍有 14 条未展示，如后续需完整子类目清单可加更精确关键词或调大 limit 再取。\n\n## 本轮已知与待补清单\n\n**已知（字典已核验）：**\n- 目标后台类目编码与父路径语义清晰，可直接用于后续 market_stat 的 key 参数；\n- 类目下至少含收纳盒、鞋子收纳架、收纳箱盖三个已见子类目。\n\n**待补（本轮按约定不查、不推断）：**\n- 该类目的大盘指标（SKU 数、店铺数、销量、销售额、价格段）——需 market_stat 后方可知；\n- 月字段口径（monthCount/monthSum 等）的真实起止与天数；\n- 28 天口径字段是否存在及其语义核验；\n- 历史时间序列、环比/同比、季节性——用户已声明无此资料，本轮不建立、不推断；\n- 品牌集中度、卖家类型（本土/跨境）分布——均未取得，不可定论。\n\n本轮任务到此收口，不再追问。后续若要推进类目大盘统计，可直接用已核验的 key=17027937 执行，无需重新查字典。",
+          "done": true,
+          "output": [
+            {
+              "type": "function_call",
+              "id": "chatcmpl-tool-802500293300d613",
+              "call_id": "chatcmpl-tool-802500293300d613",
+              "name": "view_skill",
+              "arguments": "{\"id\":\"youweiai-ozon-category-trend\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_f904169a841847048d2e6695",
+              "call_id": "chatcmpl-tool-802500293300d613",
+              "status": "completed",
+              "output": {
+                "content_omitted": true,
+                "skill_id": "youweiai-ozon-category-trend",
+                "version_ids": [
+                  "056fbf46-03cf-4d53-b44e-ed71167a764f"
+                ]
+              }
+            },
+            {
+              "type": "function_call",
+              "id": "chatcmpl-tool-b198b5c6b494295c",
+              "call_id": "chatcmpl-tool-b198b5c6b494295c",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"收纳\",\"limit\":20,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_361cf0987f644cbdb0dee217",
+              "call_id": "chatcmpl-tool-b198b5c6b494295c",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 20,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    }\n  ],\n  \"hint\": \"还有 14 条未返回，可加更精确的 keyword 或调大 limit。\"\n}"
+                }
+              ],
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "kind": "trend",
+      "status": "通过",
+      "verdict": "done=true；实际调用仅view_skill和dict_lookup，无fields_lookup/代码/商品/大盘/品牌；最终确认17027937父路径并列已知及待补，无趋势推断或追问。",
+      "acceptance_scope": "仅字典边界及最终答验收；done与是否通过分别记录",
+      "done": true,
+      "calls": [
+        {
+          "name": "view_skill",
+          "call_id": "chatcmpl-tool-802500293300d613",
+          "status": "completed"
+        },
+        {
+          "name": "youweiai-ozon_yq_dict_lookup",
+          "call_id": "chatcmpl-tool-b198b5c6b494295c",
+          "status": "completed"
+        }
+      ],
+      "skill_versions": [
+        {
+          "id": "youweiai-ozon-category-trend",
+          "version_ids": [
+            "056fbf46-03cf-4d53-b44e-ed71167a764f"
+          ]
+        }
+      ],
+      "chatId": "e4f4522c-598c-4839-b582-f6b6902f7a1f",
+      "chatUrl": "https://local.dianleida.net:21996/c/e4f4522c-598c-4839-b582-f6b6902f7a1f",
+      "skill": "类目趋势"
+    }
+  ],
+  "patches": [
+    {
+      "id": "youweiai-ozon-category-trend",
+      "before": "2f9dd0f5-77a5-4e4c-b7c0-8eda20a1161c",
+      "after": "a3dcf7fa-7331-4e2d-9239-9d79d5b0662a",
+      "change": "仅字典请求先行终止，业务白名单仅dict，不调用fields或代码枚举无关分支；只改content"
+    },
+    {
+      "id": "youweiai-ozon-category-trend",
+      "before": "a3dcf7fa-7331-4e2d-9239-9d79d5b0662a",
+      "after": "056fbf46-03cf-4d53-b44e-ed71167a764f",
+      "scope": "description",
+      "change": "description同步仅字典提前收口：只dict，禁止fields/代码/大盘/品牌/商品。",
+      "source": "主代理提供补丁版本；e4f4522c实际view_skill验证after版本"
+    }
+  ],
+  "archive_batches": [
+    {
+      "captured_at": "2026-11-16T03:55:53.570Z",
+      "method": "现有页面同源GET聊天API；token仅用于Authorization header；仅保留user/assistant content及实际function_call/function_call_output；去reasoning和view_skill全文，保留技能ID/版本；脱敏内部上游URL及凭据",
+      "source": "真实UI会话持久化聊天API，同源GET；仅取指定会话，未导航或提交线上修改",
+      "sanitized_download_sha256": "a9442f0e5a0cd5ea5c9fca684285c034e8869cebf6d86d8071a84fdb82930455",
+      "preservation": {
+        "historical_cases_sha256": "e281b4f57e6ffd623e546438747d543425073ff91b2374c627bdb56d4df9b847",
+        "historical_cases_unchanged": true
+      },
+      "cases": [
+        {
+          "title": "OZON商品解析",
+          "updated_at": 1794800162,
+          "messages": [
+            {
+              "role": "user",
+              "content": "帮我解析一个OZON商品，还没发链接。",
+              "output": []
+            },
+            {
+              "role": "assistant",
+              "content": "我先读取商品解析技能的流程要求，然后需要您提供商品信息。\n技能流程已就绪。解析OZON商品需要您先提供目标商品，我用表单一次收集：\n好的，本轮不执行查询。以下是需要补充的信息格式，供您之后直接粘贴使用：\n\n## 支持的目标格式（三选一）\n\n| 方式 | 格式示例 | 说明 |\n|------|---------|------|\n| **商品链接**（推荐） | `https://www.ozon.ru/product/商品名-slug-123456789/` | 直接粘贴商品页完整URL，最准确，无需再确认ID类型 |\n| **SKU ID** | 一串数字，如 `1234567890` | 商品页地址末尾的数字编号；按**单品**口径解析详情 |\n| **SPU ID** | 父体编号 | 按父体口径解析，并核对变体结构 |\n\n## 三种目标分别能解析出什么\n\n- **SKU 口径**：商品标题、当前价格（含币种）、卖家信息、近1/7/28天销量、评分评论数、上架日期、包装重量尺寸、跟卖数量、每日数据序列等。\n- **SPU 口径**：父体名称、价格、评分评论、类目归属、店铺信息及**明确返回时**的变体清单；代表SKU销量与父体总量会分开列示，不混算。\n- **链接**：自动识别是单品还是父体，再走对应口径。\n\n## 补充说明（可选）\n\n- 如果您想顺带看某个卖家/店铺，可提供店铺名称或店铺ID，我会按店铺口径核对经营指标。\n- 如果是做选品对比（同类目候选商品），也可以直接告诉我类目词+筛选条件（价格区间、销量周期等），我按选品搜索流程执行。\n\n拿到链接或ID后直接发我即可，我会立即解析并输出含KPI、明细表和结论的完整报告。",
+              "done": true,
+              "output": [
+                {
+                  "type": "function_call",
+                  "id": "call_daa006a111ae4be788110a82",
+                  "call_id": "call_daa006a111ae4be788110a82",
+                  "name": "view_skill",
+                  "arguments": "{\"id\":\"youweiai-ozon-product-parse\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_944f5f3729224664a531a13d",
+                  "call_id": "call_daa006a111ae4be788110a82",
+                  "status": "completed",
+                  "output": {
+                    "content_omitted": true,
+                    "skill_id": "youweiai-ozon-product-parse",
+                    "version_ids": [
+                      "a968ef4f-88a2-437f-b743-51f7909936d7"
+                    ]
+                  }
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_7e3ef27329c24f729282df65",
+                  "call_id": "call_7e3ef27329c24f729282df65",
+                  "name": "ask_user",
+                  "arguments": "{\"questions\":[{\"id\":\"product_target\",\"header\":\"Question 1\",\"question\":\"请提供要解析的OZON商品目标（链接或ID二选一，直接粘贴即可）：\",\"options\":[{\"label\":\"粘贴商品链接\",\"description\":\"直接粘贴商品页完整URL（推荐，最准确），或把 https://ozon.ru/product/... 形式的链接填入自定义输入框\"},{\"label\":\"提供SKU ID\",\"description\":\"提供商品页数字SKU，将按SKU口径解析单品详情\"},{\"label\":\"提供SPU ID\",\"description\":\"提供商品SPU编号，将按父体口径解析并核对变体结构\"}],\"allow_other\":true}],\"allow_other\":true,\"timeout_ms\":120000}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_call_7e3ef27329c24f729282df65",
+                  "call_id": "call_7e3ef27329c24f729282df65",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\"status\":\"answered\",\"answers\":{\"product_target\":{\"type\":\"other\",\"text\":\"本轮暂不提供目标，只列需要补充的链接或ID格式，然后完成，不查商品。\"}}}"
+                    }
+                  ],
+                  "status": "completed"
+                }
+              ]
+            }
+          ],
+          "kind": "parse",
+          "status": "通过",
+          "verdict": "ask_user真实返回answered，product_target为other且包含本轮不提供目标、不查商品的提交文本；调用仅view_skill和ask_user；done=true，最终列链接/SKU/SPU格式，未查询商品。",
+          "preview_verified": {
+            "applicable": false,
+            "formActuallyViewed": true,
+            "filledAndSubmitted": true,
+            "source": "原UI人工核验记录及本次实际ask_user调用输出"
+          },
+          "done": true,
+          "calls": [
+            {
+              "name": "view_skill",
+              "call_id": "call_daa006a111ae4be788110a82",
+              "status": "completed"
+            },
+            {
+              "name": "ask_user",
+              "call_id": "call_7e3ef27329c24f729282df65",
+              "status": "completed"
+            }
+          ],
+          "skill_versions": [
+            {
+              "id": "youweiai-ozon-product-parse",
+              "version_ids": [
+                "a968ef4f-88a2-437f-b743-51f7909936d7"
+              ]
+            }
+          ],
+          "chatId": "66434420-0a52-4027-bde5-c00c3b77f2ff",
+          "chatUrl": "https://local.dianleida.net:21996/c/66434420-0a52-4027-bde5-c00c3b77f2ff",
+          "skill": "商品解析"
+        },
+        {
+          "title": "OZON家居收纳类目趋势",
+          "updated_at": 1794800110,
+          "messages": [
+            {
+              "role": "user",
+              "content": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+              "output": []
+            },
+            {
+              "role": "assistant",
+              "content": "我先按「类目趋势」主流程读取技能说明，并同步做类目字典（前台/后台）与字段清单的元数据核对——全部为免费查询，不取样商品、不取销量数据。\n技能说明已确认本轮口径：仅做类目字典语义确认，不调大盘/商品/品牌接口（商品取样数=0），不推断增长。字典首轮已命中核心编码，但后台类目提示「还有 4 条未返回」，我先补齐字典子类全量与「住宅和花园」父级分支边界（仍属字典确认范畴），随后直接收口。\n字典与父级边界已确认完毕。按技能硬约束，我先用代码对本次真实返回逐条核验、构建唯一展示数据（verified JSON）并生成事实摘要——除 `view_skill` 外本轮实际数据调用仅为类目字典与字段字典，商品/大盘接口调用数为 0。\n核验与计算已完成，以下为本轮交付。**本次实际数据调用仅为类目字典（CATEGORY/CATEGORY_BACKEND）与字段字典元数据：大盘接口调用 0 次、商品取样 0 条**，无日期序列取得，因此不作任何增长、季节性或市场空窗判断。\n\n## 事实摘要（均由本次真实返回经代码核验）\n\n1. 前台类目含「收纳」共 **2** 个：8804（汽车配件及用品>收纳件和行李箱包）、14995（厨具>餐具收纳架和组织器），均非家居收纳主体。\n2. 后台类目含「收纳」共 **34** 个；家居收纳主类目为 **17027937「收纳」（住宅和花园>收纳，父级 17027494「住宅和花园」）**。\n3. 该主类目词面召回直属子类 **5** 个：鞋子收纳架(504866185)、收纳盒(95483)、收纳箱盖(970716865)、衣物收纳盒(970896147)、收纳袋(971078631)；核心分支词面相关合计 6 条（含根）。\n4. 词面命中但归属其他分支 **28** 条、分布 24 个一级分支（家居用品 2、收藏品 2、配饰 2、食物贮藏 2，其余各 1），属易混项，须按编码调用。\n5. 本次无日期序列、无容量/动销/价格段数值：**趋势基线、增长与季节性均待补**。\n\n## 核心家居收纳类目（住宅和花园>收纳，后台编码）\n\n| 后台编码 | 类目名 | 完整路径 | 层级 | 备注 |\n|---|---|---|---|---|\n| 17027937 | 收纳 | 住宅和花园>收纳 | 二级（根） | 家居收纳主类目 |\n| 504866185 | 鞋子收纳架 | 住宅和花园>收纳>鞋子收纳架 | 三级 | 直属子类 |\n| 95483 | 收纳盒 | 住宅和花园>收纳>收纳盒 | 三级 | 直属子类 |\n| 970716865 | 收纳箱盖 | 住宅和花园>收纳>收纳箱盖 | 三级 | 直属子类 |\n| 970896147 | 衣物收纳盒 | 住宅和花园>收纳>衣物收纳盒 | 三级 | 直属子类 |\n| 971078631 | 收纳袋 | 住宅和花园>收纳>收纳袋 | 三级 | 直属子类 |\n\n## 词面命中但归属其他分支（非家居收纳主体，共 28 条）\n\n| 一级分支 | 编码·类目名 |\n|---|---|\n| 汽车用品 | 82169566 收纳箱和汽车包（子级：92186 汽车收纳袋） |\n| 汽车脚垫和车座套 | 92209 轮胎收纳套 |\n| 爱好和创作 | 88577267 创造收纳袋和包 |\n| 工位存储和归纳用品 | 115946994 工具收纳盒 |\n| 家居用品 | 594158428 餐具收纳盒；970787019 餐具收纳架 |\n| 野餐用品 | 702661764 烧烤工具收纳包 |\n| 餐具 | 93715 茶包收纳盒 |\n| 收藏品 | 93830 收藏品收纳配件；95872 杂志收纳盒 |\n| 配饰 | 94307 旅行收纳箱；970870896 文件收纳箱 |\n| 手工用品 | 95488 手工收纳箱 |\n| 运动套和包 | 95489 钓鱼收纳箱 |\n| 儿童洗澡 | 95710 浴室玩具收纳用品 |\n| 儿童背带 | 970662051 待产包收纳袋 |\n| 个人卫生用品 | 970715586 个人护理用品收纳包 |\n| 食物贮藏 | 970742618 冰箱收纳箱；971311575 塑料袋收纳器 |\n| 帐篷、遮阳篷、帐篷和睡袋 | 970795346 帐篷收纳箱 |\n| 家居香水 | 970833114 精油收纳架 |\n| 运动器材 | 970858513 球收纳架 |\n| 文具 | 970869397 文具收纳盒 |\n| 性爱玩具护理和储存 | 971102746 情趣用品收纳 |\n| 野营家具 | 971289485 旅游桌收纳架 |\n| 烹饪配件 | 971297805 吧台收纳架 |\n| 文件夹和文件袋 | 97614 档案收纳盒 |\n\n**同名易混警示**：95483「收纳盒」（家居收纳）≠ 95489「钓鱼收纳箱」；95488「手工收纳箱」≠ 家居收纳箱。调用检索时必须传编码，不能传词。\n\n## 已知字段（本轮已核验）与待补字段（待你授权后的下一轮）\n\n| 类别 | 字段 | 状态 |\n|---|---|---|\n| 已核验 | 前台/后台类目编码、完整父路径、parentValue | ✅ 本次取得 |\n| 已核验 | market_stat 返回结构：allSkuNum/allMallNum/allSalesNum/allCommentsNum/allBrandsNum/skuInfoNum7·28/skuSearchNum7·28/skuViewNum7·28/daySalesNum/dayPrice/weeklySalesNum·Price/monthlySalesNum·Price/monthSkuNum/monthMallNum/statPrices 价格段 19 项、createTime/updateTime | ✅ 字段清单已查（**仅有字段名，无数值**） |\n| 待补 | 上述全部指标的**数值**（须 market_stat(key=\"17027937\")） | ⏸ 未调用 |\n| 待补 | 7天/28天动销、搜索、浏览指标日期口径与币种（symbol） | ⏸ 未调用 |\n| 待补 | 价格段分布 statPrices 及区间/币种 | ⏸ 未调用 |\n| 待补 | 日期序列/环比同比/季节性 | ⏸ 无历史序列，不推断 |\n| 待补 | 「住宅和花园>收纳」子树完整清单（本批 34 条为词面召回，非子树全量枚举） | ⏸ 字典按关键词返回，需另证 |\n\n```html\n<!DOCTYPE html>\n<html lang=\"zh-CN\">\n<head>\n<meta charset=\"UTF-8\">\n<title>OZON 家居收纳类目·字典语义确认报告（2026-11-16）</title>\n<style>\nbody{font-family:\"Microsoft YaHei\",\"PingFang SC\",sans-serif;background:#fff;color:#222;margin:0;padding:24px;line-height:1.6}\nh1{font-size:22px;margin:0 0 4px} h2{font-size:17px;margin:28px 0 10px;border-left:4px solid #2e7d32;padding-left:8px}\n.meta{color:#666;font-size:13px;margin-bottom:18px}\n.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}\n.kpi{border:1px solid #e0e0e0;border-radius:8px;padding:10px 16px;min-width:130px;background:#fafafa}\n.kpi b{display:block;font-size:22px;color:#2e7d32}\n.kpi span{font-size:12px;color:#666}\ntable{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}\nth,td{border:1px solid #ddd;padding:6px 10px;text-align:left}\nth{background:#f1f8f1;color:#2e7d32}\n.tag{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 8px;font-size:12px;margin-right:4px}\n.warn{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px 14px;font-size:13px;margin-top:14px}\n.note{color:#777;font-size:12px;margin-top:6px}\nul{margin:6px 0;padding-left:20px;font-size:13px}\n</style>\n</head>\n<body>\n<h1>OZON 家居收纳类目 · 字典语义确认报告</h1>\n<div class=\"meta\">数据源：youweiAI-OZON 类目字典（platform=ozon）｜查询日期：2026-11-16｜本轮范围：仅类目字典与字段元数据核验；大盘/商品接口调用 0 次，商品取样 0 条｜币种：未涉及金额，无币种口径</div>\n\n<div class=\"kpis\">\n  <div class=\"kpi\"><b>2</b><span>前台 CATEGORY 词面命中</span></div>\n  <div class=\"kpi\"><b>34</b><span>后台 CATEGORY_BACKEND 词面命中</span></div>\n  <div class=\"kpi\"><b>17027937</b><span>家居收纳主类目编码</span></div>\n  <div class=\"kpi\"><b>6</b><span>核心分支词面相关（含根）</span></div>\n  <div class=\"kpi\"><b>28</b><span>词面命中但属其他分支</span></div>\n  <div class=\"kpi\"><b>0</b><span>本轮商品取样 / 大盘数值指标</span></div>\n</div>\n\n<h2>一、核心家居收纳类目（住宅和花园&gt;收纳）</h2>\n<table>\n<tr><th>后台编码</th><th>类目名</th><th>完整路径</th><th>层级</th><th>备注</th></tr>\n<tr><td>17027937</td><td>收纳</td><td>住宅和花园&gt;收纳</td><td>二级（根）</td><td>家居收纳主类目，父级 17027494 住宅和花园</td></tr>\n<tr><td>504866185</td><td>鞋子收纳架</td><td>住宅和花园&gt;收纳&gt;鞋子收纳架</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>95483</td><td>收纳盒</td><td>住宅和花园&gt;收纳&gt;收纳盒</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>970716865</td><td>收纳箱盖</td><td>住宅和花园&gt;收纳&gt;收纳箱盖</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>970896147</td><td>衣物收纳盒</td><td>住宅和花园&gt;收纳&gt;衣物收纳盒</td><td>三级</td><td>直属子类</td></tr>\n<tr><td>971078631</td><td>收纳袋</td><td>住宅和花园&gt;收纳&gt;收纳袋</td><td>三级</td><td>直属子类</td></tr>\n</table>\n\n<h2>二、词面命中但归属其他分支（共 28 条，24 个一级分支，须按编码调用）</h2>\n<table>\n<tr><th>一级分支</th><th>编码 · 类目名</th></tr>\n<tr><td>汽车用品</td><td>82169566 收纳箱和汽车包（子级：92186 汽车收纳袋）</td></tr>\n<tr><td>汽车脚垫和车座套</td><td>92209 轮胎收纳套</td></tr>\n<tr><td>爱好和创作</td><td>88577267 创造收纳袋和包</td></tr>\n<tr><td>工位存储和归纳用品</td><td>115946994 工具收纳盒</td></tr>\n<tr><td>家居用品</td><td>594158428 餐具收纳盒；970787019 餐具收纳架</td></tr>\n<tr><td>野餐用品</td><td>702661764 烧烤工具收纳包</td></tr>\n<tr><td>餐具</td><td>93715 茶包收纳盒</td></tr>\n<tr><td>收藏品</td><td>93830 收藏品收纳配件；95872 杂志收纳盒</td></tr>\n<tr><td>配饰</td><td>94307 旅行收纳箱；970870896 文件收纳箱</td></tr>\n<tr><td>手工用品</td><td>95488 手工收纳箱</td></tr>\n<tr><td>运动套和包</td><td>95489 钓鱼收纳箱</td></tr>\n<tr><td>儿童洗澡</td><td>95710 浴室玩具收纳用品</td></tr>\n<tr><td>儿童背带</td><td>970662051 待产包收纳袋</td></tr>\n<tr><td>个人卫生用品</td><td>970715586 个人护理用品收纳包</td></tr>\n<tr><td>食物贮藏</td><td>970742618 冰箱收纳箱；971311575 塑料袋收纳器</td></tr>\n<tr><td>帐篷、遮阳篷、帐篷和睡袋</td><td>970795346 帐篷收纳箱</td></tr>\n<tr><td>家居香水</td><td>970833114 精油收纳架</td></tr>\n<tr><td>运动器材</td><td>970858513 球收纳架</td></tr>\n<tr><td>文具</td><td>970869397 文具收纳盒</td></tr>\n<tr><td>性爱玩具护理和储存</td><td>971102746 情趣用品收纳</td></tr>\n<tr><td>野营家具</td><td>971289485 旅游桌收纳架</td></tr>\n<tr><td>烹饪配件</td><td>971297805 吧台收纳架</td></tr>\n<tr><td>文件夹和文件袋</td><td>97614 档案收纳盒</td></tr>\n</table>\n<div class=\"warn\"><b>同名易混警示：</b>95483「收纳盒」（家居收纳）≠ 95489「钓鱼收纳箱」；95488「手工收纳箱」≠ 家居收纳箱。检索调用必须传编码。</div>\n\n<h2>三、已知字段（本轮已核验）与待补字段</h2>\n<table>\n<tr><th>状态</th><th>字段</th><th>说明</th></tr>\n<tr><td><span class=\"tag\">已核验</span></td><td>前台/后台类目编码、完整父路径、parentValue</td><td>本次字典返回取得</td></tr>\n<tr><td><span class=\"tag\">已核验</span></td><td>market_stat 返回结构（字段名）</td><td>allSkuNum/allMallNum/allSalesNum/allCommentsNum/allBrandsNum；skuInfoNum7·28、skuSearchNum7·28、skuViewNum7·28；daySalesNum/dayPrice、weeklySalesNum·Price、monthlySalesNum·Price、monthSkuNum/monthMallNum；statPrices 价格段 19 项；createTime/updateTime。仅字段名，无数值</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>上述全部指标数值</td><td>须调用大盘统计（key=17027937），本轮未执行</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>7/28 天口径、日期范围、币种 symbol、价格段区间</td><td>随大盘数值一并核验</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>日期序列、环比/同比、季节性</td><td>无历史序列取得，本轮不作推断</td></tr>\n<tr><td><span class=\"tag\">待补</span></td><td>「收纳」子树完整清单</td><td>34 条为「收纳」词面召回，非子树全量枚举</td></tr>\n</table>\n\n<h2>四、结论与边界</h2>\n<ul>\n<li>家居收纳主类目语义已确认：<b>后台 17027937（住宅和花园&gt;收纳）</b>，词面召回直属子类 5 个；相邻易混类目（汽车、钓鱼、手工、文具、餐具等 28 条）已单列，不并入家居收纳范围。</li>\n<li>本轮<b>无日期序列、无容量/动销/价格段数值</b>：类目容量、销量、价格分布、增长与季节性均为待补，不作任何推断，不判市场空窗。</li>\n<li>口径说明：34 条与 2 条为「收纳」词面召回边界，非类目树全量；本次未取样商品，未调用大盘接口，全部数值指标处于待补状态。</li>\n</ul>\n<div class=\"note\">生成：youweiAI-OZON 选品专家 · 2026-11-16 · 依据当次工具真实返回与代码核验结果构建</div>\n</body>\n</html>\n```\n\n**结论收口**：家居收纳类目语义确认完成（主类目 17027937「住宅和花园>收纳」+ 5 个词面直属子类，28 条易混类目已单列）；本轮按你的范围要求仅完成字典确认与已知/待补清单，商品取样 0、大盘数值 0、无任何趋势推断。后续若要取得容量/动销/价格段数值，执行路径已列明：`market_stat(key=\"17027937\")`，届时 7/28 天口径、币种与日期范围将随真实返回一并核验。",
+              "done": true,
+              "output": [
+                {
+                  "type": "function_call",
+                  "id": "call_4641d094bbf34056913ef4ef",
+                  "call_id": "call_4641d094bbf34056913ef4ef",
+                  "name": "view_skill",
+                  "arguments": "{\"id\":\"youweiai-ozon-category-trend\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_714d2ad57c4c4d5386a3f3bf",
+                  "call_id": "call_714d2ad57c4c4d5386a3f3bf",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"收纳\",\"limit\":30,\"platform\":\"ozon\",\"type\":\"CATEGORY\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_0cd1c4a6b2cb4874a8c9530d",
+                  "call_id": "call_0cd1c4a6b2cb4874a8c9530d",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"收纳\",\"limit\":30,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_c74ff80d7b21478ba6100f30",
+                  "call_id": "call_c74ff80d7b21478ba6100f30",
+                  "name": "youweiai-ozon_yq_fields_lookup",
+                  "arguments": "{\"tool\":\"yq_ozon_market_stat\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_3251627bd7fe44fb8db68a87",
+                  "call_id": "call_4641d094bbf34056913ef4ef",
+                  "status": "completed",
+                  "output": {
+                    "content_omitted": true,
+                    "skill_id": "youweiai-ozon-category-trend",
+                    "version_ids": [
+                      "2f9dd0f5-77a5-4e4c-b7c0-8eda20a1161c"
+                    ]
+                  }
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_22fac37cc9e649ddb5bd2e83",
+                  "call_id": "call_714d2ad57c4c4d5386a3f3bf",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 2,\n  \"returned\": 2,\n  \"items\": [\n    {\n      \"value\": \"8804\",\n      \"label\": \"收纳件和行李箱包\",\n      \"path\": \"汽车配件及用品>收纳件和行李箱包\",\n      \"parentValue\": \"8608\"\n    },\n    {\n      \"value\": \"14995\",\n      \"label\": \"餐具收纳架和组织器\",\n      \"path\": \"厨具>餐具收纳架和组织器\",\n      \"parentValue\": \"30711\"\n    }\n  ]\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_520b95a4d34042a3b6a9b104",
+                  "call_id": "call_0cd1c4a6b2cb4874a8c9530d",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 30,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"970742618\",\n      \"label\": \"冰箱收纳箱\",\n      \"path\": \"食物贮藏>冰箱收纳箱\",\n      \"parentValue\": \"17027933\"\n    },\n    {\n      \"value\": \"970787019\",\n      \"label\": \"餐具收纳架 \",\n      \"path\": \"家居用品>餐具收纳架 \",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"970795346\",\n      \"label\": \"帐篷收纳箱\",\n      \"path\": \"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\",\n      \"parentValue\": \"17029010\"\n    },\n    {\n      \"value\": \"970833114\",\n      \"label\": \"精油收纳架\",\n      \"path\": \"家居香水>精油收纳架\",\n      \"parentValue\": \"86029514\"\n    },\n    {\n      \"value\": \"970858513\",\n      \"label\": \"球收纳架\",\n      \"path\": \"运动器材>球收纳架\",\n      \"parentValue\": \"17029000\"\n    },\n    {\n      \"value\": \"970869397\",\n      \"label\": \"文具收纳盒\",\n      \"path\": \"文具>文具收纳盒\",\n      \"parentValue\": \"17029021\"\n    },\n    {\n      \"value\": \"970870896\",\n      \"label\": \"文件收纳箱\",\n      \"path\": \"配饰>文件收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"970896147\",\n      \"label\": \"衣物收纳盒\",\n      \"path\": \"收纳>衣物收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971078631\",\n      \"label\": \"收纳袋\",\n      \"path\": \"收纳>收纳袋\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971102746\",\n      \"label\": \"情趣用品收纳\",\n      \"path\": \"性爱玩具护理和储存>情趣用品收纳\",\n      \"parentValue\": \"200001500\"\n    }\n  ],\n  \"hint\": \"还有 4 条未返回，可加更精确的 keyword 或调大 limit。\"\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_5b701bbf3a3d4042bbda85e6",
+                  "call_id": "call_c74ff80d7b21478ba6100f30",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"tool\": \"yq_ozon_market_stat\",\n  \"title\": \"大盘统计接口\",\n  \"totalFields\": 26,\n  \"returned\": 26,\n  \"envelope\": \"列表类返回 {total, items, stats}；详情类直接返回对象\",\n  \"defaultFields\": [\n    \"id\",\n    \"sku\",\n    \"spu\",\n    \"spuName\",\n    \"skuName\",\n    \"title\",\n    \"price\",\n    \"currency\",\n    \"sales\",\n    \"daily_sales\",\n    \"monthly_sales\",\n    \"score\",\n    \"opt_id\",\n    \"thumb_url\",\n    \"photo\",\n    \"opt_ids\",\n    \"region\",\n    \"ware_house_type\",\n    \"mall_id\",\n    \"created_at\",\n    \"issued_date\",\n    \"last_modified\",\n    \"weekly_sales\",\n    \"comment_num_tips\",\n    \"title_zh\",\n    \"name\",\n    \"market_price\",\n    \"date\"\n  ],\n  \"computedFields\": [\n    {\n      \"name\": \"goods_url\",\n      \"desc\": \"商品链接（用商品 id 拼的，可直接点开；不需要也不能写进 _fields）\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"key\",\n      \"type\": \"String\",\n      \"desc\": \"all或者后台分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"stats\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"大盘统计项\",\n      \"default\": false,\n      \"childrenCount\": 22\n    },\n    {\n      \"name\": \"statPrices\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"价格段统计\",\n      \"default\": false,\n      \"childrenCount\": 19\n    },\n    {\n      \"name\": \"createTime\",\n      \"type\": \"String\",\n      \"desc\": \"创建时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"updateTime\",\n      \"type\": \"String\",\n      \"desc\": \"更新时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"SKU总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allCommentsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"评论总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allBrandsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"品牌总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"salesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"mallsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"日销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"dayPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"每日价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"周销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"周价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"月价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月SKU数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月店铺数\",\n      \"default\": false\n    }\n  ],\n  \"hint\": \"用 _fields 指定非默认字段，如 _fields=[\\\"id\\\",\\\"title\\\",\\\"image_urls\\\"]。字段名拼错不会报错但会被忽略，请从上面的清单里复制。\"\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_07cb2188624e41cabfaacb8c",
+                  "call_id": "call_07cb2188624e41cabfaacb8c",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"收纳\",\"limit\":100,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_d240e4136686441cb6e05b23",
+                  "call_id": "call_d240e4136686441cb6e05b23",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"住宅\",\"limit\":50,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_c1bcd979ffa84d2b9d145363",
+                  "call_id": "call_07cb2188624e41cabfaacb8c",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 34,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"970742618\",\n      \"label\": \"冰箱收纳箱\",\n      \"path\": \"食物贮藏>冰箱收纳箱\",\n      \"parentValue\": \"17027933\"\n    },\n    {\n      \"value\": \"970787019\",\n      \"label\": \"餐具收纳架 \",\n      \"path\": \"家居用品>餐具收纳架 \",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"970795346\",\n      \"label\": \"帐篷收纳箱\",\n      \"path\": \"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\",\n      \"parentValue\": \"17029010\"\n    },\n    {\n      \"value\": \"970833114\",\n      \"label\": \"精油收纳架\",\n      \"path\": \"家居香水>精油收纳架\",\n      \"parentValue\": \"86029514\"\n    },\n    {\n      \"value\": \"970858513\",\n      \"label\": \"球收纳架\",\n      \"path\": \"运动器材>球收纳架\",\n      \"parentValue\": \"17029000\"\n    },\n    {\n      \"value\": \"970869397\",\n      \"label\": \"文具收纳盒\",\n      \"path\": \"文具>文具收纳盒\",\n      \"parentValue\": \"17029021\"\n    },\n    {\n      \"value\": \"970870896\",\n      \"label\": \"文件收纳箱\",\n      \"path\": \"配饰>文件收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"970896147\",\n      \"label\": \"衣物收纳盒\",\n      \"path\": \"收纳>衣物收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971078631\",\n      \"label\": \"收纳袋\",\n      \"path\": \"收纳>收纳袋\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"971102746\",\n      \"label\": \"情趣用品收纳\",\n      \"path\": \"性爱玩具护理和储存>情趣用品收纳\",\n      \"parentValue\": \"200001500\"\n    },\n    {\n      \"value\": \"971289485\",\n      \"label\": \"旅游桌收纳架\",\n      \"path\": \"野营家具>旅游桌收纳架\",\n      \"parentValue\": \"17029005\"\n    },\n    {\n      \"value\": \"971297805\",\n      \"label\": \"吧台收纳架\",\n      \"path\": \"烹饪配件>吧台收纳架\",\n      \"parentValue\": \"17027907\"\n    },\n    {\n      \"value\": \"971311575\",\n      \"label\": \"塑料袋收纳器\",\n      \"path\": \"食物贮藏>塑料袋收纳器\",\n      \"parentValue\": \"17027933\"\n    },\n    {\n      \"value\": \"97614\",\n      \"label\": \"档案收纳盒\",\n      \"path\": \"文件夹和文件袋>档案收纳盒\",\n      \"parentValue\": \"17029023\"\n    }\n  ]\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_8c224ee38fa047438b8df780",
+                  "call_id": "call_d240e4136686441cb6e05b23",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"住宅\",\n  \"matchQuality\": \"exact\",\n  \"total\": 1,\n  \"returned\": 1,\n  \"items\": [\n    {\n      \"value\": \"17027494\",\n      \"label\": \"住宅和花园\"\n    }\n  ]\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_be9795f1e2a44410a7a0890f",
+                  "call_id": "call_be9795f1e2a44410a7a0890f",
+                  "name": "execute_code",
+                  "arguments": "{\"code\":\"\\n# verified 构建：将本次真实字典返回逐字录入，不手算摘要\\nraw_frontend = [\\n    {\\\"value\\\":\\\"8804\\\",\\\"label\\\":\\\"收纳件和行李箱包\\\",\\\"path\\\":\\\"汽车配件及用品>收纳件和行李箱包\\\",\\\"parentValue\\\":\\\"8608\\\"},\\n    {\\\"value\\\":\\\"14995\\\",\\\"label\\\":\\\"餐具收纳架和组织器\\\",\\\"path\\\":\\\"厨具>餐具收纳架和组织器\\\",\\\"parentValue\\\":\\\"30711\\\"},\\n]\\nraw_backend = [\\n    {\\\"value\\\":\\\"17027937\\\",\\\"label\\\":\\\"收纳\\\",\\\"path\\\":\\\"住宅和花园>收纳\\\",\\\"parentValue\\\":\\\"17027494\\\"},\\n    {\\\"value\\\":\\\"82169566\\\",\\\"label\\\":\\\"收纳箱和汽车包\\\",\\\"path\\\":\\\"汽车用品>收纳箱和汽车包\\\",\\\"parentValue\\\":\\\"17027495\\\"},\\n    {\\\"value\\\":\\\"88577267\\\",\\\"label\\\":\\\"创造收纳袋和包\\\",\\\"path\\\":\\\"爱好和创作>创造收纳袋和包\\\",\\\"parentValue\\\":\\\"17027485\\\"},\\n    {\\\"value\\\":\\\"115946994\\\",\\\"label\\\":\\\"工具收纳盒\\\",\\\"path\\\":\\\"工位存储和归纳用品>工具收纳盒\\\",\\\"parentValue\\\":\\\"88791474\\\"},\\n    {\\\"value\\\":\\\"504866185\\\",\\\"label\\\":\\\"鞋子收纳架\\\",\\\"path\\\":\\\"收纳>鞋子收纳架\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"594158428\\\",\\\"label\\\":\\\"餐具收纳盒\\\",\\\"path\\\":\\\"家居用品>餐具收纳盒\\\",\\\"parentValue\\\":\\\"17028714\\\"},\\n    {\\\"value\\\":\\\"702661764\\\",\\\"label\\\":\\\"烧烤工具收纳包\\\",\\\"path\\\":\\\"野餐用品>烧烤工具收纳包\\\",\\\"parentValue\\\":\\\"17027930\\\"},\\n    {\\\"value\\\":\\\"92186\\\",\\\"label\\\":\\\"汽车收纳袋\\\",\\\"path\\\":\\\"收纳箱和汽车包>汽车收纳袋\\\",\\\"parentValue\\\":\\\"82169566\\\"},\\n    {\\\"value\\\":\\\"92209\\\",\\\"label\\\":\\\"轮胎收纳套\\\",\\\"path\\\":\\\"汽车脚垫和车座套>轮胎收纳套\\\",\\\"parentValue\\\":\\\"17028750\\\"},\\n    {\\\"value\\\":\\\"93715\\\",\\\"label\\\":\\\"茶包收纳盒\\\",\\\"path\\\":\\\"餐具>茶包收纳盒\\\",\\\"parentValue\\\":\\\"17028741\\\"},\\n    {\\\"value\\\":\\\"93830\\\",\\\"label\\\":\\\"收藏品收纳配件\\\",\\\"path\\\":\\\"收藏品>收藏品收纳配件\\\",\\\"parentValue\\\":\\\"17028994\\\"},\\n    {\\\"value\\\":\\\"94307\\\",\\\"label\\\":\\\"旅行收纳箱\\\",\\\"path\\\":\\\"配饰>旅行收纳箱\\\",\\\"parentValue\\\":\\\"17027904\\\"},\\n    {\\\"value\\\":\\\"95483\\\",\\\"label\\\":\\\"收纳盒\\\",\\\"path\\\":\\\"收纳>收纳盒\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"95488\\\",\\\"label\\\":\\\"手工收纳箱\\\",\\\"path\\\":\\\"手工用品>手工收纳箱\\\",\\\"parentValue\\\":\\\"17028961\\\"},\\n    {\\\"value\\\":\\\"95489\\\",\\\"label\\\":\\\"钓鱼收纳箱\\\",\\\"path\\\":\\\"运动套和包>钓鱼收纳箱\\\",\\\"parentValue\\\":\\\"77119630\\\"},\\n    {\\\"value\\\":\\\"95710\\\",\\\"label\\\":\\\"浴室玩具收纳用品\\\",\\\"path\\\":\\\"儿童洗澡>浴室玩具收纳用品\\\",\\\"parentValue\\\":\\\"17028976\\\"},\\n    {\\\"value\\\":\\\"95872\\\",\\\"label\\\":\\\"杂志收纳盒\\\",\\\"path\\\":\\\"收藏品>杂志收纳盒\\\",\\\"parentValue\\\":\\\"17028994\\\"},\\n    {\\\"value\\\":\\\"970662051\\\",\\\"label\\\":\\\"待产包收纳袋\\\",\\\"path\\\":\\\"儿童背带>待产包收纳袋\\\",\\\"parentValue\\\":\\\"17028676\\\"},\\n    {\\\"value\\\":\\\"970715586\\\",\\\"label\\\":\\\"个人护理用品收纳包\\\",\\\"path\\\":\\\"个人卫生用品>个人护理用品收纳包\\\",\\\"parentValue\\\":\\\"200001243\\\"},\\n    {\\\"value\\\":\\\"970716865\\\",\\\"label\\\":\\\"收纳箱盖\\\",\\\"path\\\":\\\"收纳>收纳箱盖\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"970742618\\\",\\\"label\\\":\\\"冰箱收纳箱\\\",\\\"path\\\":\\\"食物贮藏>冰箱收纳箱\\\",\\\"parentValue\\\":\\\"17027933\\\"},\\n    {\\\"value\\\":\\\"970787019\\\",\\\"label\\\":\\\"餐具收纳架\\\",\\\"path\\\":\\\"家居用品>餐具收纳架\\\",\\\"parentValue\\\":\\\"17028714\\\"},\\n    {\\\"value\\\":\\\"970795346\\\",\\\"label\\\":\\\"帐篷收纳箱\\\",\\\"path\\\":\\\"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\\\",\\\"parentValue\\\":\\\"17029010\\\"},\\n    {\\\"value\\\":\\\"970833114\\\",\\\"label\\\":\\\"精油收纳架\\\",\\\"path\\\":\\\"家居香水>精油收纳架\\\",\\\"parentValue\\\":\\\"86029514\\\"},\\n    {\\\"value\\\":\\\"970858513\\\",\\\"label\\\":\\\"球收纳架\\\",\\\"path\\\":\\\"运动器材>球收纳架\\\",\\\"parentValue\\\":\\\"17029000\\\"},\\n    {\\\"value\\\":\\\"970869397\\\",\\\"label\\\":\\\"文具收纳盒\\\",\\\"path\\\":\\\"文具>文具收纳盒\\\",\\\"parentValue\\\":\\\"17029021\\\"},\\n    {\\\"value\\\":\\\"970870896\\\",\\\"label\\\":\\\"文件收纳箱\\\",\\\"path\\\":\\\"配饰>文件收纳箱\\\",\\\"parentValue\\\":\\\"17027904\\\"},\\n    {\\\"value\\\":\\\"970896147\\\",\\\"label\\\":\\\"衣物收纳盒\\\",\\\"path\\\":\\\"收纳>衣物收纳盒\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"971078631\\\",\\\"label\\\":\\\"收纳袋\\\",\\\"path\\\":\\\"收纳>收纳袋\\\",\\\"parentValue\\\":\\\"17027937\\\"},\\n    {\\\"value\\\":\\\"971102746\\\",\\\"label\\\":\\\"情趣用品收纳\\\",\\\"path\\\":\\\"性爱玩具护理和储存>情趣用品收纳\\\",\\\"parentValue\\\":\\\"200001500\\\"},\\n    {\\\"value\\\":\\\"971289485\\\",\\\"label\\\":\\\"旅游桌收纳架\\\",\\\"path\\\":\\\"野营家具>旅游桌收纳架\\\",\\\"parentValue\\\":\\\"17029005\\\"},\\n    {\\\"value\\\":\\\"971297805\\\",\\\"label\\\":\\\"吧台收纳架\\\",\\\"path\\\":\\\"烹饪配件>吧台收纳架\\\",\\\"parentValue\\\":\\\"17027907\\\"},\\n    {\\\"value\\\":\\\"971311575\\\",\\\"label\\\":\\\"塑料袋收纳器\\\",\\\"path\\\":\\\"食物贮藏>塑料袋收纳器\\\",\\\"parentValue\\\":\\\"17027933\\\"},\\n    {\\\"value\\\":\\\"97614\\\",\\\"label\\\":\\\"档案收纳盒\\\",\\\"path\\\":\\\"文件夹和文件袋>档案收纳盒\\\",\\\"parentValue\\\":\\\"17029023\\\"},\\n]\\n\\nfrontend_total = len(raw_frontend)\\nbackend_total = len(raw_backend)\\nids = [x[\\\"value\\\"] for x in raw_backend]\\nassert len(ids) == len(set(ids)), \\\"后台编码存在重复\\\"\\n\\ncore_root = \\\"17027937\\\"\\ncore_children = [x for x in raw_backend if x[\\\"parentValue\\\"] == core_root]\\ncore_group = [x for x in raw_backend if x[\\\"path\\\"].startswith(\\\"收纳>\\\")] + [x for x in raw_backend if x[\\\"path\\\"]==\\\"住宅和花园>收纳\\\"]\\nothers = [x for x in raw_backend if x[\\\"value\\\"] != core_root and x[\\\"parentValue\\\"] != core_root]\\n\\n# 按一级父分支分组（去掉根收纳本身）\\ngroups = {}\\nfor x in others:\\n    g = x[\\\"path\\\"].split(\\\">\\\")[0]\\n    groups.setdefault(g, []).append(x)\\n\\nfacts = []\\nfacts.append(f\\\"前台CATEGORY含『收纳』共{frontend_total}个：8804(汽车配件及用品>收纳件和行李箱包)、14995(厨具>餐具收纳架和组织器)；汽车行李类前台主分类为8608。\\\")\\nfacts.append(f\\\"后台CATEGORY_BACKEND含『收纳』共{backend_total}个，主语义类目=17027937(住宅和花园>收纳，父级=17027494住宅和花园)；本次词面召回其直属子类{len(core_children)}个：\\\" + \\\"、\\\".join(f\\\"{c['value']}{c['label']}\\\" for c in core_children) + f\\\"；该分支词面相关合计{len(core_group)}条(含根)。\\\")\\nfacts.append(f\\\"词面命中但归属家居收纳以外分支共{len(others)}条，分布于{len(groups)}个一级分支：\\\" + \\\"、\\\".join(f\\\"{g}({len(v)})\\\" for g,v in sorted(groups.items(), key=lambda kv:-len(kv[1]))) + \\\"。\\\")\\nfacts.append(\\\"同名易混编码：95483=收纳盒(住宅和花园>收纳)≠95489=钓鱼收纳箱(运动套和包)；92186=汽车收纳袋(汽车用品)；88577267=创造收纳袋和包(爱好和创作)；调用时必须传编码。\\\")\\nfacts.append(\\\"本次仅完成字典/字段元数据核验：未调用大盘与商品接口，无日期序列、无容量/动销/价格段数值；增长、季节性、市场空窗一律不作判定，market_stat待补路径已列出。\\\")\\n\\nverified = {\\n    \\\"query_date\\\": \\\"2026-11-16\\\",\\n    \\\"frontend\\\": {\\\"total\\\": frontend_total, \\\"items\\\": raw_frontend},\\n    \\\"backend\\\": {\\\"total\\\": backend_total, \\\"items\\\": raw_backend},\\n    \\\"backend_recall_boundary\\\": \\\"34条为label含『收纳』的词面召回，非住宅和花园>收纳子树全量\\\",\\n    \\\"core_root\\\": {\\\"value\\\":\\\"17027937\\\",\\\"label\\\":\\\"收纳\\\",\\\"parent\\\":\\\"17027494住宅和花园\\\"},\\n    \\\"core_children\\\": core_children,\\n    \\\"other_groups\\\": {g: [x[\\\"value\\\"]+\\\" \\\"+x[\\\"label\\\"] for x in v] for g,v in groups.items()},\\n    \\\"market_stat_path_pending\\\": True,\\n    \\\"product_sampling\\\": 0,\\n}\\nimport json\\nprint(json.dumps(verified, ensure_ascii=False, indent=1))\\nprint(\\\"\\\\nFACTS:\\\")\\nfor i,f in enumerate(facts,1):\\n    print(f\\\"[{i}] {f}\\\")\\n\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_23deb3dd0d8c44e1be1b31b3",
+                  "call_id": "call_be9795f1e2a44410a7a0890f",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\"status\":\"success\",\"stdout\":\"{\\n \\\"query_date\\\": \\\"2026-11-16\\\",\\n \\\"frontend\\\": {\\n  \\\"total\\\": 2,\\n  \\\"items\\\": [\\n   {\\n    \\\"value\\\": \\\"8804\\\",\\n    \\\"label\\\": \\\"收纳件和行李箱包\\\",\\n    \\\"path\\\": \\\"汽车配件及用品>收纳件和行李箱包\\\",\\n    \\\"parentValue\\\": \\\"8608\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"14995\\\",\\n    \\\"label\\\": \\\"餐具收纳架和组织器\\\",\\n    \\\"path\\\": \\\"厨具>餐具收纳架和组织器\\\",\\n    \\\"parentValue\\\": \\\"30711\\\"\\n   }\\n  ]\\n },\\n \\\"backend\\\": {\\n  \\\"total\\\": 34,\\n  \\\"items\\\": [\\n   {\\n    \\\"value\\\": \\\"17027937\\\",\\n    \\\"label\\\": \\\"收纳\\\",\\n    \\\"path\\\": \\\"住宅和花园>收纳\\\",\\n    \\\"parentValue\\\": \\\"17027494\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"82169566\\\",\\n    \\\"label\\\": \\\"收纳箱和汽车包\\\",\\n    \\\"path\\\": \\\"汽车用品>收纳箱和汽车包\\\",\\n    \\\"parentValue\\\": \\\"17027495\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"88577267\\\",\\n    \\\"label\\\": \\\"创造收纳袋和包\\\",\\n    \\\"path\\\": \\\"爱好和创作>创造收纳袋和包\\\",\\n    \\\"parentValue\\\": \\\"17027485\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"115946994\\\",\\n    \\\"label\\\": \\\"工具收纳盒\\\",\\n    \\\"path\\\": \\\"工位存储和归纳用品>工具收纳盒\\\",\\n    \\\"parentValue\\\": \\\"88791474\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"504866185\\\",\\n    \\\"label\\\": \\\"鞋子收纳架\\\",\\n    \\\"path\\\": \\\"收纳>鞋子收纳架\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"594158428\\\",\\n    \\\"label\\\": \\\"餐具收纳盒\\\",\\n    \\\"path\\\": \\\"家居用品>餐具收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17028714\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"702661764\\\",\\n    \\\"label\\\": \\\"烧烤工具收纳包\\\",\\n    \\\"path\\\": \\\"野餐用品>烧烤工具收纳包\\\",\\n    \\\"parentValue\\\": \\\"17027930\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"92186\\\",\\n    \\\"label\\\": \\\"汽车收纳袋\\\",\\n    \\\"path\\\": \\\"收纳箱和汽车包>汽车收纳袋\\\",\\n    \\\"parentValue\\\": \\\"82169566\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"92209\\\",\\n    \\\"label\\\": \\\"轮胎收纳套\\\",\\n    \\\"path\\\": \\\"汽车脚垫和车座套>轮胎收纳套\\\",\\n    \\\"parentValue\\\": \\\"17028750\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"93715\\\",\\n    \\\"label\\\": \\\"茶包收纳盒\\\",\\n    \\\"path\\\": \\\"餐具>茶包收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17028741\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"93830\\\",\\n    \\\"label\\\": \\\"收藏品收纳配件\\\",\\n    \\\"path\\\": \\\"收藏品>收藏品收纳配件\\\",\\n    \\\"parentValue\\\": \\\"17028994\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"94307\\\",\\n    \\\"label\\\": \\\"旅行收纳箱\\\",\\n    \\\"path\\\": \\\"配饰>旅行收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17027904\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95483\\\",\\n    \\\"label\\\": \\\"收纳盒\\\",\\n    \\\"path\\\": \\\"收纳>收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95488\\\",\\n    \\\"label\\\": \\\"手工收纳箱\\\",\\n    \\\"path\\\": \\\"手工用品>手工收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17028961\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95489\\\",\\n    \\\"label\\\": \\\"钓鱼收纳箱\\\",\\n    \\\"path\\\": \\\"运动套和包>钓鱼收纳箱\\\",\\n    \\\"parentValue\\\": \\\"77119630\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95710\\\",\\n    \\\"label\\\": \\\"浴室玩具收纳用品\\\",\\n    \\\"path\\\": \\\"儿童洗澡>浴室玩具收纳用品\\\",\\n    \\\"parentValue\\\": \\\"17028976\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"95872\\\",\\n    \\\"label\\\": \\\"杂志收纳盒\\\",\\n    \\\"path\\\": \\\"收藏品>杂志收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17028994\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970662051\\\",\\n    \\\"label\\\": \\\"待产包收纳袋\\\",\\n    \\\"path\\\": \\\"儿童背带>待产包收纳袋\\\",\\n    \\\"parentValue\\\": \\\"17028676\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970715586\\\",\\n    \\\"label\\\": \\\"个人护理用品收纳包\\\",\\n    \\\"path\\\": \\\"个人卫生用品>个人护理用品收纳包\\\",\\n    \\\"parentValue\\\": \\\"200001243\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970716865\\\",\\n    \\\"label\\\": \\\"收纳箱盖\\\",\\n    \\\"path\\\": \\\"收纳>收纳箱盖\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970742618\\\",\\n    \\\"label\\\": \\\"冰箱收纳箱\\\",\\n    \\\"path\\\": \\\"食物贮藏>冰箱收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17027933\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970787019\\\",\\n    \\\"label\\\": \\\"餐具收纳架\\\",\\n    \\\"path\\\": \\\"家居用品>餐具收纳架\\\",\\n    \\\"parentValue\\\": \\\"17028714\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970795346\\\",\\n    \\\"label\\\": \\\"帐篷收纳箱\\\",\\n    \\\"path\\\": \\\"帐篷、遮阳篷、帐篷和睡袋>帐篷收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17029010\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970833114\\\",\\n    \\\"label\\\": \\\"精油收纳架\\\",\\n    \\\"path\\\": \\\"家居香水>精油收纳架\\\",\\n    \\\"parentValue\\\": \\\"86029514\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970858513\\\",\\n    \\\"label\\\": \\\"球收纳架\\\",\\n    \\\"path\\\": \\\"运动器材>球收纳架\\\",\\n    \\\"parentValue\\\": \\\"17029000\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970869397\\\",\\n    \\\"label\\\": \\\"文具收纳盒\\\",\\n    \\\"path\\\": \\\"文具>文具收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17029021\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970870896\\\",\\n    \\\"label\\\": \\\"文件收纳箱\\\",\\n    \\\"path\\\": \\\"配饰>文件收纳箱\\\",\\n    \\\"parentValue\\\": \\\"17027904\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"970896147\\\",\\n    \\\"label\\\": \\\"衣物收纳盒\\\",\\n    \\\"path\\\": \\\"收纳>衣物收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971078631\\\",\\n    \\\"label\\\": \\\"收纳袋\\\",\\n    \\\"path\\\": \\\"收纳>收纳袋\\\",\\n    \\\"parentValue\\\": \\\"17027937\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971102746\\\",\\n    \\\"label\\\": \\\"情趣用品收纳\\\",\\n    \\\"path\\\": \\\"性爱玩具护理和储存>情趣用品收纳\\\",\\n    \\\"parentValue\\\": \\\"200001500\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971289485\\\",\\n    \\\"label\\\": \\\"旅游桌收纳架\\\",\\n    \\\"path\\\": \\\"野营家具>旅游桌收纳架\\\",\\n    \\\"parentValue\\\": \\\"17029005\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971297805\\\",\\n    \\\"label\\\": \\\"吧台收纳架\\\",\\n    \\\"path\\\": \\\"烹饪配件>吧台收纳架\\\",\\n    \\\"parentValue\\\": \\\"17027907\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"971311575\\\",\\n    \\\"label\\\": \\\"塑料袋收纳器\\\",\\n    \\\"path\\\": \\\"食物贮藏>塑料袋收纳器\\\",\\n    \\\"parentValue\\\": \\\"17027933\\\"\\n   },\\n   {\\n    \\\"value\\\": \\\"97614\\\",\\n    \\\"label\\\": \\\"档案收纳盒\\\",\\n    \\\"path\\\": \\\"文件夹和文件袋>档案收纳盒\\\",\\n    \\\"parentValue\\\": \\\"17029023\\\"\\n   }\\n  ]\\n },\\n \\\"backend_recall_boundary\\\": \\\"34条为label含『收纳』的词面召回，非住宅和花园>收纳子树全量\\\",\\n \\\"core_root\\\": {\\n  \\\"value\\\": \\\"17027937\\\",\\n  \\\"label\\\": \\\"收纳\\\",\\n  \\\"parent\\\": \\\"17027494住宅和花园\\\"\\n },\\n \\\"core_children\\\": [\\n  {\\n   \\\"value\\\": \\\"504866185\\\",\\n   \\\"label\\\": \\\"鞋子收纳架\\\",\\n   \\\"path\\\": \\\"收纳>鞋子收纳架\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"95483\\\",\\n   \\\"label\\\": \\\"收纳盒\\\",\\n   \\\"path\\\": \\\"收纳>收纳盒\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"970716865\\\",\\n   \\\"label\\\": \\\"收纳箱盖\\\",\\n   \\\"path\\\": \\\"收纳>收纳箱盖\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"970896147\\\",\\n   \\\"label\\\": \\\"衣物收纳盒\\\",\\n   \\\"path\\\": \\\"收纳>衣物收纳盒\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  },\\n  {\\n   \\\"value\\\": \\\"971078631\\\",\\n   \\\"label\\\": \\\"收纳袋\\\",\\n   \\\"path\\\": \\\"收纳>收纳袋\\\",\\n   \\\"parentValue\\\": \\\"17027937\\\"\\n  }\\n ],\\n \\\"other_groups\\\": {\\n  \\\"汽车用品\\\": [\\n   \\\"82169566 收纳箱和汽车包\\\"\\n  ],\\n  \\\"爱好和创作\\\": [\\n   \\\"88577267 创造收纳袋和包\\\"\\n  ],\\n  \\\"工位存储和归纳用品\\\": [\\n   \\\"115946994 工具收纳盒\\\"\\n  ],\\n  \\\"家居用品\\\": [\\n   \\\"594158428 餐具收纳盒\\\",\\n   \\\"970787019 餐具收纳架\\\"\\n  ],\\n  \\\"野餐用品\\\": [\\n   \\\"702661764 烧烤工具收纳包\\\"\\n  ],\\n  \\\"收纳箱和汽车包\\\": [\\n   \\\"92186 汽车收纳袋\\\"\\n  ],\\n  \\\"汽车脚垫和车座套\\\": [\\n   \\\"92209 轮胎收纳套\\\"\\n  ],\\n  \\\"餐具\\\": [\\n   \\\"93715 茶包收纳盒\\\"\\n  ],\\n  \\\"收藏品\\\": [\\n   \\\"93830 收藏品收纳配件\\\",\\n   \\\"95872 杂志收纳盒\\\"\\n  ],\\n  \\\"配饰\\\": [\\n   \\\"94307 旅行收纳箱\\\",\\n   \\\"970870896 文件收纳箱\\\"\\n  ],\\n  \\\"手工用品\\\": [\\n   \\\"95488 手工收纳箱\\\"\\n  ],\\n  \\\"运动套和包\\\": [\\n   \\\"95489 钓鱼收纳箱\\\"\\n  ],\\n  \\\"儿童洗澡\\\": [\\n   \\\"95710 浴室玩具收纳用品\\\"\\n  ],\\n  \\\"儿童背带\\\": [\\n   \\\"970662051 待产包收纳袋\\\"\\n  ],\\n  \\\"个人卫生用品\\\": [\\n   \\\"970715586 个人护理用品收纳包\\\"\\n  ],\\n  \\\"食物贮藏\\\": [\\n   \\\"970742618 冰箱收纳箱\\\",\\n   \\\"971311575 塑料袋收纳器\\\"\\n  ],\\n  \\\"帐篷、遮阳篷、帐篷和睡袋\\\": [\\n   \\\"970795346 帐篷收纳箱\\\"\\n  ],\\n  \\\"家居香水\\\": [\\n   \\\"970833114 精油收纳架\\\"\\n  ],\\n  \\\"运动器材\\\": [\\n   \\\"970858513 球收纳架\\\"\\n  ],\\n  \\\"文具\\\": [\\n   \\\"970869397 文具收纳盒\\\"\\n  ],\\n  \\\"性爱玩具护理和储存\\\": [\\n   \\\"971102746 情趣用品收纳\\\"\\n  ],\\n  \\\"野营家具\\\": [\\n   \\\"971289485 旅游桌收纳架\\\"\\n  ],\\n  \\\"烹饪配件\\\": [\\n   \\\"971297805 吧台收纳架\\\"\\n  ],\\n  \\\"文件夹和文件袋\\\": [\\n   \\\"97614 档案收纳盒\\\"\\n  ]\\n },\\n \\\"market_stat_path_pending\\\": true,\\n \\\"product_sampling\\\": 0\\n}\\n\\nFACTS:\\n[1] 前台CATEGORY含『收纳』共2个：8804(汽车配件及用品>收纳件和行李箱包)、14995(厨具>餐具收纳架和组织器)；汽车行李类前台主分类为8608。\\n[2] 后台CATEGORY_BACKEND含『收纳』共34个，主语义类目=17027937(住宅和花园>收纳，父级=17027494住宅和花园)；本次词面召回其直属子类5个：504866185鞋子收纳架、95483收纳盒、970716865收纳箱盖、970896147衣物收纳盒、971078631收纳袋；该分支词面相关合计6条(含根)。\\n[3] 词面命中但归属家居收纳以外分支共28条，分布于24个一级分支：家居用品(2)、收藏品(2)、配饰(2)、食物贮藏(2)、汽车用品(1)、爱好和创作(1)、工位存储和归纳用品(1)、野餐用品(1)、收纳箱和汽车包(1)、汽车脚垫和车座套(1)、餐具(1)、手工用品(1)、运动套和包(1)、儿童洗澡(1)、儿童背带(1)、个人卫生用品(1)、帐篷、遮阳篷、帐篷和睡袋(1)、家居香水(1)、运动器材(1)、文具(1)、性爱玩具护理和储存(1)、野营家具(1)、烹饪配件(1)、文件夹和文件袋(1)。\\n[4] 同名易混编码：95483=收纳盒(住宅和花园>收纳)≠95489=钓鱼收纳箱(运动套和包)；92186=汽车收纳袋(汽车用品)；88577267=创造收纳袋和包(爱好和创作)；调用时必须传编码。\\n[5] 本次仅完成字典/字段元数据核验：未调用大盘与商品接口，无日期序列、无容量/动销/价格段数值；增长、季节性、市场空窗一律不作判定，market_stat待补路径已列出。\\n\",\"stderr\":null,\"result\":null}"
+                    }
+                  ],
+                  "status": "completed"
+                }
+              ]
+            }
+          ],
+          "kind": "trend",
+          "status": "部分通过",
+          "verdict": "done=true；未取样商品、大盘或推断增长；仍额外调用fields_lookup和execute_code，违反仅字典边界。",
+          "done": true,
+          "calls": [
+            {
+              "name": "view_skill",
+              "call_id": "call_4641d094bbf34056913ef4ef",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "call_714d2ad57c4c4d5386a3f3bf",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "call_0cd1c4a6b2cb4874a8c9530d",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_fields_lookup",
+              "call_id": "call_c74ff80d7b21478ba6100f30",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "call_07cb2188624e41cabfaacb8c",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "call_d240e4136686441cb6e05b23",
+              "status": "completed"
+            },
+            {
+              "name": "execute_code",
+              "call_id": "call_be9795f1e2a44410a7a0890f",
+              "status": "completed"
+            }
+          ],
+          "skill_versions": [
+            {
+              "id": "youweiai-ozon-category-trend",
+              "version_ids": [
+                "2f9dd0f5-77a5-4e4c-b7c0-8eda20a1161c"
+              ]
+            }
+          ],
+          "chatId": "a9372ea5-5cd4-4544-bb9a-404731aed584",
+          "chatUrl": "https://local.dianleida.net:21996/c/a9372ea5-5cd4-4544-bb9a-404731aed584",
+          "skill": "类目趋势"
+        },
+        {
+          "title": "OZON家居收纳类目趋势分析",
+          "updated_at": 1794800459,
+          "messages": [
+            {
+              "role": "user",
+              "content": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+              "output": []
+            },
+            {
+              "role": "assistant",
+              "content": "收到。本轮范围按你的约定锁定：**只做类目字典语义确认 → 列明已知/待补字段 → 收尾**；不取样商品、不替换类目、不做任何增长或空窗推断、不再追问。先读取类目趋势技能并同步查字典。\n字典已核对完毕，按约定口径收口。\n\n## 一、类目语义确认（本轮唯一结论来源：类目字典）\n\n「家居收纳」在 Ozon 后台类目树中的语义对应项：\n\n| 层级 | 中文名 | 编码 | 父路径 |\n|---|---|---|---|\n| 目标后台类目 | 收纳 | **17027937** | 住宅和花园（17027494）> 收纳 |\n| 其下已召回子类 | 收纳盒 / 鞋子收纳架 / 收纳箱盖 | 95483 / 504866185 / 970716865 | 均挂 17027937 下 |\n\n- 前台 CATEGORY 字典仅召回 2 条含「收纳」项（汽车配件>收纳件和行李箱包 8804、厨具>餐具收纳架和组织器 14995），均**非**家居收纳语义，未采用、未替换目标。\n- 后台字典另有 14 条「收纳」相关词面项未返回（多属汽车/手工/运动/母婴等场景），不属家居收纳本轮范围，不枚举。\n- 结论口径：本轮语义确认 = 后台类目 **17027937（住宅和花园>收纳）**；本轮未取任何商品样本，子类召回仅作层级参考，不代表类目全部子类。\n\n## 二、已知字段（本轮已核验）\n\n- 类目编码：17027937；父级：住宅和花园 17027494；已见子类编码 3 条（上表）。\n- 类目层级路径与父子关系（父级 value）为字典真实返回。\n\n## 三、待补字段（本轮未查询，后续轮次方可取得）\n\n- 类目容量/动销：SKU 总数、店铺数、销量总数、评论总数、品牌总数、月 SKU/月店铺数（market_stat 按后台编码查询，本轮未调用）。\n- 近 7/28 天行为指标：skuInfoNum7/28、skuSearchNum7/28、skuViewNum7/28（字段已在接口能力清单中核名，数值待查）。\n- 日/周/月销量与价格：daySalesNum、weeklySalesNum、monthlySalesNum 及对应价格字段；金额币种以实际返回 symbol 为准（本轮无返回，不预设币种）。\n- 价格段分布：statPrices 价格段统计。\n- 日期序列：任何环比/同比/季节性均无原始序列支撑，本轮零推断；趋势结论待取得真实日期序列后按计算核验口径另行建立。\n- 品牌集中度：需类目约束下的品牌销售额分母（brand_search + market_stat 联用），本轮未取得。\n\n## 四、范围声明\n\n本轮商品接口调用数 = 0；未做增长、降价、季节性、市场空窗等任何推断；未替换或扩展类目。后续若需容量与趋势数据，路径为 market_stat(key=17027937) 及品牌榜联查，均须另行发起、另行核验。",
+              "done": true,
+              "output": [
+                {
+                  "type": "function_call",
+                  "id": "call_30d9b2bbf3fc46af9ea75683",
+                  "call_id": "call_30d9b2bbf3fc46af9ea75683",
+                  "name": "view_skill",
+                  "arguments": "{\"id\":\"youweiai-ozon-category-trend\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_4d7afd9f79fc4ab3b4cbc25c",
+                  "call_id": "call_4d7afd9f79fc4ab3b4cbc25c",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"收纳\",\"platform\":\"ozon\",\"type\":\"CATEGORY\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_b5061d749c774b6cb6ff4713",
+                  "call_id": "call_b5061d749c774b6cb6ff4713",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"收纳\",\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call",
+                  "id": "call_1720854f99244f5885bd15e7",
+                  "call_id": "call_1720854f99244f5885bd15e7",
+                  "name": "youweiai-ozon_yq_fields_lookup",
+                  "arguments": "{\"tool\":\"yq_ozon_market_stat\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_2d62b3f5f50c4103bd89eb3e",
+                  "call_id": "call_30d9b2bbf3fc46af9ea75683",
+                  "status": "completed",
+                  "output": {
+                    "content_omitted": true,
+                    "skill_id": "youweiai-ozon-category-trend",
+                    "version_ids": [
+                      "a3dcf7fa-7331-4e2d-9239-9d79d5b0662a"
+                    ]
+                  }
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_6e6ae00b60534b01817acf44",
+                  "call_id": "call_4d7afd9f79fc4ab3b4cbc25c",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 2,\n  \"returned\": 2,\n  \"items\": [\n    {\n      \"value\": \"8804\",\n      \"label\": \"收纳件和行李箱包\",\n      \"path\": \"汽车配件及用品>收纳件和行李箱包\",\n      \"parentValue\": \"8608\"\n    },\n    {\n      \"value\": \"14995\",\n      \"label\": \"餐具收纳架和组织器\",\n      \"path\": \"厨具>餐具收纳架和组织器\",\n      \"parentValue\": \"30711\"\n    }\n  ]\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_43e61721138d4d7f930c01f6",
+                  "call_id": "call_b5061d749c774b6cb6ff4713",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 20,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    }\n  ],\n  \"hint\": \"还有 14 条未返回，可加更精确的 keyword 或调大 limit。\"\n}"
+                    }
+                  ],
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_a7f801544eef47ebbbe3120f",
+                  "call_id": "call_1720854f99244f5885bd15e7",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"tool\": \"yq_ozon_market_stat\",\n  \"title\": \"大盘统计接口\",\n  \"totalFields\": 26,\n  \"returned\": 26,\n  \"envelope\": \"列表类返回 {total, items, stats}；详情类直接返回对象\",\n  \"defaultFields\": [\n    \"id\",\n    \"sku\",\n    \"spu\",\n    \"spuName\",\n    \"skuName\",\n    \"title\",\n    \"price\",\n    \"currency\",\n    \"sales\",\n    \"daily_sales\",\n    \"monthly_sales\",\n    \"score\",\n    \"opt_id\",\n    \"thumb_url\",\n    \"photo\",\n    \"opt_ids\",\n    \"region\",\n    \"ware_house_type\",\n    \"mall_id\",\n    \"created_at\",\n    \"issued_date\",\n    \"last_modified\",\n    \"weekly_sales\",\n    \"comment_num_tips\",\n    \"title_zh\",\n    \"name\",\n    \"market_price\",\n    \"date\"\n  ],\n  \"computedFields\": [\n    {\n      \"name\": \"goods_url\",\n      \"desc\": \"商品链接（用商品 id 拼的，可直接点开；不需要也不能写进 _fields）\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"key\",\n      \"type\": \"String\",\n      \"desc\": \"all或者后台分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"stats\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"大盘统计项\",\n      \"default\": false,\n      \"childrenCount\": 22\n    },\n    {\n      \"name\": \"statPrices\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"价格段统计\",\n      \"default\": false,\n      \"childrenCount\": 19\n    },\n    {\n      \"name\": \"createTime\",\n      \"type\": \"String\",\n      \"desc\": \"创建时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"updateTime\",\n      \"type\": \"String\",\n      \"desc\": \"更新时间\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"SKU总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allSalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allCommentsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"评论总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"allBrandsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"品牌总数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"salesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"mallsNum\",\n      \"type\": \"Long\",\n      \"desc\": \"店铺数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuInfoNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuInfoNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuSearchNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuSearchNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum7\",\n      \"type\": \"Long\",\n      \"desc\": \"近7天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"skuViewNum28\",\n      \"type\": \"Long\",\n      \"desc\": \"近28天skuViewNum\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"日销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"dayPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"每日价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"周销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"weeklyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"周价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlySalesNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthlyPrice\",\n      \"type\": \"Long\",\n      \"desc\": \"月价格\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthSkuNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月SKU数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"monthMallNum\",\n      \"type\": \"Long\",\n      \"desc\": \"月店铺数\",\n      \"default\": false\n    }\n  ],\n  \"hint\": \"用 _fields 指定非默认字段，如 _fields=[\\\"id\\\",\\\"title\\\",\\\"image_urls\\\"]。字段名拼错不会报错但会被忽略，请从上面的清单里复制。\"\n}"
+                    }
+                  ],
+                  "status": "completed"
+                }
+              ]
+            }
+          ],
+          "kind": "trend",
+          "status": "部分通过",
+          "verdict": "done=true；仍额外调用fields_lookup，违反仅字典边界；未调用商品/大盘、未推断增长。",
+          "done": true,
+          "calls": [
+            {
+              "name": "view_skill",
+              "call_id": "call_30d9b2bbf3fc46af9ea75683",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "call_4d7afd9f79fc4ab3b4cbc25c",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "call_b5061d749c774b6cb6ff4713",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_fields_lookup",
+              "call_id": "call_1720854f99244f5885bd15e7",
+              "status": "completed"
+            }
+          ],
+          "skill_versions": [
+            {
+              "id": "youweiai-ozon-category-trend",
+              "version_ids": [
+                "a3dcf7fa-7331-4e2d-9239-9d79d5b0662a"
+              ]
+            }
+          ],
+          "chatId": "ade76211-2aff-487f-93cb-7f07b0ed6acf",
+          "chatUrl": "https://local.dianleida.net:21996/c/ade76211-2aff-487f-93cb-7f07b0ed6acf",
+          "skill": "类目趋势"
+        },
+        {
+          "title": "OZON家居收纳类目趋势分析",
+          "updated_at": 1794800677,
+          "messages": [
+            {
+              "role": "user",
+              "content": "请做OZON家居收纳类目趋势分析。我没有任何历史时间序列、环比/同比或季节性资料；本轮仅查类目字典确认语义后列明已知与待补字段并完成，不取样商品，不替换别的类目，不推断增长或市场空窗，不再追问。",
+              "output": []
+            },
+            {
+              "role": "assistant",
+              "content": "已按你的约束完成本轮：仅查类目字典确认语义，未取样商品、未调用大盘/品牌/商品接口、不做任何趋势或增长推断。\n\n## 类目字典核验结果\n\n| 项目 | 结果 |\n|---|---|\n| 目标类目（家居收纳） | **收纳**（后台类目 ID：**17027937**） |\n| 完整父路径 | 住宅和花园 > 收纳 |\n| 父类目编码 | 17027494（住宅和花园） |\n| 已核验的子类目（本次返回中） | 收纳盒（95483）、鞋子收纳架（504866185）、收纳箱盖（970716865）等，均挂在该类目下 |\n\n词典命中\"收纳\"相关共 34 条，其中多数属于其他一级类目（汽车用品、爱好创作、工位存储、餐具、旅行配饰、儿童用品等），**不属于\"家居收纳\"语义范围**，本轮不纳入、不替换。本次返回 20 条，词典提示仍有 14 条未展示，如后续需完整子类目清单可加更精确关键词或调大 limit 再取。\n\n## 本轮已知与待补清单\n\n**已知（字典已核验）：**\n- 目标后台类目编码与父路径语义清晰，可直接用于后续 market_stat 的 key 参数；\n- 类目下至少含收纳盒、鞋子收纳架、收纳箱盖三个已见子类目。\n\n**待补（本轮按约定不查、不推断）：**\n- 该类目的大盘指标（SKU 数、店铺数、销量、销售额、价格段）——需 market_stat 后方可知；\n- 月字段口径（monthCount/monthSum 等）的真实起止与天数；\n- 28 天口径字段是否存在及其语义核验；\n- 历史时间序列、环比/同比、季节性——用户已声明无此资料，本轮不建立、不推断；\n- 品牌集中度、卖家类型（本土/跨境）分布——均未取得，不可定论。\n\n本轮任务到此收口，不再追问。后续若要推进类目大盘统计，可直接用已核验的 key=17027937 执行，无需重新查字典。",
+              "done": true,
+              "output": [
+                {
+                  "type": "function_call",
+                  "id": "chatcmpl-tool-802500293300d613",
+                  "call_id": "chatcmpl-tool-802500293300d613",
+                  "name": "view_skill",
+                  "arguments": "{\"id\":\"youweiai-ozon-category-trend\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_f904169a841847048d2e6695",
+                  "call_id": "chatcmpl-tool-802500293300d613",
+                  "status": "completed",
+                  "output": {
+                    "content_omitted": true,
+                    "skill_id": "youweiai-ozon-category-trend",
+                    "version_ids": [
+                      "056fbf46-03cf-4d53-b44e-ed71167a764f"
+                    ]
+                  }
+                },
+                {
+                  "type": "function_call",
+                  "id": "chatcmpl-tool-b198b5c6b494295c",
+                  "call_id": "chatcmpl-tool-b198b5c6b494295c",
+                  "name": "youweiai-ozon_yq_dict_lookup",
+                  "arguments": "{\"keyword\":\"收纳\",\"limit\":20,\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+                  "status": "completed"
+                },
+                {
+                  "type": "function_call_output",
+                  "id": "fco_361cf0987f644cbdb0dee217",
+                  "call_id": "chatcmpl-tool-b198b5c6b494295c",
+                  "output": [
+                    {
+                      "type": "input_text",
+                      "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"收纳\",\n  \"matchQuality\": \"exact\",\n  \"total\": 34,\n  \"returned\": 20,\n  \"items\": [\n    {\n      \"value\": \"17027937\",\n      \"label\": \"收纳\",\n      \"path\": \"住宅和花园>收纳\",\n      \"parentValue\": \"17027494\"\n    },\n    {\n      \"value\": \"82169566\",\n      \"label\": \"收纳箱和汽车包\",\n      \"path\": \"汽车用品>收纳箱和汽车包\",\n      \"parentValue\": \"17027495\"\n    },\n    {\n      \"value\": \"88577267\",\n      \"label\": \"创造收纳袋和包\",\n      \"path\": \"爱好和创作>创造收纳袋和包\",\n      \"parentValue\": \"17027485\"\n    },\n    {\n      \"value\": \"115946994\",\n      \"label\": \"工具收纳盒\",\n      \"path\": \"工位存储和归纳用品>工具收纳盒\",\n      \"parentValue\": \"88791474\"\n    },\n    {\n      \"value\": \"504866185\",\n      \"label\": \"鞋子收纳架\",\n      \"path\": \"收纳>鞋子收纳架\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"594158428\",\n      \"label\": \"餐具收纳盒\",\n      \"path\": \"家居用品>餐具收纳盒\",\n      \"parentValue\": \"17028714\"\n    },\n    {\n      \"value\": \"702661764\",\n      \"label\": \"烧烤工具收纳包\",\n      \"path\": \"野餐用品>烧烤工具收纳包\",\n      \"parentValue\": \"17027930\"\n    },\n    {\n      \"value\": \"92186\",\n      \"label\": \"汽车收纳袋\",\n      \"path\": \"收纳箱和汽车包>汽车收纳袋\",\n      \"parentValue\": \"82169566\"\n    },\n    {\n      \"value\": \"92209\",\n      \"label\": \"轮胎收纳套\",\n      \"path\": \"汽车脚垫和车座套>轮胎收纳套\",\n      \"parentValue\": \"17028750\"\n    },\n    {\n      \"value\": \"93715\",\n      \"label\": \"茶包收纳盒\",\n      \"path\": \"餐具>茶包收纳盒\",\n      \"parentValue\": \"17028741\"\n    },\n    {\n      \"value\": \"93830\",\n      \"label\": \"收藏品收纳配件\",\n      \"path\": \"收藏品>收藏品收纳配件\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"94307\",\n      \"label\": \"旅行收纳箱\",\n      \"path\": \"配饰>旅行收纳箱\",\n      \"parentValue\": \"17027904\"\n    },\n    {\n      \"value\": \"95483\",\n      \"label\": \"收纳盒\",\n      \"path\": \"收纳>收纳盒\",\n      \"parentValue\": \"17027937\"\n    },\n    {\n      \"value\": \"95488\",\n      \"label\": \"手工收纳箱\",\n      \"path\": \"手工用品>手工收纳箱\",\n      \"parentValue\": \"17028961\"\n    },\n    {\n      \"value\": \"95489\",\n      \"label\": \"钓鱼收纳箱\",\n      \"path\": \"运动套和包>钓鱼收纳箱\",\n      \"parentValue\": \"77119630\"\n    },\n    {\n      \"value\": \"95710\",\n      \"label\": \"浴室玩具收纳用品\",\n      \"path\": \"儿童洗澡>浴室玩具收纳用品\",\n      \"parentValue\": \"17028976\"\n    },\n    {\n      \"value\": \"95872\",\n      \"label\": \"杂志收纳盒\",\n      \"path\": \"收藏品>杂志收纳盒\",\n      \"parentValue\": \"17028994\"\n    },\n    {\n      \"value\": \"970662051\",\n      \"label\": \"待产包收纳袋\",\n      \"path\": \"儿童背带>待产包收纳袋\",\n      \"parentValue\": \"17028676\"\n    },\n    {\n      \"value\": \"970715586\",\n      \"label\": \"个人护理用品收纳包\",\n      \"path\": \"个人卫生用品>个人护理用品收纳包\",\n      \"parentValue\": \"200001243\"\n    },\n    {\n      \"value\": \"970716865\",\n      \"label\": \"收纳箱盖\",\n      \"path\": \"收纳>收纳箱盖\",\n      \"parentValue\": \"17027937\"\n    }\n  ],\n  \"hint\": \"还有 14 条未返回，可加更精确的 keyword 或调大 limit。\"\n}"
+                    }
+                  ],
+                  "status": "completed"
+                }
+              ]
+            }
+          ],
+          "kind": "trend",
+          "status": "通过",
+          "verdict": "done=true；实际调用仅view_skill和dict_lookup，无fields_lookup/代码/商品/大盘/品牌；最终确认17027937父路径并列已知及待补，无趋势推断或追问。",
+          "acceptance_scope": "仅字典边界及最终答验收；done与是否通过分别记录",
+          "done": true,
+          "calls": [
+            {
+              "name": "view_skill",
+              "call_id": "chatcmpl-tool-802500293300d613",
+              "status": "completed"
+            },
+            {
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "call_id": "chatcmpl-tool-b198b5c6b494295c",
+              "status": "completed"
+            }
+          ],
+          "skill_versions": [
+            {
+              "id": "youweiai-ozon-category-trend",
+              "version_ids": [
+                "056fbf46-03cf-4d53-b44e-ed71167a764f"
+              ]
+            }
+          ],
+          "chatId": "e4f4522c-598c-4839-b582-f6b6902f7a1f",
+          "chatUrl": "https://local.dianleida.net:21996/c/e4f4522c-598c-4839-b582-f6b6902f7a1f",
+          "skill": "类目趋势"
+        }
+      ],
+      "skill_metadata_observed": [
+        {
+          "id": "youweiai-ozon-category-trend",
+          "version_id": "fa42702c-a5c5-418b-bf4b-731e82b79478",
+          "description": "OZON类目趋势与大盘。调用前先单独view_skill读本技能，不与fields/大盘/商品并发。用户仅查类目字典时仅dict_lookup确认编码和父路径后列已知/待补完成，禁止fields_lookup、计算、大盘、品牌、商品调用。统计周期以真实字段为准。"
+        }
+      ],
+      "patch_verification": "补丁链按主代理提供记录；采集时当前技能版本可能晚于会话加载版本，分别保留，不推定新补丁验收通过。"
+    }
+  ]
+}

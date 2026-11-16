@@ -1,0 +1,303 @@
+{
+  "date": "2026-11-16",
+  "purpose": "继续解决报告错路由、取样与预览缺陷，保留前轮失败，本文件仅追加修复后的独立UI证据。",
+  "patches": [
+    {
+      "skillId": "ozon-selection-analysis",
+      "beforeVersion": "c13260d8-d199-4132-b9a0-7fa6973f7918",
+      "afterVersion": "48f6684f-82f5-4517-9539-7ea53a69b58b",
+      "change": "入口先转读报告技能、所有补验size上限、币种与比值及HTML范围约束；仅content，未改绑定工具"
+    },
+    {
+      "skillId": "youweiai-ozon-report-gen",
+      "beforeVersion": "8a5a6502-8631-4407-8feb-60135e3ea89a",
+      "afterVersion": "4b61df2d-5ed9-4904-9d77-c212a9ae7c84",
+      "change": "交付前确认已读报告、SPU与SKU逐行证据账及币种分离、限定全部搜索size和宽表防溢出；仅content"
+    }
+  ],
+  "cases": [
+    {
+      "chatId": "fd3657b5-ca6a-4eef-8c38-c18d949b10b4",
+      "chatUrl": "https://local.dianleida.net:21996/c/fd3657b5-ca6a-4eef-8c38-c18d949b10b4",
+      "pageId": 2,
+      "question": "请做俄罗斯OZON猫砂盆选品简报，最多3个SPU，包含抽样范围和证据缺口，不需要供应链或利润测算。销量按近28天，其他筛选不另加门槛。",
+      "independentNewUISession": true,
+      "method": "chrome-devtools新页面，fill输入原问法并Enter发送；只读同源chat API核对实际调用。",
+      "status": "通过（本次明确报告路径）",
+      "routeObservation": "真实调用先读选品搜索，其后已view_skill读取报告技能，再执行SPU搜索；所有已见SPU搜索size=3。",
+      "messages": [
+        {
+          "role": "user",
+          "content": "请做俄罗斯OZON猫砂盆选品简报，最多3个SPU，包含抽样范围和证据缺口，不需要供应链或利润测算。销量按近28天，其他筛选不另加门槛。",
+          "output": []
+        },
+        {
+          "role": "assistant",
+          "content": "我来处理这个OZON猫砂盆选品简报。先读取选品搜索技能，并准备类目编码。\n技能已加载。用户要\"简报\"，按契约我需要再读报告技能；同时类目字典里\"猫砂盆\"只命中垫子/除臭剂两个相邻品类，我先查同父级与前台类目，避免错用编码。\n类目已确认：后台类目「宠物厕所」（编码 95242，路径：宠物护理用品>宠物厕所），即猫砂盆类目；字典中\"猫砂盆\"命中的垫子/除臭剂为相邻品类，不采用。前台类目无\"猫砂盆\"编码，使用后台编码。\n\n现在执行第一轮 SPU 搜索：按您要求最多3个SPU，size=3、from=0，销量按近28天（soldCount28 降序），不加其他门槛。\n第一轮命中：接口共命中 305 个SPU，本次取回前3条（size=3，按近28天销量降序）。返回中缺币种字段（我上次 _fields 未包含 currency），按纪律补一次币种/上架日期字段（同样 size=3、from=0、条件不变）：\n`currency` 在 SPU 搜索接口不存在（接口已提示）。按纪律先查字段字典确认币种字段名，不臆造：\n字段名是 `symbol`。执行第三轮同参数补齐币种（size=3、from=0、条件与排序不变）：\n数据齐备。3个SPU均已核验语义（均为猫砂盆/宠物厕所，非垫子或除臭剂）、链接、图片、₽币种。以下为简报。\n\n## OZON 猫砂盆选品简报（摘要）\n\n- **口径**：OZON 后台类目「宠物厕所」(95242，即猫砂盆类目)；SPU 行口径；销量周期=近28天；币种₽；快照时点 2026-11-16。按您要求未加价格/上架/跨境等门槛，未做供应链与利润测算。\n- **抽样**：接口命中 305 个SPU，本次取近28天销量降序前3条（from=0, size=3，返回3条，核验3条），为头部样本，**不���表类目全量**。\n- 样本3个SPU近28天合计 **20,030件 / ₽11,657,238**（仅3行合计，非类目总量）。\n- 头部均为开放式带网格/高围栏基础款，价格带 ₽610–1,184，评分4.8–4.9。\n- 第3款卖家显示为 \"Ozon Россия\"，仅名称含 Ozon 字样，**自营/跨境类型未核验**。\n\n```html\n<!DOCTYPE html>\n<html lang=\"zh\">\n<head>\n<meta charset=\"UTF-8\">\n<title>OZON猫砂盆选品简报</title>\n</head>\n<body style=\"max-width:1180px;margin:auto;background:#fff;color:#1a1a1a;font-family:'Microsoft YaHei',Arial,sans-serif;overflow-wrap:anywhere;padding:20px\">\n<div id=\"zoom\" style=\"display:none;position:fixed;z-index:9999;pointer-events:none;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:6px\">\n  <img style=\"width:320px!important;min-width:320px;max-width:320px!important;height:320px;min-height:320px;max-height:320px;box-sizing:content-box;flex:none;object-fit:contain;background:#fff\" alt=\"放大图\">\n</div>\n\n<h1 style=\"font-size:22px;margin:0 0 6px\">OZON 猫砂盆选品简报</h1>\n<p style=\"color:#555;font-size:12px;margin:0 0 14px\">口径：后台类目「宠物厕所」(95242) ｜ SPU接口口径 ｜ 销量周期：近28天（soldCount28）｜ 币种：₽ ｜ 排序：近28天销量降序 ｜ 快照：2026-11-16 ｜ 条件：无其他门槛（未加价格/上架/跨境筛选）</p>\n\n<div style=\"display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px\">\n  <div style=\"min-width:0;border:1px solid #e5e7eb;border-radius:8px;padding:10px;background:#f8fafc\"><div style=\"font-size:11px;color:#64748b\">类目命中（SPU）</div><div style=\"font-size:20px;font-weight:700;color:#0f766e\">305</div><div style=\"font-size:10px;color:#94a3b8\">接口命中总数</div></div>\n  <div style=\"min-width:0;border:1px solid #e5e7eb;border-radius:8px;padding:10px;background:#f8fafc\"><div style=\"font-size:11px;color:#64748b\">本次样本</div><div style=\"font-size:20px;font-weight:700;color:#0f766e\">3 SPU</div><div style=\"font-size:10px;color:#94a3b8\">销量降序Top3，from=0,size=3</div></div>\n  <div style=\"min-width:0;border:1px solid #e5e7eb;border-radius:8px;padding:10px;background:#f8fafc\"><div style=\"font-size:11px;color:#64748b\">样本近28天销量</div><div style=\"font-size:20px;font-weight:700;color:#0f766e\">20,030件</div><div style=\"font-size:10px;color:#94a3b8\">3个SPU行合计，非类目全量</div></div>\n  <div style=\"min-width:0;border:1px solid #e5e7eb;border-radius:8px;padding:10px;background:#f8fafc\"><div style=\"font-size:11px;color:#64748b\">样本近28天销售额</div><div style=\"font-size:20px;font-weight:700;color:#0f766e\">₽11,657,238</div><div style=\"font-size:10px;color:#94a3b8\">soldSum28同口径合计</div></div>\n  <div style=\"min-width:0;border:1px solid #e5e7eb;border-radius:8px;padding:10px;background:#f8fafc\"><div style=\"font-size:11px;color:#64748b\">样本价格带（当前价）</div><div style=\"font-size:20px;font-weight:700;color:#0f766e\">₽610–1,184</div><div style=\"font-size:10px;color:#94a3b8\">评分4.8–4.9</div></div>\n</div>\n\n<div style=\"width:100%;max-width:100%;overflow:auto;margin-bottom:6px\">\n<table style=\"border-collapse:collapse;font-size:12px;min-width:980px\">\n<thead><tr style=\"background:#0f766e;color:#fff\">\n  <th style=\"padding:8px;border:1px solid #d1d5db\">主图</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">商品（SPU）</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">品牌</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">卖家</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">当前价</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">近28天销量</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">近28天销售额</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">评分/累计评论</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">SPU上架日期<br>(最早SKU)</th>\n  <th style=\"padding:8px;border:1px solid #d1d5db\">SPU ID</th>\n</tr></thead>\n<tbody>\n<tr>\n  <td style=\"padding:6px;border:1px solid #d1d5db\"><div class=\"thumb-wrap\" data-img=\"https://ir-20.ozonstatic.cn/s3/multimedia-1-5/11738591249.jpg\" style=\"cursor:zoom-in\"><img class=\"thumb\" src=\"https://ir-20.ozonstatic.cn/s3/multimedia-1-5/11738591249.jpg\" style=\"width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff\"></div></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\"><a href=\"https://www.ozon.ru/product/1965803294\" target=\"_blank\" style=\"color:#0f766e;font-weight:600\">Лоток для кошек большой с сеткой и бортом</a><div style=\"color:#64748b;font-size:11px\">参考译名：大号猫砂盆（带网格与围栏）</div></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">Альтернатива</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">ООО \"ЗПИ \"Альтернатива\"</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">₽1,184</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db;font-weight:700\">7,740件</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">₽3,204,422</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">4.9 / 41,485</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">2025-03-21</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">8718230666</td>\n</tr>\n<tr>\n  <td style=\"padding:6px;border:1px solid #d1d5db\"><div class=\"thumb-wrap\" data-img=\"https://ir-20.ozonstatic.cn/s3/multimedia-1-b/9332079959.jpg\" style=\"cursor:zoom-in\"><img class=\"thumb\" src=\"https://ir-20.ozonstatic.cn/s3/multimedia-1-b/9332079959.jpg\" style=\"width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff\"></div></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\"><a href=\"https://www.ozon.ru/product/3643433124\" target=\"_blank\" style=\"color:#0f766e;font-weight:600\">Лоток для кошек с сеткой, 42 x 31 x 10 см, большой</a><div style=\"color:#64748b;font-size:11px\">参考译名：带网格猫砂盆 42×31×10cm 大号</div></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">Пижон</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">Сима-Ленд - Маркет</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">₽670</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db;font-weight:700\">6,175件</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">₽4,634,140</td>\n  <td style=\"padding:6px:border:1px solid #d1d5db\">4.9 / 6,960</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">2025-09-16</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">2676734082</td>\n</tr>\n<tr>\n  <td style=\"padding:6px;border:1px solid #d1d5db\"><div class=\"thumb-wrap\" data-img=\"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/21153848209.jpg\" style=\"cursor:zoom-in\"><img class=\"thumb\" src=\"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/21153848209.jpg\" style=\"width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff\"></div></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\"><a href=\"https://www.ozon.ru/product/1125893844\" target=\"_blank\" style=\"color:#0f766e;font-weight:600\">PET PRIDE Pet Toilet open With high sides</a><div style=\"color:#64748b;font-size:11px\">参考译名：PET PRIDE 高围栏开放式宠物厕所</div></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">PET PRIDE</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">Ozon Россия<span style=\"color:#b45309\">（类型未核验）</span></td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">₽610</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db;font-weight:700\">6,115件</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">₽3,818,675</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">4.8 / 17,337</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">—</td>\n  <td style=\"padding:6px;border:1px solid #d1d5db\">7315106163</td>\n</tr>\n</tbody>\n</table>\n</div>\n<p style=\"font-size:11px;color:#64748b;margin:4px 0 14px\">注：销量/销售额为接口SPU行口径（近28天），未取得完整变体清单，不等于该SPU全部变体合计；上架日期为SPU内最早SKU时间；价格为当前价而非28天成交均价；评论数为累计值。</p>\n\n<div style=\"border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:12px;background:#f0fdf4\">\n<b style=\"color:#0f766e\">结论（限本次证据）</b>\n<ul style=\"font-size:13px;margin:8px 0 0;padding-left:18px;line-height:1.7\">\n  <li>猫砂盆类目头部3款均为<b>开放式基础款（带网格或高围栏）</b>，价格带 ₽610–1,184，近28天单SPU行销量 6,115–7,740件。</li>\n  <li>头部样本评分 4.8–4.9、累计评论 6,960–41,485，头部口碑积累深，进入需面对高评论壁垒（评论数为累计值，不构成转化结论）。</li>\n  <li>第2款以样本最低价之一（₽670）实现样本最高28天销售额（₽4,634,140）；第1款销量最高但单价 ₽1,184；两者为并列观察，<b>未做因果归因</b>。</li>\n  <li>本次为头部样本基线（2026-11-16快照），无历史序列，<b>不下增长/季节性/起量结论</b>；样本3条不代表类目305个SPU全量分布。</li>\n</ul>\n</div>\n\n<div style=\"border:1px solid #fde68a;border-radius:8px;padding:12px;background:#fffbeb\">\n<b style=\"color:#b45309\">证据缺口与范围说明</b>\n<ul style=\"font-size:12px;margin:8px 0 0;padding-left:18px;line-height:1.7;color:#7c4a03\">\n  <li>抽样范围：类目命中305个SPU，仅取近28天销量Top3（from=0, size=3），未覆盖中长尾，不能外推类目市场规模或价格段分布。</li>\n  <li>SPU #3（PET PRIDE）接口未返回上架日期（表中\"—\"）；其卖家名称含\"Ozon Россия\"字样，自营/本土/跨境属性未核验。</li>\n  <li>未取得各SPU完整变体清单与变体计数；soldCount28/soldSum28为SPU行口径，不能当作全部变体合计。</li>\n  <li>OZON字典中「猫砂盆」另命中「猫砂盆垫」「猫砂盆除臭剂」两个相邻品类，本简报仅含「宠物厕所」主类目，未含垫/除臭剂。</li>\n  <li>无历史快照与日期序列，价格与销量均为当前基线；佣金、物流、利润按您要求未测算。</li>\n</ul>\n</div>\n\n<script>\ndocument.querySelectorAll('.thumb-wrap').forEach(function(w){\n  var z=document.getElementById('zoom'), zi=z.querySelector('img');\n  function show(e){ zi.src=w.dataset.img; z.style.display='block'; move(e); }\n  function move(e){\n    var x=e.clientX+18, y=e.clientY+18;\n    var r=z.getBoundingClientRect();\n    if(x+r.width>window.innerWidth-8) x=e.clientX-r.width-18;\n    if(y+r.height>window.innerHeight-8) y=e.clientY-r.height-18;\n    z.style.left=x+'px'; z.style.top=y+'px';\n  }\n  w.addEventListener('mouseenter',show);\n  w.addEventListener('mousemove',move);\n  w.addEventListener('mouseleave',function(){ z.style.display='none'; });\n});\n</script>\n</body>\n</html>\n```\n\n**补验路径（可选下一步）**：如需商家类型核验可对代表SKU逐条补查；如需扩展样本可按同条件取更多SPU或加入价格带分析。如需猫砂盆垫/除臭剂相邻品类或全类目大盘，可另开一轮。",
+          "done": true,
+          "output": [
+            {
+              "type": "function_call",
+              "id": "call_51a6561a318147169b9a6fde",
+              "call_id": "call_51a6561a318147169b9a6fde",
+              "name": "view_skill",
+              "arguments": "{\"id\":\"ozon-selection-analysis\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_5d5cb018b43f4db786f9730a",
+              "call_id": "call_5d5cb018b43f4db786f9730a",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"猫砂盆\",\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_074122011e0044d2991e219e",
+              "call_id": "call_074122011e0044d2991e219e",
+              "name": "youweiai-ozon_yq_fields_lookup",
+              "arguments": "{\"tool\":\"yq_ozon_spu_search\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_77657c506ea54a8d993c3f46",
+              "call_id": "call_51a6561a318147169b9a6fde",
+              "output": {
+                "content_omitted": true,
+                "version_ids": [
+                  "48f6684f-82f5-4517-9539-7ea53a69b58b"
+                ]
+              },
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_ddbdf58fed2a427a9deaa1eb",
+              "call_id": "call_5d5cb018b43f4db786f9730a",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"猫砂盆\",\n  \"matchQuality\": \"exact\",\n  \"total\": 2,\n  \"returned\": 2,\n  \"items\": [\n    {\n      \"value\": \"970721693\",\n      \"label\": \"猫砂盆垫\",\n      \"path\": \"宠物护理用品>猫砂盆垫\",\n      \"parentValue\": \"17028968\"\n    },\n    {\n      \"value\": \"971962784\",\n      \"label\": \"猫砂盆除臭剂\",\n      \"path\": \"宠物护理用品>猫砂盆除臭剂\",\n      \"parentValue\": \"17028968\"\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_898981ebed834d1d87b34817",
+              "call_id": "call_074122011e0044d2991e219e",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"tool\": \"yq_ozon_spu_search\",\n  \"title\": \"spu商品搜索接口\",\n  \"totalFields\": 85,\n  \"returned\": 60,\n  \"envelope\": \"列表类返回 {total, items, stats}；详情类直接返回对象\",\n  \"defaultFields\": [\n    \"id\",\n    \"sku\",\n    \"spu\",\n    \"spuName\",\n    \"skuName\",\n    \"title\",\n    \"price\",\n    \"currency\",\n    \"sales\",\n    \"daily_sales\",\n    \"monthly_sales\",\n    \"score\",\n    \"opt_id\",\n    \"thumb_url\",\n    \"photo\",\n    \"opt_ids\",\n    \"region\",\n    \"ware_house_type\",\n    \"mall_id\",\n    \"created_at\",\n    \"issued_date\",\n    \"last_modified\",\n    \"weekly_sales\",\n    \"comment_num_tips\",\n    \"title_zh\",\n    \"name\",\n    \"market_price\",\n    \"date\"\n  ],\n  \"computedFields\": [\n    {\n      \"name\": \"goods_url\",\n      \"desc\": \"商品链接（用商品 id 拼的，可直接点开；不需要也不能写进 _fields）\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"spu\",\n      \"type\": \"String\",\n      \"desc\": \"SPUID\",\n      \"default\": true\n    },\n    {\n      \"name\": \"spuName\",\n      \"type\": \"String\",\n      \"desc\": \"SPU名称\",\n      \"default\": true\n    },\n    {\n      \"name\": \"spuNameZh\",\n      \"type\": \"String\",\n      \"desc\": \"SPU中文名\",\n      \"default\": false\n    },\n    {\n      \"name\": \"spuNameEn\",\n      \"type\": \"String\",\n      \"desc\": \"SPU英文名\",\n      \"default\": false\n    },\n    {\n      \"name\": \"photo\",\n      \"type\": \"String\",\n      \"desc\": \"商品图片链接\",\n      \"default\": true\n    },\n    {\n      \"name\": \"link\",\n      \"type\": \"String\",\n      \"desc\": \"商品详情页链接\",\n      \"default\": false\n    },\n    {\n      \"name\": \"brandId\",\n      \"type\": \"String\",\n      \"desc\": \"品牌ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"brand\",\n      \"type\": \"String\",\n      \"desc\": \"品牌\",\n      \"default\": false\n    },\n    {\n      \"name\": \"score\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"评分\",\n      \"default\": true\n    },\n    {\n      \"name\": \"comment\",\n      \"type\": \"Integer\",\n      \"desc\": \"评论\",\n      \"default\": false\n    },\n    {\n      \"name\": \"images\",\n      \"type\": \"List<String>\",\n      \"desc\": \"图片列表\",\n      \"default\": false\n    },\n    {\n      \"name\": \"videos\",\n      \"type\": \"List<Object>\",\n      \"desc\": \"视频列表\",\n      \"default\": false,\n      \"childrenCount\": 2\n    },\n    {\n      \"name\": \"skuList\",\n      \"type\": \"List<String>\",\n      \"desc\": \"SKU列表\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category\",\n      \"type\": \"List<String>\",\n      \"desc\": \"后台分类ID集合\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category1Id\",\n      \"type\": \"String\",\n      \"desc\": \"后台一级分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category1\",\n      \"type\": \"String\",\n      \"desc\": \"后���一级分类名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category2Id\",\n      \"type\": \"String\",\n      \"desc\": \"后台二级分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category2\",\n      \"type\": \"String\",\n      \"desc\": \"后台二级分类名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category3Id\",\n      \"type\": \"String\",\n      \"desc\": \"后台三级分类ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"category3\",\n      \"type\": \"String\",\n      \"desc\": \"后台三级分类名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"types\",\n      \"type\": \"List<String>\",\n      \"desc\": \"前台分类集合\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type1Id\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类一级ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type1\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类一级名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type2Id\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类二级ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type2\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类二级名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type3Id\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类三级ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type3\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类三级名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type4Id\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类四级ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"type4\",\n      \"type\": \"String\",\n      \"desc\": \"前台分类四级名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sellerId\",\n      \"type\": \"String\",\n      \"desc\": \"店铺ID\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sellerName\",\n      \"type\": \"String\",\n      \"desc\": \"店铺名称\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sellerLogo\",\n      \"type\": \"String\",\n      \"desc\": \"店铺Logo\",\n      \"default\": false\n    },\n    {\n      \"name\": \"price\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"价格\",\n      \"default\": true\n    },\n    {\n      \"name\": \"disPrice\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"折后价\",\n      \"default\": false\n    },\n    {\n      \"name\": \"originalPrice\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"原价\",\n      \"default\": false\n    },\n    {\n      \"name\": \"minPrice\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"价格最小值\",\n      \"default\": false\n    },\n    {\n      \"name\": \"maxPrice\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"价格最大值\",\n      \"default\": false\n    },\n    {\n      \"name\": \"soldSum\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近一天销售额\",\n      \"default\": false\n    },\n    {\n      \"name\": \"soldSum7\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近7天销售额\",\n      \"default\": false\n    },\n    {\n      \"name\": \"soldSum28\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近28天销售额\",\n      \"default\": false\n    },\n    {\n      \"name\": \"soldCount\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近一天销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"soldCount7\",\n      \"type\": \"Integer\",\n      \"desc\": \"近7天销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"soldCount28\",\n      \"type\": \"Integer\",\n      \"desc\": \"近28天销量\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sessionCount7\",\n      \"type\": \"Integer\",\n      \"desc\": \"近7天会话数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sessionCount28\",\n      \"type\": \"Integer\",\n      \"desc\": \"近28天会话数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"convToCartPdp7\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近7天商详加购转化率\",\n      \"default\": false\n    },\n    {\n      \"name\": \"convToCartPdp28\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近28天商详加购转化率\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sessionCountSearch7\",\n      \"type\": \"Integer\",\n      \"desc\": \"近7天sessionCountSearch\",\n      \"default\": false\n    },\n    {\n      \"name\": \"sessionCountSearch28\",\n      \"type\": \"Integer\",\n      \"desc\": \"近28天sessionCountSearch\",\n      \"default\": false\n    },\n    {\n      \"name\": \"convToCartSearch7\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近7天搜索加购转化率\",\n      \"default\": false\n    },\n    {\n      \"name\": \"convToCartSearch28\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近28天搜索加购转化率\",\n      \"default\": false\n    },\n    {\n      \"name\": \"views7\",\n      \"type\": \"Integer\",\n      \"desc\": \"近7天views\",\n      \"default\": false\n    },\n    {\n      \"name\": \"views28\",\n      \"type\": \"Integer\",\n      \"desc\": \"近28天views\",\n      \"default\": false\n    },\n    {\n      \"name\": \"convViewToOrder7\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近7天浏览下单转化率\",\n      \"default\": false\n    },\n    {\n      \"name\": \"convViewToOrder28\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近28天浏览下单转化率\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daysWithTrafarets7\",\n      \"type\": \"Integer\",\n      \"desc\": \"近7天推广天数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daysWithTrafarets28\",\n      \"type\": \"Integer\",\n      \"desc\": \"近28天推广天数\",\n      \"default\": false\n    },\n    {\n      \"name\": \"drr7\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近7天DRR（库存可支撑天数）\",\n      \"default\": false\n    },\n    {\n      \"name\": \"drr28\",\n      \"type\": \"BigDecimal\",\n      \"desc\": \"近28天DRR（库存可支撑天数）\",\n      \"default\": false\n    },\n    {\n      \"name\": \"daysInPromo7\",\n      \"type\": \"Integer\",\n      \"desc\": \"近7天促销活动天数\",\n      \"default\": false\n    }\n  ],\n  \"hint\": \"还有 25 个字段未列出，可加 keyword 缩小范围。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_f9a28bf4bd354f629f45e48e",
+              "call_id": "call_f9a28bf4bd354f629f45e48e",
+              "name": "view_skill",
+              "arguments": "{\"id\":\"youweiai-ozon-report-gen\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_ef681b5c862e4e2f8872829f",
+              "call_id": "call_ef681b5c862e4e2f8872829f",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"猫厕所\",\"platform\":\"ozon\",\"type\":\"CATEGORY_BACKEND\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_b7f806353f8d47f98a2ad590",
+              "call_id": "call_b7f806353f8d47f98a2ad590",
+              "name": "youweiai-ozon_yq_dict_lookup",
+              "arguments": "{\"keyword\":\"猫砂盆\",\"platform\":\"ozon\",\"type\":\"CATEGORY\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_5e38e9d06ae24d258031045d",
+              "call_id": "call_f9a28bf4bd354f629f45e48e",
+              "output": {
+                "content_omitted": true,
+                "version_ids": [
+                  "4b61df2d-5ed9-4904-9d77-c212a9ae7c84"
+                ]
+              },
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_e7bedb9a602f42b193dbe8d9",
+              "call_id": "call_ef681b5c862e4e2f8872829f",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY_BACKEND\",\n  \"keyword\": \"猫厕所\",\n  \"matchQuality\": \"fuzzy\",\n  \"total\": 8,\n  \"returned\": 8,\n  \"items\": [\n    {\n      \"value\": \"971015665\",\n      \"label\": \"来自动物收容所的猫\",\n      \"path\": \"Services>来自动物收容所的猫\",\n      \"parentValue\": \"17027483\"\n    },\n    {\n      \"value\": \"92706\",\n      \"label\": \"化粪池、生态厕所清洁剂\",\n      \"path\": \"洗涤剂和清洁剂>化粪池、生态厕所清洁剂\",\n      \"parentValue\": \"17027920\"\n    },\n    {\n      \"value\": \"94469\",\n      \"label\": \"生态厕所\",\n      \"path\": \"花园装饰和温室>生态厕所\",\n      \"parentValue\": \"17028745\"\n    },\n    {\n      \"value\": \"94470\",\n      \"label\": \"水桶式厕所\",\n      \"path\": \"花园装饰和温室>水桶式厕所\",\n      \"parentValue\": \"17028745\"\n    },\n    {\n      \"value\": \"95242\",\n      \"label\": \"宠物厕所\",\n      \"path\": \"宠物护理用品>宠物厕所\",\n      \"parentValue\": \"17028968\"\n    },\n    {\n      \"value\": \"971004554\",\n      \"label\": \"花园厕所\",\n      \"path\": \"建成的房屋、浴室和车库>花园厕所\",\n      \"parentValue\": \"17028655\"\n    },\n    {\n      \"value\": \"971075628\",\n      \"label\": \"移动厕所配件\",\n      \"path\": \"花园装饰和温室>移动厕所配件\",\n      \"parentValue\": \"17028745\"\n    },\n    {\n      \"value\": \"971472428\",\n      \"label\": \"自动宠物厕所电源适配器\",\n      \"path\": \"宠物护理用品>自动宠物厕所电源适配器\",\n      \"parentValue\": \"17028968\"\n    }\n  ],\n  \"hint\": \"⚠️ 没有精确匹配「猫厕所」，以下是**字面相近**的候选，语义未必对。请挑最接近的并跟用户说明你选了哪个；如果都不对，可以改用候选里的 parentValue（上级分类）来查，范围更大但更稳。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_873fb66f42c84f33bbbf78a2",
+              "call_id": "call_b7f806353f8d47f98a2ad590",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"type\": \"CATEGORY\",\n  \"keyword\": \"猫砂盆\",\n  \"matchQuality\": \"empty\",\n  \"total\": 0,\n  \"returned\": 0,\n  \"items\": [],\n  \"hint\": \"没有匹配「猫砂盆」的条目。先换更短的词再试（如「居家」→「家居」）；实在找不到，就不带 keyword 列出全部条目自己挑一个最接近的。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_dcf26d2918704363be8aba88",
+              "call_id": "call_dcf26d2918704363be8aba88",
+              "name": "youweiai-ozon_yq_ozon_spu_search",
+              "arguments": "{\"category\":[\"95242\"],\"_fields\":[\"spu\",\"spuName\",\"price\",\"soldCount28\",\"soldSum28\",\"photo\",\"link\",\"brand\",\"score\",\"comment\",\"sellerName\",\"sellerId\"],\"from\":0,\"size\":3,\"sort\":[{\"soldCount28\":\"desc\"}]}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_453b69fad9fa4cc2b325984d",
+              "call_id": "call_dcf26d2918704363be8aba88",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"total\": 305,\n  \"stats\": {\n    \"total\": 305\n  },\n  \"statsNote\": \"stats 为整批候选的汇总统计（字段含义以接口说明为准，与行内同名字段可能不同义）\",\n  \"items\": [\n    {\n      \"spu\": \"8718230666\",\n      \"spuName\": \"Лоток для кошек большой с сеткой и бортом\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-5/11738591249.jpg\",\n      \"link\": \"https://www.ozon.ru/product/1965803294\",\n      \"brand\": \"Альтернатива\",\n      \"score\": 4.9,\n      \"comment\": 41485,\n      \"sellerId\": \"18772\",\n      \"sellerName\": \"ООО \\\"ЗПИ \\\"Альтернатива\\\"\",\n      \"price\": 1184.0,\n      \"soldSum28\": 3204422.319,\n      \"soldCount28\": 7740\n    },\n    {\n      \"spu\": \"2676734082\",\n      \"spuName\": \"Лоток для кошек с сеткой, 42 x 31 x 10 см, большой\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-b/9332079959.jpg\",\n      \"link\": \"https://www.ozon.ru/product/3643433124\",\n      \"brand\": \"Пижон\",\n      \"score\": 4.9,\n      \"comment\": 6960,\n      \"sellerId\": \"2791298\",\n      \"sellerName\": \"Сима-Ленд - Маркет\",\n      \"price\": 670.0,\n      \"soldSum28\": 4634140.079000001,\n      \"soldCount28\": 6175\n    },\n    {\n      \"spu\": \"7315106163\",\n      \"spuName\": \"PET PRIDE Pet Toilet open With high sides\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/21153848209.jpg\",\n      \"link\": \"https://www.ozon.ru/product/1125893844\",\n      \"brand\": \"PET PRIDE\",\n      \"score\": 4.8,\n      \"comment\": 17337,\n      \"sellerId\": \"0\",\n      \"sellerName\": \"Ozon Россия\",\n      \"price\": 610.0,\n      \"soldSum28\": 3818675.35,\n      \"soldCount28\": 6115\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_351eb52818084b0d8741fb48",
+              "call_id": "call_351eb52818084b0d8741fb48",
+              "name": "youweiai-ozon_yq_ozon_spu_search",
+              "arguments": "{\"category\":[\"95242\"],\"_fields\":[\"spu\",\"spuName\",\"price\",\"currency\",\"soldCount28\",\"soldSum28\",\"photo\",\"link\",\"brand\",\"score\",\"comment\",\"sellerName\",\"sellerId\",\"createDate\"],\"from\":0,\"size\":3,\"sort\":[{\"soldCount28\":\"desc\"}]}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_a472146c690949078680026f",
+              "call_id": "call_351eb52818084b0d8741fb48",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"total\": 305,\n  \"stats\": {\n    \"total\": 305\n  },\n  \"statsNote\": \"stats 为整批候选的汇总统计（字段含义以接口说明为准，与行内同名字段可能不同义）\",\n  \"items\": [\n    {\n      \"spu\": \"8718230666\",\n      \"spuName\": \"Лоток для кошек большой с сеткой и бортом\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-5/11738591249.jpg\",\n      \"link\": \"https://www.ozon.ru/product/1965803294\",\n      \"brand\": \"Альтернатива\",\n      \"score\": 4.9,\n      \"comment\": 41485,\n      \"sellerId\": \"18772\",\n      \"sellerName\": \"ООО \\\"ЗПИ \\\"Альтернатива\\\"\",\n      \"price\": 1184.0,\n      \"soldSum28\": 3204422.319,\n      \"soldCount28\": 7740,\n      \"createDate\": \"2025-03-21T08:00:00.000+08:00\"\n    },\n    {\n      \"spu\": \"2676734082\",\n      \"spuName\": \"Лоток для кошек с сеткой, 42 x 31 x 10 см, большой\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-b/9332079959.jpg\",\n      \"link\": \"https://www.ozon.ru/product/3643433124\",\n      \"brand\": \"Пижон\",\n      \"score\": 4.9,\n      \"comment\": 6960,\n      \"sellerId\": \"2791298\",\n      \"sellerName\": \"Сима-Ленд - Маркет\",\n      \"price\": 670.0,\n      \"soldSum28\": 4634140.079000001,\n      \"soldCount28\": 6175,\n      \"createDate\": \"2025-09-16T08:00:00.000+08:00\"\n    },\n    {\n      \"spu\": \"7315106163\",\n      \"spuName\": \"PET PRIDE Pet Toilet open With high sides\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/21153848209.jpg\",\n      \"link\": \"https://www.ozon.ru/product/1125893844\",\n      \"brand\": \"PET PRIDE\",\n      \"score\": 4.8,\n      \"comment\": 17337,\n      \"sellerId\": \"0\",\n      \"sellerName\": \"Ozon Россия\",\n      \"price\": 610.0,\n      \"soldSum28\": 3818675.35,\n      \"soldCount28\": 6115\n    }\n  ],\n  \"_note\": \"以下 _fields 字段名不存在、已被忽略：currency。用 yq_fields_lookup(tool=\\\"SPU_SEARCH\\\") 查正确的字段名（传错名字不会报错，但会少字段；全都传错时会退化成返回全部字段）。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_b710ed9f03554e3bbf983640",
+              "call_id": "call_b710ed9f03554e3bbf983640",
+              "name": "youweiai-ozon_yq_fields_lookup",
+              "arguments": "{\"keyword\":\"币\",\"tool\":\"yq_ozon_spu_search\"}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_d1bda9c74a124ea3bf864875",
+              "call_id": "call_b710ed9f03554e3bbf983640",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"tool\": \"yq_ozon_spu_search\",\n  \"title\": \"spu商品搜索接口\",\n  \"keyword\": \"币\",\n  \"matchQuality\": \"keyword\",\n  \"totalFields\": 85,\n  \"returned\": 1,\n  \"envelope\": \"列表类返回 {total, items, stats}；详情类直接返回对象\",\n  \"defaultFields\": [\n    \"id\",\n    \"sku\",\n    \"spu\",\n    \"spuName\",\n    \"skuName\",\n    \"title\",\n    \"price\",\n    \"currency\",\n    \"sales\",\n    \"daily_sales\",\n    \"monthly_sales\",\n    \"score\",\n    \"opt_id\",\n    \"thumb_url\",\n    \"photo\",\n    \"opt_ids\",\n    \"region\",\n    \"ware_house_type\",\n    \"mall_id\",\n    \"created_at\",\n    \"issued_date\",\n    \"last_modified\",\n    \"weekly_sales\",\n    \"comment_num_tips\",\n    \"title_zh\",\n    \"name\",\n    \"market_price\",\n    \"date\"\n  ],\n  \"computedFields\": [\n    {\n      \"name\": \"goods_url\",\n      \"desc\": \"商品链接（用商品 id 拼的，可直接点开；不需要也不能写进 _fields）\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"symbol\",\n      \"type\": \"String\",\n      \"desc\": \"符号/币种\",\n      \"default\": false\n    }\n  ],\n  \"hint\": \"用 _fields 指定非默认字段，如 _fields=[\\\"id\\\",\\\"title\\\",\\\"image_urls\\\"]。字段名拼错不会报错但会被忽略，请从上面的清单里复制。\"\n}"
+                }
+              ],
+              "status": "completed"
+            },
+            {
+              "type": "function_call",
+              "id": "call_24982a7293324a45b17891d6",
+              "call_id": "call_24982a7293324a45b17891d6",
+              "name": "youweiai-ozon_yq_ozon_spu_search",
+              "arguments": "{\"_fields\":[\"spu\",\"spuName\",\"price\",\"symbol\",\"soldCount28\",\"soldSum28\",\"photo\",\"link\",\"brand\",\"score\",\"comment\",\"sellerName\",\"sellerId\",\"createDate\"],\"category\":[\"95242\"],\"from\":0,\"size\":3,\"sort\":[{\"soldCount28\":\"desc\"}]}",
+              "status": "completed"
+            },
+            {
+              "type": "function_call_output",
+              "id": "fco_bf7ce04164f6430ab459d631",
+              "call_id": "call_24982a7293324a45b17891d6",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "{\n  \"total\": 305,\n  \"stats\": {\n    \"total\": 305\n  },\n  \"statsNote\": \"stats 为整批候选的汇总统计（字段含义以接口说明为准，与行内同名字段可能不同义）\",\n  \"items\": [\n    {\n      \"spu\": \"8718230666\",\n      \"spuName\": \"Лоток для кошек большой с сеткой и бортом\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-5/11738591249.jpg\",\n      \"link\": \"https://www.ozon.ru/product/1965803294\",\n      \"brand\": \"Альтернатива\",\n      \"score\": 4.9,\n      \"comment\": 41485,\n      \"sellerId\": \"18772\",\n      \"sellerName\": \"ООО \\\"ЗПИ \\\"Альтернатива\\\"\",\n      \"price\": 1184.0,\n      \"soldSum28\": 3204422.319,\n      \"soldCount28\": 7740,\n      \"createDate\": \"2025-03-21T08:00:00.000+08:00\",\n      \"symbol\": \"₽\"\n    },\n    {\n      \"spu\": \"2676734082\",\n      \"spuName\": \"Лоток для кошек с сеткой, 42 x 31 x 10 см, большой\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-b/9332079959.jpg\",\n      \"link\": \"https://www.ozon.ru/product/3643433124\",\n      \"brand\": \"Пижон\",\n      \"score\": 4.9,\n      \"comment\": 6960,\n      \"sellerId\": \"2791298\",\n      \"sellerName\": \"Сима-Ленд - Маркет\",\n      \"price\": 670.0,\n      \"soldSum28\": 4634140.079000001,\n      \"soldCount28\": 6175,\n      \"createDate\": \"2025-09-16T08:00:00.000+08:00\",\n      \"symbol\": \"₽\"\n    },\n    {\n      \"spu\": \"7315106163\",\n      \"spuName\": \"PET PRIDE Pet Toilet open With high sides\",\n      \"photo\": \"https://ir-20.ozonstatic.cn/s3/multimedia-1-p/21153848209.jpg\",\n      \"link\": \"https://www.ozon.ru/product/1125893844\",\n      \"brand\": \"PET PRIDE\",\n      \"score\": 4.8,\n      \"comment\": 17337,\n      \"sellerId\": \"0\",\n      \"sellerName\": \"Ozon Россия\",\n      \"price\": 610.0,\n      \"soldSum28\": 3818675.35,\n      \"soldCount28\": 6115,\n      \"symbol\": \"₽\"\n    }\n  ]\n}"
+                }
+              ],
+              "status": "completed"
+            }
+          ]
+        }
+      ],
+      "done": true,
+      "review": {
+        "route": "view_skill选品搜索后在商品搜索前补读report-gen；报告契约实际执行",
+        "searchSizes": [
+          3,
+          3,
+          3
+        ],
+        "uniqueSpuCount": 3,
+        "total": 305,
+        "scope": "近28天SPU接口口径，三个样本均有symbol=₽、实际link/photo；非全变体或全市场",
+        "calculation": {
+          "soldCount28": 20030,
+          "soldSum28": 11657237.748000002,
+          "roundedSoldSum28": 11657238
+        },
+        "forbiddenCalls": 0,
+        "remaining": "首轮currency无效后已按字典更正symbol，保留恢复经过；历史两次失败不改判"
+      },
+      "previewCheck": {
+        "clicked": true,
+        "version": 1,
+        "viewportWidth": 829,
+        "documentWidth": 814,
+        "kpiCount": 5,
+        "productRows": 3,
+        "conclusion": true,
+        "tableWrapper": {
+          "clientWidth": 774,
+          "scrollWidth": 980,
+          "overflowX": "auto",
+          "actualScrollLeft": 100
+        },
+        "imagesLoaded": 3,
+        "thumbnailSize": [
+          64,
+          64
+        ],
+        "objectFit": "contain",
+        "hover": {
+          "performed": true,
+          "visible": true,
+          "width": 320,
+          "height": 320,
+          "loaded": true,
+          "rect": {
+            "left": 77,
+            "top": 346,
+            "right": 411,
+            "bottom": 684
+          },
+          "viewport": {
+            "width": 829,
+            "height": 847
+          }
+        },
+        "note": "临时alt仅为取得快照UID，hover后已删；未改保存HTML"
+      },
+      "skill": "选品报告"
+    }
+  ]
+}
