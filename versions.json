@@ -1948,6 +1948,93 @@
    "snapshots": {
     "note": "回滚：index.html与归档json取本次发布父提交blob；线上技能PATCH回选品fe585eea/报告8e03f00f对应content。"
    }
+  },
+  {
+   "ts": "2026-11-17 18:30:00 +08:00",
+   "target": "skill:youweiai-ozon-scene-*(9) 召回口径修正",
+   "action": "fix",
+   "summary": "以 2026-11-17 真实接口实测推翻『双词短语检索』：同一类目17001同一排序下，类目导航(types only) total=10000/首位17,969件，宽词сумка total=1575/首位16,992件，双词женская сумка total=220/首位1,081件（命中差45倍、榜首差15.8倍）。9个场景技能统一追加『召回口径实测修正』章节：类目导航优先、禁双词短语、from翻页在100条后失效须改用minSoldCount28按销量阈值分段切片、size上限100、性别判定必须详情type2+标题双证据且冲突以标题为准（type2 对『Сумка мужская』同样误判女士）。",
+   "snapshots": {
+    "doc": "ozon-prompt-audit-recall-fix-2026-11-17.html",
+    "versions": {
+     "hot-sales-rise": {
+      "old": "c0bc4215",
+      "new": "ae402f64",
+      "chars": "6974→9046"
+     },
+     "seasonal-stocking": {
+      "old": "2d6fdbc9",
+      "new": "46430332",
+      "chars": "7076→9148"
+     },
+     "top-seller-beginner": {
+      "old": "e4b27c54",
+      "new": "c93d709a",
+      "chars": "7137→9209"
+     },
+     "title-traffic-terms": {
+      "old": "8e28e441",
+      "new": "daabc246",
+      "chars": "6237→8309"
+     },
+     "pet-subcategory": {
+      "old": "ae1cd3e2",
+      "new": "1f0ca864",
+      "chars": "6773→8845"
+     },
+     "search-traffic": {
+      "old": "eacecad2",
+      "new": "4d9569e7",
+      "chars": "6704→8776"
+     },
+     "market-trend": {
+      "old": "d1bbc744",
+      "new": "eb7f05b9",
+      "chars": "6338→8410"
+     },
+     "supply-demand": {
+      "old": "6462ca5d",
+      "new": "8e50553d",
+      "chars": "6678→8750"
+     },
+     "batch-image": {
+      "old": "a2c9ab8b",
+      "new": "4ee0dcbf",
+      "chars": "6698→8770"
+     }
+    }
+   }
+  },
+  {
+   "ts": "2026-11-17 18:30:00 +08:00",
+   "target": "skill:ozon-selection-analysis",
+   "action": "fix",
+   "summary": "公共选品搜索技能追加『召回路径与翻页实测修正』章节，与9场景技能口径统一：类目导航优先、禁双词、minSoldCount28分段切片替代失效的from翻页、size≤100。",
+   "snapshots": {
+    "version": "fc304570 → 802f9a52",
+    "chars": "6244→7315"
+   }
+  },
+  {
+   "ts": "2026-11-17 18:30:00 +08:00",
+   "target": "expert:ozon-selection-assistant",
+   "action": "fix",
+   "summary": "专家系统提示词追加『召回与交付门禁』章节（两条硬门禁）：①召回路径——类目优先、禁双词、分段切片、type2+标题双证据；②交付形态——用户要结果时交付的是结果页，不得用验收报告或未通过清单充当交付物。system 5031→5795字，skillIds保持16。",
+   "snapshots": {
+    "chars": "5031→5795",
+    "skillIds": 16
+   }
+  },
+  {
+   "ts": "2026-11-17 18:30:00 +08:00",
+   "target": "hub:index.html#ozon-scenes",
+   "action": "publish",
+   "summary": "两份导航同步本轮召回修复：9场景 prompt/skillMd/liveVersionId 全量更新为『2026-11-17 · 召回口径实测修正后线上快照』；热销飙升标记已通过并写入真实UI首答20行证据（会话 6a9412b1，模型自主42次工具调用：3 view_skill + 2 dict_lookup + 2 types-only spu_search + 30 spu_detail 核type2；20/20行标题与销量与独立核算逐行零误差）。",
+   "snapshots": {
+    "chatId": "6a9412b1-75f0-4200-86ca-4cc72ad55a53",
+    "report": "ozon-prompt-audit-recall-fix-2026-11-17.html",
+    "firstAnswerRows": 20
+   }
   }
  ]
 }
