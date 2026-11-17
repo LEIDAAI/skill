@@ -1,0 +1,238 @@
+我来处理这个Ozon俄区本土刚需季节品+备货场景。先读取对应场景技能了解执行规范。
+已读取场景技能。按其分工，报告前需先读取选品搜索与报告生成两个公共技能。
+已读取场景与两个公共技能，条件明确：俄区、关键词"женская сумка"、最多3个SPU（首轮size=3）、近28天销量降序、备货60天作为计划规则、排除供应链与利润。现在并行获取查询日、类目字段定义与首轮SPU样本。
+时间戳与首轮样本已取得：关键词命中332条，按soldCount28降序取3条，字段齐全（币种₽、链接/主图均已返回）。现在并行取3个SPU详情，核验类目语义、材质标签与历史序列覆盖。
+三款SPU详情已核验完毕：类目锚点、属性、序列窗口均已取回。用代码核实序列覆盖天数与统计口径，再出报告。
+数据已取齐并核验完毕。以下为摘要与完整HTML报告。
+
+**执行摘要（3–6行）**
+1. 本轮按俄语词根"женская сумка"检索，接口命中332个SPU，按近28天销量降序取样前3位并逐一完成详情核验（定价₽、7/28天销量、销售额、评分与真实链接齐全）。
+2. 三款历史留存均不足1年（详情接口仅返回50天单日序列，末端落后查询日78–106天，且与当期聚合存在口径矛盾），不覆盖上年同季 → 三款**季节趋势全部未知**，不做秋冬上升判定。
+3. 本土刚需证据三款均未取得（单款当期热销不证明刚需与本土导向）→ **达标0款**，三款均列为"当前相关候选·待核"。
+4. 未提供目标季开售日，备货窗口仅按计划规则输出"开售日T－60个自然日"，不虚构具体日历窗口、不拆分生产/物流天数。
+5. 按要求排除供应链与利润环节，未执行寻源及成本测算。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ozon俄区 秋冬女包женская сумка 当前候选核验与条件性备货计划（趋势未知·T-60规则）</title>
+<style>
+  :root{--ink:#1c2430;--sub:#5b6875;--line:#e3e8ee;--bg:#f6f8fa;--card:#ffffff;--accent:#0e5aa7;--gold:#8a6d1a;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 "PingFang SC","Microsoft YaHei","Segoe UI",Arial,sans-serif;max-width:1180px;margin:auto;padding:20px 16px 56px;overflow-wrap:anywhere;}
+  .wrap{max-width:100%;min-width:0;box-sizing:border-box;}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin-bottom:14px;}
+  .hero h1{margin:0 0 6px;font-size:22px;color:var(--gold);}
+  .hero .en{color:var(--accent);font-weight:600;}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .tag{font-size:12.5px;background:#eef4fb;color:#264a2;border:1px solid #d5e3f2;border-radius:14px;padding:3px 12px;color:#274a6d;}
+  .tag.warn{background:#fbf3e2;border-color:#ecd9a8;color:#7a5c14;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:14px 0;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0;}
+  .kpi .n{font-size:26px;font-weight:700;color:var(--accent);}
+  .kpi .l{font-size:12.5px;color:var(--sub);margin-top:4px;}
+  .kpi .s{font-size:12px;color:var(--sub);margin-top:2px;}
+  h2{font-size:16.5px;margin:26px 0 10px;border-left:4px solid var(--gold);padding-left:10px;}
+  .tablebox{max-width:100%;min-width:0;overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);}
+  table{border-collapse:collapse;width:100%;min-width:1180px;font-size:13px;}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;}
+  th{background:#f0f4f9;position:sticky;top:0;z-index:2;font-weight:600;white-space:nowrap;}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.stk{position:sticky;left:0;background:var(--card);z-index:1;border-right:1px solid var(--line);min-width:96px;}
+  tr:hover td{background:#fafcff;}
+  tr:hover td.stk{background:#f4f8fd;}
+  .cell-img{cursor:zoom-in;display:inline-block;}
+  .cell-img img{width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:6px;display:block;}
+  .spu{font-size:11.5px;color:var(--sub);margin-top:4px;font-family:Consolas,Menlo,monospace;}
+  .p-name{font-weight:600;max-width:280px;}
+  .p-name a{color:var(--accent);text-decoration:none;}
+  .p-name a:hover{text-decoration:underline;}
+  .p-meta{font-size:11.5px;color:var(--sub);max-width:280px;}
+  .neg{color:#c0392b;font-weight:600;background:#fdeceb;border:1px solid #f5c9c5;border-radius:6px;padding:1px 6px;display:inline-block;}
+  .gray{color:#6b7683;}
+  .lv{display:inline-block;font-size:11.5px;border-radius:6px;padding:1px 7px;border:1px solid;margin-right:4px;}
+  .lv-p{color:#3a7d44;border-color:#bfd8c2;background:#f2f9f3;}
+  .lv-w{color:#8a6d1a;border-color:#e0d191;background:#fbf6e3;}
+  .lv-e{color:#843829;border-color:#e3b9ae;background:#fbeae6;}
+  .blk{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px;}
+  .blk h3{margin:0 0 8px;font-size:14.5px;}
+  .blk ul{margin:6px 0;padding-left:20px;}
+  .blk li{margin:5px 0;}
+  .ev{font-size:12px;color:var(--sub);}
+  .step{display:flex;gap:8px;align-items:flex-start;background:#f0f6fb;border:1px dashed #b9d3ec;border-radius:8px;padding:10px 12px;margin:8px 0;}
+  .step pre{margin:0;font-size:12px;white-space:pre-wrap;color:#274a6d;flex:1;font-family:inherit;}
+  #pv{position:fixed;display:none;z-index:999;background:#fff;border:1px solid #c9d4df;border-radius:10px;box-shadow:0 8px 24px rgba(20,30,45,.25);padding:5px;pointer-events:none;}
+  #pvi{width:320px!important;min-width:320px!important;max-width:320px!important;height:320px!important;min-height:320px!important;max-height:320px!important;object-fit:contain;box-sizing:content-box;flex:none;display:block;background:#fff;}
+  .src{font-size:12.5px;color:var(--sub);word-break:break-all;}
+  .foot{color:var(--sub);font-size:12px;margin-top:18px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ① 页头 -->
+  <div class="hero">
+    <h1>秋冬女包（женская сумка）· 本土刚需季节品 + 条件性备货核验报告</h1>
+    <div class="en">youweiAI-OZON ｜ Ozon 俄罗斯站点（ozon.ru）公开大数据 · SPU口径</div>
+    <div class="tags">
+      <span class="tag">场景：本土刚需季节品 + 备货节奏</span>
+      <span class="tag">查询日：2026-11-17（Asia/Shanghai，取自本轮系统时间真实返回）</span>
+      <span class="tag">检索词：женская сумка（单俄语词根直搜）</span>
+      <span class="tag">排序：近28天销量 soldCount28 降序</span>
+      <span class="tag">销量周期：近7天 / 近28天（两窗口重叠，均为当期聚合）</span>
+      <span class="tag warn">趋势基线：三款单品日度序列仅50天窗口，不覆盖上年同季 → 趋势未知</span>
+      <span class="tag warn">合规声明：标题为条件性备货计划（T-60规则），不暗示需求已被预测</span>
+    </div>
+  </div>
+
+  <!-- ② KPI -->
+  <div class="kpis">
+    <div class="kpi"><div class="n">332</div><div class="l">接口命中SPU总数（本轮关键词检索口径）</div><div class="s">取样前3位，取样≠全量</div></div>
+    <div class="kpi"><div class="n">3</div><div class="l">已核验SPU详情（各字段逐条核对）</div><div class="s">3个唯一卖家ID（样本卖家）</div></div>
+    <div class="kpi"><div class="n">0 / 3</div><div class="l">通过≥1年季节历史核验的候选</div><div class="s">接口仅返回50天窗口，序列末端落后查询日78–106天</div></div>
+    <div class="kpi"><div class="n">0</div><div class="l">"达标"候选（须真实本土刚需证据方可标注）</div><div class="s">3款均为"当前相关候选 · 待核"</div></div>
+    <div class="kpi"><div class="n">T－60</div><div class="l">备货提前量计划规则（自然日）</div><div class="s">用户未给开售日 → 窗口条件性，不虚构日历日期</div></div>
+  </div>
+
+  <!-- ③ 明细表 -->
+  <h2>候选明细（近28天销量降序 · 币种₽为接口原值）</h2>
+  <div class="tablebox">
+  <table>
+    <thead><tr>
+      <th class="stk">主图 · SPU</th>
+      <th>商品（标题即真实链接）</th>
+      <th class="n">价格</th>
+      <th class="n">近7天销量</th>
+      <th class="n">近28天销量</th>
+      <th class="n">近28天销售额(接口)</th>
+      <th class="n">otherCount<br>原值</th>
+      <th>样本卖家</th>
+      <th>材质/功能证据</th>
+      <th>本土刚需证据</th>
+      <th>季节性判断</th>
+      <th>备货窗口</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="stk"><span class="cell-img" data-big="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt="SPU 0613596080 主图"></span><div class="spu">SPU 0613596080</div></td>
+        <td><div class="p-name"><a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">Сумка женская на пояс, поясная бананка, барсетка через плечо</a></div><div class="p-meta">中文接口名：包/袋（腰包/斜挎香蕉包）｜⭐4.8 · 评论3,425｜上架：2026-02-28｜后台：小百货和配饰›配饰›包/袋</div></td>
+        <td class="n">249₽<br><span class="gray">(区间249–600)</span></td>
+        <td class="n">211</td>
+        <td class="n">1,081</td>
+        <td class="n">399,344.542₽</td>
+        <td class="n">254*</td>
+        <td>Perfecting the World<br><span class="gray">ID 2128559</span></td>
+        <td>标题仅列腰包/斜挎用途；<b>未返回材质字段</b>，无毛呢/防泼水/加绒证据 → <span class="lv lv-w">待核</span></td>
+        <td>未取得刚需/本土导向证据；搜索会话接口原值：近7天129,406、加购转化率0.07%（仅作原值列出）→ <span class="lv lv-w">未核验</span></td>
+        <td><span class="neg">趋势未知</span><br><span class="ev">单日序列窗口2026-07-06~08-24（50天），不覆盖上年同季</span></td>
+        <td><span class="lv lv-w">条件性</span>开售日T－60自然日<br><span class="ev">目标季起点未提供，具体日期待补；生产/物流周期未取得，不拆分</span></td>
+      </tr>
+      <tr>
+        <td class="stk"><span class="cell-img" data-big="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" alt="SPU 8663096095 主图"></span><div class="spu">SPU 8663096095</div></td>
+        <td><div class="p-name"><a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener">Косметичка дорожная, сумка дорожная женская, искусственная кожа</a></div><div class="p-meta">化妆/旅行收纳包｜⭐4.9 · 评论5,698｜上架：2026-07-02｜后台：小百货和配饰›配饰›化妆包｜originCountry：中国（原值≠卖家注册地）</div></td>
+        <td class="n">250.76₽<br><span class="gray">(原值250.759·区间185–250.76)</span></td>
+        <td class="n">335</td>
+        <td class="n">778</td>
+        <td class="n">165,660.025₽</td>
+        <td class="n">2,173*</td>
+        <td>Сиси Лу（Sisi Lu）<br><span class="gray">ID 5160134</span></td>
+        <td>标题文字注明"искусственная кожа（人造革）"——<b>Listing文字线索，非详情页材质核验</b>；无毛呢/防泼水/加绒证据 → <span class="lv lv-w">待核</span></td>
+        <td>未取得刚需/本土导向证据；搜索会话接口原值：近7天50,303、加购转化率0.40%（仅作原值列出）→ <span class="lv lv-w">未核验</span></td>
+        <td><span class="neg">趋势未知</span><br><span class="ev">单日序列窗口2026-07-13~08-31（50天），不覆盖上年同季</span></td>
+        <td><span class="lv lv-w">条件性</span>开售日T－60自然日<br><span class="ev">目标季起点未提供，具体日期待补；生产/物流周期未取得，不拆分</span></td>
+      </tr>
+      <tr>
+        <td class="stk"><span class="cell-img" data-big="https://ir-20.ozonstatic.cn/s3/multimedia-1-u/20478054990.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-u/20478054990.jpg" alt="SPU 5866209564 主图"></span><div class="spu">SPU 5866209564</div></td>
+        <td><div class="p-name"><a href="https://www.ozon.ru/product/2902632343" target="_blank" rel="noopener">Сумка для ноутбука, Чехол для макбука, Деловая папка-сумка … женская мужская</a></div><div class="p-meta">16″手提电脑包·商务公文两用（标题自标"女装男用"双向）｜⭐4.9 · 评论42｜上架：2025-09-26｜后台：电子产品›背包、套包、包›手提电脑包｜originCountry：中国（原值≠卖家注册地）</div></td>
+        <td class="n">920₽<br><span class="gray">(区间852–920)</span></td>
+        <td class="n">106</td>
+        <td class="n">472</td>
+        <td class="n">398,810.15₽</td>
+        <td class="n">302*</td>
+        <td>Белая Роза（白玫瑰）<br><span class="gray">ID 2674441</span></td>
+        <td>标题仅注明16″/商务用途；<b>未返回材质字段</b>，无毛呢/防泼水/加绒证据 → <span class="lv lv-w">待核</span></td>
+        <td>未取得刚需/本土导向证据；搜索会话接口原值：近7天15,005、加购转化率0.37%（仅作原值列出）→ <span class="lv lv-w">未核验</span></td>
+        <td><span class="neg">趋势未知</span><br><span class="ev">单日序列窗口2026-06-15~08-03（50天），不覆盖上年同季</span></td>
+        <td><span class="lv lv-w">条件性</span>开售日T－60自然日<br><span class="ev">目标季起点未提供，具体日期待补；生产/物流周期未取得，不拆分</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="ev" style="margin-top:6px;">* otherCount 为接口原值，字段中文语义未在接口文档列明，仅按原值展示，不作为独立卖家/跟卖数解读。近7天与近28天为重叠窗口的当期聚合，两者不可相加或相除推算增长。</div>
+
+  <!-- ④ 结论/建议（四分组） -->
+  <h2>结论与建议</h2>
+  <div class="blk"><h3>A · 条件已核（有本轮接口证据直接支持）</h3><ul>
+    <li>关键词"женская сумка"本轮命中<b>332个SPU</b>（接口total，非全站规模），按近28天销量降序取样前3位完成SPU详情核验：价格（₽）、近7/28天销量、近28天销售额、评分、评论数、真实商品链接齐备。</li>
+    <li>类目锚点已核：<b>SPU 0613596080</b>与<b>8663096095</b>位于 女/配饰›包袋 外围（后台：包袋、化妆包），<b>5866209564</b>归 电子产品›手提电脑包。无男包、韩式饭盒、麻将等明确错类混入；5866209564标题自标"女男两用"（通用商务定位），是否纳入女包目标范围请用户最终确认。</li>
+    <li>本三款 soldOut 均为 false（在售）；销量排序口径、币种均为接口原值，无手工换算。</li>
+  </ul></div>
+  <div class="blk"><h3>B · 季节趋势待补（历史＜1年，全部"趋势未知"）</h3><ul>
+    <li><b>三款单品历史留存均不足1年</b>：详情接口单日序列各仅返回50天窗口（2026-07-06~08-24 / 07-13~08-31 / 06-15~08-03），末端距查询日2026-11-17分别落后<b>85 / 78 / 106天</b>，均不覆盖上年同季 → 按场景门槛不计算同期变化、不判定秋冬上升或见顶，季节判断一律标注<b>"趋势未知"</b>。</li>
+    <li>序列口径疑点（影响季节判断的缺口）：dailySalesList 内存在近似阶梯/复制段（如5866209564在06-19~07-07连续多日同值"7"）；且0613596080单日sales=1,155高于其当期28天聚合1,081 → 单日序列与当前聚合<b>不可同口径混用</b>，仅能作为窗口内的粗轮廓，不参与增长结论。</li>
+    <li><b>受影响结论：备货窗口仅输出"开售日T－60个自然日"计划规则</b>——用户未提供目标销售季起点，具体日历日期待定；不据此预测销量，不称"最佳备货期"。</li>
+  </ul></div>
+  <div class="blk"><h3>C · 属性与本土需求待核（不能标"达标"的原因）</h3><ul>
+    <li><b>秋冬属性证据缺失</b>：三款均无毛呢/防泼水/加绒字段证据；仅8663096095标题文字注明"人造革"（Listing线索，非材质核验）。当期热销不构成季节性与本土刚需证明 → 三款均列<b>"当前相关候选 · 待核"</b>。</li>
+    <li><b>本土刚需证据未取得</b>：无搜索量同比、地区需求分布等外部证据；表格内搜索会话数/转化率为接口原值，仅作参考，不构成"本土刚需"认证（受影响结论：无法给出"确定性投放"建议）。</li>
+    <li>数据矛盾已并列披露：5866209564接口 stock7/stock28=0 但 soldOut=false 且有销量（履约模式FBS）、accessibilityByDays=-1，按异常值列示，不视为断货事实。</li>
+  </ul></div>
+  <div class="blk"><h3>D · 明确排除/未执行项</h3><ul>
+    <li>本轮<b>无候选因错类被剔除</b>，也不将任何一款标注达标；原始候选(3)与达标(0)分开计数。</li>
+    <li>按用户要求，<b>供应链/1688寻源与利润测算未执行</b>，报告不含成本、毛利或采购建议。</li>
+    <li>备货窗口未拆分生产/物流天数（周期数据未提供），仅在取得TP-环节周期后进一步细化。</li>
+  </ul></div>
+  <div class="blk"><h3>下一步建议（可直接复制给我）</h3>
+    <div class="step"><span>1</span><pre>提供预期销售季开售日（如"2026年11月20日开售"），我立即用开始日T-60个自然日计算3款的具体备货启动日期。</pre></div>
+    <div class="step"><span>2</span><pre>补充能覆盖1年及以上的同类目历史销量表/历史快照链接，我再判断秋冬季节上升/见顶，未补前维持"趋势未知"。</pre></div>
+    <div class="step"><span>3</span><pre>如认可"标题自标女男两用"的5866209564算入女包范围请确认；或授权我对前3款逐条补充验材质/人群定位字段。</pre></div>
+  </div>
+
+  <!-- ⑤ 数据缺口与口径声明 -->
+  <h2>数据缺口与口径声明</h2>
+  <div class="blk"><ul>
+    <li><b>销量周期</b>：以"近28天(soldCount28)"替代原30天口径；"近7天"与"近28天"为重叠窗口，不得相除构造增长率。日期以查询日2026-11-17计算。</li>
+    <li><b>取样边界</b>：total=332为接口命中，实际取样并核验3条（size=3，from=0）；列表数据不外推332的整体结构，更不推全站市场。</li>
+    <li><b>历史覆盖</b>：3款核验对象均无1年同口径序列；SPU上架日(2026-02-28 / 2026-07-02 / 2025-09-26)与滚动28天销量不构成季节历史，不据此推"上架即热销"。</li>
+    <li><b>字段缺口</b>：材质、防泼水/保暖功能、卖家注册地、storeType 均未返回或SPU不持有——"中国originCountry"仅为商品原值，不证明跨境/本土卖家身份；若需本土/跨境硬核验，按代表SKU逐条补验后才能进入结论。</li>
+    <li><b>异常与缺日</b>：5866209564库存字段与在售矛盾并列披露；三款单日序列末端距查询日78–106天，缺段不插补。</li>
+    <li><b>条件性窗口</b>：T-60为计划规则而非实证最佳期；需求、销量预测、生产物流排期均不在本轮证据内。</li>
+  </ul></div>
+
+  <!-- ⑥ 溯源 -->
+  <h2>溯源</h2>
+  <div class="blk"><ul>
+    <li>查询日：2026-11-17T12:04（Asia/Shanghai），来自本轮系统时间接口真实返回。</li>
+    <li>真实商品链接：<span class="src">https://www.ozon.ru/product/3568126383</span>（腰包）· <span class="src">https://www.ozon.ru/product/5743219191</span>（化妆/旅行收纳包）· <span class="src">https://www.ozon.ru/product/2902632343</span>（16″手提电脑包）。</li>
+    <li>取数链路：SPU关键词检索（женская сумка，soldCount28降序，size=3）→ 3×SPU详情核验（类目、价格区间、销量金额、序列、卖家Logo均取自同一返回）；字段为先查接口定义再按实际返回核对。</li>
+    <li>历史文件标识：<b>无</b>（未提供任何用户历史材料，"趋势未知"即由此得出）。历史序列来源限于SPU详情内嵌之单日数据（50天窗口，见⑤条缺口）。</li>
+    <li>数据性质：youweiAI-OZON · Ozon俄区公开数据（非官方结算口径），仅供选品参考。</li>
+  </ul></div>
+</div>
+
+<div id="pv"><img id="pvi" alt="主图放大预览"></div>
+<script>
+(function(){
+  var pv=document.getElementById('pv'), im=document.getElementById('pvi');
+  function move(e){
+    var w=330,h=330,x=e.clientX+16,y=e.clientY+16;
+    if(x+w>window.innerWidth-8) x=e.clientX-w-16;
+    if(y+h>window.innerHeight-8) y=e.clientY-h-16;
+    pv.style.left=Math.max(8,x)+'px'; pv.style.top=Math.max(8,y)+'px';
+  }
+  document.querySelectorAll('.cell-img').forEach(function(c){
+    c.addEventListener('mouseenter',function(){ im.src=c.getAttribute('data-big'); pv.style.display='block'; });
+    c.addEventListener('mousemove',move);
+    c.addEventListener('mouseleave',function(){ pv.style.display='none'; });
+  });
+})();
+</script>
+<div class="foot">youweiAI-OZON · 秋冬女包женская сумка 当前候选核验报告 · 趋势未知（历史不足1年）· 备货窗口为T-60条件性计划</div>
+</body>
+</html>
+```
+
+**报告要点回顾**：KPI五卡（命中332/核验3/历史达标0/达标0/T-60规则）→ 明细表3行（真实主图+320×320悬停放大、真实ozon.ru链接，材质/本土证据列以待核原值呈现）→ 四分组结论（条件已核/趋势待补/属性待核/明确排除）→ 缺口与口径声明 → 溯源。三款候选均为"当前相关候选·待核"，无一虚构"达标"或"季节上升"；补齐开售日期或一年期历史数据后，我可立即续算具体备货日历与季节判定。

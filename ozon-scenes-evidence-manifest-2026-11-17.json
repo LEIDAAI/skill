@@ -1,0 +1,706 @@
+{
+  "reports": [
+    {
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "turn": 1,
+      "turnId": "7f97e784-1148-4bc0-90ca-8c19b89ab19b",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-78ff7e9d-0253-4a71-9aed-20b424010afc-turn01-report01-80b7d1ccf52805f0.html",
+      "sha256": "80b7d1ccf52805f0b0f86da969874cdf330ccbe33d65e2584dabaf8ddebfb92c",
+      "completeDocument": false,
+      "source": "chat-78ff7e9d-0253-4a71-9aed-20b424010afc.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "turn": 1,
+      "turnId": "a6c433cc-2635-453d-9bf5-669baec4e7d0",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-69a991d4-81ce-4e58-bf91-159c2f47acef-turn01-report01-b156561b84ce4a99.html",
+      "sha256": "b156561b84ce4a99db0781b57ca710c38fab14ae25a87c5c30809b2876b65a32",
+      "completeDocument": true,
+      "source": "chat-69a991d4-81ce-4e58-bf91-159c2f47acef.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 1,
+      "turnId": "2e575711-433a-417f-949c-b238678f6796",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn01-report01-cc82cb2be38b54f8.html",
+      "sha256": "cc82cb2be38b54f8d40e61a8488ae8f71c2b818f6b5f64e2c1a937cadd577fd5",
+      "completeDocument": true,
+      "source": "chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 1,
+      "turnId": "287e88db-c18f-4578-8016-5897b180e28e",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn01-report01-8c677a3eb9f294d1.html",
+      "sha256": "8c677a3eb9f294d19381b9f47622b7bb22669ce2805eb0099f518f0a9d70b3bf",
+      "completeDocument": true,
+      "source": "chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "8a27eb98-8505-4c5c-83ca-fa9118d80c32",
+      "turn": 1,
+      "turnId": "52dfae72-df90-441f-aa39-d2a4750750e4",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-8a27eb98-8505-4c5c-83ca-fa9118d80c32-turn01-report01-a9c76f9f0d597ed0.html",
+      "sha256": "a9c76f9f0d597ed0fd1e109ce56c2d83538b919a39c244d779c38fce8bafcb4f",
+      "completeDocument": true,
+      "source": "chat-8a27eb98-8505-4c5c-83ca-fa9118d80c32.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "turn": 1,
+      "turnId": "06bd9252-3451-48b7-b549-6bc99a34946c",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-turn01-report01-78f401b1f73b3b1f.html",
+      "sha256": "78f401b1f73b3b1f4f0c8b1f423e30b9fca2a5f32644c81843c55d9f7ba4424c",
+      "completeDocument": true,
+      "source": "chat-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "turn": 2,
+      "turnId": "b48a9a28-ad54-49f2-9bab-4cc29b71af1b",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-turn02-report01-5d56e45351023b24.html",
+      "sha256": "5d56e45351023b24c6af3508c02f62469c13f367d0272affa4323cba913e5fb9",
+      "completeDocument": false,
+      "source": "chat-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "turn": 1,
+      "turnId": "bc29aef2-dac9-4f7a-9857-b0a160254230",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-a2843beb-1bec-4fa6-8468-b9c5a56652e2-turn01-report01-2bfb1573caed8362.html",
+      "sha256": "2bfb1573caed836296a89f1a7d26934c151637aa2ab28e678dca77434ea3d8a8",
+      "completeDocument": true,
+      "source": "chat-a2843beb-1bec-4fa6-8468-b9c5a56652e2.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "turn": 1,
+      "turnId": "428f2d1a-bbe2-4355-a446-3593b42c4e18",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-ded97bf8-08a7-490e-992b-6afe29354d78-turn01-report01-444b4b2babe0f28c.html",
+      "sha256": "444b4b2babe0f28ce0c54a2cc5077234a5398e8e8d16e18d4bd71dfb93d6bf92",
+      "completeDocument": true,
+      "source": "chat-ded97bf8-08a7-490e-992b-6afe29354d78.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "turn": 2,
+      "turnId": "b48a9a28-ad54-49f2-9bab-4cc29b71af1b",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-turn02-report01-3b239a48cd384c50.html",
+      "sha256": "3b239a48cd384c50caf7e571eaf05b3f5d0cfb6f4e74a81adf47b6eba2622bf8",
+      "completeDocument": true,
+      "source": "chat-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "turn": 1,
+      "turnId": "47e21470-513d-457d-afeb-6c0ccf0112da",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-turn01-report01-a39af25a7fb24c9e.html",
+      "sha256": "a39af25a7fb24c9e93e99e94eec85beb2ce0afc7cf20be40b1af1cba1fe10920",
+      "completeDocument": true,
+      "source": "chat-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "turn": 1,
+      "turnId": "1e94ddc0-7a8e-48a4-aa8e-3c11ac98b23e",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-turn01-report01-63b8885ec8c29863.html",
+      "sha256": "63b8885ec8c29863e60ea6b75a1417d6b7d911f7350bb4b5672315b7d8ff4961",
+      "completeDocument": true,
+      "source": "chat-c9924cd6-7ecf-431a-9f9f-cb84da28fff6.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "turn": 2,
+      "turnId": "c0629bb8-b0ab-4534-b87f-ae7956bc0ccb",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-69a991d4-81ce-4e58-bf91-159c2f47acef-turn02-report01-b9ff2f6fe2439b37.html",
+      "sha256": "b9ff2f6fe2439b3790eb74de22329b17cc04928b325c4f3a6f5d3f2cf3faa985",
+      "completeDocument": true,
+      "source": "chat-69a991d4-81ce-4e58-bf91-159c2f47acef.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 2,
+      "turnId": "c3acf5e9-1151-458d-b37b-2f328c1f964e",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn02-report01-3724a26cf37f9225.html",
+      "sha256": "3724a26cf37f9225903276d5d6db8134bca81272f6ec987ab47d711bb6da010b",
+      "completeDocument": true,
+      "source": "chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 2,
+      "turnId": "b3f6874a-b581-4e09-bbc4-d1d19e36b5c4",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn02-report01-02eb05a487ab3a33.html",
+      "sha256": "02eb05a487ab3a3312408ffb8780edc0cf737310c5bbb62dcc2bbe90a5638876",
+      "completeDocument": true,
+      "source": "chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "turn": 2,
+      "turnId": "c4e8cf28-47f3-4f4a-8f7c-4555dc66b2f4",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-turn02-report01-74428cc44418947e.html",
+      "sha256": "74428cc44418947ec271af1d023ad30116e9b2bbfc28acbdb88ffc2352abdc42",
+      "completeDocument": true,
+      "source": "chat-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "turn": 2,
+      "turnId": "a67becac-9050-4c8e-a40f-9d516b4a9aad",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-a2843beb-1bec-4fa6-8468-b9c5a56652e2-turn02-report01-b391a1cad355e7e8.html",
+      "sha256": "b391a1cad355e7e8c7a97d6f444922112bc3bf91dd4d70f25db0a1cfc31e41fc",
+      "completeDocument": true,
+      "source": "chat-a2843beb-1bec-4fa6-8468-b9c5a56652e2.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "turn": 2,
+      "turnId": "8be11c99-cab8-4006-9ee6-53a2db96f788",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-turn02-report01-d07597bae4635c82.html",
+      "sha256": "d07597bae4635c823c2be48a3ee9a86a4d9162d5982b0aba4b2bc5ccc778fdf6",
+      "completeDocument": true,
+      "source": "chat-c9924cd6-7ecf-431a-9f9f-cb84da28fff6.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 3,
+      "turnId": "b408374d-38ba-4408-9ca0-31495a942d97",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn03-report01-2e84f7111740f237.html",
+      "sha256": "2e84f7111740f237fac69f8ab36f9e18e78a8d5d8bb6115fc84d3691c5da0ff7",
+      "completeDocument": true,
+      "source": "chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2.json /turns/2/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 3,
+      "turnId": "9ccae051-3001-4518-81e8-12c43256f64f",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn03-report01-dd611fffb27a265f.html",
+      "sha256": "dd611fffb27a265f56c54e86c8413a6012d6921fa1c7fec5429fc850236da8a2",
+      "completeDocument": true,
+      "source": "chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e.json /turns/2/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "turn": 2,
+      "turnId": "8e57e767-cf19-45e0-b8cf-17a6e90c42b8",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-ded97bf8-08a7-490e-992b-6afe29354d78-turn02-report01-448610bd5c165eb0.html",
+      "sha256": "448610bd5c165eb0190603065d580d2ebf1caebce4d80beec0f0b17b7792dc0c",
+      "completeDocument": true,
+      "source": "chat-ded97bf8-08a7-490e-992b-6afe29354d78.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    }
+  ],
+  "captures": [
+    {
+      "file": "ozon-scenes-chat-78ff7e9d-0253-4a71-9aed-20b424010afc-fc6d8e0907a12f6a.json",
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "sha256": "fc6d8e0907a12f6a166457cf846b6c441ebad32ed52331e219da4111255f5ab3",
+      "capturedAt": "2026-11-17T12:15:13.784510+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-69a991d4-81ce-4e58-bf91-159c2f47acef-fab1b073a8ce37f0.json",
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "sha256": "fab1b073a8ce37f094e4410292d10f8a8ceea506ad98682a9eafb1b0f19947df",
+      "capturedAt": "2026-11-17T12:15:13.584960+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-5627c429cdce3aef.json",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "sha256": "5627c429cdce3aef4221866b94fc69eeeaf8906bfb5dd6a1795a759b35d59884",
+      "capturedAt": "2026-11-17T12:09:33.005899+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e-63f0ad0f52c2e663.json",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "sha256": "63f0ad0f52c2e663fd08cb77f47cfedfd25ed92e29d76737c2943e65e871dd8f",
+      "capturedAt": "2026-11-17T12:09:33.076267+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-8a27eb98-8505-4c5c-83ca-fa9118d80c32-fe7e6da9494d09aa.json",
+      "chatId": "8a27eb98-8505-4c5c-83ca-fa9118d80c32",
+      "sha256": "fe7e6da9494d09aa30ad8a60df435ba42be12bd40510c5204fd5e74e49d63629",
+      "capturedAt": "2026-11-17T12:09:33.142610+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-23c1676a6dc3328b.json",
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "sha256": "23c1676a6dc3328b3f2a6d826ae8692733cb7c846837d6527ef9f217a5dd121d",
+      "capturedAt": "2026-11-17T12:15:13.857675+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-bcb56284217fbe12.json",
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "sha256": "bcb56284217fbe12f57241dd568e8af11e24616f105319214498cbd812255f26",
+      "capturedAt": "2026-11-17T12:15:13.646783+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-a2843beb-1bec-4fa6-8468-b9c5a56652e2-3e1dace9cdc19dbc.json",
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "sha256": "3e1dace9cdc19dbc3a5587b063851ba9101c9c3fa851b09026ace481bdfae21d",
+      "capturedAt": "2026-11-17T12:09:33.308893+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-ded97bf8-08a7-490e-992b-6afe29354d78-02bd39d1a1d5cda7.json",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "sha256": "02bd39d1a1d5cda7b38b8ce7dfa6c21104ef9b34b0bae5fb1d508cee794de536",
+      "capturedAt": "2026-11-17T12:15:13.712369+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-3022d6084e38e0bb.json",
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "sha256": "3022d6084e38e0bb51a3eb6a23ece37115ba548511ac145d06bb704e85b8e768",
+      "capturedAt": null,
+      "missingCapture": true
+    },
+    {
+      "file": "ozon-scenes-chat-c5efb59a-0050-4ba5-a284-82619d1f3946-0501612e98046c19.json",
+      "chatId": "c5efb59a-0050-4ba5-a284-82619d1f3946",
+      "sha256": "0501612e98046c198cf245477beb22bb18890f4267834d65e4c8910279fecf51",
+      "capturedAt": null,
+      "missingCapture": true
+    },
+    {
+      "file": "ozon-scenes-chat-78ff7e9d-0253-4a71-9aed-20b424010afc-f443324638d698de.json",
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "sha256": "f443324638d698de8352f13e7a744b3d4010a3c5d899c667704f7366e99c7dd3",
+      "capturedAt": "2026-11-17T12:29:30.685160+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-69a991d4-81ce-4e58-bf91-159c2f47acef-59d87036894a23f7.json",
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "sha256": "59d87036894a23f7e71ad95ed37205568684fa884635660d6b0bd2d1a1e40878",
+      "capturedAt": "2026-11-17T12:29:30.765123+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-500fc45db612e4b3.json",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "sha256": "500fc45db612e4b3af698a1eb95edfb86bf02351f7669035772b26f479ad42cd",
+      "capturedAt": "2026-11-17T12:29:30.859913+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e-01e91571676b4d32.json",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "sha256": "01e91571676b4d32ef6f35fa8ead3e36fd13327b96fc6a53c3c4deea856d5abb",
+      "capturedAt": "2026-11-17T12:29:30.938442+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-8a27eb98-8505-4c5c-83ca-fa9118d80c32-de907cc5605b8184.json",
+      "chatId": "8a27eb98-8505-4c5c-83ca-fa9118d80c32",
+      "sha256": "de907cc5605b81845fd3059b2598ba95f612b7e862829961eaf054c46a84a7b5",
+      "capturedAt": "2026-11-17T12:29:31.007913+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-07fc2a917161d527.json",
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "sha256": "07fc2a917161d52721a25792bf44282fc8cda68cb7bac78f40985064ba57f081",
+      "capturedAt": "2026-11-17T12:29:31.075156+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-410218d9f175696b.json",
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "sha256": "410218d9f175696b6283116dc68c9d3b836166866669ec10c7a4a947b44db5e5",
+      "capturedAt": "2026-11-17T12:29:31.174162+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-a2843beb-1bec-4fa6-8468-b9c5a56652e2-04a53cd8d20087e5.json",
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "sha256": "04a53cd8d20087e59e5ff622972995f7ed722c201a7d4011f98e7c569d9d8a56",
+      "capturedAt": "2026-11-17T12:29:31.242507+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-ded97bf8-08a7-490e-992b-6afe29354d78-db4a625cd5b7d21a.json",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "sha256": "db4a625cd5b7d21a35990627f645f0a668f0082c7a289e74f2a04938326d3158",
+      "capturedAt": "2026-11-17T12:29:31.344320+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-d24889b01b82b500.json",
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "sha256": "d24889b01b82b500d5d7011390ae987462d10458c1ba9120dae6f6d2a613ab61",
+      "capturedAt": "2026-11-17T12:29:31.429108+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-c5efb59a-0050-4ba5-a284-82619d1f3946-f90af63d4939c069.json",
+      "chatId": "c5efb59a-0050-4ba5-a284-82619d1f3946",
+      "sha256": "f90af63d4939c0695b554228c72673eb9877650ba62a5833f94bdb1e79e4493d",
+      "capturedAt": "2026-11-17T12:29:31.498955+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-78ff7e9d-0253-4a71-9aed-20b424010afc-fcf27a2fa777dc7c.json",
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "sha256": "fcf27a2fa777dc7c1841623e18b37c876bb1dc0e07bb0ba37d14a1b07c526568",
+      "capturedAt": "2026-11-17T12:53:01.276068+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-69a991d4-81ce-4e58-bf91-159c2f47acef-35877f6e3a7493e8.json",
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "sha256": "35877f6e3a7493e8f49054546d234d1a62b87480ee29e26a304cae837ae77cbb",
+      "capturedAt": "2026-11-17T12:53:01.394881+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-d43ee6a12a1b3739.json",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "sha256": "d43ee6a12a1b3739ef5dc075e0e3adc3504acb5b2382fe590a380e7b3d100434",
+      "capturedAt": "2026-11-17T12:53:01.507119+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e-88f3c95f7b9049a8.json",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "sha256": "88f3c95f7b9049a864806d588f26a81a4f389c24a3637bbdc080325da573f225",
+      "capturedAt": "2026-11-17T12:53:01.586941+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-8a27eb98-8505-4c5c-83ca-fa9118d80c32-e136aa86e20776f9.json",
+      "chatId": "8a27eb98-8505-4c5c-83ca-fa9118d80c32",
+      "sha256": "e136aa86e20776f9a6f18f63dd38f0203ac7ca40980ab35af43608906bc1630d",
+      "capturedAt": "2026-11-17T12:53:01.667612+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-4cb6715ef1a17914.json",
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "sha256": "4cb6715ef1a1791418e6bc8454888f41a4a15f105104cb196142d8cfab8ded2b",
+      "capturedAt": "2026-11-17T12:53:01.733385+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-b70300c313e6f32b.json",
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "sha256": "b70300c313e6f32bff1fccb338d76e64e9eed0ebc014588752448e66ce678586",
+      "capturedAt": "2026-11-17T12:53:01.830538+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-a2843beb-1bec-4fa6-8468-b9c5a56652e2-0daaaff627573356.json",
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "sha256": "0daaaff62757335651556097ff096ac29fbf57fc28b852479813434d2fc2e316",
+      "capturedAt": "2026-11-17T12:53:01.908405+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-ded97bf8-08a7-490e-992b-6afe29354d78-d40e8ce70e4a5103.json",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "sha256": "d40e8ce70e4a5103efe4b99d68c7fb64a890924acd9a24696e9ae8daa2ab30bb",
+      "capturedAt": "2026-11-17T12:53:01.967137+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-3b6fcf95e565056b.json",
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "sha256": "3b6fcf95e565056b5628a353a261b1af2447cc3948370af53d54a9658e494404",
+      "capturedAt": "2026-11-17T12:53:02.021746+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-c5efb59a-0050-4ba5-a284-82619d1f3946-b195f350005d5156.json",
+      "chatId": "c5efb59a-0050-4ba5-a284-82619d1f3946",
+      "sha256": "b195f350005d5156830c709b036f5cd6337942f8ede4c40f5858b09eb5fd1248",
+      "capturedAt": "2026-11-17T12:53:02.064301+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-d1f38a5d8c2ac10d.json",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "sha256": "d1f38a5d8c2ac10dd235506e7fd7565803d73c763e0198467f44708dbeab2498",
+      "capturedAt": "2026-11-17T13:13:10.139260+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-9728fe6c-a86f-4a66-a0d9-0db764d2181e-5dc609e5b014591c.json",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "sha256": "5dc609e5b014591c787b01ef44e3a2300592cd1385751deb6f543a32722325d2",
+      "capturedAt": "2026-11-17T13:02:27.667734+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-ded97bf8-08a7-490e-992b-6afe29354d78-2d4d262e56c15db2.json",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "sha256": "2d4d262e56c15db22303bd7e2839ec7374e051ba4d5f8a55fa92e0bd52143a4e",
+      "capturedAt": "2026-11-17T13:14:34.618919+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-abb2399c6e827646.json",
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "sha256": "abb2399c6e827646512429772328cbb803eedbffa9e83bd88c4c7ba8a42729b7",
+      "capturedAt": "2026-11-17T13:02:27.800912+08:00",
+      "missingCapture": false
+    }
+  ],
+  "answers": [
+    {
+      "file": "ozon-scenes-answer-78ff7e9d-0253-4a71-9aed-20b424010afc-turn01-dafaad0f93a291f4.txt",
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "turn": 1,
+      "sha256": "dafaad0f93a291f46e1890273f6ad6287670c50a9af2e9b58fd474954ea72b20"
+    },
+    {
+      "file": "ozon-scenes-answer-78ff7e9d-0253-4a71-9aed-20b424010afc-turn02-f500f0af5f3201b7.txt",
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "turn": 2,
+      "sha256": "f500f0af5f3201b7828dcb7528d0d9b445f36873188a5d89203006862b5de05c"
+    },
+    {
+      "file": "ozon-scenes-answer-69a991d4-81ce-4e58-bf91-159c2f47acef-turn01-0e7130e891d13b15.txt",
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "turn": 1,
+      "sha256": "0e7130e891d13b15dd4e3c358fecd703b8f71208dc5309b5c57945b908c317c7"
+    },
+    {
+      "file": "ozon-scenes-answer-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn01-a62b45d414f02217.txt",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 1,
+      "sha256": "a62b45d414f02217ea6b87c7b81fb28c958ee352bbfa6b22c8a94dbb19bc9873"
+    },
+    {
+      "file": "ozon-scenes-answer-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn01-1a4b775cd3db57e6.txt",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 1,
+      "sha256": "1a4b775cd3db57e6d19496a542f5b2f151ebef9680fdfa0e0b459b86f931143b"
+    },
+    {
+      "file": "ozon-scenes-answer-8a27eb98-8505-4c5c-83ca-fa9118d80c32-turn01-0712a1e600a026a7.txt",
+      "chatId": "8a27eb98-8505-4c5c-83ca-fa9118d80c32",
+      "turn": 1,
+      "sha256": "0712a1e600a026a78ed9074a7f84ff5e2519a593be9604ef25b754a4606bc373"
+    },
+    {
+      "file": "ozon-scenes-answer-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-turn01-0614ee63a9a2d725.txt",
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "turn": 1,
+      "sha256": "0614ee63a9a2d7254967194e645e5e7744bbe0ac265911b239f52f4f62182a5a"
+    },
+    {
+      "file": "ozon-scenes-answer-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-turn02-b7a760f112c56e3b.txt",
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "turn": 2,
+      "sha256": "b7a760f112c56e3bc815cf909499eb02a63d87225a1ef4f89131bb3af66bebad"
+    },
+    {
+      "file": "ozon-scenes-answer-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-turn01-530b5c7f18af7b96.txt",
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "turn": 1,
+      "sha256": "530b5c7f18af7b967bc303d441b64d84d9dd5aaa8782eecb61b6a5d8a28c9dd6"
+    },
+    {
+      "file": "ozon-scenes-answer-a2843beb-1bec-4fa6-8468-b9c5a56652e2-turn01-bba96798268b943f.txt",
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "turn": 1,
+      "sha256": "bba96798268b943fc7678854b7535e6c7f1bc6955403f41ad5818cef25ef1c60"
+    },
+    {
+      "file": "ozon-scenes-answer-ded97bf8-08a7-490e-992b-6afe29354d78-turn01-5034705a6d606b24.txt",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "turn": 1,
+      "sha256": "5034705a6d606b24e9c2facd055e62fd3e1e3b7fa967bf8f455425dfb4a67fd0"
+    },
+    {
+      "file": "ozon-scenes-answer-78ff7e9d-0253-4a71-9aed-20b424010afc-turn02-69b180355ae60667.txt",
+      "chatId": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "turn": 2,
+      "sha256": "69b180355ae606672ff0163c8a834f82b8bb7657360537dad5c824f7ca60ff72"
+    },
+    {
+      "file": "ozon-scenes-answer-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn02-fe8c4fa7fe0a7bf1.txt",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 2,
+      "sha256": "fe8c4fa7fe0a7bf18822618ec6a89e22f4040f2d6153a4eaa40e575966e09b29"
+    },
+    {
+      "file": "ozon-scenes-answer-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn02-bf8fc851d4616cc9.txt",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 2,
+      "sha256": "bf8fc851d4616cc9bc2e7264a39cd299560453846beb7a235f9db0527ddf6f81"
+    },
+    {
+      "file": "ozon-scenes-answer-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f-turn02-77682bb08c98dc2d.txt",
+      "chatId": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "turn": 2,
+      "sha256": "77682bb08c98dc2d0e03c039c8f53a85c4568d8d4dd5dae3bd66c5bdc91cb819"
+    },
+    {
+      "file": "ozon-scenes-answer-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-turn01-69526c6abcadfd5c.txt",
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "turn": 1,
+      "sha256": "69526c6abcadfd5c7431d07e80e6d8c34c070b760824af2657110a260375ec55"
+    },
+    {
+      "file": "ozon-scenes-answer-a2843beb-1bec-4fa6-8468-b9c5a56652e2-turn02-cfd4e64a03cc10da.txt",
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "turn": 2,
+      "sha256": "cfd4e64a03cc10da443a93b07d800ad1af9de195f8646e746b6418746bbf1d11"
+    },
+    {
+      "file": "ozon-scenes-answer-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-turn01-0810ea2b1ca07900.txt",
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "turn": 1,
+      "sha256": "0810ea2b1ca07900e5b288313f70b359f9da25569eecde23d406dbb97e457d7f"
+    },
+    {
+      "file": "ozon-scenes-answer-c5efb59a-0050-4ba5-a284-82619d1f3946-turn01-5d8ada4cbf176644.txt",
+      "chatId": "c5efb59a-0050-4ba5-a284-82619d1f3946",
+      "turn": 1,
+      "sha256": "5d8ada4cbf176644a15167ee8c3925c944481aeb574aae75de3793a9476499ea"
+    },
+    {
+      "file": "ozon-scenes-answer-69a991d4-81ce-4e58-bf91-159c2f47acef-turn02-5f69796b82b14ebe.txt",
+      "chatId": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "turn": 2,
+      "sha256": "5f69796b82b14ebe9ea1afb2b0e7e5bb430d5493c7d19fa928e1370e3fda7000"
+    },
+    {
+      "file": "ozon-scenes-answer-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn02-51d87074741f1898.txt",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 2,
+      "sha256": "51d87074741f189821b8bf8d2c9378cd64d5f4324ec5c2191dc016fdba0cfa77"
+    },
+    {
+      "file": "ozon-scenes-answer-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn02-2968c088c696cfcf.txt",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 2,
+      "sha256": "2968c088c696cfcfa311e219f0b89364854b9089531cab46eeb87ce84e613bba"
+    },
+    {
+      "file": "ozon-scenes-answer-6e635c1c-6cde-4c4e-8a14-c0c1256c64e9-turn02-56102554498f9511.txt",
+      "chatId": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "turn": 2,
+      "sha256": "56102554498f9511b05ba0fff5f83c6c899f8afbfe74766b7b13eede0ba8c6e4"
+    },
+    {
+      "file": "ozon-scenes-answer-a2843beb-1bec-4fa6-8468-b9c5a56652e2-turn02-e01c6823dfe14e2e.txt",
+      "chatId": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "turn": 2,
+      "sha256": "e01c6823dfe14e2e69c1a33c5aa6caa3360e77bdefe97880054c7f0dd98b5241"
+    },
+    {
+      "file": "ozon-scenes-answer-c9924cd6-7ecf-431a-9f9f-cb84da28fff6-turn02-3dc36642aa252b71.txt",
+      "chatId": "c9924cd6-7ecf-431a-9f9f-cb84da28fff6",
+      "turn": 2,
+      "sha256": "3dc36642aa252b71324cb149c140fbfc46ed5c7d2582859bbd38834f6b8c4400"
+    },
+    {
+      "file": "ozon-scenes-answer-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2-turn03-dd4bcda1b41c14fc.txt",
+      "chatId": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "turn": 3,
+      "sha256": "dd4bcda1b41c14fce2480228a55cb0d920534ad3578c8d0d8f3bb4c86f703e2d"
+    },
+    {
+      "file": "ozon-scenes-answer-9728fe6c-a86f-4a66-a0d9-0db764d2181e-turn03-a227dcc1b9cf09ba.txt",
+      "chatId": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "turn": 3,
+      "sha256": "a227dcc1b9cf09ba99b138e71095b5af4a03b687cf70d365e4a5de69db839179"
+    },
+    {
+      "file": "ozon-scenes-answer-ded97bf8-08a7-490e-992b-6afe29354d78-turn02-45d7b71e81736dc9.txt",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "turn": 2,
+      "sha256": "45d7b71e81736dc9b39636f4e933b04a29aced62015181b57923cf8df6113940"
+    },
+    {
+      "file": "ozon-scenes-answer-ded97bf8-08a7-490e-992b-6afe29354d78-turn03-102a0a12b6842536.txt",
+      "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "turn": 3,
+      "sha256": "102a0a12b6842536cc0c5bb8de38504f21b38fdc29a1ee08d6876466e0ec866a"
+    }
+  ],
+  "auditArchives": [
+    {
+      "file": "ozon-scenes-audit-ca39164365977023.json",
+      "sha256": "ca39164365977023882e83b24c291557f22e22b6217fc234f0b23d65fbfcfd48",
+      "summary": {
+        "pass": 1,
+        "partial": 4,
+        "fail": 3,
+        "pending": 1,
+        "no_automatic_pass_from_done": true
+      }
+    }
+  ]
+}

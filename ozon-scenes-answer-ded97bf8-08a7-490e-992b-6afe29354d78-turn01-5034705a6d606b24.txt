@@ -1,0 +1,178 @@
+收到：本轮授权1款宠物躺床、1张主图图搜，不扩量；无汇率不做跨币价差与利润计算。先读取场景所需公共技能，再执行核类目→取TOP1 SKU→1688图搜→核价→双图HTML报告。
+后台类目已核实：**宠物躺床 = 编码 95203**，完整路径「宠物用量>携带和睡眠配件>宠物躺床」（父类：携带和睡眠配件 17028674，顶层：宠物用品 17027487），与目标品类语义一致。
+
+现在按近28天销量降序，在类目 95203 下取销量最高的 1 个 SKU（本轮授权预算 1 款）：
+已锁定类目内近28天销量最高的1个SKU：**SKU 3473191231「 Pet Bed」**，近28天销量33,416件，当前售价366.0₽，主图已取得。现在使用这张主图执行本轮唯一1次授权的1688图搜（公网图片URL直接入参）：
+1688图搜成功（1张已搜、0失败），返回4个真实候选，全部为猫抓板/猫窝类商品。图搜快照已带回候选价格，按场景要求对拟推荐的第1名候选实取1688实时供货详情核验真实采购价与起批量：
+实时详情已核验商品身份、图片与规格属性，但未含价格明细，按场景继续实取该候选的SKU阶梯价：
+1张主图图搜成功（1/1授权已用尽、0失败），返回4条相似候选，全部仅标「相似款，待人工核同款」；其中排名第1候选已实取1688实时阶梯价核验（4变体¥11/12/12/13，≥1件单价¥11、起批1件）。OZON侧取类目近28天销量TOP1 SKU（3473191231，33,416件、366.00₽）；₽与¥无汇率，本轮不做任何跨币价差、倍数或利润计算，统一标「待核」。完整精简双图HTML报告如下：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ozon→1688 批量图搜寻源 · 双图对比简报 2026-11-17</title>
+<style>
+  body{margin:0;background:#f5f7fa;color:#1f2937;font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",Arial,sans-serif;max-width:1180px;margin:0 auto;padding:16px;box-sizing:border-box;overflow-wrap:anywhere}
+  .card{background:#fff;border:1px solid #e5eaf1;border-radius:12px;padding:16px 18px;margin-bottom:14px;min-width:0}
+  h1{font-size:19px;margin:0 0 4px}
+  h2{font-size:15px;margin:0 0 10px;color:#0b66c3}
+  .m{color:#6b7280;font-size:12px}
+  .kpis{display:flex;flex-wrap:wrap;gap:10px}
+  .kpi{flex:1 1 150px;min-width:150px;background:#fff;border:1px solid #e5eaf1;border-radius:10px;padding:12px 14px}
+  .kpi b{display:block;font-size:20px;color:#0b66c3;font-variant-numeric:tabular-nums}
+  .kpi span{font-size:12px;color:#6b7280}
+  .tablebox{width:100%;max-width:100%;min-width:0;overflow-x:auto;background:#fff;border:1px solid #e5eaf1;border-radius:12px;margin:0 0 14px}
+  table{border-collapse:collapse;min-width:1080px;width:100%;margin:0}
+  th,td{padding:9px 10px;border-bottom:1px solid #eef2f6;vertical-align:top;text-align:left;font-size:13px}
+  th{background:#f0f4f8;color:#374151;white-space:nowrap;position:sticky;top:0;z-index:3}
+  thead th:first-child{position:sticky;left:0;background:#f0f4f8;z-index:4}
+  td.oz{position:sticky;left:0;background:#fff;z-index:2;box-shadow:2px 0 0 0 #eef2f6}
+  img.zi{width:76px;height:76px;object-fit:contain;display:block;border-radius:6px;border:1px solid #e5eaf1;background:#fff;cursor:zoom-in}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  a{color:#0b66c3;text-decoration:none;word-break:break-all}
+  a:hover{text-decoration:underline}
+  .tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;white-space:nowrap}
+  .warn{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+  .ok{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+  .grey{background:#f3f4f6;color:#6b7280;border:1px solid #e5eaf1}
+  ol{margin:6px 0 6px 20px;padding:0}
+  ol li{margin-bottom:7px}
+  #zoom{position:fixed;display:none;z-index:9999;pointer-events:none;background:#fff;border:1px solid #dde3ea;border-radius:10px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.18);box-sizing:content-box;width:320px;min-width:320px;max-width:320px;height:320px;min-height:320px;max-height:320px;flex:none}
+  #zoomImg{display:block;width:320px;min-width:320px;max-width:320px;height:320px;min-height:320px;max-height:320px;flex:none;box-sizing:content-box;object-fit:contain;border-radius:6px;background:#fff}
+  .banner{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:14px}
+</style>
+</head>
+<body>
+<div class="banner">相似款声明：本轮图搜候选仅凭图像/标题相似，<b>全部标注为「相似款，待人工核同款」</b>，未判定任何同款；同款确认需人工核图与规格比对。</div>
+
+<div class="card">
+  <h1>Ozon→1688 批量图搜寻源 · 双图对比简报</h1>
+  <div class="m">场景：批量图搜寻源（Ozon 俄区 → 1688） ｜ 查询日：2026-11-17（UTC） ｜ 数据服务：youweiAI-OZON + 1688图搜网关</div>
+  <div class="m">样本与实搜范围：后台类目「宠物躺床」（编码 95203，路径：宠物用品 17027487 &gt; 携带和睡眠配件 17028674 &gt; 宠物躺床 95203）接口命中 10,000 条 SKU；按近28天SKU销量降序取样 <b>1 款</b>（本轮授权 1 款/1 张主图）；实搜主图 1 张、成功 1 张、失败 0 张、相似候选 4 条。</div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b>10,000</b><span>类目命中SKU（接口total）</span></div>
+  <div class="kpi"><b>1 款</b><span>拉源SKU（销量TOP1取样）</span></div>
+  <div class="kpi"><b>1 张</b><span>有效主图（图搜网关成功取图）</span></div>
+  <div class="kpi"><b>1 / 1 张</b><span>已图搜 / 授权（失败0，重试0）</span></div>
+  <div class="kpi"><b>4 条</b><span>相似候选（同款判定0条）</span></div>
+</div>
+
+<div class="tablebox">
+<table>
+<thead><tr>
+  <th>OZON主图</th><th>OZON目标SKU · 近28天销量 · 售价（1款）</th><th>1688主图</th><th>1688供应与链接</th><th>判定 · 官方相似度</th><th>采购价 · 起批量（¥）</th><th>代发 · 服务</th><th>差异要点</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td class="oz" rowspan="4"><img class="zi" data-z="https://ir-20.ozonstatic.cn/s3/multimedia-1-a/13494563830.jpg" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-a/13494563830.jpg" alt="OZON宠物躺床主图"></td>
+  <td rowspan="4">
+    <b>Pet Bed</b>（宠物躺床）<br>
+    SKU <b>3473191231</b> ｜ SPU 8592751763<br>
+    近28天销量 <b>33,416</b> 件 ｜ 近7天 <b>13,069</b> 件<br>
+    现售价 <b>366.00 ₽</b>（接口symbol=₽）<br>
+    卖家：Xunchuang002（storeType=1，接口字段定义：跨境卖家）<br>
+    <a href="https://www.ozon.ru/product/3473191231" target="_blank" rel="noopener">ozon.ru/product/3473191231</a><br>
+    <span class="m">本SKU图搜返回候选 4 条</span>
+  </td>
+  <td><img class="zi" data-z="https://cbu01.alicdn.com/img/ibank/O1CN01ZczgLw1XqbPhWToZH_!!2216613622975-0-cib.jpg" src="https://cbu01.alicdn.com/img/ibank/O1CN01ZczgLw1XqbPhWToZH_!!2216613622975-0-cib.jpg" alt="1688候选1"></td>
+  <td><b>跨境批发剑麻猫抓板猫窝耐磨不易掉屑耐抓猫爪板大号磨爪猫咪用品</b><br>offerId 1014416876922 ｜ 诚信通4年<br>安庆市加臣贸易有限公司 ｜ 发货：安徽省安庆市<br>近30天销 0 件（图搜快照）<br><a href="https://detail.1688.com/offer/1014416876922.html" target="_blank" rel="noopener">detail.1688.com/offer/1014416876922.html</a></td>
+  <td><span class="tag warn">相似款</span><br><span class="m">相似度 0.277<br>待人工核同款</span></td>
+  <td class="num"><span class="tag ok">实时核价</span><br><b>¥11.00</b>（≥1件）<br>4变体：<b>¥11 / ¥12 / ¥12 / ¥13</b><br>起批量 <b>1 件</b> ｜ 可采 ≥10,000</td>
+  <td>先采后付（服务标签449154，按服务码口径）<br><span class="m">一件代发包邮标签未出现→代发权益未核验</span></td>
+  <td>材质棉麻；60cm 椭圆/方形（含双耳款）变体，配剑麻球</td>
+</tr>
+<tr>
+  <td><img class="zi" data-z="https://cbu01.alicdn.com/img/ibank/O1CN012aT5PcqxWxB1chua_!!2223160283038-0-cib.jpg" src="https://cbu01.alicdn.com/img/ibank/O1CN012aT5PcqxWxB1chua_!!2223160283038-0-cib.jpg" alt="1688候选2"></td>
+  <td><b>猫抓板超大号耐磨不掉屑一体猫窝剑麻猫爪板藤编四季通用耐抓用品</b><br>offerId 1094103981765 ｜ 诚信通1年（新品）<br>广州嘉亮宠物用品有限公司 ｜ 发货地未返回<br>近30天销 15 件 / 13 笔（图搜快照）<br><a href="https://detail.1688.com/offer/1094103981765.html" target="_blank" rel="noopener">detail.1688.com/offer/1094103981765.html</a></td>
+  <td><span class="tag warn">相似款</span><br><span class="m">相似度 0.277<br>待人工核同款</span></td>
+  <td class="num"><b>¥13.70</b><br><span class="m">（图搜快照价，未实时复核）</span><br>起批量 <b>2 件</b></td>
+  <td>面单支持：淘宝/抖音（标签441218/386434）</td>
+  <td>材质黄麻；56–66cm 变体，配黄麻球</td>
+</tr>
+<tr>
+  <td><img class="zi" data-z="https://cbu01.alicdn.com/img/ibank/O1CN01R7MeNe1IN5ZzB3rMH_!!2218400080880-0-cib.jpg" src="https://cbu01.alicdn.com/img/ibank/O1CN01R7MeNe1IN5ZzB3rMH_!!2218400080880-0-cib.jpg" alt="1688候选3"></td>
+  <td><b>跨境批发剑麻猫抓板猫窝耐磨不掉屑耐抓麻绳一体猫爪板大号磨爪器</b><br>offerId 900190553114 ｜ 诚信通3年<br>安庆市宜秀区文荣宠物用品加工厂 ｜ 发货：安徽省安庆市<br>近30天销 10 件 / 6 笔（图搜快照）<br><a href="https://detail.1688.com/offer/900190553114.html" target="_blank" rel="noopener">detail.1688.com/offer/900190553114.html</a></td>
+  <td><span class="tag warn">相似款</span><br><span class="m">相似度 0.277<br>待人工核同款</span></td>
+  <td class="num"><b>¥11.00</b><br><span class="m">（图搜快照价，未实时复核）</span><br>起批量 <b>1 件</b></td>
+  <td>面单支持：淘宝/抖音（标签441218/386434）</td>
+  <td>材质黄麻；60/65cm 椭圆与长方款，含+逗猫棒组合</td>
+</tr>
+<tr>
+  <td><img class="zi" data-z="https://cbu01.alicdn.com/img/ibank/O1CN01JfukFMEatGL1chua_!!2222954193686-0-cib.jpg" src="https://cbu01.alicdn.com/img/ibank/O1CN01JfukFMEatGL1chua_!!2222954193686-0-cib.jpg" alt="1688候选4"></td>
+  <td><b>猫窝猫抓板一体四季通用夏季猫咪睡觉用猫床凉窝剑麻猫爪板玩具</b><br>offerId 1081256257235 ｜ 诚信通1年<br>广州秦珅供应链有限公司 ｜ 发货：浙江省金华市<br>近30天销 0 件（图搜快照）<br><a href="https://detail.1688.com/offer/1081256257235.html" target="_blank" rel="noopener">detail.1688.com/offer/1081256257235.html</a></td>
+  <td><span class="tag warn">相似款</span><br><span class="m">相似度 0.290<br>待人工核同款</span></td>
+  <td class="num"><b>¥37.38</b><br><span class="m">（图搜快照价，未实时复核）</span><br>起批量 <b>1 件</b></td>
+  <td><span class="grey">无已核服务标签</span></td>
+  <td>材质蒲草；56–65cm，2.0基础/3.0经典/5.0深睡系列</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="m" style="margin:-8px 0 14px">※ 共同差异与待核原因：候选均为「可抓可睡」剑麻/黄麻/蒲草猫抓窝，目标为类目「宠物躺床」商品，形态是否相符须人工核图；OZON SKU 的尺寸/材质/规格字段本次未返回，规格级比对不可行；OZON 售价为 ₽、1688 采购价为 ¥，<b>币种不同且无汇率 → 价差与利润一律「待核、不可比」</b>。</div>
+
+<div class="card">
+  <h2>结论与建议</h2>
+  <ol>
+    <li>类目「宠物躺床」（后台编码95203，父路径已核）近28天销量TOP1 SKU为 <b>3473191231</b>：近28天 <b>33,416 件</b>、近7天 <b>13,069 件</b>，现售 <b>366.00 ₽</b>（依据：soldCount28/soldCount7/price/symbol 字段）。</li>
+    <li>授权1张主图图搜成功（1/1、0失败、无重试），返回 <b>4 条相似候选</b>，全部为剑麻/黄麻/蒲草猫抓板窝类货源，官方相似度 0.277–0.290，<b>均仅标「相似款，待人工核同款」，本轮无一判定同款</b>。</li>
+    <li>排名第1候选 <b>1014416876922 已完成实时核价</b>：4变体 ¥11/¥12/¥12/¥13，≥1件单价 <b>¥11.00</b>，起批量 1 件，可采 ≥10,000 件；是本轮唯一完成实时核价的候选（依据：实时供货详情 + SKU阶梯价接口）。</li>
+    <li>其余3条候选仅有图搜快照价（¥11.00–¥37.38，快照时间2026-11-17），未二次实时复核，采购前需逐条再核；「先采后付」仅候选1具备，全部候选均未核得一件代发包邮权益。</li>
+    <li>OZON 366.00 ₽ 与 1688 ¥ 采购价币种不同且本轮未取得汇率：<b>不计算任何跨币价差、倍数或利润，相关结论待核</b>；本轮销量为SKU近28天口径，不代表SPU合计或类目全量。</li>
+  </ol>
+  <div class="m">下一步（预算状态：本轮 1款/1张授权已全部用尽，剩余 0 张，未扩至100张）：① 人工核图判同款并比对目标SKU实际形态；② 对中意候选索样、需按变体/数量阶梯再度实时核价；③ 需利润测算时另行提供汇率、运费与平台费用口径；④ 批量扩量图搜须先单独确认张数与计费消耗。</div>
+</div>
+
+<div class="card">
+  <h2>数据缺口与口径声明</h2>
+  <ol>
+    <li>候选2–4价格为图搜快照价（priceValid=true，2026-11-17），未经实时复核；候选1价格为实时接口核验（2026-11-17 04:09 UTC）。</li>
+    <li>OZON SKU 未返回尺寸、材质、细节图等规格字段，无法与1688候选（56–66cm、棉麻/黄麻/蒲草）做规格级比对，同款判定必须人工完成。</li>
+    <li>无汇率：₽/¥ 不相减、不求倍数、不排序；无运费与平台费用口径：不做利润测算。</li>
+    <li>样本口径：类目命中10,000为接口total，本次取样1条SKU样本；尾部样本不推全类目。</li>
+    <li>相似度0.277–0.290为接口原值（保留3位小数），分值低-中区间，不构成同款或同厂证据。</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>溯源</h2>
+  <ol>
+    <li>类目编码：youweiAI-OZON后台类目字典（CATEGORY_BACKEND），「宠物躺床」=95203（宠物用品 17027487 &gt; 携带和睡眠配件 17028674 &gt; 宠物躺床 95203），2026-11-17核实。</li>
+    <li>OZON样本：youweiAI-OZON 商品搜索（SKU口径），2026-11-17，category=["95203"]，按 soldCount28 降序，size=1；命中total=10,000，返回1条。</li>
+    <li>图搜：1688图搜（官方引擎同步完成），2026-11-17，输入1张（OZON主图 13494563830.jpg）；inputCount=1、acceptedCount=1、duplicateCount=0，返回候选4条。</li>
+    <li>候选1核价：1688实时供货详情 + SKU阶梯价，2026-11-17 04:09 UTC，4变体价与起批量如实取自当次返回；图搜快照时间2026-11-17。</li>
+    <li>所有链接为接口原样返回，未拼接改写；缺失项以「—/未返回」标注。</li>
+  </ol>
+</div>
+
+<div id="zoom"><img id="zoomImg" alt="放大预览"></div>
+<script>
+(function(){
+  var z=document.getElementById('zoom'),zi=document.getElementById('zoomImg');
+  function move(e){
+    var w=z.offsetWidth,h=z.offsetHeight,m=8;
+    var x=e.clientX+20,y=e.clientY+20;
+    var vw=window.innerWidth||document.documentElement.clientWidth,vh=window.innerHeight;
+    if(x+w>vw-m){x=e.clientX-w-20;}
+    if(y+h>vh-m){y=e.clientY-h-20;}
+    z.style.left=Math.max(m,x)+'px';z.style.top=Math.max(m,y)+'px';
+  }
+  var list=document.querySelectorAll('img.zi');
+  for(var i=0;i<list.length;i++){
+    (function(el){
+      el.addEventListener('mouseenter',function(e){zi.src=el.getAttribute('data-z')||el.src;zi.alt=el.alt||'';z.style.display='block';move(e);});
+      el.addEventListener('mousemove',move);
+      el.addEventListener('mouseleave',function(){z.style.display='none';});
+    })(list[i]);
+  }
+})();
+</script>
+</body>
+</html>
+```
+
+本轮已完成：核类目→取TOP1 SKU→1张授权图搜→实时核价→双图简报，未发生超授权图搜或跨币价差计算；如需对候选2–4补核价或扩批图搜（须先确认消耗张数）随时指示。

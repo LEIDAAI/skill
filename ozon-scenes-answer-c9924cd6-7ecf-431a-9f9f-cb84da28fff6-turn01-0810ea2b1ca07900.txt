@@ -1,0 +1,139 @@
+场景技能已读。用户条件完整（俄区/женская сумка/最多1个SPU/近28天销量降序），无缺参，按技能流程先读取公共技能。
+技能链已读取（场景+选品搜索+报告）。开始执行：用户限定最多1个SPU，size=1，spuName="женская сумка"，近28天销量降序。
+已命中1个SPU（接口命中total=332，取样size=1）。语义核对：标题为俄文女士腰包/斜挎包，属женская сумка女包语义池。按流程补验当前在售/库存证据。
+SPU补验完成：soldOut=false（未下架），stock为7/28天窗口值。取查询时间戳后生成报告。
+校验发现渲染缺陷：KPI卡与表行混入隐藏杂元素、"数据缺口"段被污染文本破坏闭合。按验收规则做一次简洁重生成并复检。
+校验通过：标签闭合、真实数据对照、浮层悬停均已核实。以下为最终交付。
+
+**摘要（事实摘要5条）**
+
+1. **热销基线**：SPU 0613596080「Сумка женская на пояс」（女士腰包/斜挎包）按近28天销量降序居本次检索首位——近28天 **1,081 件**、销售金额 **399,344.542 ₽**、标价 **249.0 ₽**。
+2. **取样口径**：接口命中 total=332，本任务按用户限定 size=1 实取1、展示1，无翻页；样本不推全类目规模。
+3. **有货待核**：soldOut=false（未下架），stock7=8,859 / stock28=9,282 仅为窗口字段原值，缺当前可购买证据，判定为**待核**。
+4. **增速待补**：无可比历史序列，只建当前基线；近7天211件与近28天1081件窗口重叠，不相除作增长率，不判飙升。
+5. **语义核验**：标题人群/用途为女士包袋，无男包混入；otherCount=254 为同款/跟卖参考，不冒充卖家数。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OZON俄区·热销飙升场景基线报告｜женская сумка</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f7f8fa;color:#1a2233;max-width:1180px;margin:0 auto;padding:24px 18px;overflow-wrap:anywhere}
+.header{background:linear-gradient(135deg,#5b21b6 0%,#9f6cff 100%);color:#fff;border-radius:14px;padding:22px 26px;margin-bottom:18px}
+.header h1{font-size:21px;margin-bottom:8px}
+.hd-tags{display:flex;flex-wrap:wrap;gap:8px}
+.hd-tag{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:14px;padding:3px 12px;font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:#fff;border-radius:12px;padding:14px 16px;border:1px solid #e4e7ee;box-shadow:0 1px 3px rgba(30,40,90,.05)}
+.kpi .k{font-size:12px;color:#6b7a99;margin-bottom:6px}
+.kpi .v{font-size:22px;font-weight:700;color:#2a1d5e}
+.kpi .s{font-size:11px;color:#8a94ad;margin-top:4px}
+h2{font-size:15px;color:#3b2b77;margin:18px 0 10px;padding-left:10px;border-left:4px solid #7c3aed}
+.tablebox{max-width:100%;min-width:0;overflow-x:auto;background:#fff;border-radius:12px;border:1px solid #e4e7ee;padding:6px}
+table{border-collapse:collapse;width:100%;min-width:1060px;font-size:13px}
+th{background:#f0edf7;color:#3b2b77;padding:9px 10px;text-align:left;white-space:nowrap;position:sticky;top:0}
+td{padding:9px 10px;border-bottom:1px solid #eef0f4;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.gthumb-block{position:relative;width:64px;height:64px}
+.gthumb{width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid #e4e7ee;cursor:zoom-in;display:block}
+#floatimg{display:none;position:fixed;z-index:9999;background:#fff;border:2px solid #7c3ae5;border-radius:12px;padding:6px;box-shadow:0 10px 32px rgba(60,30,150,.28);pointer-events:none}
+#floatimg img{width:320px!important;min-width:320px;max-width:320px!important;height:320px!important;min-height:320px;max-height:320px!important;object-fit:contain;box-sizing:content-box;flex:none;display:block}
+a{color:#4b36c9;text-decoration:none}
+a:hover{text-decoration:underline}
+.name-cell{max-width:260px}
+.name-cell a{font-weight:600}
+.name-cell .sub{font-size:11px;color:#8a94ad;margin-top:2px}
+.tag{display:inline-block;border-radius:12px;padding:2px 10px;font-size:12px}
+.tag.pend{background:#fff4e0;color:#9a6a00;border:1px solid #f0d9a8}
+.subline{font-size:11px;color:#6b7a99}
+.concl{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cbox{background:#fff;border-radius:12px;border:1px solid #e4e7ee;padding:14px 16px}
+.cbox h3{font-size:14px;margin-bottom:8px;color:#3b2b77}
+.cbox p{font-size:12.5px;line-height:1.9;color:#37425a}
+.cbox .ev{font-size:11px;color:#8a94ad;margin-top:8px;border-top:1px dashed #e4e7ee;padding-top:8px}
+.gap-list{background:#fff;border:1px solid #e4e7ee;border-radius:12px;padding:14px 18px}
+.gap-list li{margin:6px 0;line-height:1.75;font-size:13px;color:#37425a;text-align:left}
+.src{background:#f0edf7;border-radius:12px;padding:12px 18px;margin-top:14px;font-size:12px;color:#4b5568;line-height:1.8}
+@media (max-width:860px){.concl{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>OZON俄区 · 热销飙升场景 · 当前热销基线</h1>
+<div class="hd-tags">
+<span class="hd-tag">关键词：женская сумка（女包）</span>
+<span class="hd-tag">站点：OZON 俄区</span>
+<span class="hd-tag">查询日：2026-11-17（UTC+8 12:23）</span>
+<span class="hd-tag">口径：SPU</span>
+<span class="hd-tag">取样上限：用户限定最多1个SPU，实取1、展示1</span>
+<span class="hd-tag">销量周期：近28天</span>
+<span class="hd-tag">排序：soldCount28 降序</span>
+</div>
+</div>
+<div class="kpis">
+<div class="kpi"><div class="k">接口命中 total</div><div class="v">332</div><div class="s">本次关键词检索命中数，非全站规模</div></div>
+<div class="kpi"><div class="k">取样 / 展示</div><div class="v">1 / 1</div><div class="s">size=1，from=0，未翻页</div></div>
+<div class="kpi"><div class="k">语义核验通过</div><div class="v">1</div><div class="s">标题人群为女士腰包/斜挎包，无男包混入</div></div>
+<div class="kpi"><div class="k">当前有货证据</div><div class="v">待核</div><div class="s">soldOut=false＋窗口库存，无当前可购证据</div></div>
+</div>
+<h2>明细表（近28天销量降序 · SPU口径 · 共1行）</h2>
+<div class="tablebox">
+<table>
+<thead><tr><th>商品图</th><th>SPU与名称</th><th>近28天销量<br>(件,soldCount28)</th><th>近7天销量<br>(件,soldCount7)</th><th>价格<br>(symbol)</th><th>近28天销售金额<br>(soldSum28)</th><th>同款/跟卖参考<br>(otherCount)</th><th>样本卖家</th><th>库存核验状态</th></tr></thead>
+<tbody>
+<tr>
+<td><div class="gthumb-block" data-img="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg"><img class="gthumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt="主图"></div></td>
+<td class="name-cell"><a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">Сумка женская на пояс, поясная бананка, барсетка через плечо</a><div class="sub">SPU 0613596080 · 评分 4.8 · 评论 3425 条 · 上架 2026-02-28 · 含7/28天窗口库存字段</div></td>
+<td class="num">1,081</td>
+<td class="num">211</td>
+<td class="num">249.0 ₽</td>
+<td class="num">399,344.542 ₽</td>
+<td class="num">254</td>
+<td>Perfecting the World<br><span class="subline">sellerId 2128559</span></td>
+<td><span class="tag pend">待核（在售在货未证实）</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2>结论</h2>
+<div class="concl">
+<div class="cbox"><h3>当前热销（本次样本）</h3><p>SPU 0613596080（女士腰包/斜挎包）近28天销售 1,081 件、销售金额 399,344.542 ₽、当前标价 249.0 ₽，列本次"женская сумка"检索（命中332，本次取样1）按近28天销量降序的第1位，作为当前热销基线。</p><div class="ev">依据：soldCount28 / soldSum28 / price+symbol（₽）/ sort=soldCount28 desc；仅为本次样本热销，非全类目规模结论</div></div>
+<div class="cbox"><h3>有货 · 待核</h3><p>接口返回 soldOut=false（未下架），stock7=8859、stock28=9282 为近7/28天窗口字段原值展示；缺当前时点可购买证据，按本场景规则判"在售在货待核"，不计为达标有货。</p><div class="ev">依据：soldOut / stock7 / stock28（窗口值，非实时在售库存）</div></div>
+<div class="cbox"><h3>增速 · 待补</h3><p>无可比历史销量序列，不判飙升/增长，只建当前基线；近7天211件与近28天1081件窗口重叠，禁止相除作增长率。</p><div class="ev">依据：soldCount7 / soldCount28一次快照；无历史序列与对比快照</div></div>
+<div class="cbox"><h3>口径提示</h3><p>otherCount=254 为同款/跟卖参考计数，不冒充卖家总数；上架日与滚动销量不构成"上新起量"证据；样本量1，不推全类目。</p><div class="ev">依据：otherCount / createDate；total=332为本次检索命中</div></div>
+</div>
+<h2>数据缺口与口径声明</h2>
+<div class="gap-list">
+<ul>
+<li>① 销量口径为"近28天"soldCount28，替代原场景30天字段，字段名与周期不混称；评分为单次快照，不代表评分趋势。</li>
+<li>② 本次取样并展示1个SPU（用户限定最多1个SPU）；接口命中total=332仅为该关键词本次调用命中，头部样本不推全类目规模与集中度。</li>
+<li>③ stock7/stock28仅作窗口字段原值展示；缺字段定义与当前时点在售/可购买证据，不能判当前有货，本报告判定"在售在货 → 待核"。</li>
+<li>④ 近7天与近28天窗口重叠，不相除算增长率；无可比历史，增长/季节性结论待补。</li>
+<li>⑤ otherCount=254为同款/跟卖参考，不冒充卖家数；店铺链接未取得；soldSum28为接口近28天销售金额原值，不与价格互推。</li>
+<li>⑥ 未限价格带、上架期与履约方式（用户未给，按未限定注明）；本轮不涉及1688与利润流程（用户明确排除）。</li>
+</ul>
+</div>
+<div class="src">
+<b>溯源：</b>youweiAI-OZON SPU检索 spuName="женская сумка"、sort=soldCount28 desc、from=0、size=1（用户限定），补验SPU单条详情；查询日 2026-11-17（用户本地12:23，UTC+8）；接口返回 total=332、实得items=1、无翻页；任务链接未提供（非异步任务过程）。
+</div>
+<div id="floatimg"><img id="floatimg-tag" src="" alt="Loading preview..."></div>
+<script>
+(function(){
+var f=document.getElementById('floatimg'),fi=document.getElementById('floatimg-tag');
+document.querySelectorAll('.gthumb-block').forEach(function(b){
+  b.addEventListener('mouseenter',function(){fi.src=b.dataset.img;f.style.display='block';});
+  b.addEventListener('mousemove',function(e){var w=332,h=332,x=e.clientX+16,y=e.clientY+16;if(x+w>window.innerWidth-8){x=e.clientX-16-w;}if(y+h>window.innerHeight-8){y=e.clientY-16-h;}f.style.left=x+'px';f.style.top=y+'px';});
+  b.addEventListener('mouseleave',function(){f.style.display='none';});
+});
+})();
+</script>
+</body>
+</html>
+```
+
+**下一步建议**：① 对该SPU在7天后建立第二次快照（同参数同口径），形成可比历史后再判飙升；② 可补验该SPU的变体SKU列表与当前在售购买证据，将有货从"待核"升级为达标或剔除。

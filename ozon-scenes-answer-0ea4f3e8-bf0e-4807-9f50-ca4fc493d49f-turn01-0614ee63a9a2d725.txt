@@ -1,0 +1,176 @@
+已读热搜词飙升榜场景技能。按其要求先独立读取选品搜索公共技能，再核字段与执行。
+场景与选品公共技能已读。按要求先读取报告生成技能，再核字段与类目。
+三个技能已读齐。按场景步骤1：先核字段定义与类目编码，并取查询日（三者独立，可并行）。
+字段名已核（sessionCountSearch7/28、convToCartSearch7/28、soldCount28、otherCount、link均存在）。再核 symbol 与 seller 字段名后即执行搜索。
+全部字段名已核。执行严格门槛下的SPU搜索（预算3，按7天搜索会话降序）。
+首轮搜索在严格门槛（7天会话≥5000、7天转化>0、28天销量>0）下命中28条，取回前3条。现用代码逐行核验门槛、排序与标题词根，供报告共用。
+取回3条SPU，代码逐行核验全部通过三项严格门槛（7天会话12.9万/6.4万/5.0万、转化0.07/0.03/0.4008、28天销量1,081/162/778，字段无缺失无0值）。接口严格命中28条、展示前3条，按7天搜索会话降序。#2币种为接口原值¥（保留不另换算），"ICONIC BAGS"卖家名与标题品牌词一致单列，第3题为旅行化妆包（女包相邻细分，标题自含сумка дорожная женская）。无同范围历史快照，仅交付当前快照、不判飙升。词级热度改造为SPU搜索流量口径，标题词根仅作需求解读。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ozon俄区女包·SPU搜索流量快照（2026-11-17）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f7f8fa;color:#1f2733;max-width:1180px;margin:auto;padding:24px 18px;overflow-wrap:anywhere}
+.hd{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:20px 24px;margin-bottom:14px}
+.hd h1{font-size:21px;margin-bottom:6px}
+.hd .sub{font-size:13px;color:#5b6572;line-height:1.7}
+.tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:20px;margin:2px 6px 2px 0;background:#eef4ff;color:#1c56d6;border:1px solid #c4d6f7}
+.warn{background:#fff7e8;color:#8a5a00;border:1px solid #f3ddb0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:14px 16px;min-width:0}
+.kpi .v{font-size:22px;font-weight:700;text-align:right}
+.kpi .l{font-size:12px;color:#5b6572;margin-bottom:4px}
+.sec{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:20px 24px;margin-bottom:14px}
+.sec h2{font-size:16px;margin-bottom:12px;color:#17325c}
+.tablebox{width:100%;max-width:100%;overflow-x:auto}
+table{border-collapse:collapse;min-width:1020px;background:#fff}
+th{background:#f0f4fa;color:#313c4d;font-size:12px;padding:9px 10px;text-align:left;white-space:nowrap;border-bottom:2px solid #d7dfec}
+td{font-size:12.5px;padding:8px 10px;border-bottom:1px solid #edf0f5;vertical-align:top}
+tr:hover td{background:#f8fbff}
+th:first-child,td:first-child{position:sticky;left:0;background:#fff;z-index:2}
+tr:hover td:first-child{background:#f8fbff}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+img.thumb{display:block;background:#fff;border-radius:6px;cursor:zoom-in}
+a{color:#1155cc;text-decoration:none}
+a:hover{text-decoration:underline}
+.root{display:inline-block;background:#eef4ff;border:1px solid #c9d9f5;border-radius:4px;padding:1px 6px;margin:1px 2px;font-size:12px;color:#1c3f7a}
+.note{font-size:11.5px;color:#7c8694;margin-top:8px;line-height:1.6}
+ol.con{font-size:13px;color:#2a3441;line-height:1.9;padding-left:20px}
+ol.con b{color:#17325c}
+ol.con .basis{color:#7c8694;font-size:11.5px}
+ul.gap{font-size:13px;color:#2a3441;line-height:1.9;padding-left:20px}
+.src{font-size:12px;color:#5b6572;line-height:1.8}
+.src code{background:#f0f4fa;padding:1px 5px;border-radius:4px;font-size:11.5px}
+#zoom{position:fixed;display:none;width:320px;min-width:320px;max-width:320px;height:320px;min-height:320px;max-height:320px;box-sizing:content-box;background:#fff;border:1px solid #d7dfec;border-radius:12px;box-shadow:0 8px 28px rgba(20,40,80,.18);z-index:999;pointer-events:none;padding:4px}
+#zoom img{width:100%;height:100%;object-fit:contain;box-sizing:content-box;flex:none;display:block}
+.badge{display:inline-block;font-size:11px;font-weight:600;border-radius:4px;padding:1px 7px}
+.b-green{background:#e6f6ec;color:#0f7a3d;border:1px solid #bfe8cf}
+.b-amber{background:#fff3dd;color:#8a5a00;border:1px solid #f0d9a8}
+</style>
+</head>
+<body>
+<div id="zoom"><img id="zoomImg" alt=""></div>
+
+<div class="hd">
+  <h1>Ozon 俄区 · 女包（женская сумка）SPU 搜索流量快照</h1>
+  <div class="sub">
+    场景：热搜词飙升榜选品（SPU 搜索流量口径）｜站点：Ozon 俄罗斯站｜数据源：youweiAI-OZON 公开大盘数据｜查询日：<b>2026-11-17</b>（取数时点 04:03 UTC，接口未返回数据统计时点）<br>
+    <span class="tag warn">无同范围历史快照 → 仅当前快照，不判“飙升”</span>
+    <span class="tag warn">非词级搜索指数榜：搜索字段为商品级（SPU）搜索会话，标题词根仅作需求解读</span>
+    <span class="tag">严格条件：7天搜索会话 ≥ 5,000 且 7天搜索加购转化 &gt; 0 且 近28天销量 &gt; 0</span>
+    <span class="tag">用户预算：最多 3 个 SPU</span>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="l">接口严格命中 total</div><div class="v">28</div></div>
+  <div class="kpi"><div class="l">本次取回 / SPU去重</div><div class="v">3 / 3</div></div>
+  <div class="kpi"><div class="l">核验严格有效</div><div class="v">3</div></div>
+  <div class="kpi"><div class="l">最高7天搜索会话</div><div class="v" id="topsess">129,406</div></div>
+</div>
+
+<div class="sec">
+  <h2>明细 · 按 7 天搜索会话降序（前 3 条，SPU 口径）</h2>
+  <div class="tablebox">
+  <table>
+    <thead><tr>
+      <th># / SPU</th><th>主图</th><th>标题（词根解读附后）</th>
+      <th class="num">7天搜索会话</th><th class="num">7天搜索加购转化</th>
+      <th class="num">近28天销量/件</th><th class="num">近28天销售额</th>
+      <th class="num">价格(原值币种)</th><th class="num">同款数 otherCount</th><th>卖家</th><th>档位</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><b>1</b><br>0613596080</td>
+        <td><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" width="64" height="64" style="width:64px;max-width:64px;height:64px;object-fit:contain" data-zoom="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt="主图"></td>
+        <td><a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">Сумка женская на пояс, поясная бананка, барсетка через плечо</a><br><span class="root">пояс/поясная ×2</span><span class="root">бананка</span><span class="root">барсетка</span><span class="root">через плечо ×2*</span><br><span style="color:#7c8694">*плечо跨2条样本；解读(语义假设)：女性斜挎腰包/香蕉小包，轻便解放双手</span></td>
+        <td class="num">129,406</td><td class="num">0.07</td><td class="num">1,081</td><td class="num">399,344.542 ₽</td><td class="num">249.00 ₽</td><td class="num">254</td>
+        <td>Perfecting the World</td><td><span class="badge b-green">严格候选</span></td>
+      </tr>
+      <tr>
+        <td><b>2</b><br>3815310249</td>
+        <td><img class="thumb" src="https://ir-20.ozone.ru/s3/multimedia-1-1/10322566633.jpg" width="64" height="64" style="width:64px;max-width:64px;height:64px;object-fit:contain" data-zoom="https://ir-20.ozone.ru/s3/multimedia-1-1/10322566633.jpg" alt="主图"></td>
+        <td><a href="https://www.ozon.ru/product/4208665394" target="_blank" rel="noopener">Сумка женская не большая на плечо мягкой формы с короткими ручками средняя объемная ICONIC BAGS</a><br><span class="root">небольшая</span><span class="root">мягкая форма</span><span class="root">короткие ручки</span><span class="root">средняя объёмная</span><span class="root">на плечо ×2*</span><span class="root" style="background:#f4ecff;border-color:#dccbf2;color:#5a2ea8">品牌词：ICONIC BAGS（与卖家名一致，有证据单列）</span><br><span style="color:#7c8694">解读(语义假设)：小巧软包型短提手，通勤百搭</span></td>
+        <td class="num">64,057</td><td class="num">0.03</td><td class="num">162</td><td class="num">345,544.590 ¥</td><td class="num">2,735.73 ¥</td><td class="num">37</td>
+        <td>ICONIC BAGS</td><td><span class="badge b-green">严格候选</span><br><span class="badge b-amber">币种¥为接口原值，未按站点补₽</span></td>
+      </tr>
+      <tr>
+        <td><b>3</b><br>8663096095</td>
+        <td><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" width="64" height="64" style="width:64px;max-width:64px;height:64px;object-fit:contain" data-zoom="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" alt="主图"></td>
+        <td><a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener">Косметичка дорожная,сумка дорожная женская,искусственная кожа</a><br><span class="root">дорожная ×2</span><span class="root">косметичка</span><span class="root">искусственная кожа</span><br><span style="color:#7c8694">解读(语义假设)：旅行化妆/洗漱包；材质为标题声称，待核。属女包相邻细分（标题自含 сумка дорожная женская），保留并标注</span></td>
+        <td class="num">50,303</td><td class="num">0.4008</td><td class="num">778</td><td class="num">165,660.025 ₽</td><td class="num">250.76 ₽</td><td class="num">2,173</td>
+        <td>Сиси Лу</td><td><span class="badge b-green">严格候选</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    搜索会话全期披露：7天会话如上；28天会话为 592,849 / 221,501 / 107,694，7天加购转化与28天分别展示、未做换算。转化率为接口原值口径（未乘100）；7天转化率28天窗口：0.0600 / 0.0300 / 0.3605。
+    销量周期为近28天（soldCount28/soldSum28），金额按各条实际 symbol 原值展示，₽与¥未合计。种子词 сумка/женск 覆盖 3/3、3/3；已去停用词（на/через/с/не 等）。
+  </div>
+</div>
+
+<div class="sec">
+  <h2>结论与建议（每条标注依据字段）</h2>
+  <ol class="con">
+    <li><b>严格门槛全部通过：</b>接口在 minSoldCount28≥1 与关键词召回下命中 <b>28</b> 条，本次按预算取回前 <b>3</b> 条（SPU 去重 3），3 条均同时满足 7天搜索会话≥5,000、7天搜索加购转化&gt;0、近28天销量&gt;0。<span class="basis">［依据：total、sessionCountSearch7、convToCartSearch7、soldCount28 逐行代码核验，无缺失无0值］</span></li>
+    <li><b>7天搜索会话梯队明显：</b>129,406 → 64,057 → 50,303（#1 约为 #2 的 2.0 倍、#2 约为 #3 的 1.3 倍），降序排序已核验生效。<span class="basis">［依据：sessionCountSearch7，仅本次取回样本内比较，不代表全平台排名］</span></li>
+    <li><b>同款竞争热度差异大：</b>#2 仅 37 同款且为品牌店（ICONIC BAGS，卖家名与标题品牌词一致）；#3 同款 2,173 条为本次最高，但其 7天搜索转化 0.4008 与近28天销量 778 件同为本次最高，转化高不等于竞争弱。otherCount 为接口跟卖参考，不等于本土竞争店数、不据此判红海。<span class="basis">［依据：otherCount、convToCartSearch7、soldCount28、sellerName］</span></li>
+    <li><b>词根指往三类需求:</b>斜挎腰包(пояс/бананка/барсетка/через плечо)、小巧通勤软包(мягкая форма/короткие ручки/небольшая)、旅行化妆包(дорожная/косметичка/искусственная кожа)——这是标题词证据与中文语义假设，不是词级搜索指数归因，不能按商品会话分摊词搜索量。<span class="basis">［依据：spuName 词频统计，плечо 跨2条、пояс×2与дорожная×2为单标题重复计次］</span></li>
+    <li><b>建议排序取景：</b>自营无品牌时优先关注 #1（.LoadScene 会话最大、同款适中、成交价约 249₽ 低客单）；#2 适合有品牌或中高客单承接（2,735.73¥ 币种原值、支付结算币种待核）；#3 需求真实但同款极多，差异化（材质/容量/组合）再做切入。以上均为决策参考而非承诺。<span class="basis">［依据：sessionCountSearch7、price/symbol、otherCount］</span></li>
+  </ol>
+</div>
+
+<div class="sec">
+  <h2>数据缺口与口径声明</h2>
+  <ul class="gap">
+    <li><b>无历史快照：</b>本报告仅当前单次快照（2026-11-17 取数），无相同范围、相同窗口的历史数据，不使用“飙升 / 上涨 / 增长率”结论；需要趋势请提供历史快照或后续同窗复查。</li>
+    <li><b>非词级榜单：</b>平台无词级搜索指数数据源，本榜已改造为 SPU 级搜索流量口径；“женская сумка”真实关键词热度无法拆词归因，词根表仅基于标题。</li>
+    <li><b>样本非全市场：</b>命中 28 条仅展示前 3 条（用户预算），头部样本不推全市场规模；total 为接口命中数，非平台女包总量。</li>
+    <li><b>币种与金额：</b>#2 的 symbol 为 ¥（接口原值，保留展示、未换算、未与 ₽ 合计）；全部金额不自换算为人民币或卢布。</li>
+    <li><b>语义边界：</b>#3 实为旅行化妆/洗漱包，属女包相邻细分（标题含 сумка дорожная женская），按真实召回保留并标注；其余 2 条为女包本体。</li>
+    <li><b>属性待核：</b>“искусственная кожа（人造革）”等为标题声称，材质未核验；品牌词仅 #2 有卖家名一致证据。</li>
+    <li>otherCount 仅作同款/跟卖参考，不等于活跃独立竞争卖家数；转化率为接口原值（未核比例单位，不擅自乘100）。</li>
+    <li>接口未返回数据统计时点，快照时点以查询日为准；本报告未做利润、供应链与 1688 找源（未要求不启动）。</li>
+  </ul>
+</div>
+
+<div class="sec">
+  <h2>溯源</h2>
+  <div class="src">
+    数据来源：youweiAI-OZON（云启数据，Ozon 俄区公开大盘数据，只读接口）｜取数时点：2026-11-17 04:03 UTC<br>
+    调用1 <code>yq_ozon_spu_search</code> 参数：<code>spuName="женская сумка"</code>、<code>size=3</code>、<code>from=0</code>、<code>sort=[{"sessionCountSearch7":"desc"}]</code>（排序降序已核验生效）、过滤 <code>minSoldCount28=1</code>；<code>_fields</code> 显式索取 spu/spuName/photo/link/price/symbol/soldCount28/soldSum28/sessionCountSearch7/sessionCountSearch28/convToCartSearch7/convToCartSearch28/otherCount/sellerId/sellerName；返回 <code>total=28</code>、<code>items=3</code>，字段覆盖 3/3 无缺失。<br>
+    字段名经 <code>yq_fields_lookup</code> 核对；查询日经系统时间接口获取。严格门槛（≥5,000 / &gt;0 / &gt;0）与排序、词根统计基于本批真实 items 代码计算。<br>
+    商品链接（接口原值，可直接访问）：<br>
+    · <a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">SPU 0613596080</a> ｜ <a href="https://www.ozon.ru/product/4208665394" target="_blank" rel="noopener">SPU 3815310249</a> ｜ <a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener">SPU 8663096095</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var z=document.getElementById('zoom'),zi=document.getElementById('zoomImg');
+  document.addEventListener('mousemove',function(e){
+    var t=e.target.closest?e.target.closest('img[data-zoom]'):null;
+    if(t){zi.src=t.getAttribute('data-zoom');
+      var w=z.offsetWidth,h=z.offsetHeight,x=e.clientX+16,y=e.clientY+16;
+      if(x+w>innerWidth)x=e.clientX-w-16;
+      if(x<0)x=0;
+      if(y+h>innerHeight)y=e.clientY-h-16;
+      if(y<0)y=0;
+      z.style.left=x+'px';z.style.top=y+'px';z.style.display='block';
+    }else{z.style.display='none';}
+  });
+  document.addEventListener('mouseleave',function(){z.style.display='none';});
+})();
+</script>
+</body>
+</html>
+```
+
+下一步可做：①保存本快照为基线，7天/28天后同窗复查判升降；②对 #2 核实 ¥ 结算币种与到岸价；③需要时按 #1 词根（пояс/бананка/барсетка）单独拉一批同类 SPU 扩大候选预算。

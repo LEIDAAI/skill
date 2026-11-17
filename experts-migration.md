@@ -602,3 +602,27 @@ mcp__1688__monitor_shop_list
 
 - 线上强刷核验发现：七技能实测明细已是 2026-11-16 的 22 条真实会话，但同一弹窗的 KPI、执行过程、结论与对话入口仍是 11-14 旧口径（如“3/3 通过”“交付20款”），与明细自相矛盾。
 - 修正：从本轮 22 条记录逐技能重算 KPI（会话数、通过/部分或未完成）与执行过程、结论；对话入口改指本轮明确问法会话；报告链接与逐行会话链接保持不变。不改线上专家/技能正文，不重跑会话，不美化失败。
+
+<!-- BEGIN OZON SCENES DELIVERY 2026-11-17 -->
+## 2026-11-17 OZON 九场景当前迁移与交付
+
+- 一个专家 `ozon-selection-assistant`（youweiAI-OZON选品专家），模型 `glm-5.3`；保留七个公共技能，追加九场景，实际绑定共16项。完整专家公共配置、九场景正文及七公共技能基线见 `ozon-scenes-configuration-2026-11-17.json`，没有用摘要替代正文。
+- 原七项公共实际ID：`ozon-selection-analysis`、`youweiai-ozon-competitor-monitor`、`youweiai-ozon-category-trend`、`youweiai-ozon-product-parse`、`youweiai-ozon-shop-analysis`、`ozon`、`youweiai-ozon-report-gen`。场景调用公共能力，公共技能不反向调用场景；TS保留既有七项前台ID并导出实际ID快照及九场景定义。
+- 当前索引11个独立会话，逐会话逐轮记录见 `ozon-scenes-acceptance-2026-11-17.html`、`ozon-scenes-delivery-2026-11-17.json` 与 `ozon-scenes-evidence-manifest-2026-11-17.json`。最终状态：通过10、部分通过0、未通过1、验收中0；只读取 `acceptance-results.json` 中按chatId匹配的显式最终状态，缺少则验收中。`done=true`、代码工具外层success、已有HTML均不自动判通过；preview证据单列。
+- 原 `audit-findings.json` 的失败与缺口完整保留。每轮模型回答、工具实参/完整返回、原始HTML按内容哈希独立存档；后续纠正和独立复测不覆盖首轮失败。HTML从每个 `turn.answer` 的围栏提取，损坏内容原样保留，不修复后冒充原报告。
+- 耗时证据缺失写“未提供逐工具耗时”，采集时刻、消息时间、业务数据日期不能代替耗时。本构建不操作浏览器；实际渲染/图片/hover状态只引用主Agent提供的preview证据。
+- 重建命令：`python tmp/ozon_scenes_delivery_20261117.py`。可重复执行并接收索引新增复测/缺参会话；每会话一行并输出数量校验，配置未变不重复追加版本。仅本地交付，不提交、推送或发布，不修改其他平台和两份导航HTML。
+
+| 场景 | 实际技能ID |
+|---|---|
+| youweiAI-OZON-场景-热销飙升 | `youweiai-ozon-scene-hot-sales-rise` |
+| youweiAI-OZON-场景-本土刚需季节品+备货 | `youweiai-ozon-scene-seasonal-stocking` |
+| youweiAI-OZON-场景-头部跟款+新手铺货 | `youweiai-ozon-scene-top-seller-beginner` |
+| youweiAI-OZON-场景-商品流量词分析 | `youweiai-ozon-scene-title-traffic-terms` |
+| youweiAI-OZON-场景-宠物细分类目对比 | `youweiai-ozon-scene-pet-subcategory-compare` |
+| youweiAI-OZON-场景-热搜词飙升榜选品 | `youweiai-ozon-scene-search-traffic-ranking` |
+| youweiAI-OZON-场景-大盘趋势快照（目标场景） | `youweiai-ozon-scene-market-trend-snapshot` |
+| youweiAI-OZON-场景-冷门空缺类目筛选 | `youweiai-ozon-scene-supply-demand-gaps` |
+| youweiAI-OZON-场景-批量图搜寻源（Ozon→1688） | `youweiai-ozon-scene-batch-image-sourcing` |
+
+<!-- END OZON SCENES DELIVERY 2026-11-17 -->

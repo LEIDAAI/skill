@@ -1,0 +1,464 @@
+{
+  "audit_version": 1,
+  "scope": "只读审核九个真实UI会话chat JSON与已有report HTML；未操作浏览器、线上配置或导航。",
+  "source_directory": "F:/workbuddy/dianleida/tmp/ozon-scenes-20261117",
+  "snapshot_boundary": "审核期间源文件并发更新；最新核对范围为capturedAt=2026-11-17T12:09:33.005899+08:00至12:15:13.857675+08:00的九份快照。原报告与纠正轮次分开记录，不代表后续实时会话状态。",
+  "source_captured_at": {
+    "hot-sales-rise": "2026-11-17T12:15:13.784510+08:00",
+    "seasonal-stocking": "2026-11-17T12:15:13.584960+08:00",
+    "top-seller-beginner": "2026-11-17T12:09:33.005899+08:00",
+    "title-traffic-terms": "2026-11-17T12:09:33.076267+08:00",
+    "pet-subcategory-compare": "2026-11-17T12:09:33.142610+08:00",
+    "search-traffic-ranking": "2026-11-17T12:15:13.857675+08:00",
+    "market-trend-snapshot": "2026-11-17T12:15:13.646783+08:00",
+    "supply-demand-gaps": "2026-11-17T12:09:33.308893+08:00",
+    "batch-image-sourcing": "2026-11-17T12:15:13.712369+08:00"
+  },
+  "method": "逐项对照用户请求、view_skill实际调用、业务工具arguments/output、execute_code的stdout/stderr与最终HTML。工具索引均从0开始。done=true与metadata.status=completed不作为验收通过依据。未运行浏览器或视觉验收。",
+  "status_definition": {
+    "pass": "当前可审核的业务输出、关键口径和必需调用链有依据。",
+    "partial": "主要业务事实成立，但有明确调用链或验证缺口。",
+    "fail": "已交付输出存在影响业务判断的错误、样本污染或严重报告损坏。",
+    "pending": "快照仍在生成或关键工具结果/最终报告缺失，不能作完成验收。"
+  },
+  "summary": {
+    "pass": 1,
+    "partial": 4,
+    "fail": 3,
+    "pending": 1,
+    "no_automatic_pass_from_done": true
+  },
+  "tool_timing": {
+    "available": false,
+    "tools_inspected": 103,
+    "locations_checked": [
+      "/turns/*/tools/*/metadata",
+      "/turns/*/tools/*/callMetadata",
+      "/turns/*/tools/*顶层字段"
+    ],
+    "metadata_keys_observed": [
+      "id",
+      "status"
+    ],
+    "other_tool_top_level_timing_keys": [],
+    "explanation": "九份快照未提供逐工具start/end/duration/elapsed/latency字段。capturedAt是采集时刻，users/turns.timestamp是会话消息时刻，get_current_timestamp返回当前时间，fetchedAt/snapshotTime为业务取数或数据快照时刻，均不能代替真实逐工具耗时。初版12:09批量寻源详情曾output=null；12:15更新已补齐实际详情和SKU阶梯价，未把旧缺口沿用为最终未修复问题。"
+  },
+  "scenes": [
+    {
+      "slug": "hot-sales-rise",
+      "chat_id": "78ff7e9d-0253-4a71-9aed-20b424010afc",
+      "status": "fail",
+      "done": true,
+      "done_scope": "首轮报告done=true；新增纠正轮次done=false。",
+      "correction_pending": true,
+      "correction_progress": "12:15快照新增用户验收纠正，明确窗口库存不等于当前有货、化妆包只列邻近类目、严格达标待核。/turns/1尚无工具调用且输出仍为大量乱码，未形成有效替代报告；现有report仍是首轮损坏内容。",
+      "additional_currency_limit": "原始symbol可保留为商品报价币种；soldSum28是否与price共用币种未获得独立字段定义，金额合计应标同币种成立条件，而非直接升级为已核金额币种。",
+      "report": "report-78ff7e9d-0253-4a71-9aed-20b424010afc.html",
+      "checks": {
+        "tool_supported_business_facts": "partial",
+        "currency": "原始三款均为₽，有效两款同币种合计可复算；最终HTML数字与链接失真。",
+        "inventory": "真实stock7/stock28分别为8859/9282、2308/2272、0/0；第三款accessibilityByDays=-1，但soldOut=false，字段冲突需保留。未取得SKU当前remainingStock。",
+        "semantic_filter": "已识别并剔除5866209564男女通用电脑包；有效两款分别女士腰包、女士旅行化妆包。",
+        "sample": "size=3，唯一SPU=3，没有超预算补样；有效=2，total=332。",
+        "public_skills": "已加载选品搜索、报告生成，商品详情核验前未加载youweiai-ozon-product-parse。",
+        "statistics": "execute_code成功；有效销量1859，金额565004.567₽，展示四舍五入565004.57₽，与原始返回一致。",
+        "report_structure": "严重损坏，无法验收为完整可预览HTML。"
+      },
+      "findings": [
+        {
+          "severity": "critical",
+          "issue": "最终报告大面积字符替换，HTML结构、数字和真实链接失真。",
+          "evidence": [
+            "report第1行是8DOCTYPE html8>，不是<!DOCTYPE html>；第3行<head8，第40行</8tyle>。",
+            "report第55行KPI338与真实total=332不符；第56行取回38与实际3不符。",
+            "report第133行otherCount写成217,38；真实值2173。",
+            "report第91、110、139、172行多处域名或商品编号损坏；第三款真实link是https://www.ozon.ru/product/2902632343。",
+            "chat /turns/0/answer中HTML本身即有损坏；不能因turn.done=true认定交付通过。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "缺少商品解析公共技能加载，且库存结论应避免把窗口库存写成已核当前实时库存。",
+          "evidence": [
+            "chat /turns/0/tools/0的场景技能明确：商品补验读取youweiai-ozon-product-parse。",
+            "实际view_skill只有tools/0热销场景、tools/1选品、tools/2报告；tools/5至7直接调用spu_detail。",
+            "tools/7返回stock7=0、stock28=0，同时soldOut=false；原报告仅展示零库存而未并列该冲突。"
+          ]
+        }
+      ],
+      "necessary_ui_correction": "本轮关键词基础命中332个SPU，预算内取回3款：女士腰包1款、旅行化妆包邻近类目1款、男女通用电脑包偏移1款。stock7/stock28为窗口库存，当前SKU有货仍待核验，严格达标数量待核；电脑包库存字段为0但soldOut=false，状态冲突并列。保留三条原始SPU、报价币种及近28天销量；销量仅在明确的样本池中合计，soldSum28金额币种待核，不借报价symbol直接填补。无可比历史不判飙升。原报告结构、数字及链接损坏，纠正轮次尚未完成，须从原始返回生成并验证有效HTML，补载商品解析公共技能。"
+    },
+    {
+      "slug": "seasonal-stocking",
+      "chat_id": "69a991d4-81ce-4e58-bf91-159c2f47acef",
+      "status": "partial",
+      "done": true,
+      "report": "report-69a991d4-81ce-4e58-bf91-159c2f47acef.html",
+      "update_note": "12:09快照原为pending；12:15更新已有execute_code及完整最终报告，按新证据改为partial。",
+      "checks": {
+        "tool_supported_business_facts": "趋势未知、本土刚需未核、严格达标0和T-60条件计划有依据；类目清洗与转化率单位仍有问题。",
+        "currency": "三款报价symbol=₽保留；soldSum28的币种未单独核定，不应仅从price符号直接认定全部金额币种已核。",
+        "inventory": "报告披露第三款stock7/stock28=0但soldOut=false冲突，未据此认定断货，处理较审慎。",
+        "semantic_filter": "电脑包单列真实路径但仍与另两款合称当前相关候选，且声称无男包错类，未完成严格女包清洗。",
+        "sample": "size=3，SPU详情3款，未超预算；原始3款与达标0有区分。",
+        "public_skills": "已载场景、选品、报告；调用商品详情前未加载youweiai-ozon-product-parse。",
+        "statistics": "新增tools/9 execute_code成功；三段历史各50天、末端滞后85/78/106天可复算。用户未给开售日，仅T-60计划，无虚构日历日期。",
+        "report_structure": "完整HTML六段、5张KPI、趋势与本土缺口说明完整；静态未见热销式大面积损坏。"
+      },
+      "findings": [
+        {
+          "severity": "medium",
+          "issue": "商品解析公共技能缺失。",
+          "evidence": [
+            "场景公共分工要求商品材质/属性补验读取youweiai-ozon-product-parse；当前10个工具中view_skill仅场景、选品、报告三项。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "男女通用电脑包仍纳入女包相关候选，口径不够严格。",
+          "evidence": [
+            "report第134、155行明确5866209564为电子产品手提电脑包且标题女男两用，却在第81、164行把三款均称当前相关候选；第169行明确无候选因错类剔除。用户目标为秋冬女包，应把电脑包单列偏移，不算严格女包相关数。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "转化字段追加百分号但字段定义没有给出比例单位。",
+          "evidence": [
+            "report第114、128、142行写0.07%、0.40%、0.37%，称接口原值；原始返回是0.07、0.40075224141701293、0.37000000000000005，fields_lookup只写近7天搜索加购转化率，没有注明百分比或小数比例单位。应原值展示且单位待核。"
+          ]
+        }
+      ],
+      "verified_evidence": [
+        "三款originCountry为空、中国、中国，报告第185行明确不把其当作卖家注册地；本土刚需达标为0，没有用产地或履约方式冒充达标。",
+        "0613596080 dailySalesList共50点：2026-07-06至08-24；8663096095为07-13至08-31；5866209564为06-15至08-03。均不足一年，tools/9成功计算，与report第159行一致。",
+        "report第161、182至187行明确T-60仅计划规则、未预测销量、不累加重叠窗口。"
+      ],
+      "necessary_ui_correction": "本轮取回3个SPU，严格女包语义需把男女通用电脑包单列偏移，不将其计入女包相关数。本土刚需与秋冬属性证据未取得，达标0；三款历史各仅50天，不足一年，季节趋势未知。提前60天仅为开售日T-60自然日计划，未提供T则不虚构具体日期。转化字段按接口数值展示，单位待核，不追加未经核验的百分号；金额币种与报价币种分开核定。补载商品解析公共技能完成调用链。"
+    },
+    {
+      "slug": "top-seller-beginner",
+      "chat_id": "96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2",
+      "status": "partial",
+      "done": true,
+      "report": "report-96b59e7e-c6a2-41c9-897b-5dd6e0c5c2c2.html",
+      "checks": {
+        "tool_supported_business_facts": "主要数据可由搜索、6家店铺详情和两个SPU的SKU列表支持。",
+        "currency": "5款₽、1款¥保留且未混算；¥款不参与≤1000₽判定正确，但不可仅凭¥断言人民币代码已核。",
+        "inventory": "两候选SKU列表均有remainingStock和soldOut，代表库存4150、306及化妆包合计11630均有依据。其他样本仅soldOut=false，报告有区分。",
+        "semantic_filter": "搜索使用types=[17001]，6款均返回女士包袋路径，无电脑包混入。",
+        "sample": "命中220，取6，展示3，6/60覆盖声明准确；样本6家，TOP5合计2630，全部2792。",
+        "public_skills": "只加载场景技能，缺选品、店铺分析、商品解析、报告生成四个公共技能。",
+        "statistics": "唯一execute_code返回SyntaxError，无后续成功执行；独立复算总销量和库存成立，但不能声称原会话已经代码核验。",
+        "report_structure": "完整HTML和主要六段齐全；未做浏览器视觉验收。"
+      },
+      "findings": [
+        {
+          "severity": "high",
+          "issue": "明确要求的公共技能均未加载。",
+          "evidence": [
+            "chat /turns/0/tools/0场景公共分工列出ozon-selection-analysis、youweiai-ozon-shop-analysis、youweiai-ozon-product-parse、youweiai-ozon-report-gen。",
+            "实际仅tools/0为view_skill，其后直接查字典、搜索、店铺详情和SKU；18个工具中无其他view_skill。"
+          ]
+        },
+        {
+          "severity": "high",
+          "issue": "统计生成代码未成功执行，外层success和completed掩盖了真实SyntaxError。",
+          "evidence": [
+            "chat /turns/0/tools/17/output/0/text：status=success但stdout=null，stderr含File <exec>, line 43、SyntaxError: invalid syntax。",
+            "错误来自zh=\"修身斜挎腰包（俗称\"香蕉包/胸包\"）\"的嵌套引号。未发现修正重跑。",
+            "原始6款soldCount28=1081、778、333、229、209、162；审核独立复算合计2792，TOP5=2630，占比94.2%。数值成立不代表原代码执行成功。"
+          ]
+        },
+        {
+          "severity": "low",
+          "issue": "将接口包装重量写成实测，及把原始¥符号解释成已核人民币，措辞超出返回证据。",
+          "evidence": [
+            "会话字段查询把weight定义为包装重量，SKU返回数值不提供测量方法；report第148、159、186行多次用实测。",
+            "report第133行把¥计价解释为人民币；本批商品返回symbol=¥，没有明确currency代码。"
+          ]
+        }
+      ],
+      "necessary_ui_correction": "本轮220条命中中取6个SPU，展示3款；仅代表6款样本，未覆盖60条标准头部样本。按sellerId聚合6家，TOP5样本销量2630件，全部2792件。严格三条件达标0款、待核2款、明确不符4款；轻小缺渠道标准，不判达标。重量为接口返回包装重量，非本轮实测；¥保留符号，具体币种待核。前次统计代码发生SyntaxError，补载选品、店铺、商品解析、报告四项公共技能并成功重跑后，再称完成代码核验。"
+    },
+    {
+      "slug": "title-traffic-terms",
+      "chat_id": "9728fe6c-a86f-4a66-a0d9-0db764d2181e",
+      "status": "fail",
+      "done": true,
+      "report": "report-9728fe6c-a86f-4a66-a0d9-0db764d2181e.html",
+      "checks": {
+        "tool_supported_business_facts": "原始三标题和未清洗词频有工具支持，但目标女包统计受电脑包污染，且最终HTML内容失真。",
+        "currency": "原始三款均₽；第二款评分原值4.9，交付报告写成4.4 4.9。",
+        "inventory": "本场景未要求库存，未作库存结论。",
+        "semantic_filter": "5866209564男女通用电脑包未从女包分母剔除；仅在缺口段声明相邻品类偏移。",
+        "sample": "最多3款预算遵守，3/60说明准确；有标题不等于语义有效。",
+        "public_skills": "已加载场景、选品、报告公共技能。",
+        "statistics": "对原始3条标题的代码计数成功且守恒35=7+8+1+19，但统计对象不净。",
+        "report_structure": "生成代码内HTML较完整；最终answer/report出现多处新增损坏，不能以代码写文件成功替代最终交付验收。"
+      },
+      "findings": [
+        {
+          "severity": "high",
+          "issue": "电脑包混入女包词频，抬高肩背代表性并推荐数码用途词。",
+          "evidence": [
+            "chat /turns/0/tools/4返回第三款标题含ноутбука、макбука、женская мужская；tools/5仍把三款全部计入分母。",
+            "report第74行плечо=2/3的第二个证据来自电脑包，第76行ноутбука进入高频词前3；第127至128行将这些词作为标题建议。",
+            "report第140行承认类目构成未剔除，披露不能替代清洗。",
+            "审核沿用原种子/停用词规则、仅剔除电脑包后，净样本2款：总token=16，有效9型10次；дорожная频次2且代表1/2，плечо频次1且代表1/2；ноутбука、мужская、макбука不再进入女包词表。"
+          ]
+        },
+        {
+          "severity": "critical",
+          "issue": "最终报告较生成代码新增结构、链接和数据损坏。",
+          "evidence": [
+            "report第62行含<the globalScale，第75行<segment，第76行</bearing-unit，第111行第二款链接混入俄文字串和<long-Original，第112行评分4.4 4.9（真实4.9）。",
+            "report第105行data-src使用ir-10.ozonstatic.cn，而原返回主图是ir-20.ozonstatic.cn。",
+            "chat tools/6生成代码HTML长度12117字符；当前report为11919字符；原生成HTML不含the globalScale、bearing-unit、4.4 4.9、font-size:chip16px或ir-10.ozonstatic，最终交付中出现这些内容。",
+            "tools/7只完成一处на плечo拉丁o改西里尔о的修复，不足以证明最终交付HTML完好。"
+          ]
+        },
+        {
+          "severity": "low",
+          "issue": "只展示5个词的要求被额外13型长尾词展示扩张。",
+          "evidence": [
+            "report第85至90行额外逐个列出13型长尾，第95行另列品牌词。用户要求只展示5个词，建议长尾仅保留数量及可选查看入口；品牌可按要求单列。"
+          ]
+        }
+      ],
+      "necessary_ui_correction": "原始召回3款中有1款男女通用电脑包，不纳入女包主词频；预算已用满，净样本2款，不补取。沿用原规则重算后有效9型10次；дорожная出现2次但只代表1/2款，плечо出现1次、代表1/2款。删除女包主结论中的ноутбука、мужская及MacBook词，只展示净样本前5词，品牌按证据单列。词频仅为标题共现，不作流量归因。须从已校验生成内容重新交付完整HTML，修复第二款评分、原图URL与商品链接。"
+    },
+    {
+      "slug": "pet-subcategory-compare",
+      "chat_id": "8a27eb98-8505-4c5c-83ca-fa9118d80c32",
+      "status": "pass",
+      "done": true,
+      "report": "report-8a27eb98-8505-4c5c-83ca-fa9118d80c32.html",
+      "checks": {
+        "tool_supported_business_facts": "后台字典、真实商品锚点和market_stat共同支持两类输出。",
+        "currency": "未展示monthlyPrice等未核币种金额，符合要求。",
+        "inventory": "类目规模报告未作商品库存推断。",
+        "semantic_filter": "95203宠物躺床与95201宠物垫，同父17028674；宠物垫材971110206明确排除。",
+        "sample": "两类限定比较；商品锚点SPU数与大盘SKU总数明确区分。",
+        "public_skills": "已载场景、类目趋势、报告生成；搜索锚点用途有披露。",
+        "statistics": "同日原始items最后一行date=20261115，stats数值一致；execute_code成功，审核独立复算一致。",
+        "report_structure": "页头、4张KPI、明细、结论、缺口、溯源齐全；静态检查未见阻断性结构问题。"
+      },
+      "verified_facts": {
+        "date": "2026-11-15",
+        "pet_bed": {
+          "key": "95203",
+          "allSkuNum": 12744,
+          "allMallNum": 4376,
+          "monthlySalesNum": 126506,
+          "per_mall": 28.91,
+          "per_sku": 9.93
+        },
+        "pet_mat": {
+          "key": "95201",
+          "allSkuNum": 8529,
+          "allMallNum": 3706,
+          "monthlySalesNum": 50817,
+          "per_mall": 13.71,
+          "per_sku": 5.96
+        }
+      },
+      "evidence": [
+        "chat /turns/0/tools/14、15 market_stat分别key=95203、95201，items最后一行date均20261115，统计值与stats相同；updateTime=2026-11-16，不冒充统计日。",
+        "chat /turns/0/tools/17 execute_code成功输出verified，report第56、58、72行与其一致。",
+        "report第78至82行披露币种未核、_empty:true与有效stats矛盾、排序异常及查询日/统计日区别。"
+      ],
+      "necessary_ui_correction": null,
+      "nonblocking_note": "无浏览器操作，pass仅指本地证据和静态报告审核；未验证真实渲染与图片加载。前置dailySales排序空返回被解释为接口排序异常，这一根因未由服务端证据确认，可保守改为带该排序时返回0，去排序后可召回。"
+    },
+    {
+      "slug": "search-traffic-ranking",
+      "chat_id": "0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f",
+      "status": "fail",
+      "done": true,
+      "done_scope": "首轮报告done=true；新增纠正轮次done=false。",
+      "correction_pending": true,
+      "correction_progress": "12:15快照/turns/1已接受纠正并通过1次execute_code输出：基础命中28、样本数值门槛通过3、严格女包语义2、化妆包单列、严格总数未知、金额币种待核。纠正轮正在输出HTML但done=false，现有report文件仍为首轮接口严格命中28版本；原报告fail不等于新纠正稿已完成验收。",
+      "report": "report-0ea4f3e8-bf0e-4807-9f50-ca4fc493d49f.html",
+      "checks": {
+        "tool_supported_business_facts": "取回3条满足三阈值有支持；接口28条全满足三阈值无支持。",
+        "currency": "逐行保留₽、¥且不混算，正确；¥的结算币种仍待核。",
+        "inventory": "用户未设库存门槛，本轮未核库存，不应据此称已具备供货条件。",
+        "semantic_filter": "两款女包与一款旅行化妆包已标注；无男女电脑包混入。",
+        "sample": "size=3、取回3、去重3，预算遵守；阈值全量计数未知。",
+        "public_skills": "场景、选品、报告均加载。",
+        "statistics": "逐行三阈值和降序代码核验成功，但代码人为把total标签写成严格总数，统计运算本身不能补足未应用过滤。",
+        "report_structure": "完整HTML和主要区段存在；局部文案、字段含义和比较结论有错误。"
+      },
+      "findings": [
+        {
+          "severity": "high",
+          "issue": "将total=28误称三阈值严格命中，实际接口只传销量阈值。",
+          "evidence": [
+            "chat /turns/0/tools/13/arguments只有spuName、minSoldCount28=1、size=3、from=0、sessionCountSearch7降序及_fields；无sessionCountSearch7>=5000或convToCartSearch7>0过滤参数。",
+            "tools/13/output确实total=28，但只返回3条；tools/14仅验证这3条，没有获取或验证其余25条。",
+            "report第63行接口严格命中total=28，与第139行完整参数仅minSoldCount28=1互相矛盾。",
+            "chat answer中首轮搜索在严格门槛下命中28条、接口严格命中28条均超出证据；无法仅凭返回数28猜测后端隐含过滤。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "将第三款近28天销量778误说为本次最高。",
+          "evidence": [
+            "report第115行称第三款搜索转化0.4008与近28天销量778同为本次最高。",
+            "真实三款soldCount28为1081、162、778；第一款1081才是本样本最高，第三款仅转化字段最高。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "当前标价被称成交价，且局部窗口文案错误。",
+          "evidence": [
+            "report第117行成交价约249₽实际来自price=249，未提供成交价字段。",
+            "report第105行7天转化率28天窗口应改为28天搜索加购转化率，并保留原值口径。",
+            "report第117行混入.LoadScene残留文本；无品牌与品牌店身份也不能仅由当前所选标题和sellerName升级为已核资质。"
+          ]
+        }
+      ],
+      "necessary_ui_correction": "本轮接口在关键词женская сумка及minSoldCount28=1条件下基础命中28条，按7天搜索会话降序取回3条；本地逐条核验3条均满足7天搜索会话≥5000、转化>0、28天销量>0。28不是全部三阈值达标总数，其余25条未核验；样本数值门槛通过3，严格女包语义2，化妆包单列，严格全量总数未知。第一款28天销量1081为本样本最高，第三款778件，仅转化字段最高。249₽为当前标价，不是成交价；soldSum28金额币种另待核，不借price币种代填。无可比历史不判飙升，窗口说明改为28天搜索加购转化率。新纠正轮已有上述核心修正，但生成未结束，需验收实际最终HTML后再改变原报告fail。"
+    },
+    {
+      "slug": "market-trend-snapshot",
+      "chat_id": "6e635c1c-6cde-4c4e-8a14-c0c1256c64e9",
+      "status": "pending",
+      "done": false,
+      "report": null,
+      "checks": {
+        "tool_supported_business_facts": "已实取key=all，未用关键词样本替代；尚无最终解读。",
+        "currency": "金额返回但币种单位未核，尚未见GMV或客单价计算。",
+        "inventory": "大盘任务不适用。",
+        "semantic_filter": "全平台key=all正确。",
+        "sample": "用户只展示两个实际日期；尚未成稿。",
+        "public_skills": "场景、类目趋势、报告均已加载。",
+        "statistics": "尚无execute_code或期际变化计算。",
+        "report_structure": "无最终HTML。"
+      },
+      "findings": [
+        {
+          "severity": "pending",
+          "issue": "虽然已取大盘返回，当前没有成稿，不能用工具completed替代完成。",
+          "evidence": [
+            "chat /turns/0/done=false，12:15快照已有5个工具：先取得key=all的market_stat，后补取get_current_timestamp；尚无计算或最终HTML。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "历史序列最后两日期与顶层当前统计不同，最终须明确区分。",
+          "evidence": [
+            "tools/3/output的stats是日期数组，最后两个实际点为20261031和20261104，相隔4天。",
+            "2026-10-31：allSkuNum=67236591、allMallNum=294183、monthlySalesNum=352723510；2026-11-04：67791829、294243、349275323。",
+            "同返回顶层当前统计：allSkuNum=69170209、allMallNum=294454、monthlySalesNum=293782469，updateTime=2026-11-16T00:10:32.422+08:00；顶层未单独给date，不能直接套历史最后日期或编为11月15日快照。"
+          ]
+        }
+      ],
+      "necessary_ui_correction": "当前已取得key=all大盘数据，报告尚未完成。历史仅展示2026-10-31与2026-11-04两个最新实际观测日；两点相隔4天，只称期际变化，不称日环比。顶层当前统计另列并注明updateTime及独立统计日未给出。金额币种、单位未核，不计算GMV或客单价；滚动月值不累加成自然月。"
+    },
+    {
+      "slug": "supply-demand-gaps",
+      "chat_id": "a2843beb-1bec-4fa6-8468-b9c5a56652e2",
+      "status": "partial",
+      "done": true,
+      "report": "report-a2843beb-1bec-4fa6-8468-b9c5a56652e2.html",
+      "checks": {
+        "tool_supported_business_facts": "最终两类同日数据、比值与排序正确，中间标签交叉已修复。",
+        "currency": "未展示或计算币种未核金额，正确。",
+        "inventory": "类目规模任务未将店铺总数解释为已核活跃竞争者。",
+        "semantic_filter": "限定父分支17028674与95201、95203两子类，排除其他分支宠物垫材，明确未覆盖全分支。",
+        "sample": "仅两类，未外推全分支。",
+        "public_skills": "已载场景与类目趋势，缺场景明确要求的报告公共技能。",
+        "statistics": "tools/7结构化对象正确但事实文本标签交叉；tools/8重跑成功修正，最终报告正确。",
+        "report_structure": "完整HTML六段齐全、5张KPI、同日/币种/空包装矛盾披露完整。"
+      },
+      "findings": [
+        {
+          "severity": "medium",
+          "issue": "报告生成公共技能未加载，业务数据正确不足以弥补调用链缺口。",
+          "evidence": [
+            "chat /turns/0/tools/0场景明确公共分工：先单独view_skill读取youweiai-ozon-category-trend，报告另读youweiai-ozon-report-gen。",
+            "实际view_skill只有tools/0场景与tools/1类目趋势，随后输出报告，没有report-gen调用。"
+          ]
+        }
+      ],
+      "verified_facts": {
+        "date": "2026-11-15",
+        "ranking": [
+          "宠物躺床",
+          "宠物垫"
+        ],
+        "pet_bed": {
+          "allSkuNum": 12744,
+          "allMallNum": 4376,
+          "monthlySalesNum": 126506,
+          "per_mall": 28.91,
+          "per_sku": 9.93
+        },
+        "pet_mat": {
+          "allSkuNum": 8529,
+          "allMallNum": 3706,
+          "monthlySalesNum": 50817,
+          "per_mall": 13.71,
+          "per_sku": 5.96
+        }
+      },
+      "evidence": [
+        "tools/5、6 market_stat的stats与items最后一行date=20261115数据一致；审核独立复算四个比值一致。",
+        "tools/7中FACTS误把两类数值互换，但tools/8重新执行成功，stdout和report第72至80行已修正，不能把已修复的中间错误当最终未修复错误。",
+        "report第102、104至109行明确有限覆盖、月窗口待核、非活跃竞争者、无金额展示、空包装矛盾和统计日/更新时间分离。"
+      ],
+      "necessary_ui_correction": "最终同日两类结果与比值已核对正确，前次标签交叉已修复；只比较宠物躺床、宠物垫，未覆盖全分支，不判蓝海。补载youweiai-ozon-report-gen并按最终已核数值复核报告后，才完成公共能力链验收。"
+    },
+    {
+      "slug": "batch-image-sourcing",
+      "chat_id": "ded97bf8-08a7-490e-992b-6afe29354d78",
+      "status": "partial",
+      "done": true,
+      "report": "report-ded97bf8-08a7-490e-992b-6afe29354d78.html",
+      "update_note": "12:09原快照详情output=null且报告缺失；12:15已补齐实时详情、SKU阶梯价和双图HTML，旧采购详情缺口已解决。",
+      "checks": {
+        "tool_supported_business_facts": "后台类目、TOP1 SKU、1次图搜、4候选、候选1实时SKU价格均有支持；服务码释义与币种确认仍有缺口。",
+        "currency": "Ozon报价366₽有symbol；1688工具本批价格无currency或人民币文字，报告统一补¥需注明币种待核。未跨币相减、求倍数或算利润。",
+        "inventory": "Ozon当前库存未核，报告未直接宣称现货；1688四SKU canBookCount为10000/10000/10000/10001，可采≥10000有支持。",
+        "semantic_filter": "后台95203核验；4候选为猫抓窝相关，报告仅标相似款、规格缺口明确，未升格同款。",
+        "sample": "SKU size=1、imageUrls=1张、inputCount=acceptedCount=1，未扩至100张。",
+        "public_skills": "已载场景、选品、商品解析、报告与dld-image-search。",
+        "statistics": "SKU soldCount28=33416、4候选和实时SKU价格11/12/12/13均可核；场景要求KPI代码计算，但本轮没有execute_code。",
+        "report_structure": "完整HTML，目标图+4候选图、5张KPI、结论、缺口、溯源齐全；未作视觉验收。"
+      },
+      "findings": [
+        {
+          "severity": "medium",
+          "issue": "服务标签代码被解释为具体权益，缺少本轮返回的释义依据。",
+          "evidence": [
+            "report第76、84、92、114行把449154解释为先采后付，把441218/386434解释为淘宝/抖音面单支持。",
+            "tools/7只有titleTags等数字码，serviceTags可见诚信通年限；本轮实际工具输出未包含先采后付、淘宝或抖音释义文本，也未加载服务码字典。不能把模型先验映射当本轮已核服务权益。"
+          ]
+        },
+        {
+          "severity": "medium",
+          "issue": "场景明确要求KPI纯代码计算，实际没有代码工具。",
+          "evidence": [
+            "tools/0场景写明KPI用拉源数、有效主图数、已搜数、候选命中数和失败数，均由本次真实记录代码计算；当前10个工具无execute_code。数字本身与原始记录吻合，但流程核验未完成。"
+          ]
+        },
+        {
+          "severity": "low",
+          "issue": "报告把1688无显式币种的价格统一标为¥，应标清币种依据或待核。",
+          "evidence": [
+            "tools/7候选、tools/8实时详情、tools/9 SKU价格本批返回未带currency/CNY/人民币；report第58、75、83等行直接写¥。报价数值真实，币种确认不可由平台名称代替。"
+          ]
+        }
+      ],
+      "verified_evidence": [
+        "tools/6：SKU3473191231、SPU8592751763、soldCount28=33416、soldCount7=13069、price=366、symbol=₽。",
+        "tools/7：taskId=080f060625fd40549d9826dacba2f041，inputCount=1、acceptedCount=1、results[0].status=SUCCESS、4候选，officialScore原值0.277230829至0.290252000，报告三位小数吻合。",
+        "tools/8：offerId1014416876922实时详情成功，fetchedAt=2026-11-17T04:09:34.982805639Z。",
+        "tools/9：四个SKU价11、12、12、13，canBookCount10000、10000、10000、10001；priceRanges=[{startQuantity:1,price:11}]，报告起批量1及基础阶梯11有依据。",
+        "report第106、112、115行明确只标相似款、目标尺寸材质未核、无汇率不算价差或利润，授权边界遵守。"
+      ],
+      "necessary_ui_correction": "本轮1款SKU、1张主图图搜成功，召回4个相似候选，未判同款。候选1014416876922已实取详情与SKU阶梯价：四规格11/12/12/13，阶梯从1件起基础价11；具体币种需补证，不由平台名称代填。其余候选仅快照价。删除已核先采后付及淘宝/抖音面单权益，保留原始服务码并注明释义待核。补一次基于真实记录的KPI代码计数；无汇率不算跨币价差与利润，目标规格未核不升级同款。"
+    }
+  ]
+}

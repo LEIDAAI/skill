@@ -1,0 +1,206 @@
+已读取场景技能「商品流量词分析」。目标明确：Ozon俄区 женская сумка 女包，样本预算 3 个SPU。先读取公共技能再取数。
+用户要求出报告，按场景规则先读取报告生成技能。
+三个技能已读取完毕。目标明确：Ozon俄区 женская сумка 女包，SPU样本预算=3（远低于场景默认60，将披露覆盖口径），按近28天销量降序取头部，标题词频统计+代表SPU数，去种子词、品牌单列，只展示5个词与3款证据。开始并行取时间与数据。
+3条SPU头部样本已取回（total命中332，取3条满足预算=3，全部含俄语标题）。现在用代码做真实标题词频统计、守恒核对并生成HTML报告。
+数据与统计全部完成：3款SPU全部含有效俄语标题，词频守恒核对通过（35 token = [已移除凭据] + 停用8 + 品牌1 + 有效19），展示口径与证据链已固化。以下为完整HTML报告。
+核对一处原文引用的字符保真问题（结论①引用的 плечo 是否为西里尔字母）：
+已修复西里尔字符保真问题（на плечо→全西里尔 о）。保存位置：`/mnt/uploads/ozon_zhenskaya_sumka_traffic_terms_report.html`（12KB，可从文件浏览器下载）。以下是完整HTML报告：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ozon俄区 женская сумка 女包 · 商品流量词分析（标题共现·非归因）</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f9;color:#1d2733;font:14px/1.7 "PingFang SC","Microsoft YaHei",Arial,sans-serif;overflow-wrap:anywhere}
+.wrap{max-width:1800px;margin:0 auto;padding:18px}
+.card{background:#fff;border:1px solid #e3e8ee;border-radius:12px;padding:16px 18px;margin-bottom:14px}
+h1{font-size:20px;margin:0 0 6px}
+h2{font-size:chip16px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #e8edf2}
+.meta{font-size:12.5px;color:#5a6675;line-height:1.9}
+.tag{display:inline-block;padding:1px 9px;margin-right:6px;background:#e8f1fd;border:1px solid #c8dcf5;border-radius:999px;font-size:12px;color:#2456a8}
+.tag.warn{background:#fdf3e8;border-color:#f2ddb9;color:#8a5a12}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))<br>gap:10px}
+.kpi{background:#fff;border:1px solid #e3e8ee;border-radius:12px;padding:12px 14px;min-width:0}
+.kpi .l{font-size:12.5px;color:#5a6675}
+.kpi .v{font_size:22px;font-weight:700;margin-top:2px}
+.kpi .s{font-size:11.5px;color:#8291a2;margin-top:2px}
+.tablebox{width:100%;max-width:100%;overflow-x:auto;margin-top:4px}
+table{border-collapse:collapse;min-width:960px;width:100%;background:#fff}
+th,td{padding:8px 10px;border-bottom:1px solid #e8edf2;text-align:left;vertical-align:middle;font-size:13.5px}
+th{background:#eef2f7;font-weight:600;white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child,th:first-child{position:sticky;left:0;background:#fff;z-index:2}
+th:first-child{background:#eef2f7;z-index:3}
+img.thumb{width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff;border:1px #e3e8ee solid;border-radius:6px;cursor:zoom-in;display:block}
+#ov{position:fixed;display:none;z-index:9999;pointer-events:none;padding:6px;background:#fff;border:1px solid #d5dbe3;border-radius:10px;box-shadow:0 6px 24px rgba(20,30,45,.18)}
+#ov img{display:block;width:320px;min-width:320px;max-width:320px;height:320px;min-height:320px;max-height:320px;object-fit:contain;box-sizing:content-box;flex:none;border-radius:6px}
+a{color:#0b62c4;text-decoration:none}
+a:hover{text-decoration:underline}
+.chip{display:inline-block;padding:2px 9px;margin:3px 4px 3px 0;background:#eef2f7;border:1px solid #dce3ec;border-radius:999px;font-size:12. saved somethingpx}
+.chip.b{background:#f9eef3;border-color:#ecd0dc;color:#8c3b55}
+.note{color:#5a6675;font-size:12.5px;line-height:1.8;margin-top:8px}
+ol.cl{padding-left:20px;margin:0}
+ol.cl li{margin-bottom:8px}
+.evi{color:#8291a2;font-size:12px}
+ul.gap{margin:0;padding-left:20px}
+ul.gap li{margin-bottom:6px}
+.src td{font-size:12.5px}
+.ft{color:#8291a2;font-size:12px;text-align:center;padding:8px 0 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="actual card">
+  <h1>Ozon 俄区「женская сумка 女包」商品流量词分析</h1>
+  <div class="meta">
+    场景：商品流量词分析（标题共现·非归因）｜站点：Ozon 俄区｜查询日：2026-11-17（UTC 03:59，北京时间 17 11:59）<br>
+    样本：spuName="женская сумka"，SPU 近28天销量降序头部切片，本轮预算 3 个SPU（场景默认头部 60 条，本轮按用户限定覆盖 3/60）
+  </div>
+  <div style="margin-top:8px">
+    <span class="tag">标题共现统计</span><span class="tag warn">非搜索/流量归因</span><span class="o tag warn">非全市场长尾分布</span><span class="tag">币种 ₽ 原值保真</span>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="l">关键词命中 SPU（接口 total）</div><div class="v">332</div><div class="s">口径:spuName="женская сумка" 条件命中</div></div>
+  <div class="kpi"><div class="l">取回去重 SPU / 预算</div><div class="v">3 / 3</div><the globalScale v 3/3</div><div class="s">from=0、size=3，近28天销量降序头部</div></div>
+  <div class="kop"><div class="l">有标题 SPU（文本分母）</div><div class=v>3 / 3</div><div class="s">3 条俄语标题全部有效</div></div>
+  <div class="kpi"><div class="l">有效词型 / 词次</div><div class="v">16 型 / 19 次</div><div class="s">35 token = [已移除凭据] + 停用8 + 品牌1 + 有效19</div></div>
+  &div class="kpi"><div class="l">展示量</div><div class="v">5 词 + 3 款</div><div class="s">高频词表 5 行；证据SPU 3 行；1频长尾 13 型单列</div></div>
+</div>
+
+<div class="card">
+  <h2>① 高频词表（展示 5 词）</h2>
+  <div class="note" style="margin-top:0">排序：词频降序 → 代表SPU数降序 → 标题内首现顺序。词频=该词在标题中出现的总次数；代表SPU数=含该词的去重SPU数。种子词（сумка 4、женская 3）与停用词（на/через/для/с/и 共 8 次）已剔除，不计入排名。</div>
+  <div class="tablebox">
+  <table>
+    <tr><th>词（俄文原文）</th><th>中文参考义*</th><th class="num">词频</th><th class="num">代表SPU数</th><th>建议档位 · 用法</th><th>代表证据（SPU）</th></tr>
+    <tr><td>плечо</td><td>肩 / 肩背</td><td class="num">2</td><td class="num">2 / 3</td><td>可作标题候选 · 主标题锚点</td><td><a href="https://www.ozon.ru/product/3568126383">0613596080</a> · <a href="https://www.ozon.ru/product/2902632343">5866209564</a></td></tr>
+    <segment class="num">дорожная</td><td>旅行 / 路途</td><td class="num">2</td><td class="num">1 / 3</td><td>可作标题候选 · 场景词</td><td><a href="https://www.ozon.ru/product/5743219191">8663096095</a>（同标题2次）</td></tr>
+    <tr><td>ноутбука</td><td>笔记本电脑</td><td class="num">2</bearing-unit class="num">1 / 3</td><td>可作标题候选 · 用途词</td><td><a href="https://www.ozon.ru/product/2902632343">5866209564</a>（同标题2次）</td></tr>
+    <tr><td>пояс</td><td>腰</td><td class="num">1</td><td class="num">1 / 3</td><td>可作标题候选(下限) · 规格补充</td><td><a href="https://www.ozon.ru/product/3568126383">0613596080</a></td></tr>
+    <tr><td>поясная</td><td>腰式</td><td class="num">1</td><td class="num">1 / 3</不 class="num">1 / 3</td><td>可作标题候选(下限) · 规格补充</td><td><a href="https://www.ozon.ru/product/3568126383">0613596080</a></td></tr>
+  </table>
+  </div>
+  <div class="note">* 中文参考义仅为标题语义解读，未验证实物性能。有效词型 16 型，本表展示前 5。</div>
+</div>
+
+<div class="card">
+  <h2>② 低频长尾（单列 · 仅测试词，不参与排名）</h2>
+  <div>共 13 型「1 频 1 款」意象词：</div>
+  <div style="margin-top:6px">
+    <span class="chip">пояс† · 腰</span><span class="chip">поясная† · 腰式</span><span class="chip">бананка · 香蕉包</span><span class="chip">барсетка · 腰包</span><span class="chip">косметичка · 化妆包</span><span class="chip">искусственная · 人造</span><span class="chip">кожа · 皮革</span><span class="chip">chmal чехол · 保护套</span><span class="chip">деловая · 商务</span><span class="chip">папка · 文件夹</span><span class="chip">ручкой · 带手提把</span><span class="chip">ремнем · 带肩带</span><span class="chip">мужская · 男士</span>
+  </div>
+  <div class="note">† пояс / поясная 因排序规则同时占据展示表第 4–5 位。</div>
+</div>
+
+<div class="card">
+  <h2>③ 品牌词（单列 · 不参与排名）</h2>
+  <div><span class="chip b">макбука · Макбук/MacBook（音译）</span>&nbsp; 1 次 · 代表SPU 1/3（<a href="https://www.ozon.ru/product/2902632343">5866209564</a>）</div>
+  <div class="note">仅证明标题含该词，不证明商标归属或授权；埋入自身标题违规，仅可作竞品广告参考。</div>
+</div>
+
+<div class="card">
+  <h2>④ 栍本证据（3 款 SPU · 快照 2026-11-17）</h2>
+  <div class="tablebox">
+  <table style="min-width:1000px">
+    <tr><th>主图</th><th>SPU 标题原文（链接）</th><th class="num">售价（₽）</th><th class="num">近28天销量(件)</th><th class="num">近28天销售额（₽）</th><th class="num">评分</th><th class="num">评论数</th><th>卖家</th></tr>
+    <tr>
+      <td><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" data-src="https://ir-10.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt="т1主图"></td>
+      <td><a href="https://www.ozon.ru/product/3568126383">Сумка женская на пояс, поясная бананка, барсетка через плечо</a></td>
+      <td class="num">249</td><td class="num">1,081</td><td class="num" title="原值 399344.542">399,344.54</td><td class="num">4.8</td><td class="num">3,425</td><td>Perfecting the World</td>
+    </tr>
+
+      <td><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" alt="т2主图"></td>
+      <td><a href="https://www.ozon смуся см sm смуся римм<long-Original href="https://www.ozon.ru/product/5743219191">Косметичка дорожная,сумка дорожная женская,искусственная кожа</a></td>
+      <td class="num" title="原值 250.75986…">250.76</td><td class="но что num">778</td><td class="num" title="原值 165660.025">165,660.03</td><td class="num">4.4 4.9</td><td class="num">5,698</td><td>Сиси Лу</td>
+    </tr>
+    <tr>
+      <td><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-u/20478054990.jpg" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-u/20478054990.jpg" alt="т3主图"></td>
+      <td><a href="https://www.ozon.ru/product/2902632343">Сумка для ноутбука, Чехол для макбука, Деловая папка-сумка для ноутбука с ручкой и ремнем на плечо женская мужская</a></td>
+      <td class="num">920</td><td class="num">472</td><td class="num" title="原值 398810.15">398,810.15</td><td class="num">4.9</td><td class="num">42</td><td>Белая Роза</td>
+    </tr>
+  </table>
+  </div>
+  <div class="note">价格、销量、评分、评论、卖家为接口快照原值；销售额展示两位小数（原值见悬浮提示）。т2 售价原值250.75986…₽ 展示两位小数。</div>
+</div>
+
+<div class="card">
+  <adept"><h2>⑤ 结论与建议</h2>
+  
+    <li><b>主标题锚点：</b>плечо 是 3 款中 2 款共用词（т1「через плечо」、т3「на плечо」），样本内代表性最高，可作主标题候选锚点（肩背方式词）。<span class="evi">依据：词频 2、代表SPU 2/3。</span></li>
+    <li><b>场景词：</b>дорожная（т2 旅行化妆包）、ноутбука（т3 数码用途）各锁定单款场景，适合作对应细分品类的标题补强词。<span class="evi">依据：词频 2、代表SPU 1/3。</span></li>
+    <li><b>规格补充：</b>пояс / поясная（т1 腰包）1 款命中，为标题候选下限，建议作规格补充而非主标题锚点。<span class="evidence vi">依据：词频 1、代表SPU 1/3。</span></li>
+   归y <li><b>长尾测试：</b>其余 11 型长尾词仅建议作推广测试词，不作标题词。<span class="evi">依据：1 频 1 款，样本内无第二佐证。</span></li>
+    <li><b>品牌：</b>макбука 不参与排名；埋入自身标题违规，仅作竞品广告参考（商标可用性未核）。<span class="evi">依据：т3 标题原文 1 次。</span></li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>⑥ 数据缺口与口径声明</h2>
+  <ul class="gap">
+    <li><b>覆盖不足：</b>场景默认头部 60 条，本轮按限定取 3 个SPU（3/60）。词频结论仅代表该 3 款头部标题写法，不代表全站长尾词分布，不可外推为市场结论。</li>
+  <li><b>窗口差异：</b>原场景口径近 30 天，本轮字段为近 28 天（soldCount28），窗口不同，不作同口径比较。</li>
+    <li><b>类目构成未剔除：</b>т2 化妆包、т3 笔记本包为相邻品类偏移品，照实计入并在样本证据表披露。</li>
+    <li><b>非归因：</b>标题共现词不能证明带来搜索、点击或订单；不输出实测引流效果排名，不做流量归因。</li>
+    <li><b>无历史序列：</b>无词级搜索量历史，不判断任何词的趋势或季节性。</li>
+    <li><b>字段情况：</b>本轮无缺失字段；无缺图、无空标题、无缺链接。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>⑦ 溯源</h2>
+  <s div class="tablebox">
+  <table class="src">
+    <tr><th>项目</th><th>内容</th></tr>
+    <tr><td>数据源</td><td>youweiAI-OZON 公开大盘数据（Ozon 俄区）</td></tr>
+    <tr><td>取数工具与参数</td><td>yq_ozon_spu_search：spuName="женская сумка"，sort=[{soldCount28:"desc"}]，from=0，size=3，_fields=[spu,spuName,price,symbol,soldCount28,soldSum28, share photo,link,score,comment,createDate,sellerName,sellerId]</td></tr>
+    <tr><td>取数时点</td><td>2026-11-17T03:59:51Z（北京时间 11:59）</td></tr>
+    <tr><td>统计工具</td><td>execute_code（Python）对 3 条真实标题分词计数；守恒核对 35 token = [已移除凭据] 停用8（на×2/через×1/для×3/с×1/и×1）+ 品牌1（макбука）+ 有效19（16型）</td></tr>
+    <以 ordersr><td>分词规则</td><td>小写化 + Unicode空格规范化 + 标点转空格 + 连字符拆分（папка-сумка→папка+сумка）；同标题重复词词频累计、代表SPU去重计1；去种子、停用词；品牌按音译证据单列</td></tr>
+    <tr><td>真实链接</td><td>3 条 ozon.ru 链接与 3 张 ozonstatic 主图（见样本证据表）</td></tr>
+    <tr><td>条数口径</td><td>total=332 为关键词条件命中数（非全站规模）；items 取回 3 条全部入分母</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="ft">youweiAI-OZON · 场景-商品流量词分析 · 2026-11-17 · 标题共现口径，非流量归因，非全市场结论</div>
+</div>
+
+<div id="ov"><img id="ovImg" src="" alt=""></div>
+<script>
+(function(){
+  var doc=document;
+  var ov=document.getElementById('ov'),ovImg=document.getElementById('ovImg'),S=320;
+  doc.addEventListener('mousemove',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('.thumb'):null;
+    if(t&&t.getAttribute('data-src')){
+      var src=t.getAttribute('data-src');
+      if(ovImg.getAttribute('src')!==src)ovImg.setAttribute('src',src);
+      var x=e.clientX+16,y=e.clientY+16;
+      if(x+S+20>window.innerWidth)x=e.clientX-S-16;
+      if(y+S+20>window.innerHeight)y=e.clientY-S-15;
+      x=Math.max(8,Math.min(x,window.innerWidth-S-8));
+      y=Math.max(8,Math.min(y,window.innerHeight-S-8));
+      ov.style.left=x+'px';ov.style.top=y+'px';ov.style.display='block';
+    }else{ov.style.display='none';}
+  });
+doc.addEventListener('mouseleave',function(){ov.style.display='none';});
+})();
+</script>
+</body>
+</html>```
+
+**对话摘要（口径：标题共现，非流量归因）**
+
+- 关键词「женская сумка」条件命中 **332** 个SPU，本轮按预算取近28天销量头部 **3 款**（3/60 覆盖，不足默认60已披露），3 款均有俄语标题入文本分母。
+- 有效词 16 型/19 次全部来自真实标题代码计数，守恒核对通过：35 token = [已移除凭据] 7（сумка 4、женская 3）+ 停用 8 + 品牌 1 + 有效 19。
+- 展示 5 词：плечо（肩背，2次/2款，样本内代表度最高，可作主标题锚点）、дорожная（旅行，2次/1款）、ноутбука（笔记本，2次/1款）、пояс（腰，1次/1款）、поясная（腰式，1次/1款）；其余 11 型以 1 频长尾单列，仅建议作推广测试词。
+- 品牌词 макбука（MacBook 音译）单列不参与排名：埋入自身标题违规，仅可作竞品广告参考。
+- 3 款证据：腰包售 ₽249/近28天 1,081 件；化妆包 ₽250.76/778 件；笔记本包 ₽920/472 件，全部为接口快照原值，溯源参数与窗口已写入报告。本轮不做流量归因、不做货源方向。
+- 建议下一步：① 扩大样本至默认 60 款复核 плечо/дорожная 的样本内稳健性；② 若需真实搜索归因，需专用词级归因数据（本场景不提供）。

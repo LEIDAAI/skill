@@ -1,0 +1,121 @@
+按补强规则，交付HTML前先独立读取报告技能：
+报告技能已独立读取。按其交付契约，基于本会话已核验的2026-11-15同日两类数据重出简洁HTML（不再调用业务数据、不造商品图、金额无币种不列）：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OZON俄区·携带和睡眠配件分支·限定两类供需比比较（快照2026-11-15）</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{max-width:1180px;margin:auto;overflow-wrap:anywhere;background:#f6f8fa;color:#1a2332;font:14px/1.6 "PingFang SC","Microsoft YaHei",sans-serif;padding:18px;}
+  h1{font-size:19px;}
+  h2{font-size:15px;border-left:4px solid #0b6e4f;padding-left:8px;margin-bottom:10px;}
+  header,.panel{background:#fff;border:1px solid #dde3ea;border-radius:10px;padding:16px 20px;margin-bottom:14px;}
+  .meta{color:#5b6b80;font-size:12.5px;margin-top:6px;}
+  .tag{display:inline-block;background:#eef4ee;color:#0b6e4f;border:1px solid #cfe3d6;border-radius:20px;padding:2px 10px;font-size:12px;margin:8px 6px 0 0;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+  .kpi{background:#fff;border:1px solid #dde3ea;border-radius:10px;padding:12px 14px;min-width:0;}
+  .kpi .v{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .kpi .l{color:#5b6b80;font-size:12px;margin-top:2px;}
+  .twrap{width:100%;max-width:100%;overflow:auto;border:1px solid #dde3ea;border-radius:8px;}
+  table{border-collapse:collapse;width:100%;min-width:840px;background:#fff;}
+  th,td{padding:9px 10px;font-size:13px;border-bottom:1px solid #dde3ea;white-space:nowrap;text-align:left;}
+  th{background:#eef1f5;position:sticky;top:0;}
+  th:first-child,td:first-child{position:sticky;left:0;background:#fff;z-index:2;}
+  th:first-child{background:#eef1f5;z-index:3;}
+  .num{text-align:right;font-variant-numeric:tabular-nums;}
+  .top{color:#0b6e4f;font-weight:700;}
+  .mi{color:#5b6b80;}
+  ul li{margin:4px 0 4px 18px;}
+  .ev{color:#5b6b80;font-size:12px;}
+  footer{color:#5b6b80;font-size:12px;text-align:center;padding:4px 0 8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>OZON俄区·冷门空缺类目筛选（限定比较，非全分支）</h1>
+  <div class="meta">目标父分支：携带和睡眠配件（后台编码17028674）｜查询日：2026-11-17｜统计同日快照：2026-11-15</div>
+  <span class="tag">仅核2子类（用户限定）</span>
+  <span class="tag">未覆盖全分支</span>
+  <span class="tag">两项供需比排序</span>
+  <span class="tag">不判蓝海</span>
+</header>
+
+<section class="kpis">
+  <div class="kpi"><div class="v">2</div><div class="l">字典已确认子类（宠物躺床95203、宠物垫95201）</div></div>
+  <div class="kpi"><div class="v">2/2</div><div class="l">统计成功且同日可比类数（2026-11-15）</div></div>
+  <div class="kpi"><div class="v">28.91</div><div class="l">宠物躺床 月销量÷店铺总数（排序第一）</div></div>
+  <div class="kpi"><div class="v">13.71</div><div class="l">宠物垫 月销量÷店铺总数</div></div>
+  <div class="kpi"><div class="v">9.93 vs 5.96</div><div class="l">两类的 月销量÷SKU总数 比值</div></div>
+</section>
+
+<section class="panel">
+  <h2>明细表（按 月销量÷店铺总数 降序，同日快照2026-11-15）</h2>
+  <div class="twrap">
+    <table>
+      <thead>
+        <tr><th>细分类目</th><th class="num">店铺总数 allMallNum</th><th class="num">SKU总数 allSkuNum</th><th class="num">月销量 monthlySalesNum（件）</th><th class="num">月销量÷店铺总数</th><th class="num">月销量÷SKU总数</th><th>统计date</th><th>重点提示</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>宠物躺床 <span class="mi">(95203)</span></td>
+          <td class="num">4,376</td><td class="num">12,744</td><td class="num">126,506</td>
+          <td class="num top">28.91</td><td class="num top">9.93</td><td>2026-11-15</td>
+          <td>需求规模与两项比值均居首（两类内相对），核验顺序第一</td>
+        </tr>
+        <tr>
+          <td>宠物垫 <span class="mi">(95201)</span></td>
+          <td class="num">3,706</td><td class="num">8,529</td><td class="num">50,817</td>
+          <td class="num">13.71</td><td class="num">5.96</td><td>2026-11-15</td>
+          <td>供给规模较小且需求规模较小（两类内相对），排序第二</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="ev">口径：两项比值均为类目总量算术比值；月销量为接口月口径（起止/天数待核验），不代表典型店铺或单品实际销量，不预测新店表现。</p>
+</section>
+
+<section class="panel">
+  <h2>相对排序与核验顺序（每条标依据字段）</h2>
+  <ul>
+    <li><b>宠物躺床第一</b>：月销量126,506件，月销量÷店铺总数28.91（4,376家）、月销量÷SKU总数9.93（12,744个），两项比值为本次两类内相对优先核验对象。<span class="ev">依据：monthlySalesNum÷allMallNum、monthlySalesNum÷allSkuNum，快照date=2026-11-15。</span></li>
+    <li><b>宠物垫第二</b>：月销量50,817件，比值13.71（÷店铺3,706）与5.96（÷SKU8,529），供给与需求规模均小于宠物躺床。<span class="ev">依据同上，快照date=2026-11-15。</span></li>
+    <li><b>不判蓝海</b>：比值高低成因（头部集中、有效供给口径、统计窗口）均未核验，只给本次两类的相对排序，不输出蓝海判定、机会保证或新店预测。</li>
+    <li><b>下一步可选核验（本轮均未查证）</b>：头部集中、新品表现、价格规格带、店铺口径澄清（在售/当期成交）、1688货源找源；仅列方向。</li>
+  </ul>
+</section>
+
+<section class="panel">
+  <h2>数据缺口与口径声明</h2>
+  <ul>
+    <li><b>仅两类限定比较</b>：覆盖携带和睡眠配件(17028674)分支下2个已核实子类（宠物躺床95203、宠物垫95201），分支其余子类未遍历，<b>未覆盖全分支</b>，结论不外推为分支整体。</li>
+    <li><b>月销量口径</b>：monthlySalesNum为接口月口径，起止日期与包含天数未核验，不称自然月或近28天合计。</li>
+    <li><b>店铺总数口径</b>：allMallNum为按商品统计、类目内店铺ID去重（数据方口径），是否在售或当期成交未确认，不称活跃竞争者。</li>
+    <li><b>金额不列</b>：market_stat的monthlyPrice等金额字段无币种/单位可核验，本轮不展示、不参与计算（无币种不做客单价或GMV类指标）。</li>
+    <li><b>无商品数据不造图</b>：本轮为类目级统计，未取商品样例，明细行无主图与商品链接，不造图片或商品卡。</li>
+    <li><b>排除项</b>："宠物垫材"(971110206)属宠物护理用品(17028968)分支，非目标分支，已排除未计入。</li>
+    <li><b>观测范围</b>：返回序列2026-08-13至2026-11-15，比较取两类共同最新同日快照2026-11-15；用户未要求趋势，无增长/季节性判定。</li>
+  </ul>
+</section>
+
+<section class="panel">
+  <h2>溯源</h2>
+  <ul>
+    <li>类目字典（OZON后台类目，platform=ozon，查询日2026-11-17）："携带和睡眠"→携带和睡眠配件17028674；"躺床"→宠物躺床95203；"宠物垫"→宠物垫95201及排除项971110206。</li>
+    <li>类目大盘统计：key=95201、key=95203，从其items日期序列（20260813–20261115）取同日快照行date=20261115；字段allSkuNum/allMallNum/monthlySalesNum。</li>
+    <li>比值A、B经本会话代码环境对真实返回逐行计算并输出verified（宠物躺床28.91/9.93；宠物垫13.71/5.96），无手工估算数值。</li>
+    <li>接口未返回可引用URL，本报告不提供外部链接；未做任何新的业务数据查询，全部数据沿用本会话已成功计算结果。</li>
+  </ul>
+</section>
+
+<footer>youweiAI-OZON · 限定两类供需比比较 · OZON俄区公开大盘快照，仅代表本次已核实范围</footer>
+
+</body>
+</html>
+```
+
+摘要：已独立读取报告技能后按其规范重出简洁HTML，沿用本会话已核验的同日（2026-11-15）两类数据——宠物躺床月销126,506件、店铺4,376、SKU12,744，比值28.91与9.93居首；宠物垫月销50,817件、店铺3,706、SKU8,529，比值13.71与5.96第二。口径已按您要求保留：仅两类限定比较、未覆盖全分支、只给相对排序不判蓝海、月口径起止待核验、金额无币种不列、无商品数据不造图片。本轮未新增任何业务数据查询。

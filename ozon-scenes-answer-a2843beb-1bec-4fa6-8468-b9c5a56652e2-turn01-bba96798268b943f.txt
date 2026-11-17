@@ -1,0 +1,138 @@
+按场景规则，先读公共类目技能，再核字典执行。
+字典核验开始：先查目标分支与两个限定子类的后台编码。
+后台编码已核实：宠物躺床=95203、宠物垫=95201（均属父类"携带和睡眠配件"17028674；字典另见"宠物垫材"971110206属宠物护理用品分支，不混入）。逐类取大盘统计：
+两类统计均已返回且含真实日期序列，最新公共统计日期为2026-11-15。按场景规则用代码计算比值并核验：
+代码输出发现行标签交叉错误（事实应：宠物躺床月销量126506、比值28.91/9.93；宠物垫月销量50817、比值13.71/5.96）。重新执行修正：
+数据已核验完毕，两项比值与排序均经代码计算，结论如下（详见HTML报告）：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OZON俄区·冷门空缺类目筛选（携带和睡眠配件分支·限定两类）</title>
+<style>
+  :root{--ink:#1a2332;--mid:#5b6b80;--line:#dde3ea;--bg:#f6f8fa;--card:#ffffff;--accent:#0b6e4f;--tag:#eef4ee;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font:14px/1.6 "PingFang SC","Microsoft YaHei",sans-serif;padding:18px;}
+  .wrap{max-width:1180px;margin:0 auto;}
+  header{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:14px;}
+  header h1{font-size:19px;margin-bottom:6px;}
+  header .meta{color:var(--mid);font-size:12.5px;}
+  .tags{margin-top:8px;}
+  .tag{display:inline-block;background:var(--tag);color:var(--accent);border:1px solid #cfe3d6;border-radius:20px;padding:2px 10px;font-size:12px;margin-right:6px;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .kpi .v{font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .kpi .l{color:var(--mid);font-size:12px;margin-top:2px;}
+  section.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin-bottom:14px;}
+  section.panel h2{font-size:15px;margin-bottom:10px;border-left:4px solid var(--accent);padding-left:8px;}
+  .twrap{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;}
+  table{border-collapse:collapse;width:100%;min-width:860px;background:#fff;}
+  th,td{padding:9px 10px;font-size:13px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th{background:#eef1f5;color:var(--ink);text-align:left;position:relative;}
+  td:first-child,th:first-child{position:sticky;left:0;background:#fff;z-index:2;}
+  th:first-child{background:#eef1f5;}
+  .num{text-align:right;font-variant-numeric:tabular-nums;}
+  .top{color:var(--accent);font-weight:700;}
+  .mi{color:var(--mid);}
+  ul li{margin:4px 0 4px 18px;}
+  .ev{color:var(--mid);font-size:12px;}
+  .gap li{margin:4px 0 4px 18px;}
+  .src li{font-size:12.5px;color:var(--ink);}
+  footer{color:var(--mid);font-size:12px;text-align:center;padding:4px 0 8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>OZON俄区·冷门空缺类目筛选——限定两类比较</h1>
+  <div class="meta">目标父分支：<b>携带和睡眠配件</b>（后台编码 17028674，字典父路径：宠物用品 &gt; 携带和睡眠配件）｜查询日：2026-11-17｜统计同日快照：2026-11-15</div>
+  <div class="tags">
+    <span class="tag">仅核 2 子类（用户限定）</span>
+    <span class="tag">未覆盖全分支</span>
+    <span class="tag">两项供需比排序</span>
+    <span class="tag">不判蓝海</span>
+  </div>
+</header>
+
+<section class="kpis">
+  <div class="kpi"><div class="v">2</div><div class="l">字典已确认子类数（95201、95203）</div></div>
+  <div class="kpi"><div class="v">2 / 2</div><div class="l">市场统计成功类数</div></div>
+  <div class="kpi"><div class="v">2</div><div class="l">同日可比类数（快照2026-11-15）</div></div>
+  <div class="kpi"><div class="v">2</div><div class="l">两项比值均可计算类数</div></div>
+  <div class="kpi"><div class="v">宠物躺床 28.91</div><div class="l">月销量÷店铺总数 排序第一</div></div>
+</section>
+
+<section class="panel">
+  <h2>明细表（按 月销量÷店铺总数 降序，同日快照 2026-11-15）</h2>
+  <div class="twrap">
+    <table>
+      <thead>
+        <tr>
+          <th>细分类目</th><th class="num">店铺总数 allMallNum</th><th class="num">SKU总数 allSkuNum</th><th class="num">月销量 monthlySalesNum（件）</th><th class="num">月销量÷店铺总数</th><th class="num">月销量÷SKU总数</th><th>统计date</th><th>重点提示</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>宠物躺床 <span class="mi">(95203)</span></td>
+          <td class="num">4,376</td><td class="num">12,744</td><td class="num">126,506</td>
+          <td class="num top">28.91</td><td class="num top">9.93</td><td>2026-11-15</td>
+          <td>需求规模与两项比值均居首（本次两类内相对），优先核验顺序第一</td>
+        </tr>
+        <tr>
+          <td>宠物垫 <span class="mi">(95201)</span></td>
+          <td class="num">3,706</td><td class="num">8,529</td><td class="num">50,817</td>
+          <td class="num">13.71</td><td class="num">5.96</td><td>2026-11-15</td>
+          <td>供给规模较小且需求规模也较小（本次两类内相对），排序第二</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="ev">口径：两项比值均为“类目总量算术比值”，月销量为接口月口径（起止/天数待核验），不代表典型店铺或单品实际销量，不预测新店表现。</p>
+</section>
+
+<section class="panel">
+  <h2>相对排序与核验顺序（每条标依据字段）</h2>
+  <ul>
+    <li><b>宠物躺床 两项比值均列第一</b>：月销量÷店铺总数 28.91、月销量÷SKU总数 9.93，且月销量规模 126,506 件居首 —— 相对优先核验顺序第一。<span class="ev">依据：monthlySalesNum ÷ allMallNum（4,376）、monthlySalesNum ÷ allSkuNum（12,744），快照date 2026-11-15。</span></li>
+    <li><b>宠物垫 排序第二</b>：两项比值为 13.71 与 5.96，店铺总数 3,706、SKU总数 8,529 均低于宠物躺床，月销量 50,817 件亦较低 —— 属“供给规模小且需求规模较小”一类。<span class="ev">依据同上字段，快照date 2026-11-15。</span></li>
+    <li><b>只给相对排序，不做蓝海判定</b>：比值高低成因（如头部集中、有效供给差异、统计窗口）均未核验，本轮不输出蓝海指数或机会保证。</li>
+    <li><b>下一步可选核验方向（本轮均未查证）</b>：头部集中（类目内TOP店铺/SPU份额）、新品表现（近期上架动销）、价格规格带、活跃供给口径（是否在售/当期成交店铺数）、1688货源找源。仅列方向，不构成本轮结论。</li>
+  </ul>
+</section>
+
+<section class="panel gap">
+  <h2>数据缺口与口径声明</h2>
+  <ul class="gap">
+    <li><b>覆盖范围（用户限定）</b>：仅比较“携带和睡眠配件”(17028674)分支下 2 个已核实子类（宠物躺床 95203、宠物垫 95201）；本分支其余子类未遍历，<b>未覆盖全分支</b>，结论不代表分支整体。</li>
+    <li><b>排除项</b>：字典另见“宠物垫材”(971110206)，父路径属 宠物护理用品(17028968) 分支，非本次目标分支，已排除、未计入。</li>
+    <li><b>月销量口径</b>：monthlySalesNum 为接口月口径，起止日期与天数未核验，不称自然月或近28天合计。</li>
+    <li><b>店铺总数口径</b>：allMallNum 为按商品统计、类目内店铺ID去重（数据方口径）；是否要求在售或统计期有成交尚未确认，不称“活跃竞争者”。</li>
+    <li><b>观测范围</b>：本次返回日期序列为 2026-08-13 至 2026-11-15，比较取两类共同的最新同日快照 2026-11-15；用户未要求趋势，无趋势判定。</li>
+    <li><b>金额未展示</b>：market_stat 返回的 monthlyPrice 等金额字段无币种/单位可核验，本轮不展示、不参与计算（含客单价类指标）。</li>
+    <li><b>包装标记矛盾披露</b>：接口附带 total=0 / _empty=true 空标记，但 stats 与日期数组含真实有效统计字段，按有效统计保留并在此披露矛盾，未当作0命中处理。</li>
+    <li><b>数据更新时间</b>：两类统计 updateTime 均为 2026-11-16 00:10 (+08:00)，仅作数据更新时间，不替代统计日期（2026-11-15 快照）。</li>
+  </ul>
+</section>
+
+<section class="panel">
+  <h2>溯源</h2>
+  <ul class="src">
+    <li>类目字典（OZON后台类目，platform=ozon，查询日 2026-11-17）：关键词“携带和睡眠”→ 携带和睡眠配件 17028674（父 17027487）；“躺床”→ 宠物躺床 95203（父 17028674）；“宠物垫”→ 宠物垫 95201（父 17028674）、宠物垫材 971110206（父 17028968，已排除）。</li>
+    <li>类目统计：后台类目大盘统计，key=95201（宠物垫）、key=95203（宠物躺床）；取数日期序列 20260813–20261115，报表采用其同日快照行 date=20261115；比对字段 allSkuNum / allMallNum / monthlySalesNum。</li>
+    <li>比值计算：A=monthlySalesNum÷allMallNum、B=monthlySalesNum÷allSkuNum，在本会话代码环境内对上述真实返回逐行计算并输出verified对象，无手工估算数值。</li>
+    <li>接口未返回可引用URL，本报告不提供链接；类目行无商品主图要求，未造商品与图片。</li>
+  </ul>
+</section>
+
+<footer>youweiAI-OZON · 冷门空缺类目筛选（限定两类） · 数据为OZON俄区公开大盘快照，仅代表本次已核实范围</footer>
+
+</div>
+</body>
+</html>
+```
+
+摘要：字典核实“携带和睡眠配件”(17028674)分支下宠物躺床(95203)、宠物垫(95201)两类，2026-11-15同日快照下宠物躺床月销量126,506件、店铺4,376、SKU12,744，两项比值为28.91（÷店铺）与9.93（÷SKU）均居首；宠物垫月销50,817件、店铺3,706、SKU8,529，比值13.71与5.96列第二。仅覆盖2个子类、未遍历全分支；比值为类目总量算术比值，不代表典型店铺/单品销量，不判蓝海；next核验方向（头部集中、新品、价格带、货源）均未查证。

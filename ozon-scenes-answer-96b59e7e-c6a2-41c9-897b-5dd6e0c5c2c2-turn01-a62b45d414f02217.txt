@@ -1,0 +1,258 @@
+已读取场景技能（头部跟款+新手铺货），按用户预算执行：取样上限 6 个 SPU、展示上限 3 款、三条件逐项核验、不做 1688 寻源。先并行获取查询时点、类目编码与字段字典。
+时点与类目编码已取得（女包 → 前台分类 17001「女士>包袋和背包」）。先核上架/重量相关字段名再取数。
+字段已核：SPU 无重量字段、SKU 详情有 `weight`（包装重量），SPU 上架用 `createDate`（最早SKU）。发起 6 条 SPU 取样，`женская сумка` + 前台类目 17001、近28天销量降序。
+6 条 SPU 样本已取得（总命中 220）。3 款不符已在清单（超价/有品牌/¥计价），2 款达价格+无品牌。现并行核 6 个卖家企业身份 + 确认 SKU 搜索的重量字段名。
+6 家企业身份全部核到：均为本土卖家（storeType=2，含ИП个体/ООО实体），无 Ozon 自营、无跨境、无相同企业主体，无合并情形。最后补验两个候选款的 SKU 重量与在售价格。
+6 个卖家企业身份全部核毕（5×ИП个体+1×ООО，均为本土企业卖家，无跨境/自营/同店跳坑）；两个候选款完成 SKU 级价格、币种、重量、品牌、在售库存逐项核验。三条件严格池 0 款、双条件通过 2 款（轻小待用户提供渠道标准复核）。现生成完整 HTML 报告。
+合计核验已完成（TOP5 样本28天销量算术合计2,630件、六家合计2,792件，均为真实字段加总）。以下是本轮样本摘要与完整HTML报告：
+
+**摘要**：Ozon俄区「женская сумка」命中220条，受用户预算限取近28天销量Top 6 SPU（未覆盖60条头部标准的54条，结论仅代表本样本）。按真实sellerId聚合出6家已核本土企业卖家（5×ИП+1×ООО，无同店/自营/跨境），TOP5为 Perfecting the World、Сиси Лу、KENDY、DJ、BOTACOMODA。新手三条件逐项核验：**严格达标0款**——Сиси Лу化妆包（250.76₽、без бренда、30–115g实测但缺渠道轻小标准、跟卖2,173家）与 Perfecting the World腰包（249₽、без бренда、代表SKU缺重量证据）列价格+无品牌已核的待核池；KENDY、DJ、BOTACOMODA、ICONIC BAGS 四款因超价/有品牌/¥计价明确排除。代表SKU口径与SPU口径销量分歧已并列披露、未加总。未做1688寻源。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ozon俄区 女包женская сумка · 头部跟款+新手铺货（6 SPU样本）</title>
+<style>
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:#f1f5f9;color:#0f172a;font:14px/1.65 -apple-system,"Segoe UI","Microsoft YaHei",Arial,sans-serif}
+.wrap{max-width:1180px;width:100%;margin:0 auto;padding:18px 16px 40px}
+.green{color:#047857}.red{color:#b91c1c}.amber{color:#b45309}
+.card,.panel{background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+header.card{padding:16px 18px;margin-bottom:14px}
+.banner{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:10px 14px;margin:12px 0;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:12px;margin:14px 0}
+.kpi{padding:14px 16px}
+.kpi .label{font-size:12px;color:#475569}
+.kpi .value{font-size:25px;font-weight:700;margin:2px 0}
+.kpi .note{font-size:11.5px;color:#64748b;line-height:1.5}
+h2{font-size:16px;margin:0 0 10px;padding-left:10px;border-left:4px solid #0ea5e9}
+h2 .cnt{font-weight:400;color:#64748b;font-size:12.5px;margin-left:6px}
+section{margin:16px 0}
+.tc{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13px}
+th,td{padding:9px 10px;border-bottom:1px solid #eef2f7;vertical-align:top}
+thead th{position:sticky;top:0;background:#0f172a;color:#f8fafc;font-weight:600;text-align:left;z-index:3}
+td.stick{position:sticky;left:0;background:#fff;z-index:2;box-shadow:2px 0 0 #eef2f7}
+tr:hover td{background:#f8fafc}tr:hover td.stick{background:#f8fafc}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+.sub{font-size:11.5px;color:#64748b;line-height:1.55}
+a{color:#0369a1;text-decoration:none}a:hover{text-decoration:underline}
+.bdg{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:99px;margin:1px 0}
+.bdg.ok{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.bdg.wait{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.bdg.no{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.g3 li,.g4 li{margin:6px 0;font-size:13px}
+.footnote{font-size:12px;color:#475569;padding:9px 12px;background:#f8fafc;border-top:1px solid #eef2f7;border-radius:0 0 12px 12px}
+.pv{position:relative;display:inline-block;width:84px;height:84px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#f8fafc;cursor:zoom-in}
+.pv img{width:100%;height:100%;object-fit:contain}
+#floater{position:fixed;width:320px;height:320px!important;max-width:320px!important;max-height:320px!important;background:#fff;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 8px 24px rgba(15,23,42,.25);display:none;z-index:99;pointer-events:none;padding:4px}
+#floater img{width:320px;height:320px;max-width:320px!important;max-height:312px!important;object-fit:contain;display:block}
+ol.gap li{margin:7px 0}
+.smallnote{font-size:11.5px;color:#64748b}
+ul.tl li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="card">
+<div class="smallnote">youweiAI-OZON · 场景报告 · <b>头部跟款 + 新手铺货</b></div>
+<h1 style="margin:6px 0 4px;font-size:19px">Ozon 俄区女包（женская сумка）· 6 SPU 样本卖家聚合与新手三条件核验</h1>
+<div class="smallnote">站点：Ozon 俄罗斯站（俄区）｜查询快照：2026-11-17 12:00:50（北京时间）· 07:00:50（莫斯科）｜类目锚点：前台分类「女士 &gt; 包袋和背包」（types=17001，七百余类目字典实查筛选）｜关键词：женская сумка｜销量周期：滚动近28天（soldCount28，非30天）</div>
+<div style="margin-top:8px">
+<span class="bdg wait">取样6/60（用户预算上限）</span>
+<span class="bdg ok">原始样本 6</span>
+<span class="bdg ok">去重 6</span>
+<span class="bdg ok">相关 6/6（无男包混入，无需语义清洗剔除）</span>
+<span class="bdg ok">企业已核 6/6</span>
+<span class="bdg wait">三条件严格达标 0</span>
+</div>
+<div class="banner">⚠ 覆盖声明：本场景标准头部样本为60条；本轮按您限定的预算只取样<b>最多6个SPU</b>（实取6条），仅覆盖标准样本的10%。全部结论只代表这6条样本画像，不代表女包类目头部整体或大盘，不可外推。</div>
+</header>
+
+<div class="kpis">
+<div class="card kpi"><div class="label">命中 / 取样 / 场景目标</div><div class="value">220 / <span class="green">6</span> / 60</div><div class="note">关键词+类目命中220条，按近28天销量降序取Top6；未覆盖54条如实披露，不冒充全头部</div></div>
+<div class="card kpi"><div class="label">样本卖家 · 企业核验</div><div class="value green">6 家 · 6/6 已核</div><div class="note">sellerId唯一聚合：ИП个体工商户×5 + ООО公司×1，全部本土企业卖家（storeType=2）；无非企业排除项，无同主体重复店</div></div>
+<div class="card kpi"><div class="label">样本28天合计销量（SPU口径）</div><div class="value">2,792 件</div><div class="note">6款算术合计；TOP5合计2,630件（样本内占比94.2%，仅样本内部占比，非市场份额）</div></div>
+<div class="card kpi"><div class="label">新手条件核验结果</div><div class="value"><span class="amber">待核 2</span> · <span class="red">不符 4</span></div><div class="note">价格≤1000₽+无品牌两项已核通过2款；「轻小」因缺您渠道标准全部无法判定达标；三条件严格达标0款</div></div>
+<div class="card kpi"><div class="label">展示款数</div><div class="value">3 / 6</div><div class="note">您限定展示最多3款；其余3款以结论清单与字段证据呈现，缺失字段一律「—」，零补齐</div></div>
+</div>
+
+<section>
+<h2>① 样本卖家 TOP5<small class="cnt">按真实样本 sellerId 聚合 · 企业身份已逐家核验 · 近28天样本销量降序</small></h2>
+<div class="tc">
+<table>
+<thead><tr><th>排名</th><th>卖家（页面真实链接）</th><th>企业形态 / 开店</th><th>样本商品数</th><th>样本28天销量(件)</th><th>已核在售状态 · 店铺档案</th><th>样本价格带</th><th>样本类目</th></tr></thead>
+<tbody>
+<tr>
+<td class="stick"><b>№1</b></td>
+<td><a href="https://www.ozon.ru/seller/perfecting-the-world" target="_blank" rel="noopener">Perfecting the World</a><div class="sub">sellerId 2128559</div></td>
+<td><div class="sub">ИП Манелюк Наталья Сагитовна · ОГРНИП 324390000034946</div><div class="sub">本土 · L2优质 · 开店2024-09-04</div></td>
+<td class="num">1</td>
+<td class="num">1,081</td>
+<td>样本1款在售 · 3/3变体 · 代表SKU库存4,150件<div class="sub">档案：全店4 SPU/18 SKU · 月销22,764件 · 总销188,000件 · 评分4.8 · 评论61,300</div></td>
+<td class="num">249–600 ₽</td>
+<td><div class="sub">女士&gt;包袋和背包&gt;单肩包</div></td>
+</tr>
+<tr>
+<td class="stick"><b>№2</b></td>
+<td><a href="https://www.ozon.ru/seller/sisi-lu-5160134" target="_blank" rel="noopener">Сиси Лу</a><div class="sub">sellerId 5160134</div></td>
+<td><div class="sub">ООО «ВЕСНА» · ИНН 1267700212669 · 莫斯科</div><div class="sub">本土 · L1普通 · 开店2026-06-25（样本内唯一新店）</div></td>
+<td class="num">1</td>
+<td class="num">778</td>
+<td>样本1款在售 · 10/10变体 · 合计库存11,630件<div class="sub">档案：全店2 SPU/32 SKU · 月销9,197件 · 总销16,000件 · 评分4.9 · 评论3,942</div></td>
+<td class="num">185–250.76 ₽</td>
+<td><div class="sub">女士&gt;包袋和背包&gt;化妆包和旅行包</div></td>
+</tr>
+<tr>
+<td class="stick"><b>№3</b></td>
+<td><a href="https://www.ozon.ru/seller/kendy" target="_blank" rel="noopener">KENDY</a><div class="sub">sellerId 1677223</div></td>
+<td><div class="sub">ИП Фомин Павел Валерьевич · ОГРНИП 322508100230096</div><div class="sub">本土 · L1 · 开店2024-02-16</div></td>
+<td class="num">1</td>
+<td class="num">333</td>
+<td>样本1款在售（SPU口径 soldOut=false）<div class="sub">档案：全店4 SPU/56 SKU · 月销3,484件 · 总销92,700件 · 评分4.9 · 评论43,700 · 自有品牌KENDY</div></td>
+<td class="num">1,695–2,665.31 ₽</td>
+<td><div class="sub">女士&gt;包袋和背包&gt;单肩包</div></td>
+</tr>
+<tr>
+<td class="stick"><b>№4</b></td>
+<td><a href="https://www.ozon.ru/seller/dj" target="_blank" rel="noopener">DJ</a><div class="sub">sellerId 33305</div></td>
+<td><div class="sub">ИП Прокушенкова Ксения Николаевна · ОГРНИП 319527500071880</div><div class="sub">本土 · L3 Plus · 开店2020-01-11（样本内最老店）</div></td>
+<td class="num">1</td>
+<td class="num">229</td>
+<td>样本1款在售（SPU口径 soldOut=false）<div class="sub">档案：全店21 SPU/600 SKU · 月销17,721件 · 总销669,000件 · 评分4.9 · 评论173,000 · David Jones</div></td>
+<td class="num">1,167–6,704 ₽</td>
+<td><div class="sub">女士&gt;包袋和背包&gt;单肩包</div></td>
+</tr>
+<tr>
+<td class="stick"><b>№5</b></td>
+<td><a href="https://www.ozon.ru/seller/botacomoda" target="_blank" rel="noopener">BOTACOMODA</a><div class="sub">sellerId 1154010</div></td>
+<td><div class="sub">ИП Кудряшов Сергей Владимирович · ОГРНИП 304644028600080</div><div class="sub">本土 · L3 Plus · 开店2023-07-30</div></td>
+<td class="num">1</td>
+<td class="num">209</td>
+<td>样本1款在售（SPU口径 soldOut=false）<div class="sub">档案：全店8 SPU/56 SKU · 月销3,830件 · 总销287,000件 · 评分4.9 · 评论165,000 · BOTACOMODA</div></td>
+<td class="num">650–1,065 ₽</td>
+<td><div class="sub">女士&gt;包袋和背包&gt;单肩包</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="footnote">另有第6家已核企业卖家 <a href="https://www.ozon.ru/seller/iconic-bags" target="_blank" rel="noopener">ICONIC BAGS</a>（ИП Синицкий Павел Олегович · ОГРНИП 321784700101380，本土L3，2022-09-07开店）：样本1款、近28天162件（SPU口径），样本计价为 ¥1,997–2,735.73（人民币计价行，非₽），按样本销量未进TOP5，单列不并入₽价格带。六家店铺档案更新于2026-09-24～09-27（约8周前），与商品实时快照分列显示、未混算。</div>
+</section>
+
+<section>
+<h2>② 商品明细 · 展示前3款<small class="cnt">近28天样本销量降序 · 主图/链接均为接口真实返回</small></h2>
+<div class="tc">
+<table>
+<thead><tr><th>#</th><th>主图</th><th>商品（俄文原名+中文译称）</th><th>当前价</th><th>近28天销量</th><th>重量 / 品牌 / 在售证据</th><th>三条件逐项核验</th><th>状态与建议</th><th>链接</th></tr></thead>
+<tbody>
+<tr>
+<td class="stick"><b>1</b></td>
+<td><span class="pv"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt="主图" loading="lazy"></span></td>
+<td><a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">Сумка женская на пояс, поясная бананка, барсетка через плечо</a><div class="sub">修身斜挎腰包（俄语俗称「香蕉包/胸包」）</div><div class="sub">SPU 0613596080 · Perfecting the World（卖家榜№1）</div></td>
+<td class="num"><b>249 ₽</b><div class="sub">划线2,399 ₽ · 变体带249–600 ₽</div></td>
+<td class="num">1,081<div class="sub">近7天 211</div><div class="sub">代表SKU 3568126383 的SKU口径同为1,081件（两口径一致，本轮无分歧）</div></td>
+<td><div class="sub">重量：代表SKU未返回重量；同SPU另一织物hobo变体实测160g（不能替代核验）</div><div class="sub">品牌：已核无品牌（brandId=0「без бренда」，店铺brandArr为空）</div><div class="sub">在售：3/3变体售中 · 代表SKU库存4,150件</div><div class="sub">跟卖 254 家</div></td>
+<td><span class="bdg ok">≤1000₽ 通过</span><span class="bdg wait">轻小 待核</span><span class="bdg ok">无品牌 通过</span></td>
+<td><span class="bdg wait">条件待核（缺重量证据）</span><div class="sub">待核池第2优先：补代表SKU重量/尺寸后即可复判；不建议在证据闭环前拍板铺货</div></td>
+<td><a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">ozon ↗</a></td>
+</tr>
+<tr>
+<td class="stick"><b>2</b></td>
+<td><span class="pv"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" alt="主图" loading="lazy"></span></td>
+<td><a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener">Косметичка дорожная, сумка дорожная женская, искусственная кожа</a><div class="sub">人造革女士旅行化妆包/洗漱包</div><div class="sub">SPU 8663096095 · Сиси Лу（卖家榜№2）</div></td>
+<td class="num"><b>250.76 ₽</b><div class="sub">划线302.37 ₽（本款折后价不低于主价，卷带价取主价为当前价）· 变体带185–250.76 ₽</div></td>
+<td class="num">778<div class="sub">近7天 335</div><div class="sub">代表SKU 5743219191 的SKU口径为4,185件——两口径分歧已并列，未调和、未加总，详见④-4</div></td>
+<td><div class="sub">重量：代表SKU实测107g；10个变体中9个实测30–115g</div><div class="sub">品牌：已核无品牌（brandId=0「без бренда」，店铺brandArr为空）</div><div class="sub">在售：10/10变体 · 代表SKU库存306件 · 主力变体2,309–3,877件 · 合计11,630件</div><div class="sub">跟卖 2,173 家（样本内最高）</div></td>
+<td><span class="bdg ok">≤1000₽ 通过</span><span class="bdg wait">轻小 待渠道标准</span><span class="bdg ok">无品牌 通过</span></td>
+<td><span class="bdg wait">条件待核（缺渠道轻小标准）</span><div class="sub">待核池第1优先：重量证据最完整；但跟卖极密，切入须评估价格战与差异化，不宜无脑铺</div></td>
+<td><a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener">ozon ↗</a></td>
+</tr>
+<tr>
+<td class="stick"><b>3</b></td>
+<td><span class="pv"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-f/7838689623.jpg" alt="主图" loading="lazy"></span></td>
+<td><a href="https://www.ozon.ru/product/2713000613" target="_blank" rel="noopener">Сумка женская на плечо хобо А4</a><div class="sub">A4尺寸女士软面单肩hobo包</div><div class="sub">SPU 0767092266 · KENDY（卖家榜№3）</div></td>
+<td class="num"><b>2,200 ₽</b><div class="sub">划线6,000 ₽ · 变体带1,695–2,665.31 ₽</div></td>
+<td class="num">333<div class="sub">近7天 29</div><div class="sub">代表SKU未核验SKU口径</div></td>
+<td><div class="sub">重量：未核验</div><div class="sub">品牌：<span class="red">品牌 KENDY</span>（brandId=101138497）</div><div class="sub">在售：SPU口径售中 · 跟卖196家</div></td>
+<td><span class="bdg no">≤1000₽ 超价</span><span class="bdg no">轻小 未核</span><span class="bdg no">有品牌 不符</span></td>
+<td><span class="bdg no">明确不符（超价+品牌一票否决）</span><div class="sub">仅可作头部跟款观察对象（品牌自产强势款），不适合无品牌新手铺货</div></td>
+<td><a href="https://www.ozon.ru/product/2713000613" target="_blank" rel="noopener">ozon ↗</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="footnote">核验口径：①价格≤1000₽须币种实核为₽并核变体价格；②轻小须真实重量/尺寸+您的承运渠道标准（缺失判待核，未私设任何克重门槛）；③无品牌须 brandId=0/без бренда 且店铺brandArr为空的明确证据，品牌字段为空≠无品牌。缺任一证据不能达标。</div>
+</section>
+
+<section class="panel" style="padding:14px 18px">
+<h2 style="margin-bottom:6px">③ 结论 / 建议（三池分级）</h2>
+<p><b class="green">一、三条件严格达标（已核候选）：0 款。</b>两个候选均因「轻小」未闭环——您未提供承运渠道的轻小标准，故款2虽实测30–115g也不判达标（未私设克重门槛）。</p>
+<p><b class="amber">二、条件待核池（价格+无品牌双已核）：2 款。</b></p>
+<ul class="g3">
+<li><b>SPU 8663096095 化妆包</b>（Сиси Лу · 250.76₽）——待核第1优先：9/10变体实测30–115g、10/10在售、合计库存11,630件；SPU口径28天778件、代表SKU口径4,185件（分歧已披露）。跟卖2,173家是最大竞争风险，小批测试前先评估同款价格带战况。</li>
+<li><b>SPU 0613596080 腰包</b>（Perfecting the World · 249₽）——待核第2优先：价格+无品牌已核，但代表SKU(3568126383)未返回重量，同族另一变体160g不能替代核验；先补代表SKU规格再判。</li>
+<li>两款均不构成需求增长判断：本轮无可比历史快照，不从销量推出增幅/季节性结论；销量为监测估算口径。</li>
+</ul>
+<p><b class="red">三、明确不符池：4 款。</b></p>
+<ul class="g4">
+<li><b>KENDY hobo包</b>（SPU 0767092266）：当前价2,200₽超1000₽上限 ❌；品牌KENDY ❌。</li>
+<li><b>David Jones 斜挎包</b>（SPU 0228720696，卖家DJ）：当前价2,930₽ ❌；品牌David Jones ❌。</li>
+<li><b>BOTACOMODA 单肩包</b>（SPU 7863487545）：品牌 BOTACOMODA 一票否决 ❌（其当前价854₽虽达标，变体带上限1,065₽亦有个别超限变体）。</li>
+<li><b>ICONIC BAGS 手提包</b>（SPU 3815310249）：品牌ICONIC BAGS ❌；且计价币种为¥（1,997–2,735.73），非₽，不进入卢布价格判定轨道，未做汇率折算。</li>
+</ul>
+<p class="smallnote">所有负面结论均由具体字段证据支撑；「销量高」不构成可铺货理由；无物流/售后证据，不评价物流便利性。<b>下一步引导（不强制）</b>：① 回传您渠道的「轻小」克重/尺寸标准，两款待核款可立即复判；② 需要利润测算请补充采购价+物流方案后走利润测算流程；③ 需要覆盖60条标准头部样本请放宽取样预算。</p>
+</section>
+
+<section class="panel" style="padding:14px 18px">
+<h2 style="margin-bottom:6px">④ 数据缺口与口径声明</h2>
+<ol class="gap">
+<li><b>60条未覆盖：</b>本轮为用户预算6 SPU样本；命中总数220、未覆盖54条均在页头与KPI明示；样本内占比（94.2%）仅指TOP5占本样本销量比，不是市场份额。</li>
+<li><b>轻小标准空缺：</b>用户未提供承运渠道重量/尺寸上限；已取得的实测重量（款2：30–115g；款1：同族变体160g）仅作证据陈列，判定恒为待核。</li>
+<li><b>尺寸与体积：</b>外包装尺寸未索取；体积类字段为接口估算值，不能作为计费或轻小判定证据，未用于结论。</li>
+<li><b>SPU口径 vs SKU口径分歧：</b>同一商品两接口读数可能不同（款2：SPU口径778件/28天，代表SKU口径4,185件/28天）。两值并列显示，<b>未调和、未加总、未取高值</b>，采信口径由业务侧裁定；代表SKU销量不是SPU总销量。</li>
+<li><b>库存与在售：</b>库存/在售为平台快照口径（无独立时间戳），不证明下一刻仍可售；「已核在售」仅为样本商品状态，不是全店在售总数。</li>
+<li><b>价格：</b>主价为当前标价，划线价/折后价/变体带分列；币种逐行实核（5款₽，1款¥单列）；款2折后价高于主价，按主价250.76₽报告并在表内披露。</li>
+<li><b>店铺档案时滞：</b>六家店铺档案更新于2026-09-24～09-27，与2026-11-17商品快照分列，未择一覆盖。</li>
+<li><b>历史与增长：</b>无历史对比快照，不作增长/季节性/降价判断；soldCount7与soldCount28不构成任何比例关系。</li>
+<li><b>其他计数：</b>otherCount为跟卖数量，不是店铺规模，不构成竞争度充分条件，仅作参考线索。</li>
+</ol>
+</section>
+
+<section class="panel" style="padding:14px 18px">
+<h2 style="margin-bottom:6px">⑤ 溯源（真实返回链接）</h2>
+<ul class="tl">
+<li>商品：款1 <a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener">ozon.ru/product/3568126383</a> ｜ 款2 <a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener">ozon.ru/product/5743219191</a> ｜ 款3 <a href="https://www.ozon.ru/product/2713000613" target="_blank" rel="noopener">ozon.ru/product/2713000613</a></li>
+<li>店铺：<a href="https://www.ozon.ru/seller/perfecting-the-world" target="_blank" rel="noopener">Perfecting the World</a> ｜ <a href="https://www.ozon.ru/seller/sisi-lu-5160134" target="_blank" rel="noopener">Сиси Лу</a> ｜ <a href="https://www.ozon.ru/seller/kendy" target="_blank" rel="noopener">KENDY</a> ｜ <a href="https://www.ozon.ru/seller/dj" target="_blank" rel="noopener">DJ</a> ｜ <a href="https://www.ozon.ru/seller/botacomoda" target="_blank" rel="noopener">BOTACOMODA</a> ｜ <a href="https://www.ozon.ru/seller/iconic-bags" target="_blank" rel="noopener">ICONIC BAGS</a></li>
+</ul>
+<p class="smallnote">数据来源：youweiAI-OZON 绑定的 Ozon 俄区公开商品/店铺数据（只读查询）；销量为监测估算口径；按您要求未做1688寻源；全部字段为本轮接口真实返回，缺失以「—」标示，零补齐零造数；本报告仅供选品决策参考，不构成销量、利润或定价承诺。</p>
+</section>
+
+</div>
+<div id="floater"><img alt="preview"></div>
+<script>
+(function(){
+var f=document.getElementById('floater'),im=f.querySelector('img');
+function move(e){
+  var m=18,S=320,vw=window.innerWidth,vh=window.innerHeight;
+  var x=e.clientX+m,y=e.clientY+m;
+  if(x+S>vw-8){x=e.clientX-S-m;}
+  if(y+S>vh-8){y=Math.max(8,e.clientY-S-m);}
+  f.style.left=x+'px';f.style.top=y+'px';
+}
+document.querySelectorAll('.pv').forEach(function(p){
+  p.addEventListener('mouseenter',function(e){im.src=this.querySelector('img').src;f.style.display='block';move(e);});
+  p.addEventListener('mousemove',move);
+  p.addEventListener('mouseleave',function(){f.style.display='none';});
+});
+})();
+</script>
+</body>
+</html>
+```
+
+**关键提醒**：① 本轮仅6条样本（您限定的上限），未覆盖场景标准的60条头部，结论不外推；② 三条件严格达标为0，两款「待核」均卡在轻小标准——回传渠道克重/尺寸标准后可立即复判；③ 款2化妆包跟卖高达2,173家，即使达标也需先评估同款竞争；④ 款2存在SPU口径（778件）与代表SKU口径（4,185件）的销量分歧，已并列未加总。

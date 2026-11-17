@@ -1,0 +1,69 @@
+收到最终口径：soldSum28 币种未独立核实——销售额列改为"币种待核"标注（保留金额原值），报价 price+symbol（售价₽）原样保留，不以报价符号代填销售额币种。不取新数，仅修改表头与相关说明，三池统计、真实图片链接全部沿用：
+终验全部通过：₽仅存2处（售价表头price symbol原样 + symbol说明句），3个销售额原值均无币种符号并标"币种待核"，三池守恒、3图3链、CSS、字符保真全部沿用通过。读取终版原文交付：
+终版HTML已生成并锁存（56行，全部校验通过）。完整交付：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ozon俄区 女包 流量词分析 · 三池分计 · 标题共现（非归因）</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#1d2733;font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.w{max-width:1180px;margin:0 auto;padding:16px}
+.c{background:#fff;border:1px solid #e3e8ee;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+h1{font-size:19px;margin:0 0 4px}h2{font-size:15px;margin:0 0 8px}h3{font-size:13.5px;margin:10px 0 4px}
+.m{font-size:12px;color:#67788c}td,th{padding:6px 8px;border-bottom:1px solid #eef1f5;text-align:left;font-size:12.8px;vertical-align:middle}
+th{background:#eef2f7;white-space:nowrap}.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tb{width:100%;max-width:100%;overflow-x:auto}table{border-collapse:collapse;min-width:880px;width:100%;background:#fff}
+.f{display:flex;flex-wrap:wrap;gap:4px}.k{display:inline-block;padding:1px 8px;background:#eef4fb;border:1px solid #cfdff2;border-radius:999px;font-size:12px}
+.k.off{background:#f2e8f7;border-color:#e0cdec}.k.br{background:#fbe8ec;border-color:#f0cdd6}.ok{color:#0a7a3d}.bad{color:#b03a3a}
+a{color:#0b62c4;text-decoration:none}a:hover{text-decoration:underline}
+img.th{width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff;border:1px solid #e3e8ee;border-radius:6px;display:block;cursor:zoom-in}
+#ov{position:fixed;display:none;z-index:99;pointer-events:none;padding:6px;background:#fff;border:1px solid #d5dbe3;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#ov img{display:block;width:320px;min-width:320px;max-width:320px;height:320px;min-height:320px;max-height:320px;object-fit:contain;box-sizing:content-box;border-radius:6px}
+</style></head><body><div class="w">
+<div class="c"><h1>Ozon 俄区「женская сумка 女包」流量词 · 三池分计终版</h1>
+<div class="m">场景：商品流量词分析（仅标题共现）｜站点：Ozon 俄区｜查询日：2026-11-17（UTC 03:59）｜样本：spuName="женская сумка" 近28天销量降序取回 3 款SPU，本轮未再取数<br>验收纠正已生效：上一版 плечо 跨池合并（"2款共用"）作废；ноутбука 等数码用途词限定于偏移池，不作女包词；div残片与评分错乱已修复（т2 评分 4.9）；销售额soldSum28币种待核，不以报价symbol代填</div></div>
+<div class="c"><b>KPI</b>：关键词命中 total <b>332</b>（接口条件命中，非全站）｜已取回 SPU <b>3/3</b>（全部有标题，文本分母 3）｜三池 token <b>35</b> = P1 9 + P2 7 + P3 19（守恒通过）｜分池有效词 <b>19 次/17 型</b>（全局去重 16 型，плечо 跨池重复 1 型）｜种子 7 次、停用 8 次、品牌 1 次已剔除</div><div class="c"><h2>分池数值核对（词频×代表SPU，池内独立）</h2><div class="tb"><table>
+<tr><th>池</th><th>SPU / 标题</th><th class="num">token</th><th class="num">种子</th><th class="num">停用</th><th class="num">品牌</th><th class="num">有效词次/型</th><th>池内有效词（词×频）</th></tr>
+<tr><td>P1 严格女包腰包</td><td><a href="https://www.ozon.ru/product/3568126383">0613596080</a> Сумка женская на пояс, поясная бананка, барсетка через плечо（种子: сумка1+женская1；停用: на1+через1）</td><td class="num">9</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">5 / 5</td><td>бананка×1 барсетка×1 плечо×1 пояс×1 поясная×1</td></tr>
+<tr><td>P2 邻近化妆包</td><td><a href="https://www.ozon.ru/product/5743219191">8663096095</a> Косметичка дорожная,сумка дорожная женская,искусственная кожа（种子: сумка1+женская1）</td><td class="num">7</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">5 / 4</td><td>дорожная×2 косметичка×1 искусственная×1 кожа×1</td></tr>
+<tr><td>P3 偏移电脑包</td><td><a href="https://www.ozon.ru/product/2902632343">5866209564</a> Сумка для ноутбука, Чехол для макбука, Деловая папка-сумка для ноутбука с ручкой и ремнем на плечо женская мужская（种子: сумка3+женская1；停用: для3+с1+на1+и1；品牌: макбука1）</td><td class="num">19</td><td class="num">3</td><td class="num">6</td><td class="num">1</td><td class="num">9 / 8</td><td>ноутбука×2 плечо×1 чехол×1 деловая×1 папка×1 ручкой×1 ремнем×1 мужская×1</td></tr>
+</table></div>
+<div class="m">种子词：сумка 4次/женская 3次（检索主词，不参与任何池内排名）；停用词：на×2 через×1 для×3 с×1 и×1；плечо 于 P1、P3 各计 1 次，<b class="bad">严禁合并为"共用词"</b>——上一版"плечо 2款/主标题锚点"结论作废。</div></div>
+<div class="c"><h2>分池词层（17 型，去品牌/停用/种子；每个词仅限本池）</h2>
+<h3>P1 严格女包腰包池（唯一可入女包标题候选层；单款证据=弱）</h3><div class="f"><span class="k">барсетка×1 腰包</span><span class="k">поясная×1 腰式</span><span class="k">пояс×1 腰</span><span class="k">бананка×1 香蕉包廓形</span><span class="k">плечо×1 肩背（через плечо 斜挎写法）</span></div>
+<h3>P2 邻近品类参考层（化妆包线；不入女包高频词）</h3><div class="f"><span class="k off">дорожная×2 旅行（同标题2次）</span><span class="k off">косметичка×1 化妆包品名</span><span class="k off">искусственная×1 人造</span><span class="k off">кожа×1 皮革</span></div>
+<h3>P3 偏移品类参考层（电脑包；<b class="bad">数码用途词不推荐为女包词</b>）</h3><div class="f"><span class="k off">ноутбука×2 笔记本</span><span class="k off">чехол×1 保护套</span><span class="k off">деловая×1 商务</span><span class="k off">папка×1 文件夹</span><span class="k off">ручкой×1 带手提把</span><span class="k off">ремнем×1 带肩带</span><span class="k off">мужская×1 男士</span><span class="k off">плечо×1 肩背（на плечо 写法）</span></div>
+<h3>品牌层（单列 · 不参与排名 · 未核商标 <b class="bad">不推荐使用</b>）</h3><div class="f"><span class="k br">макбука×1 Макбук/MacBook 音译（仅P3标题出现）</span></div>
+<div class="m">中文仅为语义参考；档位仅为标题共现写法归类，不是搜索量/流量等级；未核验商标不推荐使用。</div></div>
+<div class="c"><h2>证据 SPU（3 款 · 接口快照 · 真实图片）</h2><div class="tb"><table style="min-width:980px">
+<tr><th>主图</th><th>SPU</th><th class="num">售价₽</th><th class="num">近28天销量</th><th class="num">近28天销售额（币种待核）</th><th class="num">评分</th><th class="num">评论</th><th>卖家</th></tr>
+<tr><td><img class="th" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg"></td><td><a href="https://www.ozon.ru/product/3568126383">0613596080 · 腰包 P1</a></td><td class="num">249</td><td class="num">1,081</td><td class="num">399,344.54</td><td class="num">4.8</td><td class="num">3,425</td><td>Perfecting the World</td></tr>
+<tr><td><img class="th" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg"></td><td><a href="https://www.ozon.ru/product/5743219191">8663096095 · 化妆包 P2</a></td><td class="num">250.76</td><td class="num">778</td><td class="num">165,660.03</td><td class="num"><b>4.9</b></td><td class="num">5,698</td><td>Сиси Лу</td></tr>
+<tr><td><img class="th" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-u/20478054990.jpg"></td><td><a href="https://www.ozon.ru/product/2902632343">5866209564 · 电脑包 P3</a></td><td class="num">920</td><td class="num">472</td><td class="num">398,810.15</td><td class="num">4.9</td><td class="num">42</td><td>Белая Роза</td></tr>
+</table></div><div class="m">销量/销售额/评分为近28天与当日接口快照原值（т2售价原值250.75986…，展示两位小数）；售价price为接口返回symbol=₽原样照列；<b class="bad">soldSum28销售额币种未独立核实，仅列金额原值并标"币种待核"，不以报价symbol代填</b>；т2 评分接口原值 4.9，上一版"4.4"为渲染错误，已修订。</div></div><div class="c"><h2>结论与建议（标题共现口径）</h2>
+<b>P1：</b>пояс/поясная/барсетка/бананка/плечо 各1次1款，仅证明"腰包"子类头部标题围绕腰包+斜挎写法组合；作词参考时全部为单款弱证据。<br>
+<b>P2：</b>дорожная×2 显示化妆包标题重复强调"旅行"场景，仅作邻近品类参考，<b class="bad">不得计入女包高频词</b>。<br>
+<b>P3：</b>ноутбука×2 及配套数码词均针对电脑包容器，<b class="bad">不推荐为女包高频词</b>；мужская（男款）进一步证明类目偏移。<br>
+<b>合并纠偏：</b>"плечо 跨2款/主标题锚点"结论因三池违规合并作废，本轮 плечо 仅各池内各计1次。<br>
+<b>品牌：</b>макбука 未核商标，<b class="bad">不推荐使用或投放</b>；如需广告参考须先核商标授权。</div>
+<div class="c"><h2>缺口与声明</h2><div class="m">①样本 3/60（本轮预算3款），全部结论仅限 3 款头部写法，<b>不能外推全站长尾</b>；②窗口近28天（原场景30天口径，不作同口径比较）；③仅标题共现，<b>不是搜索/流量/订单归因</b>；④无词级历史序列，不判趋势/季节性；⑤total=332 为本次关键词命中，非市场规模；⑥上一版HTML缺陷（div残片、т2评分错乱、正文乱码）由验收纠正，本版由真实3条标题的代码重算并核对（35=9+7+19；19=5+5+9；17型-плечо重复1=16型）；⑦销售额soldSum28币种未独立核实，金额原值单列待核，不以报价symbol代填，不作跨币种计算或汇总。</div></div>
+<div class="c"><b>溯源</b>：youweiAI-OZON 公开大盘数据（Ozon俄区）；spuName="женская сумка"，sort=[{"soldCount28":"desc"}]，from=0、size=3；快照 2026-11-17T03:59Z；本轮未新增取数，词频由 execute_code 基于已取回 3 条标题原文分池重算；链接与图片为接口原值 URL。<div class="m" style="margin-top:4px">youweiAI-OZON · 流量词分析·三池分计终版 · 2026-11-17</div></div>
+</div>
+<div id="ov"><img id="ovi" src=""></div>
+<script>
+var ov=document.getElementById('ov'),ovi=document.getElementById('ovi'),S=320;
+document.addEventListener('mousemove',function(e){var t=e.target.closest?e.target.closest('.th'):null;
+if(t){ovi.src=t.src;var x=e.clientX+16,y=e.clientY+16;
+if(x+S+20>window.innerWidth)x=e.clientX-S-16;if(y+S+20>window.innerHeight)y=e.clientY-S-16;
+x=Math.max(8,Math.min(x,window.innerWidth-S-8));y=Math.max(8,Math.min(y,window.innerHeight-S-8));
+ov.style.left=x+'px';ov.style.top=y+'px';ov.style.display='block';}else ov.style.display='none';});
+</script></body></html>
+```
+
+**最终口径落实摘要（未取新数，3图3链与三池统计原样沿用）**
+
+- 销售额表头已去₽改标「近28天销售额（币种待核）」：399,344.54 / 165,660.03 / 398,810.15 均为接口金额原值单列，无币种符号；全文₽仅2处（售价表头"售价₽"=price+symbol原样照列 + 说明句"symbol=₽"表述），并新增缺口⑦"不作跨币种计算或汇总"。
+- 三池分计统计原样沿用：35 token = [已移除凭据] 9 + P2化妆包 7 + P3电脑包 19；19 有效词次 = 5+5+9；17型−плечо1=16型；плечо 各池独立1次，ноутбука×2 等数码词仅限P3偏移池，不作女包词推荐；макбука 品牌单列未核不推荐。
+- 证据表评分 4.8/4.9/4.9（т2 原值4.9已正）、真实主图3张与商品链接3条均为接口原值；版本升级为"三池分计终版"，同步登记于验收行、说明句、缺口⑦与页脚。
+- 报告仅称标题共现、非流量归因；文件已锁存 `/mnt/uploads/ozon_womenbag_traffic_terms_v2_pools.html`（56行）。
