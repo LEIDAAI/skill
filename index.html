@@ -5507,8 +5507,8 @@ const OZON_SCENE_SKILLS = [
   ],
   "ozonSceneNo": 9,
   "scenario": "product-selection",
-  "status": "部分通过",
-  "acceptanceStatus": "部分通过",
+  "status": "已通过",
+  "acceptanceStatus": "已通过",
   "configurationStatus": "已上线",
   "version": "2026-11-17 · 召回口径实测修正后线上快照",
   "liveVersionId": "4ee0dcbf-648d-4645-acc9-6f6fae4bf59e",
@@ -5531,7 +5531,7 @@ const OZON_SCENE_SKILLS = [
    "title": "最新会话原指令判定：未通过",
    "date": "2026-11-17",
    "acceptanceStatus": "未通过",
-   "chatUrl": "https://local.dianleida.net:21996/c/271a8840-de5d-4f8e-8473-ce05997841a9",
+   "chatUrl": "https://local.dianleida.net:21996/c/ef2b2e3d-30d6-41b2-b29e-9561091371c3",
    "chatUrls": [
     "https://local.dianleida.net:21996/c/ded97bf8-08a7-490e-992b-6afe29354d78",
     "https://local.dianleida.net:21996/c/bbdcd714-ee1a-4df1-a20e-5c43aa7f6444"
@@ -5582,6 +5582,11 @@ const OZON_SCENE_SKILLS = [
     }
    ],
    "acceptanceHistory": [
+    {
+     "date": "2026-11-17",
+     "status": "已通过",
+     "note": "1688图搜网关重启修复后补跑（会话 ef2b2e3d）；首轮502失败留证已保留"
+    },
     {
      "date": "2026-11-17",
      "status": "部分通过",
@@ -5727,13 +5732,13 @@ const OZON_SCENE_SKILLS = [
     }
    ],
    "note": "限量测试通过仅对应原始测试指令，不证明默认60/100条或完整业务场景已完成。测试范围、业务完成度和首答状态逐会话分列。聊天正文摘录为现场记录，不代表人工验收通过。done 标记、HTML 围栏或工具完成均不作为通过依据。预览、图片与悬停效果以 acceptance-results.json 的现场验收记录为准。无逐调用耗时证据。",
-   "chatId": "271a8840-de5d-4f8e-8473-ce05997841a9",
+   "chatId": "ef2b2e3d-30d6-41b2-b29e-9561091371c3",
    "rerun": {
     "date": "2026-11-17",
-    "verdict": "部分通过",
-    "calls": "4 view_skill + 1 dict + 1 goods_search(95205) + 1 goods_detail + 2 1688_native_call(image_search) + 1 selection_search_sync",
-    "finding": "OZON侧全对：类目95205核实(total=4830)、销量最高SKU 5014222925(1,394件/₽297)与独立核算一致；1688图搜网关502\"no configured MCP connector\"重试仍失败，0候选未伪造数据——诚实降级为部分通过，待图搜通道修复后补跑",
-    "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+    "verdict": "通过",
+    "calls": "4 view_skill + 1 dict + 1 goods_search(95205) + 1 goods_detail + 3 1688_native_call(image_search+realtime_detail+sku_prices) + 4 execute_code",
+    "finding": "1688图搜通道修复后补跑通过：类目95205(total=4830)、SKU 5014222925(1,394件/₽297/bin28=leader/广东跨境卖家)；图搜命中4个1688候选，首选义乌舒净offerId=985465320012实取详情+SKU阶梯价¥2.90起(≥1件)与独立核算一致；相似款标注+无汇率不算价差全部遵守",
+    "independentCheck": "直连同网关通道复现：货源subject与¥2.90阶梯价逐字段一致"
    }
   }
  }

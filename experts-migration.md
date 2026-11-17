@@ -80,6 +80,17 @@
 导航同步：9 场景 status/demo.rerun/acceptanceHistory 已写入源与发布版，两者 JSON 等价，node --check 通过。
 <!-- END OZON RERUN 2026-11-17 晚 -->
 
+<!-- BEGIN OZON SCENE9 RERUN 2026-11-17 -->
+## OZON 场景9 补跑通过（2026-11-17 21:50）—— 九场景 9/9 全通过
+
+- 根因修复：1688 图搜 502 "no configured MCP connector" 非配置缺失——网关进程（gateway_daemon 守护，2026-11-17 09:01 起）的 ConfigLoader 连接器状态损坏。重启网关进程（taskkill + daemon 3 秒自动拉起）后接口立即恢复（get_category_info/image_search/ali_offer_realtime_detail/ali_offer_sku_prices 全部 200）。
+- 补跑会话 ef2b2e3d-30d6-41b2-b29e-9561091371c3：类目 95205（total=4830）、销量最高 SKU 5014222925（1,394 件/₽297/bin28=leader/广东省跨境卖家 KEYUE1）；图搜命中 4 个 1688 候选，首选义乌舒净 offerId=985465320012「厂家批发宠物垫子」，实取供货详情+SKU 阶梯价 ¥2.90 起（≥1件）。
+- 独立核算：直连同网关通道复现，货源 subject 与 ¥2.90 阶梯价逐字段一致。相似款标注、无汇率不算价差等纪律全部遵守。
+- 导航两份 9 场景全部「已通过」，JSON 等价，node --check 通过；versions.json 追加 1 条。
+- 运维备注：gateway_daemon.py（F://traehuihua//temp_20261010_04//dld-gateway//）常驻，网关 ConfigLoader 每 60s 从 Open WebUI TOOL_SERVER_CONNECTIONS 刷新；再遇 no configured 502 先重启网关进程（旧进程缓存损坏是已知模式）。
+<!-- END OZON SCENE9 RERUN 2026-11-17 -->
+
+
 
 ## TEMU / OZON 配置核查（2026-11-17，本地待发布）
 - 已只读核查两专家及14技能；线上配置未改。本地评估：`temu-ozon-config-review-2026-11-17.html`，两份导航的相关实测面板增加独立评估入口，不改写历史会话判定与计数。

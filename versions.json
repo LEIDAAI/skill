@@ -2062,6 +2062,16 @@
    "target": "ozon-scenes",
    "action": "导航9场景状态与证据更新",
    "note": "场景1-8标已通过（含rerun证据块），场景9部分通过并留网关502证据；源与发布版等价，node --check通过。"
+  },
+  {
+   "ts": "2026-11-17 21:50:00",
+   "target": "ozon-scenes",
+   "action": "场景9补跑通过，九场景9/9全通过",
+   "note": "1688图搜网关进程重启修复（旧进程ConfigLoader状态损坏致502 no configured MCP connector）；补跑会话ef2b2e3d：95205/SKU 5014222925真实OZON侧+1688货源985465320012详情与¥2.90阶梯价实取，独立核算一致。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }
