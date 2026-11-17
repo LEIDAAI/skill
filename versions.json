@@ -3,6 +3,17 @@
  "entries": [
   {
    "date": "2026-11-17",
+   "target": "amazon-scene-q4",
+   "action": "抽验发现快照调用未带nodeIdPath（事后清洗代替事前锁参），教训升级为执行步骤0强制锁参；线上回读逐字一致，两份导航同步",
+   "files": [
+    "skill/youweiAI-amazon-scenes/youweiAI-amazon-场景-去年Q4旺季备货参考.md",
+    "ozon-skill-hub.html",
+    "skill/index.html",
+    "tmp/scene_lessons_verify_20261117.json"
+   ]
+  },
+  {
+   "date": "2026-11-17",
    "target": "amazon-scene-skills-4",
    "action": "回填表格v3.108新教训至4个场景技能（Q4参数陷阱/五维六轮返工/毛利书面语/四步法图搜验证层），线上4/4逐字一致，两份导航同步",
    "files": [
