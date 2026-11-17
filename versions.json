@@ -2046,6 +2046,22 @@
     "report": "ozon-prompt-audit-recall-fix-2026-11-17.html",
     "firstAnswerRows": 20
    }
+  },
+  {
+   "ts": "2026-11-17 19:44:00",
+   "target": "ozon-scenes",
+   "action": "8场景真实首答复验（场景2-9）",
+   "note": "召回修正后重跑：7通过+1部分通过（场景9 OZON侧全对，1688图搜网关502未配置connector，0候选不伪造）。会话：319968a8/5c97f2af/409f948b/b7d31e4b/33c6a1ba/2cc4da9c/4373eae7/271a8840。销量/价格/类目编码与直连MCP独立核算逐字段一致。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
+  },
+  {
+   "ts": "2026-11-17 19:52:00",
+   "target": "ozon-scenes",
+   "action": "导航9场景状态与证据更新",
+   "note": "场景1-8标已通过（含rerun证据块），场景9部分通过并留网关502证据；源与发布版等价，node --check通过。"
   }
  ]
 }
