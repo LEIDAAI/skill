@@ -1,0 +1,129 @@
+我先读取热销飙升场景技能，按其流程执行。
+条件已齐全（OZON俄区、женская сумка、近28天、取样60展示20、有货硬条件），先核验类目锚点。
+类目字典用俄文无命中，改用中文关键词试。
+前台类目锚点确认：女士(17000)>包袋和背包(17001)。以俄语词根「женская сумка」+该前台类目取近28天销量降序60条。
+请求超时，原参数重试一次。
+已取60条唯一SPU样本（接口命中220，取样60）。排序显示销量断崖：前16条 soldCount28>0，其余44条近28天销量为0。样本已固定，先核验库存字段定义，再对16条有销量的头部商品补验当前有货证据。
+库存补验依据已明确：goods_search 的 remainingStock（剩余库存）为当前时点库存字段。对16条有销量头部商品并行补验（第一批8条）。
+第一批8条均核到正库存，继续补验后8条。
+详情补验完成：RICHFAMILY 与 SASSA 两款由商品详情取得 soldOut=false、stock7 为正及 2026-11-16 快照价格记录，核验为有货。现在用同一结构化数据集计算统计并断言。
+统计完成，交付前按门禁读取报告技能。
+执行完成。摘要：
+
+- 接口命中220条，同条件取样60个唯一SPU（销量降序头部切片），16款近28天有销量且核验当前有货，不足目标展示20款，如实列16款。
+- 头部热销：腰包 бананка（1,081件/28天，249₽）、旅行化妆包（778件，250.76₽）、Хобо А4单肩包（333件，2,200₽）；合计销量3,235件，₽价格带249–17,819，另有2款¥标价单列。
+- 飙升判定不做：样本无连续历史序列，仅两个重叠销量窗口，不构成可比增速；已建立当前基线，需后续快照核验增长。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ozon俄区女包热销飙升筛选</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{max-width:1180px;margin:0 auto;padding:20px 16px 40px;font-family:'Segoe UI','Microsoft YaHei',Arial,sans-serif;background:#f5f7fa;color:#2c3345;font-size:14px;line-height:1.5}
+h1{font-size:21px;color:#1a2a5e}
+.sub{color:#6a7185;font-size:12.5px;margin-top:4px}
+.kpis{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.kpi{background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:12px 16px;min-width:150px;flex:1;min-width:0}
+.kpi .n{font-size:22px;font-weight:700;color:#1a2a5e}
+.kpi .l{font-size:12px;color:#6a7185;margin-top:2px}
+.tb{width:100%;max-width:100%;overflow:auto;background:#fff;border:1px solid #e3e8f0;border-radius:10px;margin:14px 0}
+table{border-collapse:collapse;min-width:980px;width:100%}
+th{position:sticky;top:0;background:#eef2f9;color:#4a5170;font-size:12.5px;padding:9px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid #dbe2ee;z-index:2}
+td{padding:9px 10px;border-bottom:1px solid #eef1f7;vertical-align:middle;font-size:13px}
+tr:hover td{background:#f7f9fd}
+.num{text-align:right;white-space:nowrap}
+.c1{width:74px}
+.thumb{width:64px;height:64px;max-width:64px;object-fit:contain;background:#fff;border-radius:6px;cursor:zoom-in;display:block}
+.noimg{font-size:11px;color:#9aa1b5;display:inline-block;width:64px}
+.tl{color:#1c4ed8;text-decoration:none}
+.tl:hover{text-decoration:underline}
+.meta{font-size:11px;color:#8b93a7;margin-top:2px}
+.sm{font-size:11.5px;color:#6a7185;min-width:170px}
+.note{background:#eef6ff;border-left:4px solid #3b82f6;border-radius:6px;padding:10px 14px;font-size:12.5px;color:#33415c;margin:12px 0}
+.sec{font-size:15px;font-weight:700;color:#1a2a5e;margin:20px 0 8px}
+ul{margin-left:18px}
+li{margin:5px 0}
+#zl{position:fixed;display:none;background:#fff;border:1px solid #d5dbe8;border-radius:10px;padding:6px;pointer-events:none;z-index:99;box-shadow:0 8px 24px rgba(20,30,70,.22)}
+#zl.wide{transform:translateX(calc(-100% - 18px))}
+#zl img{width:320px!important;min-width:320px!important;max-width:320px!important;height:320px!important;min-height:320px!important;max-height:320px!important;object-fit:contain;box-sizing:content-box;flex:none;display:block}
+@media(max-width:640px){h1{font-size:18px}.kpi{min-width:46%}}
+</style>
+</head>
+<body>
+<h1>Ozon俄区女包热销及飙升候选 · женская сумка</h1>
+<div class="sub">场景：热销飙升 ｜ 站点：Ozon俄区 ｜ 查询日：2026-11-17 ｜ 口径：SPU ｜ 取样：60/60 ｜ 销量周期：近28天(soldCount28) ｜ 币种：行内原值₽/¥</div>
+<div class="kpis">
+<div class="kpi"><div class="n">220</div><div class="l">接口命中(同条件total)</div></div>
+<div class="kpi"><div class="n">60</div><div class="l">已取样唯一SPU</div></div>
+<div class="kpi"><div class="n">16</div><div class="l">近28天有销量+当前有货(达标)</div></div>
+<div class="kpi"><div class="n">20</div><div class="l">目标展示数(仅16款达标)</div></div>
+</div>
+<div class="note">排序：soldCount28 降序。达标=近28天销量>0 且 当前有货(remainingStock>0，11-17核验；2款以商品详情 soldOut=false+stock7 补验)。剩余44条样本近28天销量为0，未列。</div>
+<div class="sec">明细表（前16款 · 达标）</div>
+<div class="tb">
+<table>
+<thead><tr><th>主图</th><th>商品 / SPU</th><th>样本卖家</th><th class="num">价格</th><th class="num">soldCount28<br>近28天销量</th><th class="num">soldSum28<br>近28天销售额</th><th class="num">评分</th><th class="num">评论数</th><th class="num">剩余库存</th><th>库存核验证据</th></tr></thead>
+<tbody>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/3568126383" target="_blank" rel="noopener" class="tl">Сумка женская на пояс, поясная бананка, барсетка через плечо</a><div class="meta">SPU 0613596080</div></td><td>Perfecting the World</td><td class="num">249.0 ₽</td><td class="num">1,081</td><td class="num">399344.542</td><td class="num">4.8</td><td class="num">3425</td><td class="num">4150</td><td class="sm">remainingStock 4150 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/5743219191" target="_blank" rel="noopener" class="tl">Косметичка дорожная,сумка дорожная женская,искусственная кожа</a><div class="meta">SPU 8663096095</div></td><td>Сиси Лу</td><td class="num">250.76 ₽</td><td class="num">778</td><td class="num">165660.025</td><td class="num">4.9</td><td class="num">5698</td><td class="num">319</td><td class="sm">remainingStock 319 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-f/7838689623.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/2713000613" target="_blank" rel="noopener" class="tl">Сумка женская на плечо хобо А4</a><div class="meta">SPU 0767092266</div></td><td>KENDY</td><td class="num">2200.0 ₽</td><td class="num">333</td><td class="num">720239.436</td><td class="num">4.9</td><td class="num">10914</td><td class="num">629</td><td class="sm">remainingStock 629 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir.ozone.ru/s3/multimedia-1-n/13127363123.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/301662955" target="_blank" rel="noopener" class="tl">Сумка женская через плечо кросс-боди</a><div class="meta">SPU 0228720696</div></td><td>DJ</td><td class="num">2930.0 ₽</td><td class="num">229</td><td class="num">600378.080</td><td class="num">4.9</td><td class="num">376</td><td class="num">125</td><td class="sm">remainingStock 125 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir.ozone.ru/s3/multimedia-1-5/6956517677.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/1121830997" target="_blank" rel="noopener" class="tl">BOTACOMODA Сумка женская через плечо средняя черная мягкая</a><div class="meta">SPU 7863487545</div></td><td>BOTACOMODA</td><td class="num">854.0 ₽</td><td class="num">209</td><td class="num">127286.845</td><td class="num">4.9</td><td class="num">30210</td><td class="num">32</td><td class="sm">remainingStock 32 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozone.ru/s3/multimedia-1-1/10322566633.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/4208665394" target="_blank" rel="noopener" class="tl">ICONIC BAGS Сумка женская мягкой формы средняя</a><div class="meta">SPU 3815310249</div></td><td>ICONIC BAGS</td><td class="num">2735.73 ¥</td><td class="num">162</td><td class="num">345544.590</td><td class="num">4.8</td><td class="num">1509</td><td class="num">1</td><td class="sm">remainingStock 1 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-v/7765443355.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/2477357493" target="_blank" rel="noopener" class="tl">Сумка женская кросс боди мессенджер черный</a><div class="meta">SPU 6666711920</div></td><td>D&O</td><td class="num">1665.0 ₽</td><td class="num">130</td><td class="num">150622.950</td><td class="num">4.8</td><td class="num">965</td><td class="num">84</td><td class="sm">remainingStock 84 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-s/7952540284.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/3467283657" target="_blank" rel="noopener" class="tl">Сумка на плечо женская кросс-боди, искусственная кожа</a><div class="meta">SPU 5594381480</div></td><td>ЖАСМИН</td><td class="num">1137.0 ₽</td><td class="num">72</td><td class="num">59119.143</td><td class="num">4.9</td><td class="num">908</td><td class="num">248</td><td class="sm">remainingStock 248 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir.ozone.ru/s3/multimedia-1-9/9273857229.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/3586424938" target="_blank" rel="noopener" class="tl">Сумка женская через плечо тоут</a><div class="meta">SPU 9278455397</div></td><td>RICHFAMILY</td><td class="num">1589.17 ₽</td><td class="num">65</td><td class="num">73147.551</td><td class="num">4.9</td><td class="num">32</td><td class="num">282</td><td class="sm">goods_detail: soldOut=false, stock7=282, 快照2026-11-16</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir.ozone.ru/s3/multimedia-1-r/13577087259.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/2345581295" target="_blank" rel="noopener" class="tl">Сумка женская натуральная кожа кросс-боди MUZA</a><div class="meta">SPU 3003636499</div></td><td>MUZA</td><td class="num">5899.0 ₽</td><td class="num">53</td><td class="num">260934.965</td><td class="num">4.8</td><td class="num">148</td><td class="num">39</td><td class="sm">remainingStock 39 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-1/7093652293.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/1565102583" target="_blank" rel="noopener" class="tl">Сумка женская кросс-боди Andrea черная</a><div class="meta">SPU 9285387810</div></td><td>Fabrizio</td><td class="num">2400.0 ₽</td><td class="num">46</td><td class="num">99545.950</td><td class="num">4.9</td><td class="num">924</td><td class="num">145</td><td class="sm">remainingStock 145 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-m/8209549678.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/3560061837" target="_blank" rel="noopener" class="tl">Sassa Сумка женская Мягкая Большая поцелуйчик кросс боди</a><div class="meta">SPU 3544988302</div></td><td>SASSA</td><td class="num">2800.0 ₽</td><td class="num">39</td><td class="num">92515.682</td><td class="num">4.9</td><td class="num">788</td><td class="num">61</td><td class="sm">goods_detail: soldOut=false, stock7=61, 快照2026-11-16</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-w/12793721504.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/5097795834" target="_blank" rel="noopener" class="tl">Сумка женская шоппер, большая</a><div class="meta">SPU 0183011002</div></td><td>Densy</td><td class="num">2551.0 ₽</td><td class="num">27</td><td class="num">47222.790</td><td class="num">4.9</td><td class="num">1434</td><td class="num">3</td><td class="sm">remainingStock 3 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-r/9067119831.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/3525262460" target="_blank" rel="noopener" class="tl">Сумка женская на плечо LAKESTONE, натуральная замша</a><div class="meta">SPU 8612906380</div></td><td>LAKESTONE</td><td class="num">17819.0 ₽</td><td class="num">5</td><td class="num">58174.0</td><td class="num">—</td><td class="num">—</td><td class="num">4</td><td class="sm">remainingStock 4 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-t/15456387773.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/1738795774" target="_blank" rel="noopener" class="tl">Сумка кросс боди женская натуральная кожа</a><div class="meta">SPU 8391726588</div></td><td>FAVE BAGS</td><td class="num">2458.0 ₽</td><td class="num">4</td><td class="num">9125.677</td><td class="num">4.8</td><td class="num">1101</td><td class="num">14</td><td class="sm">remainingStock 14 (11-17)</td></tr>
+<tr><td class="c1"><img class="thumb" src="https://ir-20.ozonstatic.cn/s3/multimedia-1-q/8452236734.jpg" alt=""></td><td><a href="https://www.ozon.ru/product/3171779092" target="_blank" rel="noopener" class="tl">Сумка женская через плечо шоппер тоут кожаная</a><div class="meta">SPU 4427067054</div></td><td>ИП Заболотникова Александра Владимировна</td><td class="num">7467.87 ¥</td><td class="num">2</td><td class="num">11740.560</td><td class="num">1.0</td><td class="num">1</td><td class="num">16</td><td class="sm">remainingStock 16 (11-17)</td></tr>
+</tbody>
+</table>
+</div>
+<div class="sec">结论与建议</div>
+<div class="note">
+<b>当前热销：</b>16款均为本次样本内近28天有销量且当前有货的头部切片；榜首为腰包(1081件/28天)与旅行化妆包(778件)。头部销量由第16名(2件)急剧收窄，严格热销梯队约前8款(130件以上)。<br>
+<b>增速待补：</b>本次仅有7天/28天两个重叠窗口销量，7÷28×4不构成可比增速，样本无连续历史序列，不做飙升判定；需建立多日快照后按日序列核验增长。<br>
+<b>同款参考：</b>行内 otherCount 为接口同款/跟卖参考计数(0–3000+不等)，非独立卖家数；样本卖家 sellerId 16个互不重复。<br>
+<b>覆盖限制：</b>取样60/展示16，仅覆盖「женская сумка」+前台类目17001(女士包袋和背包)销量降序头部；不构成全类目市场结论。
+</div>
+<div class="sec">数据缺口与口径声明</div>
+<div class="note">
+① 接口未返回 remainingStock 的「当前时点/有货定义」字段说明，本报告以剩余库存>0作为有货证据并逐行标注取数日；无此字段或无正库存证据的样本不判有货。<br>
+② soldSum28 仅同币种行原值列出；含2行¥标价样本，未做跨币种合计或汇率换算。<br>
+③ 评分/评论为本次快照单点值，评分范围 1.0–4.9(样本内16款，1款0分无评论未计入范围)。<br>
+④ 样本非全市场：取样仅60条头部切片，近28天销量0的44条未进入明细，未判断其在其他时间窗口的表现。
+</div>
+<div class="sec">溯源</div>
+<div class="note" style="font-size:12px">
+取数：youweiAI-OZON 数据源 ｜ 检索：spuName「женская сумка」+前台类目17001(女士/包袋和背包) ｜ sort=soldCount28 desc ｜ from=0,size=60 ｜ 命中total=220,取样60,达标16<br>
+库存补验：goods_search(remainingStock)与 goods_detail(soldOut/stock7) ｜ 查询/核验日期：2026-11-17(UTC) ｜ 2款详情快照：2026-11-16<br>
+无平台任务ID，预览链接未提供；表内链接均为本轮真实商品URL。
+</div>
+<div id="zl"><img id="zi" src="" alt=""></div>
+<script>
+const zl=document.getElementById('zl'),zi=document.getElementById('zi');
+document.querySelectorAll('.thumb').forEach(t=>{
+ t.addEventListener('mouseenter',()=>{zi.src=t.src;zl.style.display='block';move({clientX:t.getBoundingClientRect().left,clientY:t.getBoundingClientRect().top})});
+ t.addEventListener('mousemove',e=>move(e));
+ t.addEventListener('mouseleave',()=>{zl.style.display='none'});
+});
+function move(e){
+ let w=zl.offsetWidth||340,h=zl.offsetHeight||340,x=e.clientX+18,y=e.clientY+18;
+ zl.classList.toggle('wide',x+w>window.innerWidth-8);
+ zl.style.left=Math.max(8,x)+'px';
+ zl.style.top=Math.max(8,Math.min(y,window.innerHeight-h-8))+'px';
+}
+</script>
+</body>
+</html>
+```
+
+下一步建议：① 对前8款热销梯队建立每日销量快照（连续3–5天），即可按可比日序列核验真实飙升；② 或补验前5款的变体构成与同款组关系（otherCount 高的行如化妆包 254 同款参考）。

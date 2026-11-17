@@ -1,0 +1,69 @@
+收口完成。23个直接子类（parentValue=17027487）全部统计成功、同日可比（date=20261115），父类仅作参照不混入排名，未动1688网关。对话摘要如下，完整HTML报告见下方围栏。
+
+**5条事实摘要**
+1. 已确认23个直接子类（含字典多轮交叉核验的干粮91925、矿物石91927、冷冻饲料971280702、配件/药房/饲养缸/水族等，不声称穷尽未知分支）。
+2. 按月销量÷店铺总数降序前三：干粮639.2、宠物湿粮559.5、动物用非处方药316.2（后者店铺基数仅200，涉兽药合规，列为核验对象）。
+3. 需求规模前三：宠物护理(工具/玩具)2,339,864件、护理(毛发/清洁)1,924,744件、干粮1,025,289件。
+4. 供给少且需求也小：维生素112件、配方奶粉4件、饮料33件、宠物粥367件、矿物石2,459件；冷冻饲料为接口真实0（11月初曾有6件观测），非缺失。
+5. 字段按实际返回使用`monthlySalesNum`（未出现monthSalesNum）；父类17027487月销9,383,580/店铺108,432/SKU802,525，仅参照不参与排名；不判蓝海、不预测新店表现。
+
+```html
+<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8"><title>OZON俄区宠物用品直接子类供需核验</title>
+<style>
+body{margin:0;background:#f6f7f9;color:#22293a;font:14px/1.6 "PingFang SC","Microsoft YaHei",sans-serif}
+.w{max-width:1180px;margin:0 auto;padding:16px}
+.c{background:#fff;border:1px solid #e4e7ee;border-radius:8px;padding:14px 16px;margin-bottom:14px}
+h1{font-size:19px;margin:2px 0 6px}h2{font-size:15px;margin:0 0 8px;color:#1c3d5a}
+.mut{color:#6b7280;font-size:12.5px}
+.k{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.k div{min-width:0;background:#f9fafc;border:1px solid #e4e7ee;border-radius:8px;padding:10px 12px}
+.k b{display:block;font-size:20px;color:#1c3d5a}
+.tw{overflow-x:auto;border:1px solid #e4e7ee;border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:960px;font-size:13px}
+th,td{border-bottom:1px solid #eef0f4;padding:7px 9px;text-align:left;white-space:nowrap}
+th{background:#f1f4f8;position:sticky;top:0}
+td:first-child,th:first-child{position:sticky;left:0;background:#fff;min-width:180px}
+th:first-child{background:#f1f4f8}
+.r{text-align:right;font-variant-numeric:tabular-nums}
+tr.ref td{color:#6b7280;background:#fbfbfd}
+tr.ref td:first-child{background:#fbfbfd}
+tr:hover td{background:#f5f8fc}tr:hover td:first-child{background:#f5f8fc}
+ul{margin:6px 0 2px 18px;padding:0}li{margin:3px 0}
+</style></head><body><div class="w">
+<div class="c"><h1>OZON俄区·宠物用品直接子类供需核验（冷门空缺类目场景）</h1>
+<div class="mut">场景：冷门空缺类目筛选｜平台：OZON俄区（youweiAI-OZON）｜查询日：2026-11-17｜已核实分支：宠物用品（后台编码17027487）｜覆盖标签：已确认23个直接子类（字典多轮核验，不声称穷尽未知分支）</div></div>
+<div class="c"><h2>KPI 摘要</h2><div class="k">
+<div><b>23</b>已确认直接子类（parentValue=17027487）</div>
+<div><b>23</b>统计成功类目</div>
+<div><b>23</b>同日可比（date=20261115）</div>
+<div><b>23</b>A/B比值可计算（含真实零1个）</div>
+</div></div>
+<div class="c"><h2>23个直接子类统计与供需比值（按月销量÷店铺总数降序）</h2>
+<div class="tw"><table><thead><tr><th>细分类目</th><th>后台编码</th><th>店铺总数 allMallNum</th><th>SKU总数 allSkuNum</th><th>月销量 monthlySalesNum</th><th>月销量÷店铺总数</th><th>月销量÷SKU总数</th><th>统计date</th><th>重点提示</th></tr></thead>
+<tbody><tr><td>干粮</td><td>91925</td><td class="r">1,604</td><td class="r">63,187</td><td class="r">1,025,289</td><td class="r">639.21</td><td class="r">16.23</td><td class="r">20261115</td><td>需求规模与比值均靠前，优先核验</td></tr><tr><td>宠物湿粮</td><td>91924</td><td class="r">685</td><td class="r">29,585</td><td class="r">383,262</td><td class="r">559.51</td><td class="r">12.95</td><td class="r">20261115</td><td>需求规模与比值均靠前，优先核验</td></tr><tr><td>动物用非处方药</td><td>971454580</td><td class="r">200</td><td class="r">15,438</td><td class="r">63,234</td><td class="r">316.17</td><td class="r">4.10</td><td class="r">20261115</td><td>A最高316但店铺基数仅200、B偏低，涉兽药合规需核验</td></tr><tr><td>宠物零食</td><td>91926</td><td class="r">1,146</td><td class="r">19,223</td><td class="r">215,424</td><td class="r">187.98</td><td class="r">11.21</td><td class="r">20261115</td><td>需求规模与比值均靠前，优先核验</td></tr><tr><td>兽医药房（膳食补充剂）</td><td>200001150</td><td class="r">5,272</td><td class="r">15,790</td><td class="r">645,120</td><td class="r">122.37</td><td class="r">40.86</td><td class="r">20261115</td><td>比值靠前、月销64.5万，优先核验</td></tr><tr><td>宠物护理用品（毛发护理/清洁分支）</td><td>17028967</td><td class="r">15,761</td><td class="r">54,364</td><td class="r">1,924,744</td><td class="r">122.12</td><td class="r">35.40</td><td class="r">20261115</td><td>月销192万、比值靠前，优先核验</td></tr><tr><td>神经营养药物</td><td>972943123</td><td class="r">41</td><td class="r">247</td><td class="r">4,950</td><td class="r">120.73</td><td class="r">20.04</td><td class="r">20261115</td><td>供给极少（41店/247SKU）B较高，规模极小</td></tr><tr><td>宠物护理用品（工具/玩具分支）</td><td>17028968</td><td class="r">50,188</td><td class="r">167,404</td><td class="r">2,339,864</td><td class="r">46.62</td><td class="r">13.98</td><td class="r">20261115</td><td>月销234万、比值中位，优先核验</td></tr><tr><td>水族养殖化学品</td><td>78360021</td><td class="r">2,085</td><td class="r">6,456</td><td class="r">93,190</td><td class="r">44.70</td><td class="r">14.43</td><td class="r">20261115</td><td>—</td></tr><tr><td>宠物小工具</td><td>92310197</td><td class="r">4,135</td><td class="r">7,384</td><td class="r">139,368</td><td class="r">33.70</td><td class="r">18.87</td><td class="r">20261115</td><td>—</td></tr><tr><td>兽医药房（耗材）</td><td>17028669</td><td class="r">9,034</td><td class="r">19,774</td><td class="r">269,640</td><td class="r">29.85</td><td class="r">13.64</td><td class="r">20261115</td><td>—</td></tr><tr><td>矿物石</td><td>91927</td><td class="r">93</td><td class="r">437</td><td class="r">2,459</td><td class="r">26.44</td><td class="r">5.63</td><td class="r">20261115</td><td>供给少需求也小</td></tr><tr><td>宠物餐具</td><td>17028673</td><td class="r">24,967</td><td class="r">63,370</td><td class="r">600,095</td><td class="r">24.04</td><td class="r">9.47</td><td class="r">20261115</td><td>—</td></tr><tr><td>步行和训练配件</td><td>17028668</td><td class="r">18,460</td><td class="r">78,942</td><td class="r">421,543</td><td class="r">22.84</td><td class="r">5.34</td><td class="r">20261115</td><td>—</td></tr><tr><td>鱼缸和爬宠玻璃饲养缸配件</td><td>17028672</td><td class="r">21,922</td><td class="r">84,481</td><td class="r">450,957</td><td class="r">20.57</td><td class="r">5.34</td><td class="r">20261115</td><td>—</td></tr><tr><td>携带和睡眠配件</td><td>17028674</td><td class="r">31,970</td><td class="r">96,509</td><td class="r">564,412</td><td class="r">17.65</td><td class="r">5.85</td><td class="r">20261115</td><td>—</td></tr><tr><td>宠物服装和靴子</td><td>17028966</td><td class="r">12,061</td><td class="r">61,404</td><td class="r">126,124</td><td class="r">10.46</td><td class="r">2.05</td><td class="r">20261115</td><td>—</td></tr><tr><td>宠物粥</td><td>91923</td><td class="r">52</td><td class="r">360</td><td class="r">367</td><td class="r">7.06</td><td class="r">1.02</td><td class="r">20261115</td><td>供给少需求也小</td></tr><tr><td>宠物饮料</td><td>91928</td><td class="r">7</td><td class="r">42</td><td class="r">33</td><td class="r">4.71</td><td class="r">0.79</td><td class="r">20261115</td><td>供给少需求也小</td></tr><tr><td>鱼缸和爬宠玻璃饲养缸</td><td>17028969</td><td class="r">5,196</td><td class="r">10,591</td><td class="r">22,901</td><td class="r">4.41</td><td class="r">2.16</td><td class="r">20261115</td><td>—</td></tr><tr><td>宠物维生素</td><td>95941</td><td class="r">74</td><td class="r">719</td><td class="r">112</td><td class="r">1.51</td><td class="r">0.16</td><td class="r">20261115</td><td>供给少需求也小</td></tr><tr><td>宠物配方奶粉</td><td>971365797</td><td class="r">55</td><td class="r">148</td><td class="r">4</td><td class="r">0.07</td><td class="r">0.03</td><td class="r">20261115</td><td>供给少需求也小</td></tr><tr><td>冷冻饲料</td><td>971280702</td><td class="r">3</td><td class="r">68</td><td class="r">0</td><td class="r">0.00</td><td class="r">0.00</td><td class="r">20261115</td><td>接口真实0销量，非缺失，待核</td></tr><tr class="ref"><td>宠物用品（父类·参照）</td><td>17027487</td><td class="r">108,432</td><td class="r">802,525</td><td class="r">9,383,580</td><td class="r">—</td><td class="r">—</td><td class="r">20261115</td><td>仅参照，不参与子类排名</td></tr></tbody></table></div>
+<div class="mut">A=月销量÷店铺总数，B=月销量÷SKU总数，均为类目总量算术比值，不代表典型店铺或单品实际销量；冷冻饲料月销量为接口真实0（11月初曾有6件观测），非缺失。比值高可能由头部集中或窗口影响造成，未查证不写原因已确认。</div></div>
+<div class="c"><h2>结论与核验顺序（依据字段）</h2><ul>
+<li>食品线优先核验：干粮（A=639.1、月销102.5万）、宠物湿粮（A=559.5、月销38.3万）、宠物零食（A=188.0）需求规模与比值均靠前【依据：monthlySalesNum、allMallNum】。</li>
+<li>护理两分支规模大：工具/玩具分支月销234.0万件、毛发/清洁分支192.5万件，A中位但B高于多数类目【依据：monthlySalesNum、allSkuNum】；兽医药房（膳食补充剂）A=122.4亦靠前。</li>
+<li>动物用非处方药A=316.2最高，但店铺基数仅200、B=4.1偏低，且涉及兽药类目准入与合规，列为口径与准入核验对象【依据：allMallNum、allSkuNum】；神经营养药物供给极少（41店/247SKU）B=20.0，规模极小。</li>
+<li>供给少且需求也小：宠物维生素（112件）、配方奶粉（4件）、饮料（33件）、宠物粥（367件）、矿物石（2,459件）、冷冻饲料（0件）【依据：monthlySalesNum】。</li>
+<li>本表仅相对排序与核验顺序，不判蓝海、不预测新店表现；店铺跨类重叠、父子类不相加。</li>
+</ul></div>
+<div class="c"><h2>数据缺口与口径声明</h2><ul>
+<li>字典"宠物"关键词共118条命中，本表仅列已确认的23个直接子类（parentValue=17027487，含两个"宠物护理用品"并列编码与不含"宠物"字样的干粮/矿物石/冷冻饲料/配件/药房/饲养缸/水族分支），不声称已穷尽未知分支。</li>
+<li>销量字段按实际返回使用 monthlySalesNum（返回中未出现 monthSalesNum 字段）；该字段为接口月口径，起止天数未核验，不称自然月或近28天。</li>
+<li>统计date均为20261115（items末行快照）；顶层updateTime=2026-11-16为数据更新时间，不作统计日期。</li>
+<li>allMallNum为类目内店铺ID去重（数据方口径），是否要求在售或统计期成交未确认，不称活跃竞争者；mallsNum已知失真未使用。</li>
+<li>父类17027487（月销9,383,580）仅作参照行，不参与排名；子类口径与父类含宽口径差异，不相加不比较。</li>
+<li>月销量为零未补0：仅冷冻饲料为接口真实0，其余子类分子均&gt;0；金额字段（monthlyPrice）币种未核验，不展示不计算。</li>
+<li>共执行字典核验+逐类统计；未执行1688取数；无历史序列对比，不判增长或季节性。</li>
+</ul></div>
+<div class="c"><h2>溯源</h2><ul>
+<li>数据源：youweiAI-OZON（云启）公开大盘数据，只读查询。</li>
+<li>动作：yq_dict_lookup（CATEGORY_BACKEND，platform=ozon，关键词"宠物/兽医/处方/饲料/食品/鱼/水族/鸟"多轮交叉核验父路径）；yq_ozon_market_stat（key=上述23个后台编码逐类）。</li>
+<li>本表全部数值取自本轮 market_stat 返回快照（date=20261115，updateTime=2026-11-16）；查询日2026-11-17。</li>
+<li>后续可选核验：头部集中度（品牌/店铺份额）、新品上架表现、价格带与典型SKU规格、货源可得性——均未查证。</li>
+</ul></div>
+</div></body></html>
+```

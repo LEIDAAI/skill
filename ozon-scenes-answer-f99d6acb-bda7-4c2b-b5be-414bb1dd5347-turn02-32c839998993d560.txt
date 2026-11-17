@@ -1,0 +1,68 @@
+收到，不新增任何业务查询，仅用上轮已返回的 key=all 统计序列做本轮交付。我先把2026年10月的观测点（不重抄完整序列）送入代码核验覆盖与口径，并在同一成功执行中生成HTML。
+代码内层执行成功（无重复日期、12点全部正值核验通过），以下为交付。
+
+**事实摘要（来自代码核验输出）：**
+1. 请求窗口2026-10-01至10-31共31天，实有12个观测点（2026-10-07至2026-10-31，跨度25天），缺19天。
+2. 最新观测2026-10-31：在线SKU 67,236,591，店铺 294,183，滚动月销件数 352,723,510（接口月口径，窗口待核验）。
+3. 观测间变化（10-07→10-31）：在线SKU +4.65%，滚动月销件数 +30.51%，需求增长快于供给25.86个百分点。
+4. 金额字段无币种标识（无symbol），滚动月金额仅按原值展示，销售额单位与客单价待核验。
+5. 2026年10月自然月完整值无法确认：月度字段为滚动窗口口径且缺19天，不可插值或加总。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ozon俄区 2026年10月 大盘趋势快照</title>
+<style>body{margin:0;padding:14px;background:#f7f8fa;color:#222;font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1180px;margin:auto;background:#fff;border-radius:10px;padding:18px;box-sizing:border-box}
+h1{font-size:18px;margin:0 0 4px}.sub{color:#666;font-size:12px;margin-bottom:6px}
+.tag{display:inline-block;background:#eef2f7;border-radius:4px;padding:1px 8px;font-size:11px;color:#556;margin:2px 4px 2px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.kpi{background:#f4f6f9;border-radius:8px;padding:10px;min-width:0}.kpi .l{font-size:12px;color:#666}
+.kpi .v{font-size:16px;font-weight:700;overflow-wrap:anywhere}.kpi .n{font-size:11px;color:#888}
+.sec{margin:14px 0 4px;font-size:15px;font-weight:600}
+.tblwrap{width:100%;max-width:100%;overflow:auto;margin:8px 0}
+table{border-collapse:collapse;min-width:640px;font-size:13px}
+th,td{padding:6px 10px;border-bottom:1px solid #e8eaee;text-align:right;white-space:nowrap}
+th{background:#f4f6f9}th:first-child,td:first-child{position:sticky;left:0;background:#fff;text-align:left;z-index:1}
+th:first-child{background:#f4f6f9;z-index:2}
+.up{color:#c0392b;font-weight:600}.dim{color:#888}ul{margin:6px 0;padding-left:20px}li{margin:3px 0}
+</style></head><body><div class="wrap">
+<h1>Ozon俄区 2026年10月 全平台大盘趋势快照</h1>
+<div class="sub">场景：大盘趋势快照（目标月份）｜范围：key=all 全平台｜查询日：2026-11-17（运行环境）｜数据源顶层更新时间：2026-11-16T00:10:32.422+08:00（非统计时点）</div>
+<div><span class="tag">月口径＝接口滚动窗口（窗口待核验，非自然月）</span><span class="tag">金额币种待核验（返回无symbol）</span><span class="tag">自然月完整值待补</span></div>
+<div class="kpis">
+<div class="kpi"><div class="l">实有观测点</div><div class="v">12 点 / 31 天</div><div class="n">2026-10-07 ~ 2026-10-31，缺19天</div></div>
+<div class="kpi"><div class="l">在线SKU数（10-31）</div><div class="v">67,236,591</div><div class="n">allSkuNum</div></div>
+<div class="kpi"><div class="l">店铺数（10-31）</div><div class="v">294,183</div><div class="n">allMallNum，仅店铺总数</div></div>
+<div class="kpi"><div class="l">滚动月销件数（10-31）</div><div class="v">352,723,510</div><div class="n">monthlySalesNum，月口径窗口待核</div></div>
+<div class="kpi"><div class="l">滚动月金额（10-31）</div><div class="v">265,885,194,129</div><div class="n">monthlyPrice，币种待核验</div></div>
+</div>
+<div class="sec">明细：10月12个观测点（展示最新10行）</div>
+<div class="tblwrap"><table><thead><tr><th>统计date</th><th>在线SKU数</th><th>店铺数</th><th>日销件数</th><th>滚动月销件数</th><th>滚动月金额<span class="dim">（币种待核）</span></th></tr></thead><tbody><tr><td>2026-10-31</td><td>67,236,591</td><td>294,183</td><td>8,046,035</td><td>352,723,510</td><td>265,885,194,129</td></tr><tr><td>2026-10-28</td><td>66,915,873</td><td>294,119</td><td>9,427,870</td><td>338,906,463</td><td>248,784,106,501</td></tr><tr><td>2026-10-25</td><td>66,530,299</td><td>293,985</td><td>10,801,225</td><td>329,095,739</td><td>240,107,214,041</td></tr><tr><td>2026-10-19</td><td>65,665,551</td><td>293,827</td><td>15,714,658</td><td>319,640,845</td><td>232,573,480,664</td></tr><tr><td>2026-10-17</td><td>65,431,606</td><td>293,792</td><td>11,769,724</td><td>317,346,666</td><td>228,544,229,537</td></tr><tr><td>2026-10-16</td><td>65,290,859</td><td>293,775</td><td>10,728,816</td><td>302,724,799</td><td>217,510,420,429</td></tr><tr><td>2026-10-13</td><td>64,907,571</td><td>293,687</td><td>8,979,222</td><td>289,894,814</td><td>211,115,878,442</td></tr><tr><td>2026-10-12</td><td>64,773,259</td><td>293,659</td><td>7,153,814</td><td>277,362,131</td><td>201,657,216,897</td></tr><tr><td>2026-10-11</td><td>64,638,178</td><td>293,638</td><td>7,337,503</td><td>273,365,206</td><td>203,088,320,045</td></tr><tr><td>2026-10-09</td><td>64,381,591</td><td>293,599</td><td>11,076,820</td><td>273,162,041</td><td>193,969,806,491</td></tr></tbody></table></div>
+<div class="dim" style="font-size:12px">未展开2点：2026-10-07、2026-10-08（已在KPI与结论使用）；统计date为接口返回字段，非查询日。</div>
+<div class="sec">结论（观测间变化 10-07→10-31，两点相隔24天，非日环比）</div>
+<ul>
+<li>需求增长快于供给：滚动月销件数 <span class="up">+30.51%</span> vs 在线SKU <span class="up">+4.65%</span>，差25.86个百分点（依据字段：monthlySalesNum、allSkuNum；本范围观测标签，不能据两点断定内卷或长期趋势）。</li>
+<li>店铺数基本平稳：allMallNum <span class="up">+0.21%</span>；仅作店铺总数，不称活跃竞争者。</li>
+<li>日销件数12点样本均值 9,769,469 件（daySalesNum，10月实有点样本均值，非全月日均）。</li>
+<li>2026年10月自然月销量与销售额：待补——月度字段为滚动窗口口径，缺19天不可加总或插值。</li>
+<li>客单价：待核——金额字段无币种标识，未做金额/件数比值。</li>
+</ul>
+<div class="sec">数据缺口与口径声明</div>
+<ul>
+<li>请求窗口31天，实有12点，缺19天；断档：2026-10-01~2026-10-06；2026-10-10；2026-10-14~2026-10-15；2026-10-18；2026-10-20~2026-10-24；2026-10-26~2026-10-27；2026-10-29~2026-10-30（10-01~06无记录，序列前一点为2026-09-25）。</li>
+<li>monthlySalesNum / monthlyPrice 为接口月口径滚动窗口，起止未随返回核验，不代表2026年10月自然月总量。</li>
+<li>金额字段（dayPrice/weeklyPrice/monthlyPrice）无symbol，币种与单位待核验，原值展示、未换算、未算客单价。</li>
+<li>mallsNum已知失真未引用；allMallNum仅作店铺总数。评论数、品牌数未纳入本报告。</li>
+<li>顶层updateTime 2026-11-16T00:10:32.422+08:00 为更新时间，非统计时点，不据其声称11月16日已有销量统计。</li>
+</ul>
+<div class="sec">溯源</div>
+<ul>
+<li>数据源：youweiAI-OZON市场统计接口，key=all（全平台），本轮已返回stats日期序列，取其中2026-10的12个点；本报告全部数值来自该次返回，代码核验：无重复日期。</li>
+<li>调用与查询时点：本轮会话（2026-11-17）；本接口未返回查看链接，无外部商品链接可列。</li>
+<li>明细展示10行/共12点；观测间变化基于同范围同字段首末两点。</li>
+</ul>
+</div></body></html>
+```
+
+本报告仅使用上轮已返回的 market_stat(key=all) 统计，未新增任何业务查询；2026年10月自然月完整销量与销售额、客单价均为待补/待核项，报告中已单列缺口。

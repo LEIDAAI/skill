@@ -1,0 +1,67 @@
+代码校验通过（标签闭合、8行×8列、3张KPI卡、无重复串、无占位符、店铺数升序正确、内层stderr为null）。以下为最终HTML，未新增业务调用，仅基于已返回的8类统计重生成：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ozon俄区宠物用品8细分类目规模对比</title>
+<style>
+body{margin:0 auto;padding:24px;max-width:1180px;background:#fff;color:#1f2329;font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px}
+h1{font-size:20px;margin:0 0 6px}
+h2{font-size:15px;margin:22px 0 8px;padding-left:8px;border-left:4px solid #2f6fed}
+p{margin:6px 0}
+.sub{color:#667085;font-size:12px;margin:0 0 14px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:14px 0}
+.kpi div{border:1px solid #e4e7ec;border-radius:8px;padding:12px 14px;background:#f8fafc;min-width:0}
+.kpi b{font-size:20px;color:#1d4ed8;display:block;margin-bottom:2px}
+.kpi span{font-size:12px;color:#667085}
+.tw{width:100%;max-width:100%;overflow:auto;border:1px solid #e4e7ec;border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:780px}
+th,td{padding:7px 10px;border-bottom:1px solid #eef1f5;text-align:right;white-space:nowrap;font-size:13px}
+th{background:#f2f6ff}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#fff;font-weight:600}
+th:first-child{background:#f2f6ff}
+.note{font-size:12px;color:#667085}
+ul{margin:6px 0;padding-left:20px}
+li{margin:3px 0;font-size:13px}
+.trace{font-size:12px;color:#667085;line-height:1.7}
+</style>
+</head>
+<body>
+<h1>Ozon俄区宠物用品8细分类目规模对比</h1>
+<p class="sub">数据源：youweiAI-OZON 公开大盘统计（Ozon俄区） · 快照 2026-11-15（8/8类目同日） · 查询 2026-11-17 · 排序：店铺总数升序</p>
+<div class="kpi">
+<div><b>8 / 8</b><span>请求类别数 / 字典核实类别数</span></div>
+<div><b>2026-11-15</b><span>8类目同日快照，可同日比较</span></div>
+<div><b>2,011,672 件</b><span>8类月销量算术合计（非宠物全市场口径）</span></div>
+</div>
+<h2>明细（按店铺总数升序）</h2>
+<div class="tw"><table>
+<thead><tr><th>类目</th><th>编码</th><th>SKU总数</th><th>店铺总数</th><th>月销量</th><th>月销÷店铺</th><th>月销÷SKU</th><th>统计日期</th></tr></thead>
+<tbody>
+<tr><td>宠物指甲剪刀</td><td>95239</td><td>3,913</td><td>2,596</td><td>123,757</td><td>47.67</td><td>31.63</td><td>2026-11-15</td></tr><tr><td>异味中和剂</td><td>95181</td><td>5,397</td><td>2,617</td><td>278,596</td><td>106.46</td><td>51.62</td><td>2026-11-15</td></tr><tr><td>宠物垫</td><td>95201</td><td>8,529</td><td>3,706</td><td>50,817</td><td>13.71</td><td>5.96</td><td>2026-11-15</td></tr><tr><td>宠物躺床</td><td>95203</td><td>12,744</td><td>4,376</td><td>126,506</td><td>28.91</td><td>9.93</td><td>2026-11-15</td></tr><tr><td>宠物厕所</td><td>95242</td><td>10,349</td><td>4,924</td><td>91,162</td><td>18.51</td><td>8.81</td><td>2026-11-15</td></tr><tr><td>猫抓柱</td><td>95240</td><td>12,628</td><td>5,062</td><td>179,864</td><td>35.53</td><td>14.24</td><td>2026-11-15</td></tr><tr><td>动物梳子</td><td>95249</td><td>12,782</td><td>6,617</td><td>304,166</td><td>45.97</td><td>23.80</td><td>2026-11-15</td></tr><tr><td>宠物玩具</td><td>95238</td><td>55,192</td><td>17,886</td><td>856,804</td><td>47.90</td><td>15.52</td><td>2026-11-15</td></tr>
+</tbody>
+</table></div>
+<p class="note">月销量为接口月口径字段（统计窗口未核验）；店铺总数为类目内店铺ID去重计数；两项比值仅为类目总量算术比值，不代表典型店铺或单品销量。</p>
+<h2>结论</h2>
+<ul>
+<li>店铺数量较少：宠物指甲剪刀（2,596家）、异味中和剂（2,617家）——依据店铺总数字段，仅限本次8类比较范围。</li>
+<li>需求规模较大：宠物玩具（月销856,804）、动物梳子（304,166）、异味中和剂（278,596）——依据月销量字段。</li>
+<li>需进一步核验：宠物垫两项比值在8类中最低（13.71、5.96），动销集中度与单品结构未核验。</li>
+</ul>
+<h2>缺口与口径</h2>
+<ul>
+<li>月销量统计窗口未核验，不称近28天/近30天；月度金额字段币种与单位未核验，GMV不展示。</li>
+<li>SKU总数不等于独立款式数；店铺总数不等于活跃竞争者数；比值不预测新店或单品表现。</li>
+<li>接口包装层带空标记但统计对象含真实数值，按有效统计保留并在此披露；8类合计为算术加总。</li>
+</ul>
+<h2>溯源</h2>
+<p class="trace">接口：youweiAI-OZON 类目大盘统计（按后台类目编码逐类取数）；编码经 youweiAI-OZON 类目字典核实；统计日 2026-11-15，查询日 2026-11-17，最新日期行与顶层统计一致。<br>
+路径与编码：宠物玩具＝宠物护理用品>宠物玩具（95238）｜宠物指甲剪刀＝宠物护理用品>宠物指甲剪刀（95239）｜宠物躺床＝携带和睡眠配件>宠物躺床（95203）｜宠物垫＝携带和睡眠配件>宠物垫（95201）｜动物梳子＝宠物护理用品>动物梳子（95249）｜猫抓柱＝宠物护理用品>猫抓柱（95240）｜宠物厕所＝宠物护理用品>宠物厕所（95242）｜异味中和剂＝宠物护理用品>异味中和剂（95181）。</p>
+</body>
+</html>
+```
+
+**摘要**：8类编码全部字典核实为精确匹配，同日快照2026-11-15，同窗口可比。宠物玩具规模最大（55,192 SKU / 17,886店 / 月销856,804）；店铺最少为指甲剪刀（2,596店）与异味中和剂（2,617店）；异味中和剂月销÷店铺（106.46）和月销÷SKU（51.62）双比值最高，宠物垫两项最低（13.71 / 5.96）。店铺总数不作活跃竞争者判定，比值不判蓝海；月销窗口与GMV币种未核验，缺口已在报告中标注。

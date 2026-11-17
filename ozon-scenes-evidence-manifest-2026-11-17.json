@@ -251,6 +251,174 @@
       "source": "chat-ded97bf8-08a7-490e-992b-6afe29354d78.json /turns/1/answer",
       "originalContentPreserved": true,
       "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "b001a608-010a-4cfc-a270-47e70691cd11",
+      "turn": 2,
+      "turnId": "231a429c-46c2-4ca4-b5b8-86cce31b041c",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-b001a608-010a-4cfc-a270-47e70691cd11-turn02-report01-3d2bb634d9df90ba.html",
+      "sha256": "3d2bb634d9df90ba298eca6b4ac34d4a9cd210a460c0241c010ef64ea4d131e7",
+      "completeDocument": true,
+      "source": "chat-b001a608-010a-4cfc-a270-47e70691cd11.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "500af464-bed7-4a5c-8656-6dc887452792",
+      "turn": 1,
+      "turnId": "0b32845a-1a38-43e1-923e-1f169f19e3d1",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-500af464-bed7-4a5c-8656-6dc887452792-turn01-report01-0dcbaa5442916a65.html",
+      "sha256": "0dcbaa5442916a65d33893f037f956f83fc74fdcd5cf4b170b016f858135ee54",
+      "completeDocument": true,
+      "source": "chat-500af464-bed7-4a5c-8656-6dc887452792.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "f128ea8d-8ac8-4a44-8209-d27dbc950826",
+      "turn": 3,
+      "turnId": "6ccddf79-5133-460e-9b58-59fe554b1a8d",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-f128ea8d-8ac8-4a44-8209-d27dbc950826-turn03-report01-ac7e2346c38c31e6.html",
+      "sha256": "ac7e2346c38c31e6a2d48aa690c564339a20b150e74aa2e19dce23e50e259339",
+      "completeDocument": true,
+      "source": "chat-f128ea8d-8ac8-4a44-8209-d27dbc950826.json /turns/2/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "86099460-10f8-40e7-85f3-a410eaf02a00",
+      "turn": 1,
+      "turnId": "fb9be587-a951-48dd-98ef-df5cb612ff39",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-86099460-10f8-40e7-85f3-a410eaf02a00-turn01-report01-c2beaaed260c8dba.html",
+      "sha256": "c2beaaed260c8dba4ca1ad198a8e3ee5e785a3deacb27495ea86e556fdda50ab",
+      "completeDocument": true,
+      "source": "chat-86099460-10f8-40e7-85f3-a410eaf02a00.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "turn": 1,
+      "turnId": "40da4f49-e308-4485-ab05-61b20116919b",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-845ef292-a9a3-4843-a9a6-f7d383865083-turn01-report01-730bf2c5c99816a8.html",
+      "sha256": "730bf2c5c99816a8a6e834ab7048d13edf55157867c5115c6170ad0c85eef03e",
+      "completeDocument": false,
+      "source": "chat-845ef292-a9a3-4843-a9a6-f7d383865083.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "turn": 1,
+      "turnId": "40da4f49-e308-4485-ab05-61b20116919b",
+      "reportIndex": 2,
+      "file": "ozon-scenes-raw-845ef292-a9a3-4843-a9a6-f7d383865083-turn01-report02-e3b0c44298fc1c14.html",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "completeDocument": false,
+      "source": "chat-845ef292-a9a3-4843-a9a6-f7d383865083.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "turn": 1,
+      "turnId": "40da4f49-e308-4485-ab05-61b20116919b",
+      "reportIndex": 3,
+      "file": "ozon-scenes-raw-845ef292-a9a3-4843-a9a6-f7d383865083-turn01-report03-bf09e12acda3323f.html",
+      "sha256": "bf09e12acda3323fdca2c6699e00c33e038dd4ca7edd9ead60d67762ecfa166f",
+      "completeDocument": false,
+      "source": "chat-845ef292-a9a3-4843-a9a6-f7d383865083.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "turn": 2,
+      "turnId": "4921df8b-22d3-445d-8a1a-5a74ace1750f",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-845ef292-a9a3-4843-a9a6-f7d383865083-turn02-report01-ad0f2656fe1ab1a3.html",
+      "sha256": "ad0f2656fe1ab1a3e7050dbeb3594acca973728757fb116a1ce366d7483f7c76",
+      "completeDocument": true,
+      "source": "chat-845ef292-a9a3-4843-a9a6-f7d383865083.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "e6a5da09-ba25-41a8-977c-5bd8eef28049",
+      "turn": 1,
+      "turnId": "239a6b7f-a768-4e0a-8e9b-3b224a625ad9",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-e6a5da09-ba25-41a8-977c-5bd8eef28049-turn01-report01-96f90ebfaab1c3f7.html",
+      "sha256": "96f90ebfaab1c3f77fd257c24064aaa6dd1d530f260e2e3307fb9418f4905485",
+      "completeDocument": true,
+      "source": "chat-e6a5da09-ba25-41a8-977c-5bd8eef28049.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "e6a5da09-ba25-41a8-977c-5bd8eef28049",
+      "turn": 2,
+      "turnId": "0c1b7009-e43d-4b5c-8704-21f41362c60c",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-e6a5da09-ba25-41a8-977c-5bd8eef28049-turn02-report01-55691b80cfb62260.html",
+      "sha256": "55691b80cfb62260cc9bce6c168830940386020fc9cc47a5eb7e24a52cf72636",
+      "completeDocument": true,
+      "source": "chat-e6a5da09-ba25-41a8-977c-5bd8eef28049.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "f99d6acb-bda7-4c2b-b5be-414bb1dd5347",
+      "turn": 2,
+      "turnId": "4dc02d7f-0753-4817-b118-a1ea2a20b015",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-f99d6acb-bda7-4c2b-b5be-414bb1dd5347-turn02-report01-2acb7e4fab0a73df.html",
+      "sha256": "2acb7e4fab0a73df6af5f0d98dac2179d8d4c32d57b67b68673cbb8540ccea93",
+      "completeDocument": true,
+      "source": "chat-f99d6acb-bda7-4c2b-b5be-414bb1dd5347.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "1c9d2856-b59a-492b-bfcf-9d61502b896d",
+      "turn": 2,
+      "turnId": "e853aed5-a20c-425f-a0f0-05889f8b8b9e",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-1c9d2856-b59a-492b-bfcf-9d61502b896d-turn02-report01-9f2dc48127b31158.html",
+      "sha256": "9f2dc48127b31158bfbfc372daf21c0177ee9053e17529ff6621f760506476b9",
+      "completeDocument": true,
+      "source": "chat-1c9d2856-b59a-492b-bfcf-9d61502b896d.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "bbdcd714-ee1a-4df1-a20e-5c43aa7f6444",
+      "turn": 2,
+      "turnId": "653c28bc-ab2b-4b64-9411-fa8293bec606",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-bbdcd714-ee1a-4df1-a20e-5c43aa7f6444-turn02-report01-bdb28d12f37b253b.html",
+      "sha256": "bdb28d12f37b253b1994b81cae402e141d5ef56114a455623ec5286ec2a0e5bc",
+      "completeDocument": true,
+      "source": "chat-bbdcd714-ee1a-4df1-a20e-5c43aa7f6444.json /turns/1/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
+    },
+    {
+      "chatId": "cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02",
+      "turn": 1,
+      "turnId": "fbff805a-e6e7-4cdc-ac27-9544d3fbde7b",
+      "reportIndex": 1,
+      "file": "ozon-scenes-raw-cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02-turn01-report01-99865b5eadb428f3.html",
+      "sha256": "99865b5eadb428f3df998f341d40c4e461013aff2b51f590460403de6dcf1b70",
+      "completeDocument": true,
+      "source": "chat-cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02.json /turns/0/answer",
+      "originalContentPreserved": true,
+      "credentialFiltering": "输入在归档前统一移除凭据，未修改报告业务内容或结构"
     }
   ],
   "captures": [
@@ -512,6 +680,76 @@
       "sha256": "abb2399c6e827646512429772328cbb803eedbffa9e83bd88c4c7ba8a42729b7",
       "capturedAt": "2026-11-17T13:02:27.800912+08:00",
       "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-b001a608-010a-4cfc-a270-47e70691cd11-40b99f8c1b9067fa.json",
+      "chatId": "b001a608-010a-4cfc-a270-47e70691cd11",
+      "sha256": "40b99f8c1b9067fabed83559a4927f4973305403278439c0f923a4eaf740923e",
+      "capturedAt": "2026-11-17T15:09:00.523373+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-500af464-bed7-4a5c-8656-6dc887452792-04e2dd9d4550e4d5.json",
+      "chatId": "500af464-bed7-4a5c-8656-6dc887452792",
+      "sha256": "04e2dd9d4550e4d56873228f4b316b48904256ae60aae3ab45b871a384dea0cf",
+      "capturedAt": "2026-11-17T15:09:00.614633+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-f128ea8d-8ac8-4a44-8209-d27dbc950826-0d7d6c450d77fb39.json",
+      "chatId": "f128ea8d-8ac8-4a44-8209-d27dbc950826",
+      "sha256": "0d7d6c450d77fb399d4ab31108f89bc6b64d77aebf4affbf29ef83ff18a37f5a",
+      "capturedAt": "2026-11-17T15:09:00.795122+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-86099460-10f8-40e7-85f3-a410eaf02a00-46d2641e39666ebe.json",
+      "chatId": "86099460-10f8-40e7-85f3-a410eaf02a00",
+      "sha256": "46d2641e39666ebe84580c248b5df23dbe854cb53fd51b0529b6792b8acc4d5c",
+      "capturedAt": "2026-11-17T15:09:00.895297+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-845ef292-a9a3-4843-a9a6-f7d383865083-c68012999cb19e53.json",
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "sha256": "c68012999cb19e531c5c6362af2a886ef7314174a2d668048639063931357e7b",
+      "capturedAt": "2026-11-17T15:09:00.982795+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-e6a5da09-ba25-41a8-977c-5bd8eef28049-ee966343ac80c6ee.json",
+      "chatId": "e6a5da09-ba25-41a8-977c-5bd8eef28049",
+      "sha256": "ee966343ac80c6ee8cf944d99b1ee1c603e4de3665590d562015cbd8c9cf589c",
+      "capturedAt": "2026-11-17T15:09:01.084164+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-f99d6acb-bda7-4c2b-b5be-414bb1dd5347-f1a80ac2ae241fa6.json",
+      "chatId": "f99d6acb-bda7-4c2b-b5be-414bb1dd5347",
+      "sha256": "f1a80ac2ae241fa67cb1deb756d2c8b53530bbfa01316f54ad201d685241a80b",
+      "capturedAt": "2026-11-17T15:09:01.148628+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-1c9d2856-b59a-492b-bfcf-9d61502b896d-ef1fdd5c44ad6da2.json",
+      "chatId": "1c9d2856-b59a-492b-bfcf-9d61502b896d",
+      "sha256": "ef1fdd5c44ad6da29ffe59599e3dd170f414a68532150f634a47b64b282c4a8e",
+      "capturedAt": "2026-11-17T15:09:01.473468+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-bbdcd714-ee1a-4df1-a20e-5c43aa7f6444-37e57fdf5213a714.json",
+      "chatId": "bbdcd714-ee1a-4df1-a20e-5c43aa7f6444",
+      "sha256": "37e57fdf5213a7146d44f292bee62e5bff19eff27d644d6ccab670f4bf96af0c",
+      "capturedAt": "2026-11-17T15:09:01.583033+08:00",
+      "missingCapture": false
+    },
+    {
+      "file": "ozon-scenes-chat-cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02-99773f7e5e664039.json",
+      "chatId": "cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02",
+      "sha256": "99773f7e5e664039d01d3a9034d05164e8aa74211163c74fb9a2c513dc1fdd04",
+      "capturedAt": "2026-11-17T15:09:01.648331+08:00",
+      "missingCapture": false
     }
   ],
   "answers": [
@@ -688,6 +926,108 @@
       "chatId": "ded97bf8-08a7-490e-992b-6afe29354d78",
       "turn": 3,
       "sha256": "102a0a12b6842536cc0c5bb8de38504f21b38fdc29a1ee08d6876466e0ec866a"
+    },
+    {
+      "file": "ozon-scenes-answer-b001a608-010a-4cfc-a270-47e70691cd11-turn01-da62c959dd53b6bf.txt",
+      "chatId": "b001a608-010a-4cfc-a270-47e70691cd11",
+      "turn": 1,
+      "sha256": "da62c959dd53b6bf02668c293981aa9657373995c2f6f700c55291d2743ff211"
+    },
+    {
+      "file": "ozon-scenes-answer-b001a608-010a-4cfc-a270-47e70691cd11-turn02-ab2f948bbf7df32e.txt",
+      "chatId": "b001a608-010a-4cfc-a270-47e70691cd11",
+      "turn": 2,
+      "sha256": "ab2f948bbf7df32e4d50f96cf228f039880d9cd702f7c7395458dc08bc5497b6"
+    },
+    {
+      "file": "ozon-scenes-answer-500af464-bed7-4a5c-8656-6dc887452792-turn01-0d1eabbc7b85225d.txt",
+      "chatId": "500af464-bed7-4a5c-8656-6dc887452792",
+      "turn": 1,
+      "sha256": "0d1eabbc7b85225db8cc9101483833e7f6f262e8df03237c224165006b71669e"
+    },
+    {
+      "file": "ozon-scenes-answer-f128ea8d-8ac8-4a44-8209-d27dbc950826-turn01-7f909ed8d586c480.txt",
+      "chatId": "f128ea8d-8ac8-4a44-8209-d27dbc950826",
+      "turn": 1,
+      "sha256": "7f909ed8d586c480ce189c465442b0b52c8e221388b96436261db9a44e4f8f9f"
+    },
+    {
+      "file": "ozon-scenes-answer-f128ea8d-8ac8-4a44-8209-d27dbc950826-turn03-cad0f5018ed0291c.txt",
+      "chatId": "f128ea8d-8ac8-4a44-8209-d27dbc950826",
+      "turn": 3,
+      "sha256": "cad0f5018ed0291cf7124b4898782c71828256362acdf1ff3aa241edf661f7ab"
+    },
+    {
+      "file": "ozon-scenes-answer-86099460-10f8-40e7-85f3-a410eaf02a00-turn01-f37649176d85efb3.txt",
+      "chatId": "86099460-10f8-40e7-85f3-a410eaf02a00",
+      "turn": 1,
+      "sha256": "f37649176d85efb36077083fa9fcc85261364851fcda1eae7a853a5245faf467"
+    },
+    {
+      "file": "ozon-scenes-answer-845ef292-a9a3-4843-a9a6-f7d383865083-turn01-8446b7a61232cfd0.txt",
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "turn": 1,
+      "sha256": "8446b7a61232cfd068059aad00ecadd15dd39c6ca67cd9e7ddac7fe55a88c026"
+    },
+    {
+      "file": "ozon-scenes-answer-845ef292-a9a3-4843-a9a6-f7d383865083-turn02-b8424835d8302f5d.txt",
+      "chatId": "845ef292-a9a3-4843-a9a6-f7d383865083",
+      "turn": 2,
+      "sha256": "b8424835d8302f5de9fd29144d06963cf3991ec433566319b8c5c0639bffc485"
+    },
+    {
+      "file": "ozon-scenes-answer-e6a5da09-ba25-41a8-977c-5bd8eef28049-turn01-67f2ccdac17ad5fa.txt",
+      "chatId": "e6a5da09-ba25-41a8-977c-5bd8eef28049",
+      "turn": 1,
+      "sha256": "67f2ccdac17ad5fa802c41e58d69440e7bd28d04b5f78c083567b8c4d0afec64"
+    },
+    {
+      "file": "ozon-scenes-answer-e6a5da09-ba25-41a8-977c-5bd8eef28049-turn02-929bb3a2a7137be8.txt",
+      "chatId": "e6a5da09-ba25-41a8-977c-5bd8eef28049",
+      "turn": 2,
+      "sha256": "929bb3a2a7137be8474b9eb76a26007a77dc6a716eac228848a9be5bd7e2cb89"
+    },
+    {
+      "file": "ozon-scenes-answer-f99d6acb-bda7-4c2b-b5be-414bb1dd5347-turn01-0c636765ba47e2ea.txt",
+      "chatId": "f99d6acb-bda7-4c2b-b5be-414bb1dd5347",
+      "turn": 1,
+      "sha256": "0c636765ba47e2ea8787640e65b54000ab420aea07698d209f998ea3bb9e6908"
+    },
+    {
+      "file": "ozon-scenes-answer-f99d6acb-bda7-4c2b-b5be-414bb1dd5347-turn02-32c839998993d560.txt",
+      "chatId": "f99d6acb-bda7-4c2b-b5be-414bb1dd5347",
+      "turn": 2,
+      "sha256": "32c839998993d56028bd04c1323c4e88883a4f281c642f6103732293e5edc57b"
+    },
+    {
+      "file": "ozon-scenes-answer-1c9d2856-b59a-492b-bfcf-9d61502b896d-turn01-39be22b00ea3a7d8.txt",
+      "chatId": "1c9d2856-b59a-492b-bfcf-9d61502b896d",
+      "turn": 1,
+      "sha256": "39be22b00ea3a7d870f80cbc34516e8906a7426effa96a8403d37d77faea8777"
+    },
+    {
+      "file": "ozon-scenes-answer-1c9d2856-b59a-492b-bfcf-9d61502b896d-turn02-01f4b14f82aa094b.txt",
+      "chatId": "1c9d2856-b59a-492b-bfcf-9d61502b896d",
+      "turn": 2,
+      "sha256": "01f4b14f82aa094bec812ee9e9beb8db55460ed02efbfa0979871c17752db2be"
+    },
+    {
+      "file": "ozon-scenes-answer-bbdcd714-ee1a-4df1-a20e-5c43aa7f6444-turn01-667dfa589b8af22d.txt",
+      "chatId": "bbdcd714-ee1a-4df1-a20e-5c43aa7f6444",
+      "turn": 1,
+      "sha256": "667dfa589b8af22dc1bffb03b0839786da0971fbe02af69bde1233cda085dad1"
+    },
+    {
+      "file": "ozon-scenes-answer-bbdcd714-ee1a-4df1-a20e-5c43aa7f6444-turn02-8cdb4c5441be9650.txt",
+      "chatId": "bbdcd714-ee1a-4df1-a20e-5c43aa7f6444",
+      "turn": 2,
+      "sha256": "8cdb4c5441be965082a69e17c4d70b3d4d6b0d50f8082fde18a3eb3c303ae782"
+    },
+    {
+      "file": "ozon-scenes-answer-cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02-turn01-8e5c902aa2a18e03.txt",
+      "chatId": "cef6a8b0-805a-41f3-8b7d-c7ae1bc40a02",
+      "turn": 1,
+      "sha256": "8e5c902aa2a18e0389ac2d1072d3ff1d45a56e9008e20b8518fe913592cf3197"
     }
   ],
   "auditArchives": [

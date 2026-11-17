@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ozon俄区女包·热搜词飙升榜选品（SPU搜索流量榜改造口径）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{max-width:1180px;margin:auto;padding:20px 16px 48px;background:#f7f8fa;color:#1d2129;font-family:"Microsoft YaHei","PingFang SC",sans-serif;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.wrap{max-width:100%;min-width:0}
+.card{background:#fff;border:1px solid #e5e6eb;border-radius:10px;padding:18px 20px;margin-bottom:16px}
+h1{font-size:20px;margin-bottom:6px}
+h2{font-size:16px;margin-bottom:10px;color:#1d2129}
+.sub{color:#86909c;font-size:12px}
+.tag{display:inline-block;background:#e8f3ff;color:#165dff;border-radius:4px;padding:2px 8px;font-size:12px;margin:2px 4px 2px 0}
+.tag.warn{background:#fff3e8;color:#f77234}
+.tag.gray{background:#f2f3f5;color:#4e5969}
+.kpis{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.kpi{flex:1;min-width:150px;background:#fff;border:1px solid #e5e6eb;border-radius:10px;padding:14px 16px;min-width:0}
+.kpi .v{font-size:24px;font-weight:700;color:#165dff}
+.kpi .t{font-size:12px;color:#86909c}
+.tablebox{width:100%;max-width:100%;overflow:auto;border:1px solid #e5e6eb;border-radius:8px;background:#fff}
+table{border-collapse:collapse;min-width:980px;width:100%;font-size:13px}
+th,td{border-bottom:1px solid #f2f3f5;padding:8px 10px;text-align:left;vertical-align:middle}
+th{background:#f7f8fa;position:sticky;top:0;white-space:nowrap}
+td:first-child,th:first-child{position:sticky;left:0;background:#fff;z-index:2}
+th:first-child{background:#f7f8fa;z-index:3}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.thumb img{width:64px;max-width:64px;height:64px;object-fit:contain;background:#fff;border-radius:4px;cursor:zoom-in;display:block}
+a{color:#165dff;text-decoration:none}
+a:hover{text-decoration:underline}
+.small{font-size:12px;color:#86909c}
+.note{background:#f7f8fa;border-left:3px solid #165dff;padding:8px 12px;border-radius:4px;margin:8px 0;font-size:13px}
+.note.warn{border-left-color:#f77234;background:#fff7f0}
+ul{padding-left:20px}
+li{margin:6px 0}
+#zoom{display:none;position:fixed;z-index:99;pointer-events:none;background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.25);padding:6px}
+#zoom img{width:320px!important;min-width:320px;max-width:320px!important;height:320px;min-height:320px;max-height:320px;object-fit:contain;box-sizing:content-box;flex:none;display:block}
+.rk{font-weight:700;color:#165dff}
+.src li{font-size:12px;color:#4e5969}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="card">
+  <h1>Ozon俄区女包（женская сумка）·热搜词飙升榜选品</h1>
+  <div class="sub">查询日：2026-11-17（真实时间接口 get_current_timestamp）｜站点：Ozon俄区｜数据源：youweiAI-OZON（云启公开大盘数据）</div>
+  <div style="margin-top:8px">
+    <span class="tag">场景：热搜词飙升榜选品</span>
+    <span class="tag">类目锚点：前台类目 17001 女士&gt;包袋和背包</span>
+    <span class="tag warn">口径改造：SPU级商品搜索会话榜，非词级搜索指数榜</span>
+    <span class="tag warn">无历史快照：不判飙升/增长，仅当前基线</span>
+    <span class="tag warn">词根为标题需求解读，非实测流量归因</span>
+    <span class="tag warn">样本为头部切片，非全市场</span>
+  </div>
+  <div class="note">口径改造说明：平台无词级搜索指数数据源，本报告按商品搜索会话榜可用口径执行——SPU搜索按近7天搜索会话数（sessionCountSearch7）降序，严格条件为 会话≥5000、搜索加购转化率（convToCartSearch7）&gt;0、近28天销量（soldCount28）&gt;0，三项逐行核验。标题词根仅用于需求解读。</div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="v">1,567</div><div class="t">接口命中 total（仅对应下推参数）</div></div>
+  <div class="kpi"><div class="v">100</div><div class="t">取回 / 去重 SPU（size=100，from=0，会话降序）</div></div>
+  <div class="kpi"><div class="v">30</div><div class="t">数值达标（会话≥5000＋转化&gt;0＋销量28d&gt;0）</div></div>
+  <div class="kpi"><div class="v">26</div><div class="t">严格有效（剔除4条语义不符待核）</div></div>
+  <div class="kpi"><div class="v">20</div><div class="t">展示行数（严格达标按会话降序TOP20）</div></div>
+</div>
+
+<div class="card">
+  <h2>③ TOP20 严格达标明细（SPU级，近28天销量口径，按近7天搜索会话降序）</h2>
+  <div class="note warn">取样证据：total=1,567 仅对应已下推的类目+关键词+排序参数；三项数值阈值未下推，严格命中数只对取回的100条逐行核验，全量严格命中数未知。转化率为接口原值（比例小数），未核单位、未乘100加%。价格为接口 price 原值（非成交均价），币种按每条 symbol 原样展示，未返回者标币种待核。</div>
+  <div class="tablebox">
+  <table>
+    <thead><tr>
+      <th>排名</th><th>主图</th><th>商品名（点击打开真实商品页）</th><th>SPU</th><th>价格/币种</th>
+      <th>搜索会话 7d</th><th>搜索会话 28d</th><th>搜索加购转化 7d（原值）</th>
+      <th>销量 28d</th><th>销量 7d</th><th>otherCount 同款参考</th><th>卖家</th><th>标题词根解读（需求假设）</th><th>切入建议</th>
+    </tr></thead>
+    <tbody>
+      <tr><td class="rk">1</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-8/9730378736.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-8/9730378736.jpg" alt="TENDANCE Сумка спортивная"></span></td><td><a href="https://www.ozon.ru/product/620700579" target="_blank">TENDANCE Сумка спортивная（运动包）</a></td><td>3688803120</td><td class="num">2,916.25 ¥（币种待核）</td><td class="num">353,835</td><td class="num">865,829</td><td class="num">0.0200</td><td class="num">715</td><td class="num">101</td><td class="num">0</td><td>Rendez-Vous</td><td>运动场景（спортивн）；品牌店款</td><td>头部会话断层第一；运动通勤两用形态，店铺类型与币种待核</td></tr>
+      <tr><td class="rk">2</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-6/10922242290.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-6/10922242290.jpg" alt="Levany Сумка кросс-боди"></span></td><td><a href="https://www.ozon.ru/product/4491902893" target="_blank">Levany Сумка кросс-боди, на плечо（斜挎/单肩）</a></td><td>7777726885</td><td class="num">1,595.00 ₽</td><td class="num">274,475</td><td class="num">929,725</td><td class="num">0.0446</td><td class="num">863</td><td class="num">195</td><td class="num">907</td><td>Nexron</td><td>斜挎包型（кросс-боди）＋单肩（на плечо）；2026-04新上架</td><td>大众斜挎基本款，中位价格带，跟款热度高（otherCount 907）</td></tr>
+      <tr><td class="rk">3</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-7/8350091683.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-7/8350091683.jpg" alt="LOOK UNUSUAL Сумка конверт, клатч"></span></td><td><a href="https://www.ozon.ru/product/1620606752" target="_blank">LOOK UNUSUAL Сумка конверт, клатч（信封包/手拿包）</a></td><td>5098525878</td><td class="num">4,073.00 ₽</td><td class="num">176,559</td><td class="num">700,585</td><td class="num">0.0594</td><td class="num">630</td><td class="num">149</td><td class="num">657</td><td>LOOK UNUSUAL</td><td>信封包（конверт）＋手拿/晚宴（клатч）</td><td>晚宴+通勤两用信封包，高客单方向</td></tr>
+      <tr><td class="rk">4</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-7/8451309859.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-7/8451309859.jpg" alt="Маленькая сумка через плечо замша IS SHOP"></span></td><td><a href="https://www.ozon.ru/product/2489894234" target="_blank">Маленькая сумка через плечо замша IS SHOP（小号麂皮斜挎）</a></td><td>7309463251</td><td class="num">3,272.00 ₽</td><td class="num">158,969</td><td class="num">577,047</td><td class="num">0.0346</td><td class="num">288</td><td class="num">61</td><td class="num">137</td><td>IS SHOP</td><td>斜挎（через плечо）＋小巧（маленьк）＋麂皮（замш，标题声称，材质待核）</td><td>小巧斜挎+麂皮质感是近期标题高频组合</td></tr>
+      <tr><td class="rk">5</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-z/9709115111.jpg" alt="Сумка женская на пояс"></span></td><td><a href="https://www.ozon.ru/product/3568126383" target="_blank">Сумка женская на пояс, поясная бананка, барсетка через плечо（腰包/斜挎两用）</a></td><td>0613596080</td><td class="num">249.00 ₽</td><td class="num">129,406</td><td class="num">592,849</td><td class="num">0.0700</td><td class="num">1,081</td><td class="num">211</td><td class="num">254</td><td>Perfecting the World</td><td>腰包（на пояс/бананка/барсетка）＋女性人群词＋斜挎</td><td>低价走量款（₽249），转化好于头部均价水平；同价位竞争密集需核对手款</td></tr>
+      <tr><td class="rk">6</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-2/12077839226.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-2/12077839226.jpg" alt="Сумка-рюкзак трансформер"></span></td><td><a href="https://www.ozon.ru/product/4752730234" target="_blank">Сумка-рюкзак трансформер или сумка большая для учебы（变形双肩/上学大包）</a></td><td>2888887945</td><td class="num">2,698.00 ₽</td><td class="num">108,961</td><td class="num">379,085</td><td class="num">0.0100</td><td class="num">188</td><td class="num">43</td><td class="num">12</td><td>Вдохновелла</td><td>变形设计（трансформер）＋上学场景（учеб）＋大容量（больш）</td><td>学生场景细分，竞争少（otherCount 12），转化偏低需复盘详情页</td></tr>
+      <tr><td class="rk">7</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-s/15479809120.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-s/15479809120.jpg" alt="Сумка портфель, на плечо"></span></td><td><a href="https://www.ozon.ru/product/4422877804" target="_blank">Сумка портфель, на плечо（单肩公文包）</a></td><td>7068968796</td><td class="num">389.00 ₽</td><td class="num">72,114</td><td class="num">34,440</td><td class="num">0.0600</td><td class="num">878</td><td class="num">1,062</td><td class="num">1,499</td><td>Baoding Kuangxian</td><td>公文包（портфель）＋单肩</td><td>数据异常行：7d销量1,062＞28d销量878、7d会话＞28d会话，字段不可比，需详情核验后再引用</td></tr>
+      <tr><td class="rk">8</td><td><span class="thumb" data-src="https://ir-20.ozone.ru/s3/multimedia-1-1/10322566633.jpg"><img src="https://ir-20.ozone.ru/s3/multimedia-1-1/10322566633.jpg" alt="Сумка женская ICONIC BAGS"></span></td><td><a href="https://www.ozon.ru/product/4208665394" target="_blank">Сумка женская …мягкой формы…средняя объемная ICONIC BAGS（软塌中型女包）</a></td><td>3815310249</td><td class="num">2,735.73 ¥（币种待核）</td><td class="num">64,057</td><td class="num">221,501</td><td class="num">0.0300</td><td class="num">162</td><td class="num">40</td><td class="num">37</td><td>ICONIC BAGS</td><td>女性人群词＋软塌造型（мягк）＋中型（средн）＋提手（ручк）</td><td>软塌廓形为今年标题高频描述，竞争适中</td></tr>
+      <tr><td class="rk">9</td><td><span class="thumb" data-src="https://ir.ozone.ru/s3/multimedia-1-x/9262536765.jpg"><img src="https://ir.ozone.ru/s3/multimedia-1-x/9262536765.jpg" alt="TENDANCE Сумка с ручками"></span></td><td><a href="https://www.ozon.ru/product/3526526530" target="_blank">TENDANCE Сумка с ручками（手提包）</a></td><td>8986306512</td><td class="num">9,340.59 ₽</td><td class="num">59,777</td><td class="num">397,905</td><td class="num">0.0808</td><td class="num">559</td><td class="num">100</td><td class="num">0</td><td>Rendez-Vous</td><td>提手通勤（ручк）；品牌店款；近28天销售额 ₽4,355,965（28d金额，币种未核不聚合）</td><td>高客单手提通勤包，独家型（otherCount 0）</td></tr>
+      <tr><td class="rk">10</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-5/9262519205.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-5/9262519205.jpg" alt="TENDANCE Сумка тоут"></span></td><td><a href="https://www.ozon.ru/product/3597774926" target="_blank">TENDANCE Сумка тоут（托特包）</a></td><td>9076146818</td><td class="num">6,858.00 ₽</td><td class="num">59,626</td><td class="num">345,309</td><td class="num">0.0565</td><td class="num">128</td><td class="num">28</td><td class="num">0</td><td>Rendez-Vous</td><td>托特（тоут）</td><td>托特形态高客单位，独家型</td></tr>
+      <tr><td class="rk">11</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-f/13698235275.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-f/13698235275.jpg" alt="Сумка через плечо эко замша Marcheza"></span></td><td><a href="https://www.ozon.ru/product/5687116008" target="_blank">Сумка через плечо средняя маленькая эко замша Marcheza（环保麂皮中小斜挎）</a></td><td>3308949915</td><td class="num">3,548.00 ₽</td><td class="num">52,379</td><td class="num">245,593</td><td class="num">0.0400</td><td class="num">146</td><td class="num">28</td><td class="num">12</td><td>IS SHOP</td><td>斜挎＋中小（средн/маленьк）＋环保材质（эко，标题声称，材质待核）</td><td>эко+замша材质叙事与中小号组合，竞争少</td></tr>
+      <tr><td class="rk">12</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-j/15182747839.jpg" alt="Косметичка дорожная женская"></span></td><td><a href="https://www.ozon.ru/product/5743219191" target="_blank">Косметичка дорожная, сумка дорожная женская, искусственная кожа（旅行化妆包/女用旅行包）</a></td><td>8663096095</td><td class="num">250.76 ₽</td><td class="num">50,303</td><td class="num">107,694</td><td class="num">0.4008</td><td class="num">778</td><td class="num">335</td><td class="num">2,173</td><td>Сиси Лу</td><td>旅行场景（дорожн）＋女性人群词＋人造材质（искусствен，标题声称）；化妆包为相邻用途</td><td>TOP20内最高转化（0.4008）＋低价，但otherCount 2,173同款竞争极密</td></tr>
+      <tr><td class="rk">13</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-v/7765443355.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-v/7765443355.jpg" alt="Сумка женская кросс боди мессенджер"></span></td><td><a href="https://www.ozon.ru/product/2477357493" target="_blank">Сумка женская через плечо кросс боди - мессенджер черный компактный（黑色紧凑信使斜挎）</a></td><td>6666711920</td><td class="num">1,665.00 ₽</td><td class="num">49,919</td><td class="num">176,328</td><td class="num">0.0300</td><td class="num">130</td><td class="num">38</td><td class="num">471</td><td>D&amp;O</td><td>女性人群词＋斜挎＋信使（мессенджер）＋紧凑（компактн）＋颜色词（黑色）</td><td>经典黑色紧凑斜挎，中低价竞争带</td></tr>
+      <tr><td class="rk">14</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-9/20716605801.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-9/20716605801.jpg" alt="Cultivator Сумка на плечо"></span></td><td><a href="https://www.ozon.ru/product/3463072644" target="_blank">Cultivator Сумка на плечо（单肩包）</a></td><td>1997153445</td><td class="num">2,846.00 ₽</td><td class="num">41,823</td><td class="num">200,962</td><td class="num">0.2400</td><td class="num">610</td><td class="num">143</td><td class="num">806</td><td>CULTIVATOR2020</td><td>单肩（на плечо）；品牌标题词</td><td>高转化（0.24）+高销量，同款跟卖806家，差异化是关键</td></tr>
+      <tr><td class="rk">15</td><td><span class="thumb" data-src="https://ir.ozone.ru/s3/multimedia-1-n/13127363123.jpg"><img src="https://ir.ozone.ru/s3/multimedia-1-n/13127363123.jpg" alt="Сумка женская через плечо кросс-боди"></span></td><td><a href="https://www.ozon.ru/product/301662955" target="_blank">Сумка женская через плечо кросс-боди（女式斜挎）</a></td><td>0228720696</td><td class="num">2,930.00 ₽</td><td class="num">29,607</td><td class="num">195,623</td><td class="num">0.1049</td><td class="num">229</td><td class="num">85</td><td class="num">1,995</td><td>DJ</td><td>女性人群词＋斜挎；2020年老链接（上架日期字段，非起量推断）</td><td>长销经典款，otherCount 1,995同款极多</td></tr>
+      <tr><td class="rk">16</td><td><span class="thumb" data-src="https://ir.ozone.ru/s3/multimedia-1-r/9841396995.jpg"><img src="https://ir.ozone.ru/s3/multimedia-1-r/9841396995.jpg" alt="Сумка AFINA кросс-боди натуральная замша"></span></td><td><a href="https://www.ozon.ru/product/3958849792" target="_blank">Сумка AFINA кросс-боди, натуральная замша（天然麂皮斜挎）</a></td><td>5010936083</td><td class="num">16,409.59 ₽</td><td class="num">25,771</td><td class="num">102,998</td><td class="num">0.0664</td><td class="num">41</td><td class="num">13</td><td class="num">0</td><td>AFINA</td><td>斜挎＋天然材质（натуральн，标题声称）＋麂皮（замш，标题声称）</td><td>高价（₽16,409）天然麂皮路线，独家型、低频高客单</td></tr>
+      <tr><td class="rk">17</td><td><span class="thumb" data-src="https://ir.ozone.ru/s3/multimedia-1-9/9273857229.jpg"><img src="https://ir.ozone.ru/s3/multimedia-1-9/9273857229.jpg" alt="Сумка женская через плечо тоут"></span></td><td><a href="https://www.ozon.ru/product/3586424938" target="_blank">Сумка женская через плечо тоут（女式斜挎托特）</a></td><td>9278455397</td><td class="num">1,589.17 —（币种未返回，待核）</td><td class="num">23,486</td><td class="num">89,213</td><td class="num">0.0403</td><td class="num">65</td><td class="num">20</td><td class="num">3</td><td>RICHFAMILY</td><td>女性人群词＋斜挎＋托特</td><td>中低价托特，竞争少；币种字段缺失需详情补验</td></tr>
+      <tr><td class="rk">18</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-2/10925161418.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-2/10925161418.jpg" alt="Cultivator Сумка шоппер, портфель"></span></td><td><a href="https://www.ozon.ru/product/4487593622" target="_blank">Cultivator Сумка шоппер, портфель（购物袋/公文包）</a></td><td>3647273919</td><td class="num">3,043.00 ₽</td><td class="num">23,406</td><td class="num">119,429</td><td class="num">0.2400</td><td class="num">400</td><td class="num">88</td><td class="num">943</td><td>CULTIVATOR2020</td><td>购物袋（шоппер）＋公文包（портфель）</td><td>高转化（0.24）购物袋形态，同款943需差异化</td></tr>
+      <tr><td class="rk">19</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-w/15305862956.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-w/15305862956.jpg" alt="Сумка кожаная через плечо большая шоппер а4"></span></td><td><a href="https://www.ozon.ru/product/5198190878" target="_blank">Сумка кожаная через плечо большая шоппер а4（皮革大容量A4购物袋）</a></td><td>9228865665</td><td class="num">2,850.00 ₽</td><td class="num">22,433</td><td class="num">114,597</td><td class="num">0.0600</td><td class="num">338</td><td class="num">69</td><td class="num">79</td><td>Eleganika store</td><td>皮革（кож，标题声称，材质待核）＋斜挎＋大容量（больш）＋A4容量</td><td>A4通勤容量词直击办公需求，竞争适中</td></tr>
+      <tr><td class="rk">20</td><td><span class="thumb" data-src="https://ir-20.ozonstatic.cn/s3/multimedia-1-d/8852780389.jpg"><img src="https://ir-20.ozonstatic.cn/s3/multimedia-1-d/8852780389.jpg" alt="Сумка"></span></td><td><a href="https://www.ozon.ru/product/3416723546" target="_blank">Сумка（通名款）</a></td><td>9555883162</td><td class="num">376.02 ₽</td><td class="num">22,177</td><td class="num">75,576</td><td class="num">0.2050</td><td class="num">275</td><td class="num">84</td><td class="num">1,398</td><td>JILL MILL</td><td>通名标题（无修饰词根），低价位</td><td>低价通名款高转化，但otherCount 1,398同款极多</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">主图悬停可放大320×320；商品链接为接口逐字返回；缺失字段以"—"显示（本表otherCount/销量/会话字段100行全覆盖，仅第17行symbol缺失）。转化率列保留接口原值（比例小数），单位未核，未乘100加%。</p>
+</div>
+
+<div class="card">
+  <h2>标题词根拆解（TOP20标题内统计，execute_code 基于本轮真实items）</h2>
+  <div class="note warn">词频=词在TOP20标题中出现总次数；代表商品数=含该词的去重SPU数。种子词 сумк（包）及停用词不计；中文释义仅为语义假设；品牌词为标题内出现，非授权/注册证明。"через плечо"与"на плечо"计数互不重叠去重后合计覆盖14/20款。</div>
+  <div class="tablebox">
+  <table style="min-width:640px">
+    <thead><tr><th>词根（原文）</th><th>语义假设</th><th>出现总次数</th><th>代表商品数</th><th>需求解读</th></tr></thead>
+    <tbody>
+      <tr><td>через плечо</td><td>斜挎过肩</td><td class="num">7</td><td class="num">7</td><td>最大形态词根：解放双手的通勤/出行斜挎需求</td></tr>
+      <tr><td>женск-（женская等）</td><td>女性人群词</td><td class="num">6</td><td class="num">6</td><td>明确女性定位标题占近1/3</td></tr>
+      <tr><td>на плечо</td><td>单肩</td><td class="num">4</td><td class="num">4</td><td>单肩形态并列主流</td></tr>
+      <tr><td>кросс-боди / кросс боди</td><td>斜挎包型</td><td class="num">4</td><td class="num">4</td><td>外来语写法与俄文写法并存，标题覆盖两种拼法更稳</td></tr>
+      <tr><td>замш- / кож- / эко / натуральн- / искусствен-</td><td>材质词（标题声称）</td><td class="num">8</td><td class="num">7</td><td>麂皮质感3款+皮革2款+环保/天然/人造叙事；实际材质待核</td></tr>
+      <tr><td>больш- / маленьк- / средн- / компактн- / А4</td><td>容量/尺寸词</td><td class="num">9</td><td class="num">8</td><td>尺寸分层明确：大容量通勤（A4）与小巧出行并存</td></tr>
+      <tr><td>тоут / шоппер / портфель / клатч / конверт / мессенджер / барсетка / на пояс(бананка)</td><td>包型词</td><td class="num">11</td><td class="num">10</td><td>托特/购物袋/公文/信封晚宴/信使/腰包多形态并存，斜挎+托特为两组主力</td></tr>
+      <tr><td>спортивн- / дорожн- / учеб-</td><td>场景词</td><td class="num">3</td><td class="num">3</td><td>运动/旅行/上学场景切入点</td></tr>
+      <tr><td>TENDANCE / Cultivator / IS SHOP 等</td><td>品牌（标题词）</td><td class="num">8</td><td class="num">8</td><td>品牌词占位明显，非品牌款需以价格/材质/容量词补位</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>待核区（数值达标但语义证据不支持严格女包池——单列，不计入TOP20）</h2>
+  <div class="tablebox">
+  <table style="min-width:900px">
+    <thead><tr><th>SPU</th><th>商品名（链接）</th><th>会话 7d</th><th>转化 7d（原值）</th><th>销量 28d</th><th>价格</th><th>待核原因</th></tr></thead>
+    <tbody>
+      <tr><td>2461092285</td><td><a href="https://www.ozon.ru/product/4906904650" target="_blank">Сумка мужская через плечо, барсетка кросс-боди…</a></td><td class="num">1,626,914</td><td class="num">0.1434</td><td class="num">16,992</td><td class="num">357.67 ₽</td><td>标题明确男包（мужская），与"女包"人群证据冲突；会话量全场第1，仅平台归类在女士包袋下，不计入严格女包榜</td></tr>
+      <tr><td>5578810403</td><td><a href="https://www.ozon.ru/product/6109249574" target="_blank">Сумка портфель, багажная для самоката</a></td><td class="num">15,810</td><td class="num">0.6100</td><td class="num">97</td><td class="num">313.00 ₽</td><td>滑板车挂包，非手袋品类</td></tr>
+      <tr><td>5613160160</td><td><a href="https://www.ozon.ru/product/2543788901" target="_blank">Louis Vuitton Сумка круглая, на плечо</a></td><td class="num">11,423</td><td class="num">0.0898</td><td class="num">72</td><td class="num">3,350.03 ₽</td><td>标题含 Louis Vuitton 品牌字样但售价₽3,350，疑似仿冒，授权未核；不纳入可执行候选</td></tr>
+      <tr><td>5892661835</td><td><a href="https://www.ozon.ru/product/4055762069" target="_blank">Косметичка, Сумка для косметики и путешествий…</a></td><td class="num">11,285</td><td class="num">0.0700</td><td class="num">149</td><td class="num">131.00 ₽</td><td>化妆包（相邻品类），标题无女性人群词，人群/用途证据不足</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>④ 结论与建议（每条标注依据字段）</h2>
+  <ul>
+    <li><b>榜单结构：</b>头部呈断档——TENDANCE运动包（353,835会话）约为第2名Levany斜挎（274,475）的1.3倍；第2-5名（27.4万-12.9万会话）构成第二梯队，形态为斜挎、信封晚宴包、小号麂皮斜挎、腰包。<span class="small">依据：sessionCountSearch7排序与原值</span></li>
+    <li><b>需求词根：</b>斜挎形态（через плечо×7＋на плечо×4＋кросс-боди×4）是TOP20最大需求词根；尺寸词覆盖8/20款（A4大容量通勤与小巧出行并存）；材质词8次但全部为标题声称（замш麂皮3款），实际材质待核。<span class="small">依据：TOP20标题词频（execute_code统计）</span></li>
+    <li><b>转化画像：</b>高转化集中在低价位——旅行化妆包0.4008（₽250.76）、通名款0.2050（₽376.02）、Cultivator两款0.2400（₽2,846-3,043）；而高会话品牌款（TENDANCE系列0.02-0.08）转化明显更低。转化率为接口原值，单位未核。<span class="small">依据：convToCartSearch7+price</span></li>
+    <li><b>竞争热度（参考）：</b>otherCount范围0-2,173（TOP20内），低价通名/经典款同款极多（1,398-2,173），品牌店与新品款可达0-12；otherCount仅接口同款/跟卖参考，不等于独立竞争店数。<span class="small">依据：otherCount原值</span></li>
+    <li><b>供应链匹配方向（仅规格待核，未实际找源）：</b>①斜挎/单肩基本款（₽1,500-3,000带）；②麂皮质感小号斜挎（标题声称材质，需打样核验）；③A4大容量托特/购物袋；④₽250-400低价走量款（腰包/化妆包方向，转化高但同款密度极高）；⑤高客单真皮/天然麂皮线（₽6,000+，独家型）。规格、材质成分与采购成本均未核验。<span class="small">依据：标题词根+price；未启动1688找源</span></li>
+    <li><b>下一步：</b>本榜为2026-11-17当前快照，无历史不可判飙升——建议保存基线后同窗（近7天搜索会话）复查对比；对"高会话低转化"行（如0221218560：会话5,429、转化0、otherCount 18,273）单做详情复盘。<span class="small">依据：本轮快照+fail_ids_c0清单</span></li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>⑤ 数据缺口与口径声明</h2>
+  <ul class="small">
+    <li><b>非词级榜：</b>平台无词级搜索指数数据源；标题词根≠实测搜索流量归因词，不据商品会话分摊词的搜索量。</li>
+    <li><b>无历史：</b>无相同范围、相同窗口的历史快照，本报告不使用"飙升/上涨/增长率"作事实结论，仅交付当前基线。</li>
+    <li><b>样本边界：</b>total=1,567仅对应下推参数（types=17001＋spuName=сумка＋sessionCountSearch7降序）；三项严格阈值未下推，严格命中仅对取回100条核验，全量严格命中未知；排序为本次样本内会话排序，头部切片受搜索引擎召回影响，不代表全类目按会话的真实全量排序。</li>
+    <li><b>字段异常：</b>3行 sessionCountSearch7＞sessionCountSearch28、4行 soldCount7＞soldCount28（7d＞28d逻辑异常，其中7068968796两项均异常已标注），窗口字段按原值展示、不作修正。</li>
+    <li><b>转化单位未核：</b>convToCartSearch7为接口原值小数，未乘100加%；真实0保留0。</li>
+    <li><b>币种：</b>取回100条中43行symbol未返回；TOP20内1行（9278455397）币种待核；¥为2款接口原值（TENDANCE、ICONIC BAGS），按原样保留不按站点惯例改₽；soldSum28币种未核，不做金额聚合。</li>
+    <li><b>类目归属：</b>opt_ids字段接口不支持（_note已提示），行级类目未逐条核验，类目锚点为下推的前台类目17001（CATEGORY前台口径，非CATEGORY_BACKEND）。</li>
+    <li><b>未查证项：</b>卖家类型（本土/跨境）、库存与可购买状态、材质真实性、品牌授权均未核验；未查1688、未做利润测算（未要求）。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>⑥ 溯源</h2>
+  <ul class="src">
+    <li>查询时点：2026-11-17T06:18-06:32 UTC（get_current_timestamp 实际返回）</li>
+    <li>类目核实：yq_dict_lookup(platform=ozon, type=CATEGORY, keyword=女包) → 17001「配饰&gt;女士&gt;包袋和背包」（前台）；CATEGORY_BACKEND未检索到明确女包编码（已披露）</li>
+    <li>字段核实：yq_fields_lookup(tool=yq_ozon_spu_search, keyword=搜索/会话/session/Search/other/链接/同款) → sessionCountSearch7/28、convToCartSearch7/28、otherCount、link 均存在</li>
+    <li>主检索：yq_ozon_spu_search(spuName="сумка", types=["17001"], from=0, size=100, sort=[{"sessionCountSearch7":"desc"}], _fields=spu,spuName,photo,link,price,symbol,soldCount7,soldCount28,soldSum28,sessionCountSearch7,sessionCountSearch28,convToCartSearch7,convToCartSearch28,otherCount,sellerId,sellerName,createDate) → total=1,567，返回100行；_note提示opt_ids字段不存在已忽略</li>
+    <li>逐行核验：execute_code 对100条真实返回做三项门槛、语义剔除、异常窗口、字段覆盖与词根统计（verified对象同口径用于正文与HTML）</li>
+    <li>商品链接/主图：均逐字引用接口返回 link 与 photo 字段（共20条展示+4条待核，含 ozon.ru/product/ 真实页面）</li>
+    <li>未调用：1688任何工具、利润测算、库存与卖家类型补验（未要求或字段不可用）</li>
+  </ul>
+</div>
+
+</div>
+<div id="zoom"><img id="zoomImg" src="" alt=""></div>
+<script>
+(function(){
+  var zoom=document.getElementById('zoom'),zi=document.getElementById('zoomImg');
+  function move(e){
+    zi.src=zoom.dataset.src||zi.src;
+    var x=e.clientX+24,y=e.clientY+24;
+    if(x+340>window.innerWidth)x=e.clientX-344;
+    if(y+340>window.innerHeight)y=e.clientY-344;
+    if(x<8)x=8;if(y<8)y=8;
+    zoom.style.left=x+'px';zoom.style.top=y+'px';
+  }
+  document.querySelectorAll('.thumb').forEach(function(el){
+    var src=el.getAttribute('data-src');
+    el.addEventListener('mouseenter',function(){zi.src=src;zoom.dataset.src=src;zoom.style.display='block';});
+    el.addEventListener('mousemove',move);
+    el.addEventListener('mouseleave',function(){zoom.style.display='none';zi.src='';});
+  });
+})();
+</script>
+</body>
+</html>
