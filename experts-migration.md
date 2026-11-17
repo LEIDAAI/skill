@@ -1,5 +1,35 @@
 # 店雷达专家迁移清单（对话 → leidaaisystem 后台）
 
+<!-- BEGIN OZON SCENES DELIVERY 2026-11-17 -->
+## 2026-11-17 OZON 九场景当前迁移与交付
+
+- 一个专家 `ozon-selection-assistant`（youweiAI-OZON选品专家），模型 `glm-5.3`；保留七个公共技能，追加九场景，实际绑定共16项。完整专家公共配置、九场景正文及七公共技能基线见 `ozon-scenes-configuration-2026-11-17.json`，没有用摘要替代正文。
+- 原七项公共实际ID：`ozon-selection-analysis`、`youweiai-ozon-competitor-monitor`、`youweiai-ozon-category-trend`、`youweiai-ozon-product-parse`、`youweiai-ozon-shop-analysis`、`ozon`、`youweiai-ozon-report-gen`。场景调用公共能力，公共技能不反向调用场景；TS保留既有七项前台ID并导出实际ID快照及九场景定义。
+- 当前索引21个独立会话，逐会话逐轮记录见 `ozon-scenes-acceptance-2026-11-17.html`、`ozon-scenes-delivery-2026-11-17.json` 与 `ozon-scenes-evidence-manifest-2026-11-17.json`。原始测试指令判定：通过11、部分通过4、未通过6、验收中0；仅保留 `acceptance-results.json` 中按chatId匹配的显式status/finalStatus，缺少则验收中。历史限量测试通过仅对应原始测试指令，不能证明默认样本量/全场景完成。验收范围scope、业务达标businessStatus、首次回答firstAnswerStatus分别展示，缺失均为未评估；技术报告渲染仅引用单列preview证据，与业务条件达标分别展示。`done=true`、代码工具外层success、已有HTML均不自动判通过。
+- 热销实际商品交付补充：`ozon-hot-sales-verified-2026-11-17.html` 与同名 JSON 直接读取首轮60个SPU原始返回，独立核算并逐行溯源。导航热销实测的报告入口优先打开商品结果，验收页保留入口。独立核算通过不改写原UI首答或场景业务状态，未重跑真实会话不增加会话计数。
+- 原 `audit-findings.json` 的失败与缺口完整保留。每轮模型回答、工具实参/完整返回、原始HTML按内容哈希独立存档；后续纠正和独立复测不覆盖首轮失败。HTML从每个 `turn.answer` 的围栏提取，损坏内容原样保留，不修复后冒充原报告。
+- 耗时证据缺失写“未提供逐工具耗时”，采集时刻、消息时间、业务数据日期不能代替耗时。本构建不操作浏览器；实际渲染/图片/hover状态只引用主Agent提供的preview证据。
+- 重建命令：`python tmp/ozon_scenes_delivery_20261117.py`。可重复执行并接收索引新增复测/缺参会话；每会话一行并输出数量校验，配置未变不重复追加版本。仅本地交付，不提交、推送或发布，不修改其他平台和两份导航HTML。
+
+| 场景 | 实际技能ID |
+|---|---|
+| youweiAI-OZON-场景-热销飙升 | `youweiai-ozon-scene-hot-sales-rise` |
+| youweiAI-OZON-场景-本土刚需季节品+备货 | `youweiai-ozon-scene-seasonal-stocking` |
+| youweiAI-OZON-场景-头部跟款+新手铺货 | `youweiai-ozon-scene-top-seller-beginner` |
+| youweiAI-OZON-场景-商品流量词分析 | `youweiai-ozon-scene-title-traffic-terms` |
+| youweiAI-OZON-场景-宠物细分类目对比 | `youweiai-ozon-scene-pet-subcategory-compare` |
+| youweiAI-OZON-场景-热搜词飙升榜选品 | `youweiai-ozon-scene-search-traffic-ranking` |
+| youweiAI-OZON-场景-大盘趋势快照（目标场景） | `youweiai-ozon-scene-market-trend-snapshot` |
+| youweiAI-OZON-场景-冷门空缺类目筛选 | `youweiai-ozon-scene-supply-demand-gaps` |
+| youweiAI-OZON-场景-批量图搜寻源（Ozon→1688） | `youweiai-ozon-scene-batch-image-sourcing` |
+
+<!-- END OZON SCENES DELIVERY 2026-11-17 -->
+
+## TEMU / OZON 配置核查（2026-11-17，本地待发布）
+- 已只读核查两专家及14技能；线上配置未改。本地评估：`temu-ozon-config-review-2026-11-17.html`，两份导航的相关实测面板增加独立评估入口，不改写历史会话判定与计数。
+- TEMU 优先修复 iframe 指令冲突、异步任务与报告完成边界；核验利润找源工具依赖，按任务区分必要追问，删除重复规则。OZON 优先修复类目趋势白名单、代码故障回退与成功输出门禁冲突，统一跨技能取样预算。
+- 本轮新增真实UI会话0条：browser-skill服务正常但扩展连接0，按用户要求未切换通道。历史回读不算本轮实测。GitHub重新授权已取消或超时，本次仅本地准备，远端发布及线上浏览器验收未完成。
+
 ## 亚马逊统一演示页（2026-11-16 下午演示版）
 - 统一入口 `youweiAI-amazon-prompt-ab-20261114.html`：四步决策旅程、29技能唯一清单；每行问题/帮助/问法/实测合一。旧手册 `youweiAI-amazon-29skills-handbook.html` 自动跳转，不再维护第二份正文。
 - 34条历史证据留在实测弹窗，保留各自会话与验收边界。演示推荐：场景12→5→14→19。
@@ -589,41 +619,12 @@ mcp__1688__monitor_shop_list
 - **证据与交付**：累计 49 条真实会话（18 通过 / 19 部分通过 / 8 未通过 / 2 人工纠正后可用 / 1 待确认），报告 `ozon-seven-skills-regression-2026-11-16.html` 与两份导航已按最新独立首答同步；七技能线上正文重新 GET 归档，两份 HTML 内嵌 prompt/skillMd 与线上 content 逐字一致。
 
 
-## 2026-11-16 youweiAI-TMEU 七技能提示词 A+B 优化与真实 UI 回归
-
-- **先核对现状**：只读 GET 线上 `temu-selection-assistant` 的 system 与七个 `youweiai-tmeu-*` 技能 content，确认为七技能路由版后再定点增补，未整段重写人设；对外统一 youweiAI-TMEU，不披露上游来源。
-- **A 大样本口径**：用户要 N 款时区分取样量与展示量，明细最多逐行展开前 50 行、其余用本轮真实数据汇总并可分批导出；分页重复行显式声明并改用互不相交分段；具体品类词先语义过滤，宽类目相邻品不冒充目标品。
-- **B 硬口径**：托管模式与站点先追问；销量大于 N 传 N+1；上架窗与默认近 30 天互斥；全托 regions 只称返回站点标签；多语言词按 ID 去重；processing 直给 view_url 不轮询、done 后禁同参重调；评论真 0 与 null 分开；哥伦比亚 $ 为比索；mall_star 用 star_seller_time 核验；半托大盘仅美国站；GMV 不默认美元；利润两套算法分列、缺项只报情景；报告四段交付、0 条不造表。
-- **iframe 基础设施缺陷**：Open WebUI 将聊天内嵌 iframe 渲染为 `sandbox=""`，网关预览页脚本被禁用而只显示初始「共 0 条」，同一任务 `saved_count=100`（独立标签打开可见 100 条）。已写入专家 system 与七技能：只给可点击 view_url，不输出原生 iframe。
-- **真实 UI 回归**：七技能各跑模糊 / 明确 / 空缺或边界，共 21 条计划会话 + 1 条工具挂载修正后补测 = 22 条，全部 Open WebUI 新会话，未用 API 发问。16 条通过（含渲染缺陷与自我纠正留证各 1），6 条部分通过/未完成/未通过；工具未挂载、推理中断与渲染缺陷如实保留，不补跑凑通过。
-- **交付与迁移**：报告 `skill/temu-prompt-opt-acceptance-2026-11-16.html`（本地 `reports/` 同名），两份导航的专家 sysPrompt 与七技能 prompt 与线上 GET content 逐字一致，实测 Tab 共 22 行且报告每个会话 ID 都能在导航找到。本次只精准发布 TEMU 相关四个路径，versions 与迁移清单基于远端追加，不覆盖并行会话条目。
-
-## 2026-11-16 TEMU 实测 Tab 口径修正（发布后线上核验发现）
-
-- 线上强刷核验发现：七技能实测明细已是 2026-11-16 的 22 条真实会话，但同一弹窗的 KPI、执行过程、结论与对话入口仍是 11-14 旧口径（如“3/3 通过”“交付20款”），与明细自相矛盾。
-- 修正：从本轮 22 条记录逐技能重算 KPI（会话数、通过/部分或未完成）与执行过程、结论；对话入口改指本轮明确问法会话；报告链接与逐行会话链接保持不变。不改线上专家/技能正文，不重跑会话，不美化失败。
-
-<!-- BEGIN OZON SCENES DELIVERY 2026-11-17 -->
-## 2026-11-17 OZON 九场景当前迁移与交付
-
-- 一个专家 `ozon-selection-assistant`（youweiAI-OZON选品专家），模型 `glm-5.3`；保留七个公共技能，追加九场景，实际绑定共16项。完整专家公共配置、九场景正文及七公共技能基线见 `ozon-scenes-configuration-2026-11-17.json`，没有用摘要替代正文。
-- 原七项公共实际ID：`ozon-selection-analysis`、`youweiai-ozon-competitor-monitor`、`youweiai-ozon-category-trend`、`youweiai-ozon-product-parse`、`youweiai-ozon-shop-analysis`、`ozon`、`youweiai-ozon-report-gen`。场景调用公共能力，公共技能不反向调用场景；TS保留既有七项前台ID并导出实际ID快照及九场景定义。
-- 当前索引21个独立会话，逐会话逐轮记录见 `ozon-scenes-acceptance-2026-11-17.html`、`ozon-scenes-delivery-2026-11-17.json` 与 `ozon-scenes-evidence-manifest-2026-11-17.json`。原始测试指令判定：通过11、部分通过4、未通过6、验收中0；仅保留 `acceptance-results.json` 中按chatId匹配的显式status/finalStatus，缺少则验收中。历史限量测试通过仅对应原始测试指令，不能证明默认样本量/全场景完成。验收范围scope、业务达标businessStatus、首次回答firstAnswerStatus分别展示，缺失均为未评估；技术报告渲染仅引用单列preview证据，与业务条件达标分别展示。`done=true`、代码工具外层success、已有HTML均不自动判通过。
-- 热销实际商品交付补充：`ozon-hot-sales-verified-2026-11-17.html` 与同名 JSON 直接读取首轮60个SPU原始返回，独立核算并逐行溯源。导航热销实测的报告入口优先打开商品结果，验收页保留入口。独立核算通过不改写原UI首答或场景业务状态，未重跑真实会话不增加会话计数。
-- 原 `audit-findings.json` 的失败与缺口完整保留。每轮模型回答、工具实参/完整返回、原始HTML按内容哈希独立存档；后续纠正和独立复测不覆盖首轮失败。HTML从每个 `turn.answer` 的围栏提取，损坏内容原样保留，不修复后冒充原报告。
-- 耗时证据缺失写“未提供逐工具耗时”，采集时刻、消息时间、业务数据日期不能代替耗时。本构建不操作浏览器；实际渲染/图片/hover状态只引用主Agent提供的preview证据。
-- 重建命令：`python tmp/ozon_scenes_delivery_20261117.py`。可重复执行并接收索引新增复测/缺参会话；每会话一行并输出数量校验，配置未变不重复追加版本。仅本地交付，不提交、推送或发布，不修改其他平台和两份导航HTML。
-
-| 场景 | 实际技能ID |
-|---|---|
-| youweiAI-OZON-场景-热销飙升 | `youweiai-ozon-scene-hot-sales-rise` |
-| youweiAI-OZON-场景-本土刚需季节品+备货 | `youweiai-ozon-scene-seasonal-stocking` |
-| youweiAI-OZON-场景-头部跟款+新手铺货 | `youweiai-ozon-scene-top-seller-beginner` |
-| youweiAI-OZON-场景-商品流量词分析 | `youweiai-ozon-scene-title-traffic-terms` |
-| youweiAI-OZON-场景-宠物细分类目对比 | `youweiai-ozon-scene-pet-subcategory-compare` |
-| youweiAI-OZON-场景-热搜词飙升榜选品 | `youweiai-ozon-scene-search-traffic-ranking` |
-| youweiAI-OZON-场景-大盘趋势快照（目标场景） | `youweiai-ozon-scene-market-trend-snapshot` |
-| youweiAI-OZON-场景-冷门空缺类目筛选 | `youweiai-ozon-scene-supply-demand-gaps` |
-| youweiAI-OZON-场景-批量图搜寻源（Ozon→1688） | `youweiai-ozon-scene-batch-image-sourcing` |
-
-<!-- END OZON SCENES DELIVERY 2026-11-17 -->
+## 2026-11-17 · Amazon 4 场景技能教训回填（表格 v3.108 → 线上+导航）
+- 依据对照表 v3.108 Amazon美站子表 11-13 复跑沉淀，回填 4 个场景技能：
+  1. 去年Q4旺季备货参考（youweiai-amazon-scene-q4-last-year-reference）：★参数陷阱——参数包在 request 对象内、分页 page/size、排序 order:{field,desc}、类目锁定 nodeIdPath（nodeIdPathEqual=false）。
+  2. 市场环境五维判定（scene-market-five-dim）：★六轮返工教训——大类总盘=全部子类相加、统计卡公式、禁分数式/缩略语、多源字段级标注、预测%勿重复拼接、自营一票否决。
+  3. 1688图搜拿货+毛利测算（scene-1688-image-profit）：★书面语纪律——禁口语（出路A/压到/超线等），统一测算结论/方案A/高于上限；两品对比左右卡片布局。
+  4. 小类深度调研四步法（scene-subcat-four-step）：★图搜验证层——双路采样+逐款图搜亚马逊验证（同款集群/邻近空位/召回偏航/未验证），通过才进1688找厂。
+- 线上同步：4/4 POST /update 后 GET 回读 SHA256 逐字一致（脚本 tmp/sync_4scene_lessons_20261117.py）。
+- 导航同步：两份导航（ozon-skill-hub.html + skill/index.html）技能正文键值替换，node 语法校验通过，新增区块 probes 4/4。
+- 场景 1-20 其余教训此前已在线上正文；场景 21 维持待实测不发布口径。表格第 21 行验收链接错填（指向场景 20）已发现待表格侧修正。
