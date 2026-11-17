@@ -718,3 +718,9 @@ mcp__1688__monitor_shop_list
 - Q4备货参考（04b4540b）：教训已加载但快照调用未带 nodeIdPath，靠事后品类清洗剔除混入——已把教训升级为执行步骤0强制锁参（禁止裸快照调用），线上回读一致、导航同步。
 - 市场五维判定（6d85f26f）：通过。三路并行+execute_code；无分数式、自营占比预警、KPI卡齐全；识破接口-29.5%预测与历史旺季相悖改用历史序列；综合判定"谨慎观察"附依据。GMV缩略语1处小瑕疵。
 - 台账 tmp/scene_lessons_verify_20261117.json。
+
+## 2026-11-18 · TEMU 7公共技能交付优化（巡检发现→落地）
+- 巡检（tmp/pubskills_patrol_20261117.json，3条真实UI会话）发现：TEMU报告缺KPI卡/主图320悬停/店铺链接——技能正文未写（AMAZON/OZON均有）；selection-search 存在"processing直接输出iframe"旧指令与新沙箱段冲突。
+- 修复：7技能线上正文补「交付三件套」节；selection-search 旧指令改为"只提供view_url链接与任务状态"。7/7 POST /update 回读逐字一致（tmp/temu_trio_apply_20261118.json）。
+- 导航同步坑：TEMU prompt 字段是反引号模板，正文含 ` 和 ${ 必须转义（\`、\${），否则整页 script SyntaxError；曾污染本地两份导航，已从远端 HEAD 恢复后重注入并 node --check 通过。demo JSON 里的旧指令是历史会话证据，保留不删。
+- 发布 commit 3ea52c3（基于远端 1fdf2cb）；线上核验 trio 7、320×320 156、prompt内旧指令0/新措辞1。
