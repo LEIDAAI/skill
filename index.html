@@ -4343,6 +4343,14 @@ const OZON_SCENE_SKILLS = [
     "calls": "5 view_skill + 1 spu_search(仅types,size=6) + 6 spu_detail + 6 mall_detail + 3 execute_code",
     "finding": "类目导航取样6 SPU/6唯一卖家；店铺聚合带真实sellerId与企业身份(ИП/ООO)；轻小证据缺失如实判\"严格达标0款\"；销量合计75,180与独立核算一致",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "depthRerun": {
+    "date": "2026-11-17",
+    "verdict": "通过",
+    "chatId": "ac9a6a78-a2b4-4362-8fb9-e8b12fb95ac1",
+    "chatUrl": "https://local.dianleida.net:21996/c/ac9a6a78-a2b4-4362-8fb9-e8b12fb95ac1",
+    "calls": "8 view_skill + 1 dict + 9 spu_search(分段切片) + 26 spu_detail + 5 mall_detail + 8 execute_code, 26.1min",
+    "finding": "深度版对照验收通过：主样本80款(17001,sold28≥500)、TOP5卖家聚合表(CR1=11.3%/CR5=43.1%)、卖家类型实核(本土/跨境 storeType)、30款新手候选分层(A层12/B层18)、52款明细20展示；销量与直连独立核算一致"
    }
   }
  },
@@ -4581,6 +4589,14 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 1 spu_search(仅types) + 2 execute_code",
     "finding": "类目导航取样3 SPU；真实标题词频统计、种子词去除；明确声明\"非流量归因\"且type2未核冲突如实标注",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "depthRerun": {
+    "date": "2026-11-17",
+    "verdict": "通过",
+    "chatId": "710c5633-12b8-4a18-bdc0-d99ab8d16b46",
+    "chatUrl": "https://local.dianleida.net:21996/c/710c5633-12b8-4a18-bdc0-d99ab8d16b46",
+    "calls": "3 view_skill + 3 spu_search(三路) + 2 fields_lookup + 1 goods_search + 8 execute_code, 18.8min",
+    "finding": "深度版对照验收通过：三路样本合并、词频×销量交叉表(70行)、含词/不含词销量中位差异%（кросс-боди -32.2%等）、强关联浅黄标、非流量归因声明保留"
    }
   }
  },
@@ -5036,6 +5052,14 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 1 spu_search(minSessionCountSearch7=5000+minSoldCount28=1) + 1 spu_detail + 2 execute_code",
     "finding": "硬条件真实写入检索参数(total=218)、按sessionCountSearch7降序；无历史不判飙升；转化率原值未乘100如实标注",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "depthRerun": {
+    "date": "2026-11-17",
+    "verdict": "通过",
+    "chatId": "32fc7b81-3a85-4a4e-895c-3bb13f036bd2",
+    "chatUrl": "https://local.dianleida.net:21996/c/32fc7b81-3a85-4a4e-895c-3bb13f036bd2",
+    "calls": "3 view_skill + 1 dict + 1 fields + 4 spu_search(硬条件分段) + 17 execute_code, 25.5min",
+    "finding": "深度版对照验收通过：完整榜单100款(101图100链)、价格带×销量贡献交叉(0-499₽占39.5%款数贡献72.1%销量,背离明确指出)、词根渗透率(bag 80%)、同款数全量、无历史不判飙升保留"
    }
   }
  },
@@ -5270,6 +5294,14 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 1 market_stat(key=all) + 2 execute_code",
     "finding": "key=all直读两个实际日期；币种未核不算GMV/客单价；两点观测不判内卷；滚动窗口不与自然周混用",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "depthRerun": {
+    "date": "2026-11-17",
+    "verdict": "通过",
+    "chatId": "9696045f-5ea8-4f15-9785-273b5eb432f9",
+    "chatUrl": "https://local.dianleida.net:21996/c/9696045f-5ea8-4f15-9785-273b5eb432f9",
+    "calls": "3 view_skill + 1 market_stat(key=all) + 7 execute_code + 1 read_skill_file, 8.1min",
+    "finding": "深度版对照验收通过：50个账期全序列表格(51行)、相邻账期环比+供需增幅差(pp)、月金额源值保留\"币种未核\"、滚动窗口不与自然月混用"
    }
   }
  },
@@ -5739,6 +5771,14 @@ const OZON_SCENE_SKILLS = [
     "calls": "4 view_skill + 1 dict + 1 goods_search(95205) + 1 goods_detail + 3 1688_native_call(image_search+realtime_detail+sku_prices) + 4 execute_code",
     "finding": "1688图搜通道修复后补跑通过：类目95205(total=4830)、SKU 5014222925(1,394件/₽297/bin28=leader/广东跨境卖家)；图搜命中4个1688候选，首选义乌舒净offerId=985465320012实取详情+SKU阶梯价¥2.90起(≥1件)与独立核算一致；相似款标注+无汇率不算价差全部遵守",
     "independentCheck": "直连同网关通道复现：货源subject与¥2.90阶梯价逐字段一致"
+   },
+   "depthRerun": {
+    "date": "2026-11-17",
+    "verdict": "通过",
+    "chatId": "865c69d4-2cec-46f7-8b3d-193b7efd9606",
+    "chatUrl": "https://local.dianleida.net:21996/c/865c69d4-2cec-46f7-8b3d-193b7efd9606",
+    "calls": "3 view_skill + 1 dict + 1 goods_search + 9 1688_native_call(3图搜+3详情+3SKU价) + 2 execute_code, 5.0min",
+    "finding": "深度版对照验收通过：3款授权内图搜全成、双图对比、实取阶梯价、价差三档初判(三款1.42~2.93倍均\"一般\"，带\"数量级参考\"字样)、类目编码纠错95205→95203如实声明、精确利润门禁保留"
    }
   }
  }
