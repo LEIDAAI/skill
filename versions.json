@@ -2093,6 +2093,16 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 07:40:00",
+   "target": "ozon-all-skills",
+   "action": "16技能执行提速快车道+2场景复验通过",
+   "note": "实测spu_search _fields可批量返回type2/type3/brand/sellerName/link/photo且与detail抽验一致，替代逐款detail核验。补丁含：批量核验、抽样复核3~5款、_fields必含photo+link、禁止spuIds参数（实测被接口忽略）、HTML必须在回复正文输出（禁止只存沙箱）、execute_code合并。场景3快车道9.7min（原26.1min，提速63%）；场景6首答18.0min（原25.5min）。16技能版本均已更新。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }
