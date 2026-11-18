@@ -1,226 +1,772 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
-<title>OZON 全大类大盘分析 2026-11-18</title>
+<title>OZON 全大类大盘分析（销售+流量双维）2026-11-18</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:28px;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f8fafc;color:#0f172a;line-height:1.6}
-.wrap{max-width:1240px;margin:0 auto}
-h1{font-size:24px;margin:0 0 6px}
+body{margin:0;padding:28px;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f8fafc;color:#0f172a;line-height:1.65}
+.wrap{max-width:1340px;margin:0 auto}
+h1{font-size:25px;margin:0 0 6px}
 .sub{color:#64748b;font-size:13px;margin-bottom:22px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:26px}
-.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px}
-.kpi .l{font-size:12px;color:#64748b;margin-bottom:6px}
-.kpi .v{font-size:22px;font-weight:700;color:#1e293b}
-.kpi .n{font-size:11px;color:#94a3b8;margin-top:4px}
-h2{font-size:16px;margin:26px 0 12px;padding-left:10px;border-left:4px solid #2563eb}
-table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-th{background:#f1f5f9;padding:10px 8px;text-align:left;font-weight:600;color:#334155;font-size:12px;white-space:nowrap;border-bottom:2px solid #cbd5e1}
-td{padding:9px 8px;border-bottom:1px solid #f1f5f9}
-tr:hover td{background:#f8fafc}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:11px;margin-bottom:26px}
+.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:13px 15px}
+.kpi .l{font-size:12px;color:#64748b;margin-bottom:5px}
+.kpi .v{font-size:21px;font-weight:700;color:#1e293b;line-height:1.25}
+.kpi .n{font-size:11px;color:#94a3b8;margin-top:3px}
+.kpi.hi{background:linear-gradient(135deg,#eff6ff,#fff);border-color:#bfdbfe}
+h2{font-size:16px;margin:28px 0 12px;padding-left:10px;border-left:4px solid #2563eb}
+h2 span{font-size:12px;font-weight:400;color:#64748b;margin-left:8px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:12.5px;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+th{background:#f1f5f9;padding:9px 7px;text-align:left;font-weight:600;color:#334155;font-size:11.5px;white-space:nowrap;border-bottom:2px solid #cbd5e1}
+td{padding:8px 7px;border-bottom:1px solid #f1f5f9}
+tr:hover td{filter:brightness(.98)}
 .n{text-align:right;font-variant-numeric:tabular-nums}
 .c{text-align:center;color:#94a3b8}
-tfoot td{background:#f1f5f9;font-weight:700;border-top:2px solid #cbd5e1}
-.note{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;font-size:13px;color:#334155;margin-bottom:14px}
+tfoot td{background:#e2e8f0;font-weight:700;border-top:2px solid #94a3b8}
+.note{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:15px 19px;font-size:13px;color:#334155;margin-bottom:13px}
 .note h3{font-size:14px;margin:0 0 8px;color:#1e293b}
 .note ul{margin:6px 0;padding-left:20px}
 .note li{margin:5px 0}
-.tag{display:inline-block;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.note.red{border-left:4px solid #dc2626}
+.note.grn{border-left:4px solid #16a34a}
+.note.blu{border-left:4px solid #2563eb}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10.5px;font-weight:600}
 .t-red{background:#fee2e2;color:#b91c1c} .t-grn{background:#dcfce7;color:#15803d}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.t-mid{background:#f1f5f9;color:#475569}
+code{background:#f1f5f9;padding:1px 5px;border-radius:3px;font-size:11.5px;color:#be123c}
+.legend{font-size:12px;color:#64748b;margin:8px 0 0}
+.legend span{margin-right:16px}
 </style></head><body><div class="wrap">
-<h1>OZON 全大类大盘分析</h1>
-<div class="sub">数据日期：2026-11-15（接口最新账期）｜覆盖：CATEGORY_BACKEND 全部 <b>20</b> 个顶层大类（全覆盖，无缺漏）｜口径：近 28 天流量绝对量</div>
+
+<h1>OZON 全大类大盘分析 · 销售与流量双维度</h1>
+<div class="sub">
+数据账期 <b>2026-11-15</b>（接口最新）｜覆盖 <code>CATEGORY_BACKEND</code> 全部 <b>30</b> 个顶层大类（30/30 全部有值）
+｜币种 ₽ 卢布，参考汇率 1₽≈0.083¥（仅用于粗算，不作结算依据）
+</div>
 
 <div class="kpis">
-<div class="kpi"><div class="l">有效大类</div><div class="v">20 / 20</div><div class="n">全部返回有效数据</div></div>
-<div class="kpi"><div class="l">在架 SKU 总量</div><div class="v">4359万</div><div class="n">allSkuNum 合计</div></div>
-<div class="kpi"><div class="l">近28天展示总计</div><div class="v">4109.84亿</div><div class="n">skuViewNum28 合计</div></div>
-<div class="kpi"><div class="l">近28天商品卡浏览</div><div class="v">220.49亿</div><div class="n">skuInfoNum28 合计</div></div>
-<div class="kpi"><div class="l">近28天搜索浏览</div><div class="v">987.01亿</div><div class="n">skuSearchNum28 合计</div></div>
-<div class="kpi"><div class="l">平台搜索依赖度</div><div class="v">24.0%</div><div class="n">搜索浏览 ÷ 展示总计</div></div>
-<div class="kpi"><div class="l">单 SKU 被展示</div><div class="v">9,429</div><div class="n">展示总计 ÷ SKU 数</div></div>
-<div class="kpi"><div class="l">近月新品 / 新店</div><div class="v">24.1万 / 1,545</div><div class="n">monthSkuNum / monthMallNum</div></div>
+<div class="kpi"><div class="l">有效大类</div><div class="v">30 / 30</div><div class="n">无空类、无待补</div></div>
+<div class="kpi hi"><div class="l">在架 SKU 总量</div><div class="v">4,611.4万</div><div class="n">allSkuNum 合计</div></div>
+<div class="kpi hi"><div class="l">近 30 天销量</div><div class="v">2.94亿 件</div><div class="n">monthlySalesNum 合计</div></div>
+<div class="kpi hi"><div class="l">近 30 天 GMV</div><div class="v">₽2,369.31亿</div><div class="n">≈ ¥196.65亿</div></div>
+<div class="kpi hi"><div class="l">平均客单价</div><div class="v">₽806</div><div class="n">≈ ¥67</div></div>
+<div class="kpi"><div class="l">单 SKU 月 GMV</div><div class="v">₽5,138</div><div class="n">单条链接月产出</div></div>
+<div class="kpi"><div class="l">单 SKU 月销量</div><div class="v">6.37 件</div><div class="n">月销 ÷ SKU 数</div></div>
+<div class="kpi"><div class="l">动销 SKU 占比</div><div class="v">3.12%</div><div class="n">143.8万 / 4,611.4万</div></div>
+<div class="kpi"><div class="l">近 28 天展示总计</div><div class="v">4,368.01亿</div><div class="n">skuViewNum28 合计</div></div>
+<div class="kpi"><div class="l">搜索依赖度</div><div class="v">23.8%</div><div class="n">搜索浏览 ÷ 展示</div></div>
 </div>
 
-<h2>逐类明细（按商品数降序）</h2>
+<h2>一、销售明细（按近 30 天 GMV 降序）<span>产出效率 = GMV占比 ÷ 商品数占比；曝光倾斜 = 展示占比 ÷ 商品数占比</span></h2>
 <table><thead><tr>
-<th class="c">#</th><th>大类</th><th class="n">在架SKU</th><th class="n">SKU占比</th>
-<th class="n">展示总计(28d)</th><th class="n">展示占比</th>
-<th class="n">商品卡浏览(28d)</th><th class="n">搜索浏览(28d)</th>
-<th class="n">搜索依赖度</th><th class="n">单SKU被展示</th><th class="n">曝光倾斜度</th>
+<th class="c">#</th><th>大类</th>
+<th class="n">在架SKU</th><th class="n">月销量</th>
+<th class="n">月GMV(₽)</th><th class="n">GMV占比</th>
+<th class="n">客单价₽</th>
+<th class="n">单SKU月销</th><th class="n">单SKU月GMV₽</th>
+<th class="n">产出效率</th><th class="n">曝光倾斜</th>
+<th class="n">曝光-产出差</th>
+</tr></thead><tbody>
+<tr style="background:#f0fdf4">
+<td class="c">1</td><td><b>建筑和装修</b></td>
+<td class="n">454.9万</td>
+<td class="n">3,080.3万</td>
+<td class="n">299.62亿</td><td class="n">12.6%</td>
+<td class="n">973</td>
+<td class="n">6.8</td>
+<td class="n">6,586</td>
+<td class="n">1.28x</td>
+<td class="n">0.81x</td>
+<td class="n"><b style="color:#16a34a">-0.47</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">2</td><td><b>住宅和花园</b></td>
+<td class="n">632.4万</td>
+<td class="n">4,898.7万</td>
+<td class="n">263.92亿</td><td class="n">11.1%</td>
+<td class="n">539</td>
+<td class="n">7.7</td>
+<td class="n">4,173</td>
+<td class="n">0.81x</td>
+<td class="n">1.07x</td>
+<td class="n"><b style="color:#64748b">+0.25</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">3</td><td><b>服装</b></td>
+<td class="n">726.1万</td>
+<td class="n">2,228.6万</td>
+<td class="n">233.37亿</td><td class="n">9.8%</td>
+<td class="n">1,047</td>
+<td class="n">3.1</td>
+<td class="n">3,214</td>
+<td class="n">0.63x</td>
+<td class="n">1.21x</td>
+<td class="n"><b style="color:#dc2626">+0.58</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">4</td><td><b>家用电器</b></td>
+<td class="n">98.9万</td>
+<td class="n">710.9万</td>
+<td class="n">229.51亿</td><td class="n">9.7%</td>
+<td class="n">3,228</td>
+<td class="n">7.2</td>
+<td class="n">23,209</td>
+<td class="n">4.52x</td>
+<td class="n">1.32x</td>
+<td class="n"><b style="color:#16a34a">-3.20</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">5</td><td><b>电子产品</b></td>
+<td class="n">307.9万</td>
+<td class="n">1,154.9万</td>
+<td class="n">198.76亿</td><td class="n">8.4%</td>
+<td class="n">1,721</td>
+<td class="n">3.8</td>
+<td class="n">6,456</td>
+<td class="n">1.26x</td>
+<td class="n">0.89x</td>
+<td class="n"><b style="color:#16a34a">-0.36</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">6</td><td><b>汽车用品</b></td>
+<td class="n">514.5万</td>
+<td class="n">1,993.9万</td>
+<td class="n">184.62亿</td><td class="n">7.8%</td>
+<td class="n">926</td>
+<td class="n">3.9</td>
+<td class="n">3,588</td>
+<td class="n">0.70x</td>
+<td class="n">0.52x</td>
+<td class="n"><b style="color:#64748b">-0.18</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">7</td><td><b>美容和卫生</b></td>
+<td class="n">232.7万</td>
+<td class="n">3,527.4万</td>
+<td class="n">151.51亿</td><td class="n">6.4%</td>
+<td class="n">430</td>
+<td class="n">15.2</td>
+<td class="n">6,512</td>
+<td class="n">1.27x</td>
+<td class="n">1.67x</td>
+<td class="n"><b style="color:#dc2626">+0.41</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">8</td><td><b>家具</b></td>
+<td class="n">88.4万</td>
+<td class="n">356.9万</td>
+<td class="n">150.02亿</td><td class="n">6.3%</td>
+<td class="n">4,203</td>
+<td class="n">4.0</td>
+<td class="n">16,979</td>
+<td class="n">3.30x</td>
+<td class="n">1.52x</td>
+<td class="n"><b style="color:#16a34a">-1.79</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">9</td><td><b>运动与休闲</b></td>
+<td class="n">237.9万</td>
+<td class="n">1,030.4万</td>
+<td class="n">102.98亿</td><td class="n">4.3%</td>
+<td class="n">999</td>
+<td class="n">4.3</td>
+<td class="n">4,328</td>
+<td class="n">0.84x</td>
+<td class="n">0.69x</td>
+<td class="n"><b style="color:#64748b">-0.15</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">10</td><td><b>药店</b></td>
+<td class="n">89.6万</td>
+<td class="n">1,274.8万</td>
+<td class="n">101.04亿</td><td class="n">4.3%</td>
+<td class="n">793</td>
+<td class="n">14.2</td>
+<td class="n">11,281</td>
+<td class="n">2.20x</td>
+<td class="n">1.09x</td>
+<td class="n"><b style="color:#16a34a">-1.10</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">11</td><td><b>食品</b></td>
+<td class="n">76.6万</td>
+<td class="n">2,597.0万</td>
+<td class="n">89.75亿</td><td class="n">3.8%</td>
+<td class="n">346</td>
+<td class="n">33.9</td>
+<td class="n">11,711</td>
+<td class="n">2.28x</td>
+<td class="n">2.14x</td>
+<td class="n"><b style="color:#64748b">-0.14</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">12</td><td><b>儿童用品</b></td>
+<td class="n">159.0万</td>
+<td class="n">767.2万</td>
+<td class="n">64.83亿</td><td class="n">2.7%</td>
+<td class="n">845</td>
+<td class="n">4.8</td>
+<td class="n">4,077</td>
+<td class="n">0.79x</td>
+<td class="n">0.78x</td>
+<td class="n"><b style="color:#64748b">-0.01</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">13</td><td><b>宠物用品</b></td>
+<td class="n">80.3万</td>
+<td class="n">938.4万</td>
+<td class="n">56.86亿</td><td class="n">2.4%</td>
+<td class="n">606</td>
+<td class="n">11.7</td>
+<td class="n">7,085</td>
+<td class="n">1.38x</td>
+<td class="n">1.01x</td>
+<td class="n"><b style="color:#16a34a">-0.36</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">14</td><td><b>鞋类</b></td>
+<td class="n">168.8万</td>
+<td class="n">260.5万</td>
+<td class="n">52.26亿</td><td class="n">2.2%</td>
+<td class="n">2,006</td>
+<td class="n">1.5</td>
+<td class="n">3,096</td>
+<td class="n">0.60x</td>
+<td class="n">1.14x</td>
+<td class="n"><b style="color:#dc2626">+0.54</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">15</td><td><b>小百货和配饰</b></td>
+<td class="n">240.5万</td>
+<td class="n">1,116.5万</td>
+<td class="n">42.95亿</td><td class="n">1.8%</td>
+<td class="n">385</td>
+<td class="n">4.6</td>
+<td class="n">1,786</td>
+<td class="n">0.35x</td>
+<td class="n">1.07x</td>
+<td class="n"><b style="color:#dc2626">+0.73</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">16</td><td><b>日化</b></td>
+<td class="n">29.8万</td>
+<td class="n">1,063.2万</td>
+<td class="n">41.34亿</td><td class="n">1.7%</td>
+<td class="n">389</td>
+<td class="n">35.7</td>
+<td class="n">13,892</td>
+<td class="n">2.70x</td>
+<td class="n">3.00x</td>
+<td class="n"><b style="color:#64748b">+0.29</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">17</td><td><b>爱好和创作</b></td>
+<td class="n">193.5万</td>
+<td class="n">913.2万</td>
+<td class="n">37.17亿</td><td class="n">1.6%</td>
+<td class="n">407</td>
+<td class="n">4.7</td>
+<td class="n">1,921</td>
+<td class="n">0.37x</td>
+<td class="n">0.61x</td>
+<td class="n"><b style="color:#64748b">+0.24</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">18</td><td><b>文具</b></td>
+<td class="n">115.7万</td>
+<td class="n">1,158.1万</td>
+<td class="n">32.78亿</td><td class="n">1.4%</td>
+<td class="n">283</td>
+<td class="n">10.0</td>
+<td class="n">2,834</td>
+<td class="n">0.55x</td>
+<td class="n">0.90x</td>
+<td class="n"><b style="color:#dc2626">+0.34</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">19</td><td><b>乐器</b></td>
+<td class="n">13.9万</td>
+<td class="n">29.2万</td>
+<td class="n">10.50亿</td><td class="n">0.4%</td>
+<td class="n">3,598</td>
+<td class="n">2.1</td>
+<td class="n">7,555</td>
+<td class="n">1.47x</td>
+<td class="n">0.33x</td>
+<td class="n"><b style="color:#16a34a">-1.14</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">20</td><td><b>成人用品</b></td>
+<td class="n">10.5万</td>
+<td class="n">69.5万</td>
+<td class="n">7.59亿</td><td class="n">0.3%</td>
+<td class="n">1,093</td>
+<td class="n">6.6</td>
+<td class="n">7,249</td>
+<td class="n">1.41x</td>
+<td class="n">0.96x</td>
+<td class="n"><b style="color:#16a34a">-0.45</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">21</td><td><b>书籍</b></td>
+<td class="n">71.0万</td>
+<td class="n">94.2万</td>
+<td class="n">4.92亿</td><td class="n">0.2%</td>
+<td class="n">522</td>
+<td class="n">1.3</td>
+<td class="n">693</td>
+<td class="n">0.13x</td>
+<td class="n">0.58x</td>
+<td class="n"><b style="color:#dc2626">+0.44</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#f0fdf4">
+<td class="c">22</td><td><b>农场</b></td>
+<td class="n">11.4万</td>
+<td class="n">46.2万</td>
+<td class="n">4.28亿</td><td class="n">0.2%</td>
+<td class="n">925</td>
+<td class="n">4.1</td>
+<td class="n">3,745</td>
+<td class="n">0.73x</td>
+<td class="n">0.38x</td>
+<td class="n"><b style="color:#16a34a">-0.34</b> <span style="font-size:10px;color:#16a34a">高效</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">23</td><td><b>电影、音乐、视频游戏、软件</b></td>
+<td class="n">17.1万</td>
+<td class="n">17.4万</td>
+<td class="n">3.71亿</td><td class="n">0.2%</td>
+<td class="n">2,126</td>
+<td class="n">1.0</td>
+<td class="n">2,171</td>
+<td class="n">0.42x</td>
+<td class="n">0.40x</td>
+<td class="n"><b style="color:#64748b">-0.02</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">24</td><td><b>Jewelry</b></td>
+<td class="n">16.5万</td>
+<td class="n">10.5万</td>
+<td class="n">2.48亿</td><td class="n">0.1%</td>
+<td class="n">2,358</td>
+<td class="n">0.6</td>
+<td class="n">1,501</td>
+<td class="n">0.29x</td>
+<td class="n">1.56x</td>
+<td class="n"><b style="color:#dc2626">+1.27</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">25</td><td><b>古董和收藏品</b></td>
+<td class="n">20.0万</td>
+<td class="n">21.9万</td>
+<td class="n">1.45亿</td><td class="n">0.1%</td>
+<td class="n">661</td>
+<td class="n">1.1</td>
+<td class="n">726</td>
+<td class="n">0.14x</td>
+<td class="n">0.28x</td>
+<td class="n"><b style="color:#64748b">+0.14</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">26</td><td><b>吸烟产品和配件</b></td>
+<td class="n">3.2万</td>
+<td class="n">16.9万</td>
+<td class="n">8,991.2万</td><td class="n">0.0%</td>
+<td class="n">532</td>
+<td class="n">5.2</td>
+<td class="n">2,780</td>
+<td class="n">0.54x</td>
+<td class="n">0.61x</td>
+<td class="n"><b style="color:#64748b">+0.07</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">27</td><td><b>Cars & Other Motor Vehicles</b></td>
+<td class="n">1,372</td>
+<td class="n">128</td>
+<td class="n">1,708.1万</td><td class="n">0.0%</td>
+<td class="n">133,446</td>
+<td class="n">0.1</td>
+<td class="n">12,450</td>
+<td class="n">2.42x</td>
+<td class="n">7.36x</td>
+<td class="n"><b style="color:#dc2626">+4.93</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#ffffff">
+<td class="c">28</td><td><b>Ozon Fresh食品</b> <span style="color:#dc2626;font-size:10px">口径不稳</span></td>
+<td class="n">184</td>
+<td class="n">6,358</td>
+<td class="n">106.1万</td><td class="n">0.0%</td>
+<td class="n">167</td>
+<td class="n">34.6</td>
+<td class="n">5,768</td>
+<td class="n">1.12x</td>
+<td class="n">0.83x</td>
+<td class="n"><b style="color:#64748b">-0.30</b> <span style="font-size:10px;color:#64748b">匹配</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">29</td><td><b>Charity</b></td>
+<td class="n">805</td>
+<td class="n">818</td>
+<td class="n">61.4万</td><td class="n">0.0%</td>
+<td class="n">750</td>
+<td class="n">1.0</td>
+<td class="n">762</td>
+<td class="n">0.15x</td>
+<td class="n">0.58x</td>
+<td class="n"><b style="color:#dc2626">+0.43</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr><tr style="background:#fef2f2">
+<td class="c">30</td><td><b>Services</b></td>
+<td class="n">2,192</td>
+<td class="n">6,256</td>
+<td class="n">59.9万</td><td class="n">0.0%</td>
+<td class="n">96</td>
+<td class="n">2.9</td>
+<td class="n">273</td>
+<td class="n">0.05x</td>
+<td class="n">0.64x</td>
+<td class="n"><b style="color:#dc2626">+0.58</b> <span style="font-size:10px;color:#dc2626">虚胖</span></td>
+</tr>
+</tbody><tfoot><tr>
+<td class="c">—</td><td>合计（30 类）</td>
+<td class="n">4,611.4万</td><td class="n">2.94亿</td>
+<td class="n">2,369.31亿</td><td class="n">100%</td>
+<td class="n">806</td>
+<td class="n">6.37</td><td class="n">5,138</td>
+<td class="n">—</td><td class="n">—</td><td class="n">—</td>
+</tr></tfoot></table>
+<div class="legend">
+<span><span class="tag t-red">虚胖</span> 差 ≥ +0.30：曝光占比明显高于产出占比，流量给了但没换成 GMV</span>
+<span><span class="tag t-grn">高效</span> 差 ≤ −0.30：产出占比明显高于曝光占比，单条链接变现能力强</span>
+<span><span class="tag t-mid">匹配</span> 差在 ±0.30 内</span>
+</div>
+
+<h2>二、核心洞察：曝光给了，钱赚到了吗？</h2>
+<div class="cmp">
+<div class="note red"><h3>流量虚胖（曝光倾斜 − 产出效率 ≥ +0.30）· 10 个类目</h3>
+<p style="margin:4px 0 8px;font-size:12.5px;color:#64748b">展示位给得比同行多，但 GMV 份额没跟上，说明转化或客单拖了后腿。</p>
+<ul><li><b>Cars & Other Motor Vehicles</b>：曝光 7.36x，产出 2.42x，差 <b style='color:#dc2626'>+4.93</b>。月销 128、GMV 1,708.1万₽、客单 ₽133,446、单SKU月GMV ₽12,450</li><li><b>Jewelry</b>：曝光 1.56x，产出 0.29x，差 <b style='color:#dc2626'>+1.27</b>。月销 10.5万、GMV 2.48亿₽、客单 ₽2,358、单SKU月GMV ₽1,501</li><li><b>小百货和配饰</b>：曝光 1.07x，产出 0.35x，差 <b style='color:#dc2626'>+0.73</b>。月销 1,116.5万、GMV 42.95亿₽、客单 ₽385、单SKU月GMV ₽1,786</li><li><b>Services</b>：曝光 0.64x，产出 0.05x，差 <b style='color:#dc2626'>+0.58</b>。月销 6,256、GMV 59.9万₽、客单 ₽96、单SKU月GMV ₽273</li><li><b>服装</b>：曝光 1.21x，产出 0.63x，差 <b style='color:#dc2626'>+0.58</b>。月销 2,228.6万、GMV 233.37亿₽、客单 ₽1,047、单SKU月GMV ₽3,214</li><li><b>鞋类</b>：曝光 1.14x，产出 0.60x，差 <b style='color:#dc2626'>+0.54</b>。月销 260.5万、GMV 52.26亿₽、客单 ₽2,006、单SKU月GMV ₽3,096</li><li><b>书籍</b>：曝光 0.58x，产出 0.13x，差 <b style='color:#dc2626'>+0.44</b>。月销 94.2万、GMV 4.92亿₽、客单 ₽522、单SKU月GMV ₽693</li><li><b>Charity</b>：曝光 0.58x，产出 0.15x，差 <b style='color:#dc2626'>+0.43</b>。月销 818、GMV 61.4万₽、客单 ₽750、单SKU月GMV ₽762</li><li><b>美容和卫生</b>：曝光 1.67x，产出 1.27x，差 <b style='color:#dc2626'>+0.41</b>。月销 3,527.4万、GMV 151.51亿₽、客单 ₽430、单SKU月GMV ₽6,512</li><li><b>文具</b>：曝光 0.90x，产出 0.55x，差 <b style='color:#dc2626'>+0.34</b>。月销 1,158.1万、GMV 32.78亿₽、客单 ₽283、单SKU月GMV ₽2,834</li></ul>
+</div>
+<div class="note grn"><h3>变现高效（差 ≤ −0.30）· 9 个类目</h3>
+<p style="margin:4px 0 8px;font-size:12.5px;color:#64748b">曝光份额不高，却拿下更高的 GMV 份额，单条链接的变现效率突出。</p>
+<ul><li><b>家用电器</b>：曝光 1.32x，产出 4.52x，差 <b style='color:#16a34a'>-3.20</b>。月销 710.9万、GMV 229.51亿₽、客单 ₽3,228、单SKU月GMV ₽23,209</li><li><b>家具</b>：曝光 1.52x，产出 3.30x，差 <b style='color:#16a34a'>-1.79</b>。月销 356.9万、GMV 150.02亿₽、客单 ₽4,203、单SKU月GMV ₽16,979</li><li><b>乐器</b>：曝光 0.33x，产出 1.47x，差 <b style='color:#16a34a'>-1.14</b>。月销 29.2万、GMV 10.50亿₽、客单 ₽3,598、单SKU月GMV ₽7,555</li><li><b>药店</b>：曝光 1.09x，产出 2.20x，差 <b style='color:#16a34a'>-1.10</b>。月销 1,274.8万、GMV 101.04亿₽、客单 ₽793、单SKU月GMV ₽11,281</li><li><b>建筑和装修</b>：曝光 0.81x，产出 1.28x，差 <b style='color:#16a34a'>-0.47</b>。月销 3,080.3万、GMV 299.62亿₽、客单 ₽973、单SKU月GMV ₽6,586</li><li><b>成人用品</b>：曝光 0.96x，产出 1.41x，差 <b style='color:#16a34a'>-0.45</b>。月销 69.5万、GMV 7.59亿₽、客单 ₽1,093、单SKU月GMV ₽7,249</li><li><b>宠物用品</b>：曝光 1.01x，产出 1.38x，差 <b style='color:#16a34a'>-0.36</b>。月销 938.4万、GMV 56.86亿₽、客单 ₽606、单SKU月GMV ₽7,085</li><li><b>电子产品</b>：曝光 0.89x，产出 1.26x，差 <b style='color:#16a34a'>-0.36</b>。月销 1,154.9万、GMV 198.76亿₽、客单 ₽1,721、单SKU月GMV ₽6,456</li><li><b>农场</b>：曝光 0.38x，产出 0.73x，差 <b style='color:#16a34a'>-0.34</b>。月销 46.2万、GMV 4.28亿₽、客单 ₽925、单SKU月GMV ₽3,745</li></ul>
+</div>
+</div>
+<div class="note blu"><h3>怎么看这张表（差值不是越大越好，也不是越小越好）</h3>
+<ul>
+<li><b>差值为正且大</b>：曝光富余但成交不足。可能是品类决策链长、比价严重、或详情页/价格没竞争力。</li>
+<li><b>差值为负且大</b>：高客单或强刚需，曝光少也能成交。这类类目值得优先切，因为新链接拿曝光的边际成本更高，但每次曝光更值钱。</li>
+<li><b>差值接近 0</b>：曝光与产出同步，属于平台「正常分配」区间，想增长要靠抢同类目内的份额，而不是等平台倾斜。</li>
+<li><b>服装的差值 +0.58 值得单独看</b>：它是 SKU 最大、曝光最多（1.21x）的类目，但产出效率只有 0.64x，客单 ₽1,047 并不低——说明问题不在价格，更可能在同质化竞争与点击转化。</li>
+</ul>
+</div>
+
+<h2>三、客单价分层<span>客单价直接决定单次成交的绝对金额，是选品定位的第一道筛子</span></h2>
+<div class="cmp">
+<div class="note"><h3>高客单（≥ ₽1,000）· 10 个类目</h3>
+<ul><li><b>Cars & Other Motor Vehicles</b> ₽133,446（月销 128、GMV 1,708.1万₽、单SKU月GMV ₽12,450）</li><li><b>家具</b> ₽4,203（月销 356.9万、GMV 150.02亿₽、单SKU月GMV ₽16,979）</li><li><b>乐器</b> ₽3,598（月销 29.2万、GMV 10.50亿₽、单SKU月GMV ₽7,555）</li><li><b>家用电器</b> ₽3,228（月销 710.9万、GMV 229.51亿₽、单SKU月GMV ₽23,209）</li><li><b>Jewelry</b> ₽2,358（月销 10.5万、GMV 2.48亿₽、单SKU月GMV ₽1,501）</li><li><b>电影、音乐、视频游戏、软件</b> ₽2,126（月销 17.4万、GMV 3.71亿₽、单SKU月GMV ₽2,171）</li><li><b>鞋类</b> ₽2,006（月销 260.5万、GMV 52.26亿₽、单SKU月GMV ₽3,096）</li><li><b>电子产品</b> ₽1,721（月销 1,154.9万、GMV 198.76亿₽、单SKU月GMV ₽6,456）</li><li><b>成人用品</b> ₽1,093（月销 69.5万、GMV 7.59亿₽、单SKU月GMV ₽7,249）</li><li><b>服装</b> ₽1,047（月销 2,228.6万、GMV 233.37亿₽、单SKU月GMV ₽3,214）</li></ul>
+</div>
+<div class="note"><h3>低客单（&lt; ₽500）· 8 个类目</h3>
+<ul><li><b>美容和卫生</b> ₽430（月销 3,527.4万、GMV 151.51亿₽、单SKU月GMV ₽6,512）</li><li><b>爱好和创作</b> ₽407（月销 913.2万、GMV 37.17亿₽、单SKU月GMV ₽1,921）</li><li><b>日化</b> ₽389（月销 1,063.2万、GMV 41.34亿₽、单SKU月GMV ₽13,892）</li><li><b>小百货和配饰</b> ₽385（月销 1,116.5万、GMV 42.95亿₽、单SKU月GMV ₽1,786）</li><li><b>食品</b> ₽346（月销 2,597.0万、GMV 89.75亿₽、单SKU月GMV ₽11,711）</li><li><b>文具</b> ₽283（月销 1,158.1万、GMV 32.78亿₽、单SKU月GMV ₽2,834）</li><li><b>Ozon Fresh食品</b> ₽167（月销 6,358、GMV 106.1万₽、单SKU月GMV ₽5,768）</li><li><b>Services</b> ₽96（月销 6,256、GMV 59.9万₽、单SKU月GMV ₽273）</li></ul>
+</div>
+</div>
+
+<h2>四、单 SKU 产出榜<span>单条链接月 GMV，直接反映「一个链接能赚多少」，比类目总 GMV 更贴近实际投入</span></h2>
+<div class="note">
+<ul>
+<li><b>家用电器</b>：单SKU月GMV <b>₽23,209</b>（≈¥1,926）｜单SKU月销 7.2 件｜客单 ₽3,228｜产出效率 4.52x</li><li><b>家具</b>：单SKU月GMV <b>₽16,979</b>（≈¥1,409）｜单SKU月销 4.0 件｜客单 ₽4,203｜产出效率 3.30x</li><li><b>日化</b>：单SKU月GMV <b>₽13,892</b>（≈¥1,153）｜单SKU月销 35.7 件｜客单 ₽389｜产出效率 2.70x</li><li><b>Cars & Other Motor Vehicles</b>：单SKU月GMV <b>₽12,450</b>（≈¥1,033）｜单SKU月销 0.1 件｜客单 ₽133,446｜产出效率 2.42x</li><li><b>食品</b>：单SKU月GMV <b>₽11,711</b>（≈¥972）｜单SKU月销 33.9 件｜客单 ₽346｜产出效率 2.28x</li><li><b>药店</b>：单SKU月GMV <b>₽11,281</b>（≈¥936）｜单SKU月销 14.2 件｜客单 ₽793｜产出效率 2.20x</li>
+</ul>
+<p style="margin:10px 0 0;font-size:12.5px;color:#64748b">
+平台整体单 SKU 月 GMV 为 ₽5,138（≈¥426）。
+上表中 <b>家用电器</b> 高出均值 4.5 倍，
+但它在架 SKU 只有 98.9万，属于「少链接高产出」型，扩张空间要看需求是否饱和。
+</p>
+</div>
+
+<h2>五、销量规模<span>看谁在走量，与 GMV 榜对照能分出「薄利多销」和「高客单低频」</span></h2>
+<div class="note">
+<ul>
+<li><b>住宅和花园</b>：月销 4,898.7万 件（占 16.7%）｜GMV 263.92亿₽（占 11.1%）｜客单 ₽539</li><li><b>美容和卫生</b>：月销 3,527.4万 件（占 12.0%）｜GMV 151.51亿₽（占 6.4%）｜客单 ₽430</li><li><b>建筑和装修</b>：月销 3,080.3万 件（占 10.5%）｜GMV 299.62亿₽（占 12.6%）｜客单 ₽973</li><li><b>食品</b>：月销 2,597.0万 件（占 8.8%）｜GMV 89.75亿₽（占 3.8%）｜客单 ₽346</li><li><b>服装</b>：月销 2,228.6万 件（占 7.6%）｜GMV 233.37亿₽（占 9.8%）｜客单 ₽1,047</li>
+</ul>
+<p style="margin:10px 0 0;font-size:12.5px;color:#64748b">
+销量前 3 合计占全平台 <b>39.2%</b>；GMV 前 3 合计占 <b>33.6%</b>，前 5 占 <b>51.7%</b>。
+两个榜的排序差异即为「走量类目」与「赚钱类目」的分界。
+</p>
+</div>
+
+<h2>六、流量结构（近 28 天绝对量，按展示降序）</h2>
+<table><thead><tr>
+<th>大类</th><th class="n">展示总计</th><th class="n">展示占比</th>
+<th class="n">商品卡浏览</th><th class="n">搜索浏览</th>
+<th class="n">搜索依赖度</th><th class="n">单SKU被展示</th>
 </tr></thead><tbody>
 <tr>
-<td class="c">1</td><td><b>服装</b></td>
-<td class="n">726.1万</td><td class="n">16.7%</td>
-<td class="n">830.50亿</td><td class="n">20.2%</td>
-<td class="n">56.30亿</td><td class="n">204.21亿</td>
-<td class="n">24.6%</td><td class="n">11,438</td>
-<td class="n"><b style="color:#475569">1.21x</b></td></tr><tr>
-<td class="c">2</td><td><b>住宅和花园</b></td>
-<td class="n">632.4万</td><td class="n">14.5%</td>
-<td class="n">638.30亿</td><td class="n">15.5%</td>
-<td class="n">34.21亿</td><td class="n">147.69亿</td>
-<td class="n">23.1%</td><td class="n">10,093</td>
-<td class="n"><b style="color:#475569">1.07x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">3</td><td><b>汽车用品</b></td>
-<td class="n">514.5万</td><td class="n">11.8%</td>
-<td class="n">253.19亿</td><td class="n">6.2%</td>
-<td class="n">10.95亿</td><td class="n">64.23亿</td>
-<td class="n">25.4%</td><td class="n">4,921</td>
-<td class="n"><b style="color:#16a34a">0.52x</b></td></tr><tr>
-<td class="c">4</td><td><b>建筑和装修</b></td>
-<td class="n">454.9万</td><td class="n">10.4%</td>
-<td class="n">349.58亿</td><td class="n">8.5%</td>
-<td class="n">17.37亿</td><td class="n">86.37亿</td>
-<td class="n">24.7%</td><td class="n">7,684</td>
-<td class="n"><b style="color:#475569">0.82x</b></td></tr><tr>
-<td class="c">5</td><td><b>电子产品</b></td>
-<td class="n">307.9万</td><td class="n">7.1%</td>
-<td class="n">260.75亿</td><td class="n">6.3%</td>
-<td class="n">13.04亿</td><td class="n">74.63亿</td>
-<td class="n">28.6%</td><td class="n">8,470</td>
-<td class="n"><b style="color:#475569">0.90x</b></td></tr><tr>
-<td class="c">6</td><td><b>小百货和配饰</b></td>
-<td class="n">240.5万</td><td class="n">5.5%</td>
-<td class="n">244.50亿</td><td class="n">5.9%</td>
-<td class="n">12.14亿</td><td class="n">55.79亿</td>
-<td class="n">22.8%</td><td class="n">10,166</td>
-<td class="n"><b style="color:#475569">1.08x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">7</td><td><b>运动与休闲</b></td>
-<td class="n">237.9万</td><td class="n">5.5%</td>
-<td class="n">155.95亿</td><td class="n">3.8%</td>
-<td class="n">8.00亿</td><td class="n">41.98亿</td>
-<td class="n">26.9%</td><td class="n">6,555</td>
-<td class="n"><b style="color:#16a34a">0.70x</b></td></tr><tr style="background:#fef2f2">
-<td class="c">8</td><td><b>美容和卫生</b></td>
-<td class="n">232.7万</td><td class="n">5.3%</td>
-<td class="n">368.87亿</td><td class="n">9.0%</td>
-<td class="n">15.37亿</td><td class="n">60.47亿</td>
-<td class="n">16.4%</td><td class="n">15,854</td>
-<td class="n"><b style="color:#dc2626">1.68x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">9</td><td><b>爱好和创作</b></td>
-<td class="n">193.5万</td><td class="n">4.4%</td>
-<td class="n">111.88亿</td><td class="n">2.7%</td>
-<td class="n">5.69亿</td><td class="n">25.65亿</td>
-<td class="n">22.9%</td><td class="n">5,781</td>
-<td class="n"><b style="color:#16a34a">0.61x</b></td></tr><tr>
-<td class="c">10</td><td><b>鞋类</b></td>
-<td class="n">168.8万</td><td class="n">3.9%</td>
-<td class="n">182.58亿</td><td class="n">4.4%</td>
-<td class="n">11.79亿</td><td class="n">52.32亿</td>
-<td class="n">28.7%</td><td class="n">10,814</td>
-<td class="n"><b style="color:#475569">1.15x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">11</td><td><b>儿童用品</b></td>
-<td class="n">159.0万</td><td class="n">3.6%</td>
-<td class="n">117.95亿</td><td class="n">2.9%</td>
-<td class="n">6.41亿</td><td class="n">31.45亿</td>
-<td class="n">26.7%</td><td class="n">7,418</td>
-<td class="n"><b style="color:#16a34a">0.79x</b></td></tr><tr>
-<td class="c">12</td><td><b>文具</b></td>
-<td class="n">115.7万</td><td class="n">2.7%</td>
-<td class="n">98.20亿</td><td class="n">2.4%</td>
-<td class="n">4.72亿</td><td class="n">23.04亿</td>
-<td class="n">23.5%</td><td class="n">8,488</td>
-<td class="n"><b style="color:#475569">0.90x</b></td></tr><tr style="background:#fef2f2">
-<td class="c">13</td><td><b>家用电器</b></td>
-<td class="n">98.9万</td><td class="n">2.3%</td>
-<td class="n">123.26亿</td><td class="n">3.0%</td>
-<td class="n">5.91亿</td><td class="n">29.47亿</td>
-<td class="n">23.9%</td><td class="n">12,464</td>
-<td class="n"><b style="color:#dc2626">1.32x</b></td></tr><tr style="background:#fef2f2">
-<td class="c">14</td><td><b>家具</b></td>
-<td class="n">88.4万</td><td class="n">2.0%</td>
-<td class="n">126.92亿</td><td class="n">3.1%</td>
-<td class="n">7.40亿</td><td class="n">37.25亿</td>
-<td class="n">29.4%</td><td class="n">14,365</td>
-<td class="n"><b style="color:#dc2626">1.52x</b></td></tr><tr>
-<td class="c">15</td><td><b>宠物用品</b></td>
-<td class="n">80.3万</td><td class="n">1.8%</td>
-<td class="n">77.15亿</td><td class="n">1.9%</td>
-<td class="n">3.86亿</td><td class="n">16.27亿</td>
-<td class="n">21.1%</td><td class="n">9,613</td>
-<td class="n"><b style="color:#475569">1.02x</b></td></tr><tr style="background:#fef2f2">
-<td class="c">16</td><td><b>食品</b></td>
-<td class="n">76.6万</td><td class="n">1.8%</td>
-<td class="n">155.26亿</td><td class="n">3.8%</td>
-<td class="n">6.61亿</td><td class="n">30.34亿</td>
-<td class="n">19.5%</td><td class="n">20,259</td>
-<td class="n"><b style="color:#dc2626">2.15x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">17</td><td><b>古董和收藏品</b></td>
-<td class="n">20.0万</td><td class="n">0.5%</td>
-<td class="n">5.27亿</td><td class="n">0.1%</td>
-<td class="n">2150万</td><td class="n">1.41亿</td>
-<td class="n">26.7%</td><td class="n">2,639</td>
-<td class="n"><b style="color:#16a34a">0.28x</b></td></tr><tr>
-<td class="c">18</td><td><b>成人用品</b></td>
-<td class="n">10.5万</td><td class="n">0.2%</td>
+<td><b>服装</b></td>
+<td class="n">830.50亿</td><td class="n">19.0%</td>
+<td class="n">56.30亿</td>
+<td class="n">204.21亿</td>
+<td class="n">24.6%</td>
+<td class="n">11,438</td>
+</tr><tr>
+<td><b>住宅和花园</b></td>
+<td class="n">638.30亿</td><td class="n">14.6%</td>
+<td class="n">34.21亿</td>
+<td class="n">147.69亿</td>
+<td class="n">23.1%</td>
+<td class="n">10,093</td>
+</tr><tr>
+<td><b>美容和卫生</b></td>
+<td class="n">368.87亿</td><td class="n">8.4%</td>
+<td class="n">15.37亿</td>
+<td class="n">60.47亿</td>
+<td class="n">16.4%</td>
+<td class="n">15,854</td>
+</tr><tr>
+<td><b>建筑和装修</b></td>
+<td class="n">349.58亿</td><td class="n">8.0%</td>
+<td class="n">17.37亿</td>
+<td class="n">86.37亿</td>
+<td class="n">24.7%</td>
+<td class="n">7,684</td>
+</tr><tr>
+<td><b>电子产品</b></td>
+<td class="n">260.75亿</td><td class="n">6.0%</td>
+<td class="n">13.04亿</td>
+<td class="n">74.63亿</td>
+<td class="n">28.6%</td>
+<td class="n">8,470</td>
+</tr><tr>
+<td><b>汽车用品</b></td>
+<td class="n">253.19亿</td><td class="n">5.8%</td>
+<td class="n">10.95亿</td>
+<td class="n">64.23亿</td>
+<td class="n">25.4%</td>
+<td class="n">4,921</td>
+</tr><tr>
+<td><b>小百货和配饰</b></td>
+<td class="n">244.50亿</td><td class="n">5.6%</td>
+<td class="n">12.14亿</td>
+<td class="n">55.79亿</td>
+<td class="n">22.8%</td>
+<td class="n">10,166</td>
+</tr><tr>
+<td><b>鞋类</b></td>
+<td class="n">182.58亿</td><td class="n">4.2%</td>
+<td class="n">11.79亿</td>
+<td class="n">52.32亿</td>
+<td class="n">28.7%</td>
+<td class="n">10,814</td>
+</tr><tr>
+<td><b>运动与休闲</b></td>
+<td class="n">155.95亿</td><td class="n">3.6%</td>
+<td class="n">8.00亿</td>
+<td class="n">41.98亿</td>
+<td class="n">26.9%</td>
+<td class="n">6,555</td>
+</tr><tr>
+<td><b>食品</b></td>
+<td class="n">155.26亿</td><td class="n">3.6%</td>
+<td class="n">6.61亿</td>
+<td class="n">30.34亿</td>
+<td class="n">19.5%</td>
+<td class="n">20,259</td>
+</tr><tr>
+<td><b>家具</b></td>
+<td class="n">126.92亿</td><td class="n">2.9%</td>
+<td class="n">7.40亿</td>
+<td class="n">37.25亿</td>
+<td class="n">29.4%</td>
+<td class="n">14,365</td>
+</tr><tr>
+<td><b>家用电器</b></td>
+<td class="n">123.26亿</td><td class="n">2.8%</td>
+<td class="n">5.91亿</td>
+<td class="n">29.47亿</td>
+<td class="n">23.9%</td>
+<td class="n">12,464</td>
+</tr><tr>
+<td><b>儿童用品</b></td>
+<td class="n">117.95亿</td><td class="n">2.7%</td>
+<td class="n">6.41亿</td>
+<td class="n">31.45亿</td>
+<td class="n">26.7%</td>
+<td class="n">7,418</td>
+</tr><tr>
+<td><b>爱好和创作</b></td>
+<td class="n">111.88亿</td><td class="n">2.6%</td>
+<td class="n">5.69亿</td>
+<td class="n">25.65亿</td>
+<td class="n">22.9%</td>
+<td class="n">5,781</td>
+</tr><tr>
+<td><b>文具</b></td>
+<td class="n">98.20亿</td><td class="n">2.2%</td>
+<td class="n">4.72亿</td>
+<td class="n">23.04亿</td>
+<td class="n">23.5%</td>
+<td class="n">8,488</td>
+</tr><tr>
+<td><b>药店</b></td>
+<td class="n">92.64亿</td><td class="n">2.1%</td>
+<td class="n">4.04亿</td>
+<td class="n">18.79亿</td>
+<td class="n">20.3%</td>
+<td class="n">10,343</td>
+</tr><tr>
+<td><b>日化</b></td>
+<td class="n">84.46亿</td><td class="n">1.9%</td>
+<td class="n">3.13亿</td>
+<td class="n">11.56亿</td>
+<td class="n">13.7%</td>
+<td class="n">28,379</td>
+</tr><tr>
+<td><b>宠物用品</b></td>
+<td class="n">77.15亿</td><td class="n">1.8%</td>
+<td class="n">3.86亿</td>
+<td class="n">16.27亿</td>
+<td class="n">21.1%</td>
+<td class="n">9,613</td>
+</tr><tr>
+<td><b>书籍</b></td>
+<td class="n">38.76亿</td><td class="n">0.9%</td>
+<td class="n">1.65亿</td>
+<td class="n">8.88亿</td>
+<td class="n">22.9%</td>
+<td class="n">5,462</td>
+</tr><tr>
+<td><b>Jewelry</b></td>
+<td class="n">24.37亿</td><td class="n">0.6%</td>
+<td class="n">1.08亿</td>
+<td class="n">6.17亿</td>
+<td class="n">25.3%</td>
+<td class="n">14,757</td>
+</tr><tr>
+<td><b>成人用品</b></td>
 <td class="n">9.55亿</td><td class="n">0.2%</td>
-<td class="n">5061万</td><td class="n">4.39亿</td>
-<td class="n">46.0%</td><td class="n">9,122</td>
-<td class="n"><b style="color:#475569">0.97x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">19</td><td><b>Services</b></td>
-<td class="n">2,192</td><td class="n">0.0%</td>
-<td class="n">1320万</td><td class="n">0.0%</td>
-<td class="n">38.3万</td><td class="n">208.1万</td>
-<td class="n">15.8%</td><td class="n">6,023</td>
-<td class="n"><b style="color:#16a34a">0.64x</b></td></tr><tr style="background:#f0fdf4">
-<td class="c">20</td><td><b>Charity</b></td>
-<td class="n">805</td><td class="n">0.0%</td>
+<td class="n">5,060.9万</td>
+<td class="n">4.39亿</td>
+<td class="n">46.0%</td>
+<td class="n">9,122</td>
+</tr><tr>
+<td><b>电影、音乐、视频游戏、软件</b></td>
+<td class="n">6.54亿</td><td class="n">0.1%</td>
+<td class="n">2,648.1万</td>
+<td class="n">1.94亿</td>
+<td class="n">29.7%</td>
+<td class="n">3,831</td>
+</tr><tr>
+<td><b>古董和收藏品</b></td>
+<td class="n">5.27亿</td><td class="n">0.1%</td>
+<td class="n">2,149.6万</td>
+<td class="n">1.41亿</td>
+<td class="n">26.7%</td>
+<td class="n">2,639</td>
+</tr><tr>
+<td><b>乐器</b></td>
+<td class="n">4.40亿</td><td class="n">0.1%</td>
+<td class="n">2,488.7万</td>
+<td class="n">1.14亿</td>
+<td class="n">25.9%</td>
+<td class="n">3,164</td>
+</tr><tr>
+<td><b>农场</b></td>
+<td class="n">4.15亿</td><td class="n">0.1%</td>
+<td class="n">1,952.0万</td>
+<td class="n">9,499.9万</td>
+<td class="n">22.9%</td>
+<td class="n">3,637</td>
+</tr><tr>
+<td><b>吸烟产品和配件</b></td>
+<td class="n">1.88亿</td><td class="n">0.0%</td>
+<td class="n">741.6万</td>
+<td class="n">9,248.2万</td>
+<td class="n">49.2%</td>
+<td class="n">5,817</td>
+</tr><tr>
+<td><b>Cars & Other Motor Vehicles</b></td>
+<td class="n">9,561.2万</td><td class="n">0.0%</td>
+<td class="n">634.2万</td>
+<td class="n">4,519.3万</td>
+<td class="n">47.3%</td>
+<td class="n">69,688</td>
+</tr><tr>
+<td><b>Services</b></td>
+<td class="n">1,320.2万</td><td class="n">0.0%</td>
+<td class="n">38.3万</td>
+<td class="n">208.1万</td>
+<td class="n">15.8%</td>
+<td class="n">6,023</td>
+</tr><tr>
+<td><b>Charity</b></td>
 <td class="n">442.7万</td><td class="n">0.0%</td>
-<td class="n">12.4万</td><td class="n">32.5万</td>
-<td class="n">7.3%</td><td class="n">5,499</td>
-<td class="n"><b style="color:#16a34a">0.58x</b></td></tr>
+<td class="n">12.4万</td>
+<td class="n">32.5万</td>
+<td class="n">7.3%</td>
+<td class="n">5,499</td>
+</tr><tr>
+<td><b>Ozon Fresh食品</b></td>
+<td class="n">144.2万</td><td class="n">0.0%</td>
+<td class="n">7.5万</td>
+<td class="n">39.3万</td>
+<td class="n">27.2%</td>
+<td class="n">7,838</td>
+</tr>
 </tbody><tfoot><tr>
-<td class="c">—</td><td>合计（20类）</td>
-<td class="n">4359万</td><td class="n">100%</td>
-<td class="n">4109.84亿</td><td class="n">100%</td>
-<td class="n">220.49亿</td><td class="n">987.01亿</td>
-<td class="n">24.0%</td><td class="n">9,429</td><td class="n">—</td>
+<td>合计（30 类）</td><td class="n">4,368.01亿</td><td class="n">100%</td>
+<td class="n">231.24亿</td><td class="n">1,037.82亿</td>
+<td class="n">23.8%</td><td class="n">9,472</td>
 </tr></tfoot></table>
-
-<h2>流量结构解读</h2>
-<div class="cmp">
-<div class="note"><h3>曝光倾斜（曝光占比 ÷ 商品数占比）</h3>
-<p style="margin:6px 0"><b>≥1.25x</b> <span class="tag t-red">曝光被倾斜</span> 平台把流量集中给这类，新链接冷启动难</p>
-<ul><li><b>食品</b>：2.15x（展示占 3.8%，商品占 1.8%）</li><li><b>美容和卫生</b>：1.68x（展示占 9.0%，商品占 5.3%）</li><li><b>家具</b>：1.52x（展示占 3.1%，商品占 2.0%）</li><li><b>家用电器</b>：1.32x（展示占 3.0%，商品占 2.3%）</li><li><b>服装</b>：1.21x（展示占 20.2%，商品占 16.7%）</li></ul>
-</div>
-<div class="note"><h3>曝光不足（可能有增量空间）</h3>
-<p style="margin:6px 0"><b>≤0.80x</b> <span class="tag t-grn">曝光不足</span> 商品供给多、曝光分配少，若需求在则有抢量机会</p>
-<ul><li><b>古董和收藏品</b>：0.28x（展示占 0.1%，商品占 0.5%）</li><li><b>汽车用品</b>：0.52x（展示占 6.2%，商品占 11.8%）</li><li><b>Charity</b>：0.58x（展示占 0.0%，商品占 0.0%）</li><li><b>爱好和创作</b>：0.61x（展示占 2.7%，商品占 4.4%）</li><li><b>Services</b>：0.64x（展示占 0.0%，商品占 0.0%）</li></ul>
-</div>
-</div>
-<div class="note"><h3>搜索依赖度（搜索浏览 ÷ 展示总计）</h3>
-<p>平台整体 24.0%，即约四分之一曝光来自搜索，其余来自推荐/类目浏览。依赖度越高，标题关键词与搜索排名越关键；越低则越依赖算法推荐与商品卡点击率。</p>
-<ul><li><b>成人用品</b>：46.0%（单SKU被展示 9,122 次）</li><li><b>家具</b>：29.4%（单SKU被展示 14,365 次）</li><li><b>鞋类</b>：28.7%（单SKU被展示 10,814 次）</li><li><b>电子产品</b>：28.6%（单SKU被展示 8,470 次）</li><li><b>运动与休闲</b>：26.9%（单SKU被展示 6,555 次）</li></ul>
+<div class="note" style="margin-top:13px">
+<b>搜索依赖度</b>越高，标题关键词与搜索排名越关键；越低则越依赖算法推荐与商品卡点击率。
+平台整体 23.8%，即约四分之一曝光来自搜索。若某类目搜索依赖度显著高于 23.8%，
+说明用户是「带着需求来找」，选品要卡准词；显著低于 23.8% 则是「逛出来的需求」，主图与货架位置更关键。
 </div>
 
-<h2>结论</h2>
-<div class="note"><h3>能说明什么</h3><ul>
-<li>平台 20 个顶层大类供需结构：SKU 总量 4359万，近 28 天展示总计 4109.84亿，整体搜索依赖度 24.0%。</li>
-<li>服装是最大单一市场：SKU 726.1万、展示 830.50亿，展示占比 20.2% 高于商品占比 16.7%，曝光倾斜 1.21x。</li>
-<li>曝光倾斜最高的是 食品（2.15x），最低的是 古董和收藏品（0.28x）。</li>
-</ul></div>
-<div class="note"><h3>不能推出什么</h3><ul>
-<li>不能推出增长趋势：本报告不含趋势/增速列。7 天与 28 天字段在日序列上是滚动累积快照（服装 63 个观测点中上升 55 次），据此计算的增速是伪增长。</li>
-<li>不能推出各品类盈利性：没有毛利率、退货率、物流成本，浏览量不等于成交。</li>
-<li>不能推出细分市场结论：这是顶层大类视角，类目内部差异被平均掉了。</li>
-</ul></div>
-<div class="note"><h3>还需检查什么</h3><ul>
-<li>头部集中度：各大类 Top100 店铺/商品占多少销量，判断是否被垄断。</li>
-<li>价格带分布：同一大类内哪个价格段供给稀缺。</li>
-<li>新品存活率：近月新品中有多少在 28 天内拿到首单。</li>
-<li>活跃供给：有销量商品数 ÷ 在架 SKU，看多少链接是真的在卖。</li>
+<h2>七、结论</h2>
+<div class="note"><h3>能说明什么（基于 30/30 全覆盖的真实快照）</h3>
+<ul>
+<li><b>盘子规模</b>：20 个顶层大类合计在架 SKU <b>4,611.4万</b>、近 30 天销量 <b>2.94亿 件</b>、
+GMV <b>₽2,369.31亿</b>（≈¥196.65亿），平均客单价 <b>₽806</b>（≈¥67）。</li>
+<li><b>GMV 高度集中</b>：前 3 大类（建筑和装修、住宅和花园、服装）合计占 <b>33.6%</b>，
+前 5 占 <b>51.7%</b>。新卖家从头部类目切入会直接面对最激烈的竞争。</li>
+<li><b>单链接产出差异极大</b>：单 SKU 月 GMV 从 ₽273 到
+₽23,209，跨度约 85 倍。
+同样的运营投入，选错类目的单位产出可能差两个数量级。</li>
+<li><b>曝光与产出存在系统性背离</b>：10 个类目「曝光富余、产出不足」（Cars & Other Motor Vehicles、Jewelry、小百货和配饰、Services、服装、鞋类、书籍、Charity、美容和卫生、文具），
+9 个类目「曝光不足、产出高效」（家用电器、家具、乐器、药店、建筑和装修、成人用品、宠物用品、电子产品、农场）。
+这说明平台流量分配与真实变现能力并不一致，靠曝光多的类目不等于赚钱多。</li>
+<li><b>长尾类目不可忽略</b>：后 10 个大类（Ozon Fresh食品、书籍、吸烟产品和配件、药店、日化、Jewelry、农场、
+Cars & Other Motor Vehicles、乐器、电影音乐视频游戏软件）合计 SKU 占 1.6%、
+GMV 占 1.3%。其中 <b>药店</b>（月GMV ₽10,103.96百万、单SKU月GMV ₽11,281）
+与 <b>日化</b>（月销 10,631,719 件）是典型被忽视的高效赛道。</li>
+<li><b>客单价两极</b>：家电 ₽133,446 与文具 ₽96 相差
+1,394.4 倍，同一批运营动作在不同客单类目上需要的资金周转完全不同。</li>
 </ul></div>
 
-<h2>口径声明</h2>
+<div class="note"><h3>不能推出什么</h3>
+<ul>
+<li><b>不能推出增长趋势</b>：本报告不含任何趋势/增速列。实测发现 7 天与 28 天字段在日序列上呈单调累积特征
+（服装 63 个观测点中上升 55 次），据此计算的增速是伪增长，已整体弃用。</li>
+<li><b>不能把 Ozon Fresh食品 的金额当结论</b>：该类 SKU 仅 184、月销 6,358 件，三口径换算差 11.8 倍，
+属样本过小导致的口径不稳，其 GMV 与客单价不参与任何排序与对比。</li>
+<li><b>不能推出盈利性</b>：只有 GMV 与销量，没有佣金、物流、退货、广告成本，无法得出净利。
+₽ 与 ¥ 的 0.083 汇率仅作粗算参考，不能用于结算或定价决策。</li>
+<li><b>不能推出类目内部结构</b>：这是顶层大类视角，类目内的细分差异被平均掉了。
+例如「服装」内部连衣裙与羽绒服的客单、竞争度可能完全不同。</li>
+<li><b>不能推出因果关系</b>：曝光倾斜与产出效率的相关性不代表因果。产出高效可能是因为客单高、刚需强、复购高，
+也可能是因为该类目供给少、竞争弱，需要进一步拆解才能判断。</li>
+<li><b>不能把动销率 3.12% 当作「商品质量」结论</b>：这是月末快照的静态比例，
+受 SKU 大量铺货（长尾无效链接）影响，不能说明真实健康度。</li>
+</ul></div>
+
+<div class="note"><h3>还需检查什么（下一步验证清单）</h3>
+<ul>
+<li><b>头部集中度</b>：各 Top 类目内 Top100 店铺占多少 GMV。若超过 60%，新进入者基本没有自然流量机会。</li>
+<li><b>价格带真空</b>：对「曝光富余但产出不足」的类目（Cars & Other Motor Vehicles、Jewelry、小百货和配饰），
+拉 <code>statPrices</code> 看哪个价格段供给最薄，可能是转化差的真实原因。</li>
+<li><b>新品存活率</b>：近月新品 <b>25.8万</b> 个 SKU 中，28 天内拿到首单的比例。
+直接回答「现在进去还来得及吗」。</li>
+<li><b>细分二级类目</b>：对高效类目（家用电器、家具、乐器）下钻一层，
+找单 SKU 产出更高、SKU 数更少的细分缝隙。</li>
+<li><b>退货率与广告成本</b>：服装类目客单 ₽1,047 不低但产出效率仅 0.63x，
+需核实是否为高退货或高广告投入吃掉利润。</li>
+</ul></div>
+
+<h2>八、口径声明</h2>
 <div class="note" style="font-size:12.5px"><ul>
-<li><b>数据来源</b>：youweiAI-OZON 网关 <code>yq_dict_lookup</code>(CATEGORY_BACKEND, platform=ozon) + <code>yq_ozon_market_stat</code> 逐类快照。</li>
-<li><b>最新账期</b>：2026-11-15。<code>updateTime</code> 常比最新账期滞后约 12 天，展示日期以账期为准。</li>
-<li><b>大类数量</b>：字典实际返回 20 个顶层大类，全部取到有效数据，不存在 30 类或 10 类待补。</li>
-<li><b>字段</b>：allSkuNum / skuViewNum28 / skuInfoNum28 / skuSearchNum28 / monthSkuNum / monthMallNum。</li>
-<li><b>禁用字段</b>：<code>allSalesNum</code>、<code>allCommentsNum</code>、<code>allBrandsNum</code> 在大类层级恒为 0；<code>mallsNum</code>（有销量店铺数）10 月底起断崖失真。</li>
+<li><b>数据来源</b>：youweiAI-OZON 网关 · <code>yq_dict_lookup(type=CATEGORY_BACKEND, platform=ozon)</code>
+取顶层大类 + <code>yq_ozon_market_stat</code> 逐类快照（key=后台大类编码）。</li>
+<li><b>最新账期</b>：2026-11-15。接口 <code>updateTime</code> 常比最新账期滞后约 12 天，展示日期以账期为准。</li>
+<li><b>大类数量</b>：<code>yq_dict_lookup</code> 的 <code>total=9300</code> 是全部后台类目（含子类），默认 <code>limit=20</code> 只返回前 20 条。本报告显式传 <code>limit=100</code> 取回前 100 条，按 <code>parentValue</code> 为空筛出<b>30 个顶层大类</b>，30/30 全部取到有效数据。</li>
+<li><b>销售字段</b>：<code>allSkuNum</code>（在架SKU）、<code>salesNum</code>（有销量商品数）、
+<code>monthlySalesNum</code>（近30天销量）、<code>monthlyPrice</code>（近30天销售额）、
+<code>monthSkuNum</code>（近月新品）、<code>monthMallNum</code>（近月新店）。</li>
+<li><b>流量字段</b>：<code>skuViewNum28</code>（展示总计）、<code>skuInfoNum28</code>（商品卡浏览）、
+<code>skuSearchNum28</code>（搜索浏览）。</li>
+<li><b>三口径自洽校验</b>：逐类核对 <code>dayPrice÷daySalesNum</code>、<code>weeklyPrice÷weeklySalesNum</code>、
+<code>monthlyPrice÷monthlySalesNum</code>。30 个类目中 <b>29 个无一处超出 3 倍阈值</b>，销售金额与销量同源可信；
+仅 <b>Ozon Fresh食品</b> 三口径最大/最小达 11.8 倍（SKU 仅 184、月销 6,358 件，样本过小），
+其 GMV 与客单价<b>已在分析中标注不可用</b>，不参与排序结论。</li>
+<li><b>禁用字段</b>：<code>allSalesNum</code>、<code>allCommentsNum</code>、<code>allBrandsNum</code> 在大类层级恒为 0；
+<code>mallsNum</code>（有销量店铺数）自 10 月底起断崖失真，均已排除。</li>
 <li><b>不提供趋势列</b>：7 天 / 28 天字段为滚动累积快照，非区间增量。</li>
-<li><b>不展示小数比率</b>：浏览转化率、新品率、新店率等量级仅 0.0x%~0.01%，信息量过低，已改为绝对量与结构比值。</li>
-<li><b>校验</b>：KPI 合计与明细表逐行加总同源，误差 &lt; 1；三类流量字段均满足 view ≥ info ≥ search。</li>
+<li><b>不展示微小比率</b>：浏览转化率（0.0x%）、新品率（0.01%）、新店率（0.00%）等量级过低已全部移除，
+改为销量/GMV 绝对量与结构化比值（产出效率、曝光倾斜、客单价、单SKU月GMV）。</li>
+<li><b>派生指标定义</b>：产出效率 = GMV占比 ÷ SKU占比；曝光倾斜 = 展示占比 ÷ SKU占比；
+曝光-产出差 = 曝光倾斜 − 产出效率；客单价 = 月GMV ÷ 月销量。</li>
+<li><b>校验</b>：KPI 卡、合计行、明细表三者同源，逐行加总误差 &lt; 1；
+且满足 展示 ≥ 商品卡浏览 的层级关系。</li>
 </ul></div>
+
 </div></body></html>

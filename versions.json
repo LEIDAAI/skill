@@ -2635,6 +2635,33 @@
     "scene7": "20/20大类；SKU 4,358.9万；展示4,109.8亿；搜索987.0亿；依赖度24.0%；偏差<0.001%",
     "scene9": "3张授权3次调用0失败；2张命中相关货源(¥3.4/双、¥6.5/件)；1张命中但全无关已标注"
    }
+  },
+  {
+   "ts": "2026-11-18 20:33",
+   "date": "2026-11-18",
+   "target": "skill:ozon-scene7+scene9",
+   "action": "update",
+   "summary": "OZON场景7补齐销售侧（30类全覆盖·月销量/月GMV/客单价/单SKU月GMV/产出效率/曝光-产出背离），纠正大类数量口径为30个（limit=20仅返回前20条）；场景9改用独立会话修复跳转错乱",
+   "snapshots": {},
+   "files": [
+    "ozon-skill-hub.html",
+    "skill/index.html",
+    "skill/ozon-scene7-bigcat-2026-11-18.html"
+   ],
+   "evidence": {
+    "scene7": {
+     "chatId": "b232cc84-b364-4245-b201-8279a8f0c0ff",
+     "chatUrl": "https://local.dianleida.net:21996/c/b232cc84-b364-4245-b201-8279a8f0c0ff",
+     "kpi": "30/30大类；SKU 4,611.4万；月销 2.94亿件；GMV ₽2,369.31亿；客单价 ₽806；单SKU月GMV ₽5,138；动销率 3.12%",
+     "finding": "补齐上一版缺失的销售分析；曝光-产出背离：10类虚胖9类高效；服装曝光1.21x但产出0.63x（差+0.58）"
+    },
+    "scene9": {
+     "chatId": "a6586e2d-656a-4dfa-bfd8-7876cb6ff693",
+     "chatUrl": "https://local.dianleida.net:21996/c/a6586e2d-656a-4dfa-bfd8-7876cb6ff693",
+     "kpi": "3张授权3次调用0失败；候选34个；1张相关命中(¥1.17/¥8.50)1张无对应同款如实标注",
+     "finding": "修复与场景7共用会话36a43bf5导致的跳转错乱，现为独立会话"
+    }
+   }
   }
  ]
 }
