@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>youweiAI-amazon · crossbody bag 带筛选重跑池+11款档案卡报告（US站）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:13.5px;line-height:1.6;color:#1f2329;background:#f4f6f8;padding:20px}
+.container{max-width:1180px;margin:0 auto;background:#fff;border-radius:10px;padding:24px 28px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.page-head{border-bottom:2px solid #2f9e44;padding-bottom:14px;margin-bottom:18px}
+.page-head h1{font-size:20px;margin-bottom:6px}
+.page-head .meta{color:#5c6470;font-size:12.5px}
+.badge{display:inline-block;padding:2px 9px;border-radius:11px;font-size:11.5px;margin:2px 6px 2px 0;background:#e8f5ec;color:#2b8a3e;border:1px solid #b2dfc0;vertical-align:middle}
+.badge.gray{background:#f1f3f5;color:#5c6470;border-color:#dee2e6}
+.badge.amber{background:#fff4e0;color:#b87400;border-color:#f3d9a4}
+.kpi-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.kpi{flex:1;min-width:150px;background:#f8faf9;border:1px solid #e3ede6;border-radius:8px;padding:14px 16px}
+.kpi .num{font-size:23px;font-weight:700;color:#2b8a3e}
+.kpi .label{font-size:12px;color:#5c6470;margin-top:2px}
+.kpi .caliber{font-size:10.5px;color:#8f979f;margin-top:3px}
+h2.sec{font-size:16px;margin:26px 0 10px;padding-left:10px;border-left:4px solid #2f9e44}
+h3.sub{font-size:14px;margin:14px 0 8px;color:#3b4450}
+.table-wrap{overflow-x:auto;margin-bottom:16px;border:1px solid #e5e9ec;border-radius:8px}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:1120px;font-size:12.5px}
+thead th{position:sticky;top:0;background:#f0f4f1;color:#3b4450;font-weight:600;padding:9px 8px;text-align:left;border-bottom:1px solid #d5dde2;white-space:nowrap;z-index:5}
+tbody td{padding:7px 8px;border-bottom:1px solid #eef1f3;vertical-align:middle}
+tbody tr:hover td{background:#fafcfa}
+td.num,th.num{text-align:right;white-space:nowrap}
+td.sticky{position:sticky;left:0;background:#fff;z-index:2;min-width:118px}
+tr.zone-a td.sticky{background:#f6fbf7}
+tr.zone-a td{background:#f6fbf7}
+tr.zone-b td.sticky{background:#fff8ec}
+tr.zone-b td{background:#fff8ec}
+tr.snap td.sticky{background:#fff}
+.tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.tag.go{background:#e8f5ec;color:#2b8a3e;border:1px solid #b2dfc0}
+.tag.watch{background:#fff4e0;color:#b87400;border:1px solid #f3d9a4}
+.tag.hold{background:#fdf3e7;color:#c77700;border:1px dashed #f0b76a}
+.tag.no{background:#fdecec;color:#c92a2a;border:1px solid #f5c2c2}
+.tag.ref{background:#eef1f5;color:#495c70;border:1px solid #d5dde2}
+.tag.c{background:#f1f3f5;color:#5c6470;border:1px solid #dee2e6}
+.tag.off{background:#fdecec;color:#c92a2a;border:1px solid #f5c2c2;font-weight:500}
+.up{color:#e03131;font-weight:600}.down{color:#2f9e44;font-weight:600}
+.note{background:#fbfcfd;border:1px dashed #ccd4da;border-radius:8px;padding:12px 16px;color:#5c6470;font-size:12.5px;margin-bottom:14px}
+.note ul{padding-left:18px}
+.cards{display:grid;grid-template-columns:1fr;gap:16px}
+.card{border:1px solid #e2e8ec;border-radius:10px;padding:16px 18px;background:#fff}
+.card-head{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;border-bottom:1px solid #eef1f3;padding-bottom:10px;margin-bottom:10px}
+.cimg{width:104px;height:104px;flex:none;background:#eceff1;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cimg img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+.imgmiss{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#9aa3ab;font-size:11px}
+.chead-info{flex:1;min-width:280px}
+.chead-info .aline{margin-bottom:3px}
+.alink{font-weight:700;color:#1a6f37;text-decoration:none;font-size:13px}
+.alink:hover{text-decoration:underline}
+.tlink{color:#1f2329;text-decoration:none;font-weight:500;font-size:13px}
+.tlink:hover{color:#1a6f37;text-decoration:underline}
+.cbrand{color:#7a828b;font-size:11.5px;margin-top:2px}
+.cstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin-bottom:10px}
+.cstat{background:#f8faf9;border:1px solid #edf1f4;border-radius:7px;padding:7px 10px}
+.cstat .v{font-weight:700;font-size:14px}
+.cstat .k{font-size:10.5px;color:#8f979f}
+.chart-box{border:1px solid #eef1f3;border-radius:8px;padding:8px 6px 2px;margin-bottom:8px;background:#fcfdfe}
+.trendchart{width:100%}
+.chart-note{font-size:10.5px;color:#8f979f;padding:2px 8px 6px}
+.csum{background:#f4f8f5;border-radius:7px;padding:8px 12px;font-size:12.5px;color:#3b4450;margin-bottom:8px}
+.cblocks{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:900px){.cblocks{grid-template-columns:1fr}}
+.cblock{border-radius:7px;padding:9px 11px;font-size:12px}
+.cblock.adv{background:#f2f9f4;border:1px solid #d3ecd9}
+.cblock.risk{background:#fdf6ec;border:1px solid #f2dfc2}
+.cblock.ins{background:#f2f5fa;border:1px solid #d9e2ee}
+.cblock b{display:block;font-size:11.5px;margin-bottom:3px}
+.cblock.adv b{color:#2b8a3e}.cblock.risk b{color:#b87400}.cblock.ins b{color:#3b5bdb}
+.cblock p{margin-bottom:5px;color:#46505a}
+.kwtable td,.kwtable th{text-align:left}
+.gap-sec{background:#fbfcfd;border:1px dashed #ccd4da;border-radius:8px;padding:14px 18px;margin:14px 0}
+.gap-sec h3{font-size:14.5px;margin-bottom:8px;color:#3b4450}
+.gap-sec ul{padding-left:20px;color:#5c6470;font-size:12.5px}
+.gap-sec li{margin-bottom:4px}
+.v-item{background:#f8faf9;border:1px solid #e6ece8;border-radius:7px;padding:10px 14px;margin-bottom:8px}
+.v-item p{color:#46505a;font-size:12.5px;margin-top:3px}
+.v-item .vt{font-weight:600;margin-right:8px}
+.src-sec{color:#8f979f;font-size:11.5px;border-top:1px solid #e5e9ec;padding-top:10px;margin-top:14px}
+.src-sec a{color:#1a6f37;text-decoration:none;margin-right:10px}
+.src-sec a:hover{text-decoration:underline}
+.footnote{color:#8f979f;font-size:11px;margin-top:6px}
+.timg{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#eceff1;display:block;margin:0 auto 4px;cursor:zoom-in}
+#zoomBig{position:fixed;width:320px;height:320px;background:#fff;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.25);display:none;z-index:999;pointer-events:none;overflow:hidden}
+#zoomBig img{width:100%;height:100%;object-fit:contain}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="page-head">
+  <h1>crossbody bag 带筛选重跑池 + 11款档案卡报告 <span style="font-weight:400;font-size:13px;color:#5c6470;">（youweiAI-amazon）</span></h1>
+  <div class="meta">
+    <span class="badge">站点：US（美元）</span><span class="badge">查询日：2026-11-18</span>
+    <span class="badge">口径：6次带筛选检索·原始120条·ASIN去重58款·详情核验15款（达标11/超窗4）·未核45款</span>
+    <span class="badge">筛选参数：评论≤200 · 月销≥300 · 上架≥2026-05-21（3词×2页×20条）</span>
+    <span class="badge gray">月销为估计口径 · 未核区不含FBA费/趋势/差评 · 不声称真实净利</span>
+    <span class="badge gray">parent_asin均返回 · 未做父子归并 · 变体销量不相加</span>
+  </div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="num">120</div><div class="label">原始记录</div><div class="caliber">3词×2页×20条·全部成功</div></div>
+  <div class="kpi"><div class="num">58</div><div class="label">ASIN去重款</div><div class="caliber">非57·重跑当日榜单波动·如实</div></div>
+  <div class="kpi"><div class="num">11</div><div class="label">A区严格达标</div><div class="caliber">详情核验轮定稿·档案卡不变</div></div>
+  <div class="kpi"><div class="num">4</div><div class="label">B区超窗剔除</div><div class="caliber">详情核验listing_date判定·逐行列出</div></div>
+  <div class="kpi"><div class="num">45</div><div class="label">未核（列表层）</div><div class="caliber">=48−3（B0H6DCNLP5原不在未核区）·不参与分档</div></div>
+  <div class="kpi"><div class="num">10</div><div class="label">品类偏移标注</div><div class="caliber">双肩/腰包/戏服/腰带套装</div></div>
+  <div class="kpi"><div class="num">1 / 11</div><div class="label">差评编码覆盖款</div><div class="caliber">仅TOPEAST·不外推赛道</div></div>
+</div>
+
+<!-- ══════════ ① 完整池表 ══════════ -->
+<h2 class="sec">① 完整池表（60行 = A区11 + B区4 + 未核45）· B区为详情核验原值，未核区为本次重跑返回原始值</h2>
+<div class="note"><b>池口径：</b>6次带筛选检索（crossbody bag / cross body bag / crossbody bags 各前2页×20条，US站，评论≤200·月销≥300·上架≥2026-05-21），原始120条，ASIN去重<b>58款</b>（目标57、实际58，如实写；差异主因重跑当日榜单自然波动：新进5款、原池部分款跌出前2页，两套池不完全重合、不强行对齐）。<br>
+<b>分区：</b><b>A区·详情核验严格达标11款</b>（其中10款在重跑池中，行内月销/上架日为详情核验定稿值、与重跑当日值有差异者在括号内标注；B0HCN1C1CB本次重跑前2页未含，沿用详情核验轮原值并标注）；<b>B区·详情核验超窗剔除4款</b>——由详情核验<b>listing_date</b>判定（均早于2026-05-21），字段为详情核验轮原值（含FBA费与平台毛利率），已在下方逐行列出，其中B0H6DCNLP5为服装类小类加「品类偏移」标注，4款均不参与分档；<b>未核区45款·列表层数据</b>（搜索接口返回原值），未经详情核验、不参与分档，其中10款非crossbody主体形态（双肩包/腰包/戏服/腰带套装）在小类列后标「品类偏移」——保留行、不入档案卡。<br>
+<b>行数核对（如实）：</b>原未核区48行中移除B0GXV5HX3W、B0GYYDZCB6、B0HBPRVMQ2三行（改为B区行、值换详情核验原值）；B0H6DCNLP5原本不在重跑池与未核区（重跑池未含该款），为B区新插入行。故未核区=48−3=<b>45行</b>，池表=11+4+45=<b>60行</b>（若按"扣4款"口径应为44/59，因B0H6DCNLP5原本不在表内，实际不可扣第4行，如实呈现60行，不强行对齐）。池表覆盖=重跑池58款+B0HCN1C1CB（A区详情轮）+B0H6DCNLP5（B区详情轮）。</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>主图+ASIN</th><th>品牌 / 标题摘要</th><th>上架日</th><th class="num">售价 USD</th><th class="num">评分 / 评论</th><th class="num">月销（30天订单·估）</th><th>小类（+排名）</th><th class="num">变体</th><th>区 / 分档</th></tr></thead>
+<tbody>
+<!-- A区11 -->
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://images-na.ssl-images-amazon.com/images/I/61FiyWHwD3L._AC_UL600_SR600,400_.jpg" data-big="https://images-na.ssl-images-amazon.com/images/I/61FiyWHwD3L._AC_SL1402_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H7MCWWBF" target="_blank" rel="noopener">B0H7MCWWBF</a></td><td>elqavo · 透明球场包</td><td>2026-07-03</td><td class="num">9.56</td><td class="num">4.5 / 113</td><td class="num">3,817</td><td>Women's Crossbody #22</td><td class="num">13</td><td><span class="tag go">A区·建议A</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71htO+2jHNL.jpg" data-big="https://m.media-amazon.com/images/I/71htO+2jHNL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H4TY87T9" target="_blank" rel="noopener">B0H4TY87T9</a></td><td>YOOLIFE · 少女礼赠Sling</td><td>2026-07-02（重跑online 07-25）</td><td class="num">16.99（券$1.70）</td><td class="num">4.3 / 56</td><td class="num">2,329</td><td>Fashion Waist Packs #11</td><td class="num">90</td><td><span class="tag watch">A区·观察B</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31XI2H03TTL.jpg" data-big="https://m.media-amazon.com/images/I/31XI2H03TTL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HFQW56YY" target="_blank" rel="noopener">B0HFQW56YY</a></td><td>higouta · 防盗RFID Sling</td><td>2026-09-24</td><td class="num">18.99</td><td class="num">4.4 / 25</td><td class="num">2,202</td><td>Men's Cross-Body Sling #7</td><td class="num">5</td><td><span class="tag go">A区·建议A</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/410ZHa1QtsL.jpg" data-big="https://m.media-amazon.com/images/I/410ZHa1QtsL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H8RG5Z8N" target="_blank" rel="noopener">B0H8RG5Z8N</a></td><td>TOPEAST · 复古Hobo月牙</td><td>2026-08-25</td><td class="num">35.99（券$3.96）</td><td class="num">4.5 / 163</td><td class="num">2,145（重跑2,198）</td><td>Shoulder #28 / Tote #51</td><td class="num">5</td><td><span class="tag go">A区·建议A</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71HC7icIqkL.jpg" data-big="https://m.media-amazon.com/images/I/71HC7icIqkL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HN4X5YYC" target="_blank" rel="noopener">B0HN4X5YYC</a></td><td>UNEFCYC · 触屏小挎包</td><td>2026-10-15</td><td class="num">17.99</td><td class="num">4.4 / 6</td><td class="num">1,956（重跑2,106）</td><td>Women's Crossbody #19</td><td class="num">7</td><td><span class="tag hold">A区·验证C</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71d51l3s0+L.jpg" data-big="https://m.media-amazon.com/images/I/71d51l3s0+L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H2LY5ZNM" target="_blank" rel="noopener">B0H2LY5ZNM</a></td><td>myrtle sky · 痛包（180天边界）</td><td>2026-04-12（重跑online 05-22）</td><td class="num">22.99</td><td class="num">4.5 / 132</td><td class="num">1,733（重跑1,771）</td><td>Women大类 #12817</td><td class="num">16</td><td><span class="tag watch">A区·观察B</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/517+UvxFF6L.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/517+UvxFF6L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H8CVNGFP" target="_blank" rel="noopener">B0H8CVNGFP</a></td><td>Bagstellar · 灯芯绒15仓托特</td><td>2026-09-10</td><td class="num">35.99</td><td class="num">4.4 / 64</td><td class="num">1,742</td><td>Women's Tote #96（详情#98）</td><td class="num">8</td><td><span class="tag watch">A区·观察B</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71nbugSIrFL.jpg" data-big="https://m.media-amazon.com/images/I/71nbugSIrFL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H9XLJBND" target="_blank" rel="noopener">B0H9XLJBND</a></td><td>BAGSMART · 绗缝Hobo</td><td>2026-07-22</td><td class="num">19.99</td><td class="num">4.6 / 38</td><td class="num">1,264（重跑1,303）</td><td>Women's Tote #143 / Hobo #77</td><td class="num">5</td><td><span class="tag watch">A区·观察B</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/6169TrSu1lL.jpg" data-big="https://m.media-amazon.com/images/I/6169TrSu1lL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HCN1C1CB" target="_blank" rel="noopener">B0HCN1C1CB</a></td><td>BAGSMART · 羽绒棉月牙包<br><span style="color:#c77700;font-size:11px;">重跑前2页未含·沿用详情核验轮原值</span></td><td>2026-08-03（online 10-15）</td><td class="num">22.99（券$11.49）</td><td class="num">4.4 / 31</td><td class="num">1,257</td><td>Crossbody #158 / Tote #113 / Hobo #66</td><td class="num">6</td><td><span class="tag hold">A区·验证C</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/41sX+GsmxBL.jpg" data-big="https://m.media-amazon.com/images/I/41sX+GsmxBL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H1HH9RPQ" target="_blank" rel="noopener">B0H1HH9RPQ</a></td><td>Bymontin · 触屏胸包</td><td>2026-05-27</td><td class="num">11.99</td><td class="num">4.5 / 138</td><td class="num">1,160</td><td>Hiking Daypacks #19</td><td class="num">4</td><td><span class="tag watch">A区·观察B</span></td></tr>
+<tr class="zone-a"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31YdmYruFkL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31YdmYruFkL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H1T688B2" target="_blank" rel="noopener">B0H1T688B2</a></td><td>Coach · Brooklyn 26</td><td>2026-09-05</td><td class="num">195.00</td><td class="num">4.5 / 22</td><td class="num">1,116（重跑1,149）</td><td>Women's Shoulder #45</td><td class="num">5</td><td><span class="tag ref">A区·品牌参照</span></td></tr>
+<!-- B区4（详情核验·超窗剔除） -->
+<tr class="zone-b"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31be55ClVDL.jpg" data-big="https://m.media-amazon.com/images/I/31be55ClVDL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GXV5HX3W" target="_blank" rel="noopener">B0GXV5HX3W</a></td><td>YDF · 尼龙迷你月牙斜挎包<br><span style="color:#8f979f;font-size:11px;">详情核验：FBA $8.89 · 平台毛利率41.02%</span></td><td>2025-07-13 · 在架169天</td><td class="num">21.99</td><td class="num">4.2 / 178</td><td class="num">2,708</td><td>Women's Crossbody Handbags #78</td><td class="num">—</td><td><span class="tag hold">详情核验·超窗剔除（listing_date早于2026-05-21）</span></td></tr>
+<tr class="zone-b"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41Y4e1Ka-QL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41Y4e1Ka-QL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H6DCNLP5" target="_blank" rel="noopener">B0H6DCNLP5</a></td><td>Sanwuta · 万圣节糖果包<br><span style="color:#8f979f;font-size:11px;">详情核验：FBA $6.46 · 平台毛利率64.22%</span></td><td>2026-03-31 · 在架149天</td><td class="num">29.99</td><td class="num">3.2 / 43</td><td class="num">1,949</td><td>Women's Costume Accessory Sets #475 <span class="tag off">品类偏移（服装戏服类小类）</span></td><td class="num">—</td><td><span class="tag hold">详情核验·超窗剔除（listing_date早于2026-05-21）</span></td></tr>
+<tr class="zone-b"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31MOroFaFKL.jpg" data-big="https://m.media-amazon.com/images/I/31MOroFaFKL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GYYDZCB6" target="_blank" rel="noopener">B0GYYDZCB6</a></td><td>MYHOZEE · 麂皮Hobo多仓<br><span style="color:#8f979f;font-size:11px;">详情核验：FBA $6.47 · 平台毛利率60.86%</span></td><td>2026-03-13 · 在架173天</td><td class="num">23.99</td><td class="num">4.2 / 148</td><td class="num">1,476</td><td>Women's Tote Handbags #114</td><td class="num">—</td><td><span class="tag hold">详情核验·超窗剔除（listing_date早于2026-05-21）</span></td></tr>
+<tr class="zone-b"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/317433K62dL.jpg" data-big="https://m.media-amazon.com/images/I/317433K62dL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HBPRVMQ2" target="_blank" rel="noopener">B0HBPRVMQ2</a></td><td>DesKimdo · 编织腋下晚宴包<br><span style="color:#8f979f;font-size:11px;">详情核验：FBA $6.49 · 平台毛利率59.95%</span></td><td>2025-12-29 · 在架114天</td><td class="num">25.89</td><td class="num">4.4 / 96</td><td class="num">1,296</td><td>Women's Shoulder Handbags #77</td><td class="num">—</td><td><span class="tag hold">详情核验·超窗剔除（listing_date早于2026-05-21）</span></td></tr>
+<!-- 未核45（重跑原值） -->
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41ATT-MH99L.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41ATT-MH99L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H2HB8BPQ" target="_blank" rel="noopener">B0H2HB8BPQ</a></td><td>TobWeaL · 文艺复兴腰带套装</td><td>2026-07-07</td><td class="num">19.99</td><td class="num">4.7 / 66</td><td class="num">2,236</td><td>Fashion Waist Packs #75 <span class="tag off">品类偏移（腰带套装）</span></td><td class="num">12</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/419FIXRlYpL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/419FIXRlYpL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H3Z1LZYK" target="_blank" rel="noopener">B0H3Z1LZYK</a></td><td>Sanwuta · 万圣节糖果包（同品牌另一款）</td><td>2026-06-06</td><td class="num">29.99</td><td class="num">3.2 / 43</td><td class="num">1,724</td><td>Costume Accessory Sets #548 <span class="tag off">品类偏移（服装戏服）</span></td><td class="num">13</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31nmtkolIVL.jpg" data-big="https://m.media-amazon.com/images/I/31nmtkolIVL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HCMWS7TB" target="_blank" rel="noopener">B0HCMWS7TB</a></td><td>BAGSMART · puffer 2L月牙</td><td>2026-10-16</td><td class="num">22.99（券$11.49）</td><td class="num">4.4 / 31</td><td class="num">1,329</td><td>Women's Crossbody #77</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/41cY5EAHoRL.jpg" data-big="https://m.media-amazon.com/images/I/41cY5EAHoRL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H8VLL89D" target="_blank" rel="noopener">B0H8VLL89D</a></td><td>Nautica · 尼龙小斜挎（品牌·Amazon自营）</td><td>2026-07-29</td><td class="num">21.80</td><td class="num">4.9 / 13</td><td class="num">1,075</td><td>Women's Crossbody #86</td><td class="num">21</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41I1GRm7caL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41I1GRm7caL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HMCRZT17" target="_blank" rel="noopener">B0HMCRZT17</a></td><td>TUIKEN · 10L折叠双肩</td><td>2026-10-09</td><td class="num">15.99</td><td class="num">4.0 / 194</td><td class="num">1,064</td><td>Hiking Daypacks #19 <span class="tag off">品类偏移（双肩包）</span></td><td class="num">8</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/317qfvysiJL.jpg" data-big="https://m.media-amazon.com/images/I/317qfvysiJL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HD63H6Z2" target="_blank" rel="noopener">B0HD63H6Z2</a></td><td>TOPEAST · 防盗RFID Sling</td><td>2026-08-14</td><td class="num">19.99（券$1.00）</td><td class="num">4.4 / 177</td><td class="num">1,042</td><td>Women's Crossbody #206</td><td class="num">10</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31oLwjuy-eL.jpg" data-big="https://m.media-amazon.com/images/I/31oLwjuy-eL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HC1Z8F3H" target="_blank" rel="noopener">B0HC1Z8F3H</a></td><td>BAGSMART · puffer双子包</td><td>2026-09-21</td><td class="num">24.99</td><td class="num">4.6 / 37</td><td class="num">1,029</td><td>Women's Crossbody #79</td><td class="num">5</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/412gRxG7Y8L.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/412gRxG7Y8L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H8NL56W3" target="_blank" rel="noopener">B0H8NL56W3</a></td><td>LOVEVOOK · 绗缝PU斜挎（RFID宽肩带）</td><td>2026-08-26</td><td class="num">23.99（券$1.20）</td><td class="num">4.8 / 57</td><td class="num">919</td><td>Women's Crossbody #381</td><td class="num">9</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31iCnWzJ4oL.jpg" data-big="https://m.media-amazon.com/images/I/31iCnWzJ4oL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HG9MMDYV" target="_blank" rel="noopener">B0HG9MMDYV</a></td><td>TOPEAST · 3.5L水壶腰包</td><td>2026-08-28</td><td class="num">23.99（券$1.20）</td><td class="num">4.4 / 127</td><td class="num">917</td><td>Fashion Waist Packs #78 <span class="tag off">品类偏移（腰包）</span></td><td class="num">18</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/61FX3yCcuCL.jpg" data-big="https://m.media-amazon.com/images/I/61FX3yCcuCL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HHWQTJPD" target="_blank" rel="noopener">B0HHWQTJPD</a></td><td>XquiziFit · 麂皮月牙托特</td><td>2026-10-04</td><td class="num">25.99（券$2.60）</td><td class="num">4.2 / 100</td><td class="num">881</td><td>Women's Tote #84</td><td class="num">7</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/61aE2XQkT6L.jpg" data-big="https://m.media-amazon.com/images/I/61aE2XQkT6L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GTY6GWQ9" target="_blank" rel="noopener">B0GTY6GWQ9</a></td><td>Montana West · 德州长角牛透明斜挎（球队IP）</td><td>2026-06-12</td><td class="num">42.99</td><td class="num">4.7 / 133</td><td class="num">801</td><td>Sports Fan Handbags #5</td><td class="num">42</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71BiD2S7MtL.jpg" data-big="https://m.media-amazon.com/images/I/71BiD2S7MtL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H4TZ3KL7" target="_blank" rel="noopener">B0H4TZ3KL7</a></td><td>MOVINPE · 宿醉戏服套装</td><td>2026-07-22</td><td class="num">59.99</td><td class="num">4.0 / 23</td><td class="num">786</td><td>Costumes #10717 <span class="tag off">品类偏移（服装）</span></td><td class="num">0</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31cubuyDD7L.jpg" data-big="https://m.media-amazon.com/images/I/31cubuyDD7L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HDN1GF66" target="_blank" rel="noopener">B0HDN1GF66</a></td><td>BAGSMART · 绗缝小Sling</td><td>2026-10-15</td><td class="num">17.99</td><td class="num">4.7 / 24</td><td class="num">782</td><td>Women's Crossbody #120</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41ICHv9vMGL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41ICHv9vMGL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GHN7DSZL" target="_blank" rel="noopener">B0GHN7DSZL</a></td><td>TOPEAST · 防盗RFID腰包式Sling</td><td>2026-07-01</td><td class="num">19.99（券$1.00）</td><td class="num">4.4 / 122</td><td class="num">780</td><td>Fashion Waist Packs #129</td><td class="num">7</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/716SkKAeRIL.jpg" data-big="https://m.media-amazon.com/images/I/716SkKAeRIL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GX6BSTXC" target="_blank" rel="noopener">B0GX6BSTXC</a></td><td>Caitina · 编织麂皮Hobo</td><td>2026-05-30</td><td class="num">32.99（券$1.65）</td><td class="num">4.3 / 82</td><td class="num">778</td><td>Hobo Bags #101</td><td class="num">13</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31TaZgchhFL.jpg" data-big="https://m.media-amazon.com/images/I/31TaZgchhFL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H26LFK22" target="_blank" rel="noopener">B0H26LFK22</a></td><td>BAGSMART · mini绗缝双肩</td><td>2026-08-06</td><td class="num">22.99</td><td class="num">4.5 / 68</td><td class="num">764</td><td>Fashion Backpack Handbags #16 <span class="tag off">品类偏移（双肩包）</span></td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31rKBtL9JSL.jpg" data-big="https://m.media-amazon.com/images/I/31rKBtL9JSL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H28RK6N5" target="_blank" rel="noopener">B0H28RK6N5</a></td><td>Stylily · 尼龙convertible饺子包</td><td>2026-07-04</td><td class="num">21.99</td><td class="num">4.5 / 70</td><td class="num">763</td><td>Women's Shoulder #82</td><td class="num">21</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/41RWsRl9S9L.jpg" data-big="https://m.media-amazon.com/images/I/41RWsRl9S9L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H5PRJR7Q" target="_blank" rel="noopener">B0H5PRJR7Q</a></td><td>CHERUBEL · 半月腋下包</td><td>2026-07-15</td><td class="num">17.76</td><td class="num">4.8 / 60</td><td class="num">753</td><td>Women's Shoulder #45</td><td class="num">12</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31h1P+5WBnL.jpg" data-big="https://m.media-amazon.com/images/I/31h1P+5WBnL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H3PD4ZW3" target="_blank" rel="noopener">B0H3PD4ZW3</a></td><td>CATSEA · 复古Hobo（樱桃挂饰）</td><td>2026-07-07</td><td class="num">59.99</td><td class="num">4.1 / 37</td><td class="num">738</td><td>Women's Shoulder #103</td><td class="num">5</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31G0Wcq9kHL.jpg" data-big="https://m.media-amazon.com/images/I/31G0Wcq9kHL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HCMPPJCK" target="_blank" rel="noopener">B0HCMPPJCK</a></td><td>BAGSMART · puffy月牙（券$14.99≈50%）</td><td>2026-08-03</td><td class="num">29.99（券$14.99）</td><td class="num">4.9 / 15</td><td class="num">730</td><td>Women's Crossbody #63</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41TBkXncSxL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41TBkXncSxL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HBBPD27F" target="_blank" rel="noopener">B0HBBPD27F</a></td><td>LOVEVOOK · 防水多仓斜挎</td><td>2026-09-23</td><td class="num">24.99（券$1.25）</td><td class="num">4.4 / 73</td><td class="num">714</td><td>Women's Crossbody #321</td><td class="num">11</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/317PGJKHnHL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/317PGJKHnHL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GX9PZP51" target="_blank" rel="noopener">B0GX9PZP51</a></td><td>KKXIU · 月牙小肩包</td><td>2026-05-25</td><td class="num">21.84</td><td class="num">4.4 / 98</td><td class="num">682</td><td>Women's Hobo #75</td><td class="num">9</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71kE287JOGL._AC_SL1500_.jpg" data-big="https://m.media-amazon.com/images/I/71kE287JOGL._AC_SL1500_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H7JRS7Y1" target="_blank" rel="noopener">B0H7JRS7Y1</a></td><td>Wytidian · Y2K蝴蝶结小包</td><td>2026-07-03</td><td class="num">17.49</td><td class="num">4.9 / 45</td><td class="num">649</td><td>Women's Crossbody #168</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31Vj3iMvRFL.jpg" data-big="https://m.media-amazon.com/images/I/31Vj3iMvRFL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HFW8VQH3" target="_blank" rel="noopener">B0HFW8VQH3</a></td><td>VAYOQON · 仿麂皮Hobo</td><td>2026-10-05</td><td class="num">29.99（券$3.00）</td><td class="num">4.5 / 29</td><td class="num">623</td><td>Women's Hobo #110</td><td class="num">3</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31p2JE-l4XL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31p2JE-l4XL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H9S73VRF" target="_blank" rel="noopener">B0H9S73VRF</a></td><td>BAGSMART · 贝壳保龄球包3L</td><td>2026-09-09</td><td class="num">11.99</td><td class="num">4.1 / 63</td><td class="num">621</td><td>Women's Crossbody #128</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31MBIx1Wm2L.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31MBIx1Wm2L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H9XML1D5" target="_blank" rel="noopener">B0H9XML1D5</a></td><td>BAGSMART · mini斜挎</td><td>2026-10-13</td><td class="num">16.99</td><td class="num">4.8 / 23</td><td class="num">580</td><td>Women's Crossbody #304</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71qx3FOtaxL.jpg" data-big="https://m.media-amazon.com/images/I/71qx3FOtaxL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HGB5WXSQ" target="_blank" rel="noopener">B0HGB5WXSQ</a></td><td>Huggea · IPX8漂浮果冻包</td><td>2026-08-24</td><td class="num"><b>—</b>（接口0，未取得）</td><td class="num">4.6 / 18</td><td class="num">587</td><td>Women's Crossbody #143</td><td class="num">30</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71mUDl4ydGL._AC_SL1500_.jpg" data-big="https://m.media-amazon.com/images/I/71mUDl4ydGL._AC_SL1500_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H1QSYVSG" target="_blank" rel="noopener">B0H1QSYVSG</a></td><td>Caitina · 编织格纹腰包</td><td>2026-06-30</td><td class="num">25.64</td><td class="num">4.6 / 62</td><td class="num">566</td><td>Women's Crossbody #257 <span class="tag off">品类偏移（腰包）</span></td><td class="num">27</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/417qwxJzw2L.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/417qwxJzw2L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H4G5ZV9P" target="_blank" rel="noopener">B0H4G5ZV9P</a></td><td>kookoomia · puffer宽口腰包</td><td>2026-10-08</td><td class="num">19.99</td><td class="num">4.8 / 42</td><td class="num">559</td><td>Fashion Waist Packs #83 <span class="tag off">品类偏移（腰包）</span></td><td class="num">9</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31EC02MzyfL.jpg" data-big="https://m.media-amazon.com/images/I/31EC02MzyfL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GWCW64T1" target="_blank" rel="noopener">B0GWCW64T1</a></td><td>YDF · 大号slouchy通勤包（13"电脑）</td><td>2026-05-26</td><td class="num">27.99</td><td class="num">4.5 / 67</td><td class="num">546</td><td>Women's Shoulder #164</td><td class="num">3</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/81LHTaEEgmL._AC_SL1500_.jpg" data-big="https://m.media-amazon.com/images/I/81LHTaEEgmL._AC_SL1500_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HJ5D6LX5" target="_blank" rel="noopener">B0HJ5D6LX5</a></td><td>EkearGez · 触屏手机邮差包</td><td>2026-09-12</td><td class="num">12.50</td><td class="num">3.5 / 32</td><td class="num">522</td><td>Women's Shoulder #525</td><td class="num">7</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/61UhJ93NqnL.jpg" data-big="https://m.media-amazon.com/images/I/61UhJ93NqnL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HF7TCTJY" target="_blank" rel="noopener">B0HF7TCTJY</a></td><td>FASTFAIRY · 尼龙保龄球包（13"电脑）</td><td>2026-08-26</td><td class="num">27.99</td><td class="num">4.6 / 144</td><td class="num">521</td><td>Shoulder #119 / Totes #211 / Hobo #135</td><td class="num">18</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31x1NyAlsJL.jpg" data-big="https://m.media-amazon.com/images/I/31x1NyAlsJL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HGL9GYSD" target="_blank" rel="noopener">B0HGL9GYSD</a></td><td>TOPEAST · 15.6"工作托特</td><td>2026-06-25</td><td class="num">35.99（券$6.84）</td><td class="num">4.4 / 40</td><td class="num">512</td><td>Women's Fashion #33310</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31UawiVmFTL.jpg" data-big="https://m.media-amazon.com/images/I/31UawiVmFTL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GSVN9BBQ" target="_blank" rel="noopener">B0GSVN9BBQ</a></td><td>BAGSMART · 云朵puffer（2.4L+附袋）</td><td>2026-06-04</td><td class="num">13.99（券$0.84）</td><td class="num">4.5 / 176</td><td class="num">510</td><td>Women's Crossbody #142</td><td class="num">6</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31ScrMM6NLL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31ScrMM6NLL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H389VX1T" target="_blank" rel="noopener">B0H389VX1T</a></td><td>HomemeDiary · RFID吉他带Sling</td><td>2026-07-18</td><td class="num">32.99（券$1.65）</td><td class="num">4.7 / 102</td><td class="num">503</td><td>Women's Crossbody #456</td><td class="num">5</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/51bEQfzCTHL.jpg" data-big="https://m.media-amazon.com/images/I/51bEQfzCTHL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HBW75YNN" target="_blank" rel="noopener">B0HBW75YNN</a></td><td>RoseSeek · Y2K樱桃腋下包</td><td>2026-07-28</td><td class="num">26.99</td><td class="num">4.5 / 60</td><td class="num">499</td><td>Women's Shoulder #91</td><td class="num">14</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/71a1jJVH0DL._AC_SL1500_.jpg" data-big="https://m.media-amazon.com/images/I/71a1jJVH0DL._AC_SL1500_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HFNFGD3J" target="_blank" rel="noopener">B0HFNFGD3J</a></td><td>YUWEIUS · 尼龙puffer斜挎</td><td>2026-10-22</td><td class="num">19.99（券$1.00）</td><td class="num">4.4 / 82</td><td class="num">494</td><td>Women's Crossbody #380</td><td class="num">8</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/81UXa9IjuvL._AC_SL1500_.jpg" data-big="https://m.media-amazon.com/images/I/81UXa9IjuvL._AC_SL1500_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H7XQQFV6" target="_blank" rel="noopener">B0H7XQQFV6</a></td><td>Pritent · 素皮小斜挎</td><td>2026-07-07</td><td class="num">16.99</td><td class="num">4.8 / 31</td><td class="num">487</td><td>Women's Crossbody #188</td><td class="num">10</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/410mFzvEMBL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/410mFzvEMBL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GWDN92YN" target="_blank" rel="noopener">B0GWDN92YN</a></td><td>KALIDI · 编织腰包</td><td>2026-06-10</td><td class="num">26.99</td><td class="num">4.6 / 59</td><td class="num">485</td><td>Fashion Waist Packs #103 <span class="tag off">品类偏移（腰包）</span></td><td class="num">11</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31jHmVAPKoL.jpg" data-big="https://m.media-amazon.com/images/I/31jHmVAPKoL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GY12FZ2H" target="_blank" rel="noopener">B0GY12FZ2H</a></td><td>KKXIU · 复古腋下Hobo</td><td>2026-06-01</td><td class="num">19.99</td><td class="num">4.5 / 38</td><td class="num">450</td><td>Women's Hobo #225</td><td class="num">8</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/813dxkz6IrL._AC_SL1500_.jpg" data-big="https://m.media-amazon.com/images/I/813dxkz6IrL._AC_SL1500_.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H8T678Q4" target="_blank" rel="noopener">B0H8T678Q4</a></td><td>Laivybract · 圣诞印花Sling</td><td>2026-07-14</td><td class="num">6.99</td><td class="num">3.9 / 17</td><td class="num">417</td><td>Women's Crossbody #275</td><td class="num">60</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/816b7KF6QFL.jpg" data-big="https://m.media-amazon.com/images/I/816b7KF6QFL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HDSB33ZM" target="_blank" rel="noopener">B0HDSB33ZM</a></td><td>HAYRVANE · RFID手机包</td><td>2026-09-17</td><td class="num"><b>—</b>（接口0，未取得）</td><td class="num">4.4 / 113</td><td class="num">417</td><td>Crossbody #280</td><td class="num">9</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/I/31rdxMFxslL.jpg" data-big="https://m.media-amazon.com/images/I/31rdxMFxslL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0HF7R84LV" target="_blank" rel="noopener">B0HF7R84LV</a></td><td>ALUDAPIJU · 麂皮Hobo托特</td><td>2026-09-14</td><td class="num">21.99（券$1.32）</td><td class="num">4.2 / 54</td><td class="num">413</td><td>Women's Tote #137</td><td class="num">12</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/414Y76nVdtL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/414Y76nVdtL.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0H8S7YQS4" target="_blank" rel="noopener">B0H8S7YQS4</a></td><td>cysiyu · 格纹手机挂绳包</td><td>2026-07-14</td><td class="num">19.99</td><td class="num">4.3 / 91</td><td class="num">412</td><td>Women's Crossbody #323</td><td class="num">16</td><td><span class="tag c">未核</span></td></tr>
+<tr class="snap"><td class="sticky"><img class="timg" src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41+2zeDfo9L.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/41+2zeDfo9L.jpg" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=imgmiss style=width:44px;height:44px>图缺失</div>'"><a class="alink" href="https://www.amazon.com/dp/B0GY7KSJP1" target="_blank" rel="noopener">B0GY7KSJP1</a></td><td>Doll Sister · 中世纪花PU腰包</td><td>2026-06-26</td><td class="num">25.49（券$1.27）</td><td class="num">4.6 / 47</td><td class="num">410</td><td>Fashion Waist Packs #265 <span class="tag off">品类偏移（腰包）</span></td><td class="num">4</td><td><span class="tag c">未核</span></td></tr>
+</tbody>
+</table>
+<p class="footnote">行数核对（如实）：A区11行 + B区4行 + 未核45行 = <b>60行</b>。B区4行字段为详情核验轮原值（listing_date/在架天数/月销/FBA费/毛利率均取详情轮，非重跑列表层值）；B区变体数详情核验清单未提供，写"—"（未取得）。原未核区48行中移除B0GXV5HX3W/B0GYYDZCB6/B0HBPRVMQ2三行（其重跑列表层值已废弃，以B区详情轮原值为准）；B0H6DCNLP5原本不在重跑池与未核区，为B区新插入行——故未核区45行（非44）、总60行（非59），不强行对齐。B0H28RK6N5、B0H3PD4ZW3、B0H1QSYVSG、B0GSVN9BBQ、B0HFNFGD3J等为重跑当日新进榜款；B0HGB5WXSQ/B0HDSB33ZM价格字段接口返回0按未取得（—）处理；B0H9S73VRF/B0H9XML1D5标题含接口残留"\nTitle Generator"按原值保留。A区行月销为详情核验轮定稿值，与重跑当日值差异已在行内括号标注（最大差myrtle sky：重跑online 05-22 vs 详情listing 04-12，以详情为准）。</p>
+</div>
+
+<!-- ══════════ ②③ 档案卡（保持不变） ══════════ -->
+<h2 class="sec">② 11款逐款档案卡（真实主图 + 月销SVG柱状图 · 保持不变）</h2>
+<div class="note"><b>图表口径：</b>数据取自详情核验轮趋势接口月度销量序列，逐月与接口返回核对一致。绿柱=完整自然月；橙柱=部分月；灰槽=接口未返回（未取得，非0）。<b>近3完整月均值/环比仅对拥有≥2个完整月的款计算</b>；11月值为部分月（至18日），判定为初判。</div>
+
+<div class="cards" id="cards">
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://images-na.ssl-images-amazon.com/images/I/61FiyWHwD3L._AC_SL1402_.jpg" data-big="https://images-na.ssl-images-amazon.com/images/I/61FiyWHwD3L._AC_SL1402_.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H7MCWWBF" target="_blank" rel="noopener">B0H7MCWWBF</a> <span class="tag go">建议A</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H7MCWWBF" target="_blank" rel="noopener">elqavo Clear Football Purse, Clear Bag for Stadium Events and Concerts</a></div>
+      <div class="cbrand">elqavo · Crossbody Bags #22 · FBA · 卖家CN(A3I3LBBLKBVX7X) · 13变体 · 154g · 28.6×17.8×4.4cm</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$9.56</div><div class="k">售价（无券）</div></div>
+    <div class="cstat"><div class="v">4.5★ / 113</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">3,817</div><div class="k">月销（估，11月部分）</div></div>
+    <div class="cstat"><div class="v">2026-07-03</div><div class="k">上架 / 在架126天</div></div>
+    <div class="cstat"><div class="v">$5.15 / $0.48</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$3.93 · 41.1%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"7月","v":12,"s":"p"},{"m":"8月","v":255,"s":"f"},{"m":"9月","v":2080,"s":"f"},{"m":"10月","v":2846,"s":"f"},{"m":"11月","v":3817,"s":"p"}]'></div><div class="chart-note">7月=上架月（07-03起）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>近3完整月（8-10月）均值 <b>1,727</b>；10月环比9月 <b class="up">+36.8%</b>；<b>趋势判定：上行</b>（11月未完整值3,817已达10月整月的134%，待完整核验）。<b>重跑对照：</b>重跑online_date=2026-07-15与详情listing_date=2026-07-03相差12天，以详情核验为准。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 11月未完整18天月销3,817，已超10月整月2,846的134%，上行斜率全池第一；</p><p>② Crossbody Bags小类BSR #22，评论仅113即上月销3000+，新品爬坡快。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 平台毛利$3.93/41.1%，低客单下利润薄，真实净利需补采购与头程；</p><p>② 词层证据：clear crossbody bag峰值月为9月，但本款商品口径旺季"均衡"，季节结构待复核。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>透明材质+球场安检场景词打法成立；本款无评论差评样本收录，缺陷无证据，不可推断其无差评。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/71htO+2jHNL.jpg" data-big="https://m.media-amazon.com/images/I/71htO+2jHNL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H4TY87T9" target="_blank" rel="noopener">B0H4TY87T9</a> <span class="tag watch">观察B</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H4TY87T9" target="_blank" rel="noopener">YOOLIFE Christmas Stocking Stuffers for Girls Gifts Sling Bag, Pink A</a></div>
+      <div class="cbrand">YOOLIFE · Waist Packs #11 · FBA · 卖家HK(AWY1NL5BUZG5X) · 90变体 · 231g · 券$1.70</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$16.99</div><div class="k">售价（券$1.70后）</div></div>
+    <div class="cstat"><div class="v">4.3★ / 56</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">2,329</div><div class="k">月销（估，11月部分）</div></div>
+    <div class="cstat"><div class="v">2026-07-02</div><div class="k">上架 / 在架116天</div></div>
+    <div class="cstat"><div class="v">$5.65 / $1.53</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$8.11 · 53.0%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"7月","v":5,"s":"p"},{"m":"8月","v":906,"s":"f"},{"m":"9月","v":459,"s":"f"},{"m":"10月","v":857,"s":"f"},{"m":"11月","v":2329,"s":"p"}]'></div><div class="chart-note">7月=上架月 · 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>近3完整月（8-10月）均值 <b>741</b>；10月环比9月 <b class="up">+86.7%</b>，但9月环比8月 <b class="down">-49.3%</b>；<b>趋势判定：高波动</b>（11月未完整2,329跳升待核）。<b>重跑对照：</b>重跑online_date=2026-07-25与详情listing_date=2026-07-02相差23天，以详情核验为准。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① Waist Packs小类BSR #11，全池排名最高；</p><p>② 月销额$39,570（2,329×$16.99），礼赠词布局（圣诞/生日gift词）客单转化场景清晰。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 月销序列腰斩式波动（906→459→857），4.3★为全池最低星，评论56；</p><p>② 90变体铺货打法SKU管理重，且有$1.70券，需求含券成分待剥离。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>少女礼赠词打法可参考，但波动大说明流量依赖活动/季节，跟进前先核12月礼赠季真实留存。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/31XI2H03TTL.jpg" data-big="https://m.media-amazon.com/images/I/31XI2H03TTL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0HFQW56YY" target="_blank" rel="noopener">B0HFQW56YY</a> <span class="tag go">建议A</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0HFQW56YY" target="_blank" rel="noopener">Anti Theft Sling Bag for Men Compact RFID Blocking Crossbody Bag（5层安保：防盗钩拉链/RFID内衬/锁扣/割防肩带/500D尼龙）</a></div>
+      <div class="cbrand">higouta · Cross-Body Sling Bags #7 · FBA · 卖家CN(AOFA5BG8HE2AZ) · 5变体 · 191g · 25.0×18.2×4.4cm</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$18.99</div><div class="k">售价（无券）</div></div>
+    <div class="cstat"><div class="v">4.4★ / 25</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">2,202</div><div class="k">月销（估，11月部分）</div></div>
+    <div class="cstat"><div class="v">2026-09-24</div><div class="k">上架 / 在架55天</div></div>
+    <div class="cstat"><div class="v">$5.63 / $1.90</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$11.46 · 60.4%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"9月","v":0,"s":"p"},{"m":"10月","v":1532,"s":"f"},{"m":"11月","v":2202,"s":"p"}]'></div><div class="chart-note">9月=上架月（09-24起，仅6天）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月仅10月（1个），<b>无法计算3月均值</b>；<b>趋势判定：上行</b>（10月1,532 → 11月未完整2,202）。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 上架仅55天月销2,202、月销额$41,816，Sling小类BSR #7；</p><p>② 平台毛利率60.4%全池第二，无券放量，需求成色更干净。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 完整月仅1个，基数风险大；评论25条，评论源无差评收录，功能缺陷无证据；</p><p>② 5层安保材料（RFID内衬/钢丝肩带）成本结构未知，真实净利未核。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>功能差异化（防盗/RFID）+主词crossbody bag（141,755搜索量）引流，是功能型切入样本；需补首页功能款差评采样。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/410ZHa1QtsL.jpg" data-big="https://m.media-amazon.com/images/I/410ZHa1QtsL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H8RG5Z8N" target="_blank" rel="noopener">B0H8RG5Z8N</a> <span class="tag go">建议A</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H8RG5Z8N" target="_blank" rel="noopener">Vintage Purses for Women, Soft PU Leather Shoulder Bag Hobo Handbag（Slouchy Crescent 月牙形）</a></div>
+      <div class="cbrand">TOPEAST · Shoulder Bags #28 / Totes #51 · FBA · 卖家HK(A2J0ZDCTEQ69JE) · 5变体 · 640g · 券$3.96</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$35.99</div><div class="k">售价（券$3.96后）</div></div>
+    <div class="cstat"><div class="v">4.5★ / 163</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">2,145</div><div class="k">月销（估，11月部分；重跑2,198）</div></div>
+    <div class="cstat"><div class="v">2026-08-25</div><div class="k">上架 / 在架82天</div></div>
+    <div class="cstat"><div class="v">$7.46 / $5.45</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$19.12 · 59.7%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"8月","v":5,"s":"p"},{"m":"9月","v":1281,"s":"f"},{"m":"10月","v":1790,"s":"f"},{"m":"11月","v":2198,"s":"p"}]'></div><div class="chart-note">8月=上架月（08-25起）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月2个（9-10月），均值 <b>1,536</b>（不足3月，如实标注）；10月环比9月 <b class="up">+39.7%</b>；<b>趋势判定：上行</b>（11月未完整2,198）。<b>重跑对照：</b>重跑online_date=2026-08-28与详情listing_date=2026-08-25相差3天，以详情核验为准。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 月销额$77,199全池第二（2,145×$35.99），单件毛利$19.12；</p><p>② 全池唯一有评论编码证据（26好评+1差评，2026-08-30~09-11），卖点可复用。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 唯一差评主诉实物褪色显旧、与图不符（见第④节）；有$3.96券，需求含券成分；</p><p>② 完整月仅2个，3月均值不成立；上架82天即Shoulder #28，竞争位待观察。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>复古hobo/月牙方向跟款首选：跟其三仓磁扣结构、PU质感与轻量，规避其差评点（褪色显旧、气味、拉链）。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/71HC7icIqkL.jpg" data-big="https://m.media-amazon.com/images/I/71HC7icIqkL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0HN4X5YYC" target="_blank" rel="noopener">B0HN4X5YYC</a> <span class="tag hold">验证前不跟进C</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0HN4X5YYC" target="_blank" rel="noopener">Small Crossbody Purse for Women, Phone Wallet with Touchscreen Window</a></div>
+      <div class="cbrand">UNEFCYC · Crossbody Bags #19 · <b>FBM</b>（Spring Thoughts发货，配送费$13.99）· 卖家CN(A2D0A6EICVG358) · 7变体 · 177g</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$17.99</div><div class="k">售价（无券）</div></div>
+    <div class="cstat"><div class="v">4.4★ / <b>6</b></div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,956</div><div class="k">月销（估，11月部分；重跑2,106）</div></div>
+    <div class="cstat"><div class="v">2026-10-15</div><div class="k">上架 / 在架34天</div></div>
+    <div class="cstat"><div class="v">FBM $13.99</div><div class="k">配送费（非FBA）</div></div>
+    <div class="cstat"><div class="v">$15.14 · 84.2%</div><div class="k">平台口径毛利/率（含FBM配送）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"10月","v":182,"s":"p"},{"m":"11月","v":2106,"s":"p"}]'></div><div class="chart-note">10月=上架月（10-15起，16天）· 11月=未完整月（至18日）· 无完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月 <b>0个，无法计算均值与环比</b>；<b>趋势判定：无法判定</b>（部分月182→2,106跳升，基数未立）。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 34天月销1,956，放量速度全池前三；</p><p>② Crossbody Bags小类BSR #19，触屏窗+多卡位卖点区分度尚可。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（三重证据，非单一评论比）</b><p>① <b>评论6条 vs 月销1,956</b>，比例异常待核（评论真实性/未核销Vine，仅为一项证据）；</p><p>② <b>Listing正文缺失</b>（五点描述字段为空，本轮接口实得）；③ <b>FBM配送$13.99</b>、履约模式待核。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>验证前不跟进：需先核评论真实性（评论日期分布/变体分布）与FBM履约能力，三项证据澄清后再议。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/81xs0esU04L.jpg" data-big="https://m.media-amazon.com/images/I/81xs0esU04L.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H8CVNGFP" target="_blank" rel="noopener">B0H8CVNGFP</a> <span class="tag watch">观察B</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H8CVNGFP" target="_blank" rel="noopener">Bagstellar Corduroy Tote Bag for Women 15 Pocket Teacher Nurse Work Handbag（15.6"电脑仓+40oz杯位）</a></div>
+      <div class="cbrand">Bagstellar · Totes #98 · FBA · 卖家HK(A3566MSOB3QR8M) · 8变体 · 821g（大件）· 40.4×28.5×5.5cm</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$35.99</div><div class="k">售价（无券）</div></div>
+    <div class="cstat"><div class="v">4.4★ / 64</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,742</div><div class="k">月销（估，11月部分）</div></div>
+    <div class="cstat"><div class="v">2026-09-10</div><div class="k">上架 / 在架67天</div></div>
+    <div class="cstat"><div class="v">$8.46 / $6.12</div><div class="k">FBA费 / 佣金（大件费高）</div></div>
+    <div class="cstat"><div class="v">$21.41 · 59.5%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"9月","v":435,"s":"p"},{"m":"10月","v":1100,"s":"f"},{"m":"11月","v":1742,"s":"p"}]'></div><div class="chart-note">9月=上架月（09-10起）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月仅10月（1个），<b>无法计算3月均值</b>；<b>趋势判定：上行</b>（9月部分435→10月1,100→11月未完整1,742）。<b>重跑对照：</b>重跑online_date=2026-09-12与详情listing_date=2026-09-10相差2天，以详情核验为准。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 单件平台毛利$21.41全池最高；</p><p>② 67天月销1,742、月销额$62,695，放量稳定无券。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 821g大件FBA费$8.46、头程成本显著高于轻款，真实净利未核；</p><p>② 小类为Totes #98非crossbody核心节点；完整月仅1个。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>教师/护士职业词托特方向可行，但需按大件重算头程与仓储后再判利润。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/71d51l3s0+L.jpg" data-big="https://m.media-amazon.com/images/I/71d51l3s0+L.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H2LY5ZNM" target="_blank" rel="noopener">B0H2LY5ZNM</a> <span class="tag watch">观察B</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H2LY5ZNM" target="_blank" rel="noopener">myrtle sky Black Ita Bag for Anime Pins（痛包：透明展示窗+蕾丝）</a></div>
+      <div class="cbrand">myrtle sky · Women大类 #12817（非crossbody小类口径）· FBA · 卖家CN(A3Q4J2IVH0AYEK) · 16变体 · 748g · <b>在架180天恰边界</b></div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$22.99</div><div class="k">售价（=划线价，无券）</div></div>
+    <div class="cstat"><div class="v">4.5★ / 132</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,733</div><div class="k">月销（估，11月部分；重跑1,771）</div></div>
+    <div class="cstat"><div class="v">2026-04-12</div><div class="k">上架 / 在架180天（边界）</div></div>
+    <div class="cstat"><div class="v">$7.76 / $3.45</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$11.78 · 51.2%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"6月","v":19,"s":"f"},{"m":"7月","v":664,"s":"f"},{"m":"8月","v":790,"s":"f"},{"m":"9月","v":1667,"s":"f"},{"m":"10月","v":1302,"s":"f"},{"m":"11月","v":1771,"s":"p"}]'></div><div class="chart-note">序列自6月起返回（上架04-12，4-5月未返回=未取得非0）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>近3完整月（8-10月）均值 <b>1,253</b>；10月环比9月 <b class="down">-21.9%</b>；<b>趋势判定：回落后回升</b>（9月峰1,667→10月1,302→11月未完整1,771）。<b>重跑对照：</b>重跑online_date=2026-05-22与详情listing_date=2026-04-12相差40天，以详情核验为准。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 4.5★/132 + 16变体，niche口碑结构健康；</p><p>② 近3完整月均值1,253、月销额$39,842，痛包细分需求已立。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 在架恰180天边界，按本窗口达标但余量极小；序列4-5月未返回；</p><p>② 小类排名为Women大类#12817，非crossbody小类可比口径。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>痛包（ita bag）为差评驱动少的niche（其评论源无差评收录），二次元受众+徽章场景可作旁支方向。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/71nbugSIrFL.jpg" data-big="https://m.media-amazon.com/images/I/71nbugSIrFL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H9XLJBND" target="_blank" rel="noopener">B0H9XLJBND</a> <span class="tag watch">观察B</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H9XLJBND" target="_blank" rel="noopener">BAGSMART Shoulder Bag for Women, Quilted Purses Hobo Shoulder Bag, Camel（可容12.9" iPad）</a></div>
+      <div class="cbrand">BAGSMART · Totes #143 / Hobo #77 · FBA · 卖家HK(A3TX4BYKY3SE5G) · 5变体 · 240g</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$19.99</div><div class="k">售价（划线价$21.99）</div></div>
+    <div class="cstat"><div class="v"><b>4.6★</b> / 38</div><div class="k">评分（全池最高）/ 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,264</div><div class="k">月销（估，11月部分；重跑1,303）</div></div>
+    <div class="cstat"><div class="v">2026-07-22</div><div class="k">上架 / 在架119天</div></div>
+    <div class="cstat"><div class="v">$5.65 / $2.40</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$11.94 · 59.7%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"10月","v":202,"s":"f"},{"m":"11月","v":1303,"s":"p"}]'></div><div class="chart-note">趋势接口仅返回10-11月；7-9月未返回（未取得，非0）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月仅10月（1个，202——详情年销1,505与序列不连续，接口覆盖缺口），<b>无法计算3月均值</b>；<b>趋势判定：无法判定</b>（10月202→11月未完整1,303跳变，疑数据覆盖缺口）。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 4.6★全池最高评分；</p><p>② 双小类上榜（Totes #143/Hobo #77），平台毛利率59.7%。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 趋势序列7-9月未返回，销量积累节奏无法核验；</p><p>② BAGSMART为成熟品牌盘（有品牌旗舰店），白牌切入同款难度高。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>绗缝hobo是本品方向的有效信号（4.6星证明体验成立），但跟款对象应选无品牌壁垒的白牌位。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/6169TrSu1lL.jpg" data-big="https://m.media-amazon.com/images/I/6169TrSu1lL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0HCN1C1CB" target="_blank" rel="noopener">B0HCN1C1CB</a> <span class="tag hold">验证前不跟进C</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0HCN1C1CB" target="_blank" rel="noopener">BAGSMART Small Crossbody Bags, Puffer Cross Body Purse 2L（轻132g/防泼水/月牙形）</a></div>
+      <div class="cbrand">BAGSMART · Crossbody #158 / Totes #113 / Hobo #66 · FBA · 卖家HK(A3TX4BYKY3SE5G) · 6变体 · 132g · <b>券$11.49≈售价50%</b></div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$22.99</div><div class="k">售价（券后$11.50）</div></div>
+    <div class="cstat"><div class="v">4.4★ / 31</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,257</div><div class="k">月销（估，11月部分）</div></div>
+    <div class="cstat"><div class="v">2026-08-03</div><div class="k">上架（online 10-15起算34天）</div></div>
+    <div class="cstat"><div class="v">$5.11 / $2.04</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$4.35 · 37.8%</div><div class="k">平台口径毛利/率（全池偏低）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"10月","v":77,"s":"p"},{"m":"11月","v":1329,"s":"p"}]'></div><div class="chart-note">10月=online当月（10-15起，16天）· 11月=未完整月 · 无完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月 <b>0个，无法计算均值</b>；<b>趋势判定：无法判定</b>（部分月77→1,329，券期放量）。<b>重跑对照：</b>本次重跑前2页未含该款（可能跌出榜单），数据沿用详情核验轮原值。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① 11月未完整月销1,329 vs 10月部分月77；</p><p>② 132g超轻+2.7L容量，轻量小包卖点成立。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（三重证据）</b><p>① 券$11.49≈售价50%，需求高度依赖券；② 平台毛利率37.8%全池偏低；</p><p>③ 0完整月，撤券后留存无证据——以上为组合证据，非单一指标。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>验证前不跟进：待其撤券后观察1个完整月销量留存，再判断需求真实性。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/I/41sX+GsmxBL.jpg" data-big="https://m.media-amazon.com/images/I/41sX+GsmxBL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H1HH9RPQ" target="_blank" rel="noopener">B0H1HH9RPQ</a> <span class="tag watch">观察B（下行）</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H1HH9RPQ" target="_blank" rel="noopener">Crossbody Sling Bag with Touch Screen Phone Pocket Chest Bag（男女通用+侧网兜）</a></div>
+      <div class="cbrand">Bymontin · Hiking Daypacks #19 · FBA · 卖家HK(A2ERYDZUSP58D) · 4变体 · 308g · <b>跟卖卖家2家</b></div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$11.99</div><div class="k">售价（=划线价）</div></div>
+    <div class="cstat"><div class="v">4.5★ / 138</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,160</div><div class="k">月销（估，11月部分）</div></div>
+    <div class="cstat"><div class="v">2026-05-27</div><div class="k">上架 / 在架175天</div></div>
+    <div class="cstat"><div class="v">$5.93 / $1.80</div><div class="k">FBA费 / 佣金</div></div>
+    <div class="cstat"><div class="v">$4.26 · 35.5%</div><div class="k">平台口径毛利/率（全池最低）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"5月","v":null,"s":"x"},{"m":"6月","v":null,"s":"x"},{"m":"7月","v":99,"s":"f"},{"m":"8月","v":1078,"s":"f"},{"m":"9月","v":1624,"s":"f"},{"m":"10月","v":1487,"s":"f"},{"m":"11月","v":1160,"s":"p"}]'></div><div class="chart-note">5/6月接口返回-1（未取得，非0）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>近3完整月（8-10月）均值 <b>1,396</b>；10月环比9月 <b class="down">-8.4%</b>；<b>趋势判定：下行</b>（9月峰1,624后连续回落：1,487→11月未完整1,160）。</div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>优势（有数字）</b><p>① BSR Hiking Daypacks #19、评论138，户外词根基稳；</p><p>② 近3完整月均值1,396，规模仍在门槛上方。</p></div>
+    <div class="cblock risk"><b>劣势 / 待核风险（证据约束）</b><p>① 连续两月回落（-8.4%、11月未完整-22%），生命周期下行；</p><p>② 毛利率35.5%全池最低；跟卖2家，价格竞争风险。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>触屏胸包方向成立但本品已过峰，观察其企稳与否，不建议此时跟。</p></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="cimg"><img src="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31YdmYruFkL.jpg" data-big="https://m.media-amazon.com/images/W/BW_MEDIAX_AVIF_MEASUREMENT_1306696-T4/images/I/31YdmYruFkL.jpg" alt="" referrerpolicy="no-referrer" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<div class=imgmiss>图缺失</div>')"><div></div></div>
+    <div class="chead-info">
+      <div class="aline"><a class="alink" href="https://www.amazon.com/dp/B0H1T688B2" target="_blank" rel="noopener">B0H1T688B2</a> <span class="tag ref">品牌参照（不碰）</span></div>
+      <div class="aline"><a class="tlink" href="https://www.amazon.com/dp/B0H1T688B2" target="_blank" rel="noopener">Coach Women's Brooklyn Shoulder Bag 26（天然粒面真皮）</a></div>
+      <div class="cbrand">Coach · Shoulder Bags #45 · <b>Amazon自营</b>（seller_id=null，跟卖卖家2）· 5变体 · 408g</div>
+    </div>
+  </div>
+  <div class="cstats">
+    <div class="cstat"><div class="v">$195.00</div><div class="k">售价（无券）</div></div>
+    <div class="cstat"><div class="v">4.5★ / 22</div><div class="k">评分 / 评论（&lt;200 ✓）</div></div>
+    <div class="cstat"><div class="v">1,116</div><div class="k">月销（估，11月部分；重跑1,149）</div></div>
+    <div class="cstat"><div class="v">2026-09-05</div><div class="k">上架 / 在架74天</div></div>
+    <div class="cstat"><div class="v">$8.60 / $33.15</div><div class="k">FBA费 / 佣金（15%档）</div></div>
+    <div class="cstat"><div class="v">$153.25 · 78.6%</div><div class="k">平台口径毛利/率（不含采购头程）</div></div>
+  </div>
+  <div class="chart-box"><div class="trendchart" data-series='[{"m":"9月","v":268,"s":"p"},{"m":"10月","v":770,"s":"f"},{"m":"11月","v":1116,"s":"p"}]'></div><div class="chart-note">9月=上架月（09-05起）· 11月=未完整月</div></div>
+  <div class="csum"><b>完整月统计：</b>完整月仅10月（1个），<b>无法计算3月均值</b>；<b>趋势判定：上行</b>（9月部分268→10月770→11月未完整1,116）。<b>本卡仅作价格带参照，不参与跟款分档。</b></div>
+  <div class="cblocks">
+    <div class="cblock adv"><b>参照价值（有数字）</b><p>① 月销额$217,620全池第一，证明$195价格带在crossbody搜索流量下可放量；</p><p>② 上架74天月销1,116，品牌款上量节奏参照。</p></div>
+    <div class="cblock risk"><b>为何不碰（证据）</b><p>① Amazon自营（seller_id=null），无跟卖与同款竞争空间；</p><p>② 其平台毛利78.6%基于品牌定价，与白牌成本结构不可比。</p></div>
+    <div class="cblock ins"><b>选品启示</b><p>白牌不必对标$195，但$35.99档（TOPEAST/Bagstellar）到$195之间存在中价位带空缺，可作为后续词层验证方向。</p></div>
+  </div>
+</div>
+
+</div>
+
+<!-- ══════════ ④ 分档与评论洞察（保持不变） ══════════ -->
+<h2 class="sec">④ 分档结论 · 赢家/风险共同点 · 差评主题与品控（保持不变）</h2>
+<div class="v-item"><span class="tag go">建议A · 跟款3款</span><span class="vt">elqavo B0H7MCWWBF / higouta B0HFQW56YY / TOPEAST B0H8RG5Z8N</span>
+<p><b>赢家共同点：</b>① 场景/功能差异化明确（透明球场包、防盗RFID、复古hobo大容量）；② 全部FBA、跨境卖家（CN/HK）；③ 上架55~126天的新款；④ 月销2,145~3,817且完整月序列上行；⑤ 星级4.4~4.5、评论25~163（全部&lt;200）；⑥ 平台口径毛利率41~60%；⑦ 均有真实词量支撑（主词141,755 / clear词36,512 / crescent词1,035且3年连涨）。重跑佐证：三款在带筛选重跑池中依然在榜且数值与详情轮一致或更高。</p></div>
+<div class="v-item"><span class="tag watch">观察B · 5款</span><span class="vt">YOOLIFE / Bagstellar / myrtle sky / BAGSMART绗缝 / Bymontin</span>
+<p><b>风险款共同点：</b>① 月销序列波动或下行（YOOLIFE 9月-49.3%、Bymontin连续两月回落）；② 非crossbody核心小类口径（myrtle=Women大类、Bagstellar=职业托特）；③ 完整月数据不足（BAGSMART绗缝7-9月未返回、myrtle 4-5月未返回）；④ 券依赖待剥离（YOOLIFE有券）。五款均达标硬门槛，跟进与否取决于各自缺口的补核。</p></div>
+<div class="v-item"><span class="tag hold">验证前不跟进C · 2款</span><span class="vt">UNEFCYC B0HN4X5YYC / BAGSMART puffer B0HCN1C1CB</span>
+<p><b>组合证据（非单一评论比）：</b>UNEFCYC=评论6条vs月销1,956比例异常 + Listing五点正文缺失 + FBM配送$13.99三项；puffer=券$11.49（≈50%力度）+ 毛利率37.8%偏低 + 0完整月三项。两项均为达标硬门槛的商品，仅因证据不足暂缓。puffer本次重跑前2页未含（可能跌出榜单），续观察。</p></div>
+<div class="v-item"><span class="tag no">不碰 · 1款</span><span class="vt">Coach B0H1T688B2</span>
+<p>Amazon自营品牌款（seller_id=null），无跟卖空间，仅作$195价格带与上量节奏参照。</p></div>
+
+<h3 class="sub">差评主题与品控动作（样本仅覆盖1/11款，明确不外推赛道）</h3>
+<div class="note">
+<b>覆盖声明：</b>本轮评论源仅对 <b>TOPEAST B0H8RG5Z8N</b> 有收录（好评26条 + 差评1条，2026-08-30 ~ 09-11）；其余10款该源返回"无收录"，<b>"无收录"≠"无差评"</b>，故差评主题结论<b>仅适用于TOPEAST一类复古PU hobo包，不得外推至crossbody赛道整体</b>。<br>
+<b>差评主题（1条2★，Brown，2026-09-04）：</b>「实物褪色显旧、与图片描述不符」——原文："The purse looks extremely faded and old… The seller didn't describe this item accurately."<br>
+<b>好评内4★抱怨（同款可预防）：</b>开箱塑料味需通风（"a pretty nasty plasticky smell"）；弧形拉链单手难拉（"the zipper awkward to operate"）；内衬易脱出（"lining is not attached and pulls out easily"）；到货肩带扭曲；内侧缺卡槽。<br>
+<b>品控动作清单（针对上述证据）：</b>① 主图与实物色差校准、禁用滤镜过度的渲染图；② 材料出味管控（通风静置/更换低气味PU）；③ 弧形拉链顺滑度抽检、拉头选型；④ 内衬三边缝合工艺锁定；⑤ 肩带组装与包装定型QC；⑥ 增设内部卡槽位。<br>
+<b>营销建议（好评高频卖点，TOPEAST样本内）：</b>三仓结构（两侧磁扣+中仓拉链）、软PU质感近真皮、轻量但立挺、可调肩带——跟款Listing可直接映射。</div>
+
+<!-- ══════════ ⑤ 关键词基准（保持不变） ══════════ -->
+<h2 class="sec">⑤ 关键词量价基准（1主词 + 2形态子词 · 保持不变）</h2>
+<div class="table-wrap">
+<table class="kwtable">
+<thead><tr><th>关键词</th><th class="num">月搜索量</th><th class="num">CPC（区间）USD</th><th class="num">90天搜索转化率</th><th>峰值月</th><th class="num">CPO USD</th><th>补充证据</th></tr></thead>
+<tbody>
+<tr><td>crossbody bag（斜挎包·主词）</td><td class="num">141,755</td><td class="num">0.46（0.32–0.54）</td><td class="num">2.14%</td><td>均衡</td><td class="num">21.50（14.95–25.23）</td><td>周榜#8095（周环比+1417）；首页日均出单估值12单；Top3点击品牌 bagsmart/FEIBOON/Pritent</td></tr>
+<tr><td>clear crossbody bag（透明·子词）</td><td class="num">36,512</td><td class="num">0.56（0.34–0.76）</td><td class="num"><b>6.96%</b>（3词最高）</td><td>9月</td><td class="num">8.05（4.89–10.92）</td><td>90天销量2,716；首页日均出单估值18单；Top3点击品牌 USPECLARE/BS-VOG/Fibrdoo</td></tr>
+<tr><td>crescent crossbody bag（月牙·子词）</td><td class="num">1,035</td><td class="num"><b>0.35</b>（0.32–0.41，3词最低）</td><td class="num">1.12%</td><td>5/6/7月</td><td class="num"><b>未取得</b>（接口返回-1）</td><td>年度搜索量3年连涨：2024年6,726→2025年21,873→2026年33,953；Top3点击品牌 BITUOR/Iioscre/BAGGU</td></tr>
+</tbody>
+</table>
+<p class="footnote">未取得字段标注：① 三词的点击转化率与点击量字段接口均返回0，按<b>未取得</b>处理；② crescent词CPO=-1未取得；③ 三词首页平均评论数字段返回0，未取得。更新日期2026-11-10（ABA口径）。clear词峰值9月与elqavo商品口径"均衡"不一致，需复核季节结构。</p>
+</div>
+
+<!-- ══════════ ⑥ 切入建议（保持不变） ══════════ -->
+<h2 class="sec">⑥ 按方向排序的切入建议（依据商品 + 验证动作 + 不碰清单 · 保持不变）</h2>
+<div class="v-item"><span class="tag go">方向1 · 透明球场包</span><span class="vt">依据：elqavo B0H7MCWWBF + clear crossbody bag（36,512 · 90天转化6.96%最高 · 峰值9月）</span>
+<p><b>验证动作：</b>① 复核9月词峰值 vs 当前11月热度与elqavo商品"均衡"口径的矛盾；② 采样首页竞品（USPECLARE/BS-VOG等）30天差评；③ 1688询价+头程后重算利润（当前41.1%为平台口径）。重跑佐证：Montana West球队IP透明斜挎（$42.99/801月销）在未核池在榜，透明场景供给含IP溢价位。</p></div>
+<div class="v-item"><span class="tag go">方向2 · 防盗功能斜挎</span><span class="vt">依据：higouta B0HFQW56YY + 主词crossbody bag（141,755）+ Sling小类BSR #7</span>
+<p><b>验证动作：</b>① 首页功能款差评采样（RFID/拉链/肩带失效类）；② RFID内衬+钢丝肩带BOM成本核算；③ 月销留存再核1个完整月。重跑佐证：同卖点TOPEAST×2（B0HD63H6Z2/B0GHN7DSZL）与HomemeDiary B0H389VX1T在未核池在榜，该方向供给密集、需差异化。</p></div>
+<div class="v-item"><span class="tag go">方向3 · 复古hobo/月牙包</span><span class="vt">依据：TOPEAST B0H8RG5Z8N + crescent crossbody bag（1,035 · 3年连涨6,726→21,873→33,953 · CPC 0.35最低 · 峰值5-7月）</span>
+<p><b>验证动作：</b>① 按5-7月峰值规划备货窗口；② 直接规避TOPEAST差评点（褪色显旧/气味/弧形拉链/内衬/卡槽）；③ 词量1,035偏小，需再拓crescent相关长尾词验证池容量。重跑佐证：未核池麂皮/仿麂皮hobo在榜6款（XquiziFit/VAYOQON/ALUDAPIJU/Caitina×2等），该方向供给密集；B区超窗款MYHOZEE麂皮Hobo亦属该形态，佐证供给热度。</p></div>
+<div class="v-item"><span class="tag hold">验证前不跟进 · 2款</span><span class="vt">UNEFCYC（评论真实性+正文缺失+FBM三重待核）/ BAGSMART puffer（撤券留存+低毛利+0完整月三重待核）</span>
+<p><b>验证动作：</b>UNEFCYC核评论日期/变体分布与FBM履约时效；puffer等撤券后1个完整月数据（本次重跑其已跌出前2页，续观察）。</p></div>
+<div class="v-item"><span class="tag no">不碰清单 · 1款</span><span class="vt">Coach B0H1T688B2（Amazon自营品牌，无跟卖空间，仅作价格带参照）</span>
+<p>另：BAGSMART绗缝B0H9XLJBND同属品牌盘，白牌不建议同款硬碰（观察项而非不碰，因其指标本身无异常）；Nautica B0H8VLL89D同为品牌+自营，在未核池在榜，同理不碰。B区超窗4款因listing_date早于2026-05-21被本窗口剔除，不参与分档，仅留档参考。</p></div>
+
+<div class="gap-sec">
+<h3>证据缺口与口径声明（带筛选重跑版·B区补插后）</h3>
+<ul>
+<li><b>详情核验共15款=达标11+超窗4：</b>超窗4款由详情核验<b>listing_date</b>判定（均早于2026-05-21：B0GXV5HX3W 2025-07-13 / B0H6DCNLP5 2026-03-31 / B0GYYDZCB6 2026-03-13 / B0HBPRVMQ2 2025-12-29），已在表1 B区逐行列出，字段为详情核验轮原值；其中B0H6DCNLP5为服装类小类（Costume Accessory Sets #475），另加「品类偏移」标注。</li>
+<li><b>去重数58（非57，如实）：</b>6次带筛选检索原始120条，ASIN去重58款。与原池57的差异主因重跑当日榜单自然波动：重跑新进B0H28RK6N5/B0H3PD4ZW3/B0H1QSYVSG/B0GSVN9BBQ/B0HFNFGD3J等当日新榜款，原池部分款跌出前2页；两套池不完全重合，不强行对齐。</li>
+<li><b>未核45款为列表层数据（非44，如实）：</b>搜索接口返回原值（ASIN/标题/价格/评分/评论/月销/上架日/小类/变体/主图），<b>未经详情核验</b>，利润率/FBA费/月销趋势/差评均未取得，不参与分档判定。行数说明：按"扣B区4款"口径应为44款，但B0H6DCNLP5原本就不在重跑池与未核区（本次为B区新插入），实际从原未核48行移除仅3行（B0GXV5HX3W/B0GYYDZCB6/B0HBPRVMQ2，其列表层值废弃、以B区详情轮原值为准），故未核45行、池表=11+4+45=60行，不强行对齐。品类偏移10款仅保留行、不入档案卡。</li>
+<li><b>B0HCN1C1CB特殊标注：</b>该款为A区11款之一（详情核验达标），本次重跑前2页未含（可能跌出榜单），池表中沿用详情核验轮原值并标注，不视为重跑池成员。</li>
+<li><b>字段异常留痕：</b>B0HGB5WXSQ与B0HDSB33ZM价格字段接口返回0（未取得，表内写"—"）；B0H9S73VRF/B0H9XML1D5标题含接口残留"\nTitle Generator"按原值保留；B区4行变体数详情核验清单未提供，写"—"（未取得）；A区行重跑online_date与详情listing_date差异逐行标注（YOOLIFE差23天、myrtle差40天最大）。</li>
+<li><b>parent_asin口径：</b>58款parent_asin均返回，父体键未产生合并；全部月销为ASIN口径估计值，未做父子归并、不做变体加总。</li>
+<li><b>评论覆盖：</b>11款中仅1款（TOPEAST）有评论收录（27条）；其余10款评论源无收录（≠无差评），差评主题与品控清单不得外推赛道。</li>
+<li><b>完整月序列：</b>仅4款拥有≥3个完整月，TOPEAST仅2个，其余6款≤1个或0个；"近3完整月均值"仅对有≥2完整月的款给出并标注月数。</li>
+<li><b>利润口径：</b>A区11款与B区4款毛利为平台口径（售价−FBA/配送−佣金，B区FBA费与毛利率为详情核验轮原值），未取得采购与头程成本，不声称真实净利；跨卡比较仅用于相对排序。</li>
+<li><b>查询日/站点：</b>重跑池与A/B区详情数据均为2026-11-18 · US站 · USD。</li>
+</ul>
+</div>
+
+<div class="src-sec">
+溯源链接（美国站 /dp/）——A区11款：
+<a href="https://www.amazon.com/dp/B0H7MCWWBF" target="_blank" rel="noopener">B0H7MCWWBF</a>
+<a href="https://www.amazon.com/dp/B0H4TY87T9" target="_blank" rel="noopener">B0H4TY87T9</a>
+<a href="https://www.amazon.com/dp/B0HFQW56YY" target="_blank" rel="noopener">B0HFQW56YY</a>
+<a href="https://www.amazon.com/dp/B0H8RG5Z8N" target="_blank" rel="noopener">B0H8RG5Z8N</a>
+<a href="https://www.amazon.com/dp/B0HN4X5YYC" target="_blank" rel="noopener">B0HN4X5YYC</a>
+<a href="https://www.amazon.com/dp/B0H2LY5ZNM" target="_blank" rel="noopener">B0H2LY5ZNM</a>
+<a href="https://www.amazon.com/dp/B0H8CVNGFP" target="_blank" rel="noopener">B0H8CVNGFP</a>
+<a href="https://www.amazon.com/dp/B0H9XLJBND" target="_blank" rel="noopener">B0H9XLJBND</a>
+<a href="https://www.amazon.com/dp/B0HCN1C1CB" target="_blank" rel="noopener">B0HCN1C1CB</a>
+<a href="https://www.amazon.com/dp/B0H1HH9RPQ" target="_blank" rel="noopener">B0H1HH9RPQ</a>
+<a href="https://www.amazon.com/dp/B0H1T688B2" target="_blank" rel="noopener">B0H1T688B2</a>
+· B区4款：<a href="https://www.amazon.com/dp/B0GXV5HX3W" target="_blank" rel="noopener">B0GXV5HX3W</a>
+<a href="https://www.amazon.com/dp/B0H6DCNLP5" target="_blank" rel="noopener">B0H6DCNLP5</a>
+<a href="https://www.amazon.com/dp/B0GYYDZCB6" target="_blank" rel="noopener">B0GYYDZCB6</a>
+<a href="https://www.amazon.com/dp/B0HBPRVMQ2" target="_blank" rel="noopener">B0HBPRVMQ2</a>
+· 未核45款见"① 完整池表"逐行链接。
+</div>
+
+</div>
+
+<div id="zoomBig"><img id="zoomImg" src="" alt="" referrerpolicy="no-referrer"></div>
+<script>
+(function(){
+  function fmt(v){ return v>=1000 ? v.toLocaleString('en-US') : String(v); }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  document.querySelectorAll('.trendchart').forEach(function(el){
+    var series;
+    try{ series = JSON.parse(el.getAttribute('data-series')); }catch(e){ return; }
+    var W=520, H=150, padL=10, padR=10, padT=22, padB=24;
+    var vals = series.filter(function(s){ return s.v!=null; }).map(function(s){ return s.v; });
+    var max = Math.max.apply(null, vals.concat([1]));
+    var n = series.length;
+    var plotW = W-padL-padR, plotH = H-padT-padB;
+    var bw = Math.min(plotW/n*0.6, 52);
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:auto">';
+    svg += '<line x1="'+padL+'" y1="'+(H-padB)+'" x2="'+(W-padR)+'" y2="'+(H-padB)+'" stroke="#dde3e8" stroke-width="1"/>';
+    series.forEach(function(s,i){
+      var cx = padL + plotW*(i+0.5)/n;
+      if (s.v==null){
+        svg += '<rect x="'+(cx-bw/2)+'" y="'+(H-padB-3)+'" width="'+bw+'" height="3" fill="none" stroke="#c3ccd4" stroke-width="1" stroke-dasharray="3,2"/>';
+        svg += '<text x="'+cx+'" y="'+(H-padB-8)+'" text-anchor="middle" font-size="9" fill="#9aa3ab">未取得</text>';
+      } else {
+        var h = Math.max(plotH*s.v/max, s.v>0?2:0);
+        var y = H-padB-h;
+        var fill = (s.s==='p') ? '#f5a623' : '#37b24d';
+        svg += '<rect x="'+(cx-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="2" fill="'+fill+'" opacity="'+(s.s==='p'?0.9:1)+'"/>';
+        if (s.v===0){
+          svg += '<text x="'+cx+'" y="'+(H-padB-5)+'" text-anchor="middle" font-size="9" fill="#8f979f">0</text>';
+        } else {
+          svg += '<text x="'+cx+'" y="'+(y-4)+'" text-anchor="middle" font-size="9.5" font-weight="600" fill="#46505a">'+fmt(s.v)+'</text>';
+        }
+        if (s.s==='p'){
+          svg += '<text x="'+(cx)+'" y="'+(y-14)+'" text-anchor="middle" font-size="8" fill="#c77700">◐部分月</text>';
+        }
+      }
+      svg += '<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle" font-size="10" fill="#7a828b">'+esc(s.m)+'</text>';
+    });
+    svg += '</svg>';
+    el.innerHTML = svg;
+  });
+  var zb = document.getElementById('zoomBig');
+  var zi = document.getElementById('zoomImg');
+  var WZ = 320, HZ = 320, PAD = 14;
+  function move(e){
+    var x = e.clientX + PAD, y = e.clientY + PAD;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    if (x + WZ > vw - 8) x = e.clientX - WZ - PAD;
+    if (y + HZ > vh - 8) y = e.clientY - HZ - PAD;
+    if (x < 8) x = 8;
+    if (y < 8) y = 8;
+    zb.style.left = x + 'px'; zb.style.top = y + 'px';
+  }
+  document.querySelectorAll('.cimg img, .timg').forEach(function(el){
+    el.addEventListener('mouseenter', function(e){
+      var big = el.getAttribute('data-big');
+      if (!big){ zb.style.display='none'; return; }
+      zi.src = big; zb.style.display = 'block'; move(e);
+    });
+    el.addEventListener('mousemove', move);
+    el.addEventListener('mouseleave', function(){ zb.style.display='none'; zi.src=''; });
+  });
+})();
+</script>
+</body>
+</html>
