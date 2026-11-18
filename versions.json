@@ -3,6 +3,19 @@
  "entries": [
   {
    "date": "2026-11-18",
+   "target": "amazon-scene-skills-21-regression",
+   "action": "21场景深度层全量真实UI回归（21会话/560+调用）：17通过/2部分/1未通过/1合规收口；三缺陷（场景13工具交付HTML、场景2 execute_code循环熔断、场景19 iframe外链交付）落为21技能「报告交付通道门禁」章节并同步导航",
+   "files": [
+    "skill/amazon-depth-regression-2026-11-18.html",
+    "ozon-skill-hub.html",
+    "skill/index.html",
+    "tmp/depth_regression_verdicts_20261118.json",
+    "tmp/depth_regression_summary_20261118.json"
+   ],
+   "evidence": "skill/amazon-depth-regression-2026-11-18.html"
+  },
+  {
+   "date": "2026-11-18",
    "target": "amazon-scene-skills-21-depth",
    "action": "21场景技能逐个对照运营实测报告(amz-01~20.html)骨架，各追加「深度交付层」章节（双榜结构/漏斗叙事/分层档案/敏感性矩阵/分形态判定/新品实证等）；线上21/21回读一致，两份导航同步并发布",
    "files": [
