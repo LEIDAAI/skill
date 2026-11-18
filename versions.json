@@ -2704,6 +2704,15 @@
      "finding": "修复与场景7共用会话36a43bf5导致的跳转错乱，现为独立会话"
     }
    }
+  },
+  {
+   "ts": "2026-11-18 23:30:00 +08:00",
+   "target": "hub:index.html + skills:youweiai-tmeu-scene-*",
+   "action": "build",
+   "summary": "TEMU场景技能层搭建完成：按《店雷达跨境选品提示词库·平台对照表v3.112》Temu页14场景逐个落成独立场景技能（youweiai-tmeu-scene-category-hot/blue-ocean/price-band-potential/score-verify/ftd-profit/ftd-market-report/item-blue-ocean/product-compare/my-item-reference/life-cycle/six-factor/semi-new-motion/batch-image-source/ftd-new-motion），正文含必填追问/触发/分工/输出形态/原始口径逐字/数据源/执行步骤/公共纪律/异常处理，TEMU口径坑位（min_usd_price、same_num显式_fields、脱敏、快照口径、IP初筛、504降级、分页重复切片）写入对应技能。专家temu-selection-assistant绑7公共+14场景=21技能并补绑1688通道（gateway+1688数据源）供场景13/5。14场景全部真实UI会话执行（13通过、场景6部分通过：全托大盘统计接口不可用按降级通道样本估算醒目标注；场景13首次工具未绑如实披露后补绑重跑；场景14前次回答截断换新会话重跑收口），对照表原报告8维度查优补漏完成。导航两份HTML新增14场景卡片与实测证据，报告skill/temu-scene-acceptance-2026-11-18.html。",
+   "snapshots": {
+    "note": "回滚：index.html取本次发布父提交blob；14场景技能content见tmp/temu_scenes_20261118/create_results.json与线上GET。"
+   }
   }
  ]
 }
