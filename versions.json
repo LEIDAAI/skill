@@ -2548,6 +2548,16 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 15:25:00",
+   "target": "ozon-nav",
+   "action": "修复弹窗\"打开实测对话\"指向旧会话导致只看到1款图搜",
+   "note": "用户发现点开场景9实测对话仍是1款图搜的老会话。根因：之前只更新了docStandard.chatUrl，而弹窗\"打开实测对话\"读的是demo.chatUrl/chatUrls/linkUrls，仍指向11-17老会话。本轮把9场景这些字段全部指向本轮达标会话（场景9=ce66d7d8即100款全量图搜）。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }
