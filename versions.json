@@ -2538,6 +2538,16 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 15:10:00",
+   "target": "ozon-nav",
+   "action": "弹窗执行过程/明细表/结论对齐本轮达标",
+   "note": "用户发现点开实测：顶部KPI已达标但下方\"执行过程/结果数据表格/结论\"仍是11-17未通过旧内容，自相矛盾。本轮把9场景demo.flow/table/conclusion改为本轮达标会话摘要，整套弹窗内容一致。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }
