@@ -2462,13 +2462,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'a15ba861-7314-445b-9ff4-485d70cb3f40',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '找BSR排名上升最快、有真实涨幅证据的商品（Open WebUI 场景技能 youweiai-amazon-scene-bsr-riser）',
 
     triggers: ['BSR上升的狗玩具有哪些','场景1'],
 
-    demo: {"title": "实测：BSR飙升潜力款 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景1 · 08:59"}, {"label": "接口调用", "v": "36 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站 women handbag 女包里 BSR 排名上升最快的商品", "执行链路：KPI+BSR明细表（36次调用：类目核对+候选逐款详情+BSR日级趋势防单月脉冲）", "实测证据：找到唯一真实上升款并核BSR日级序列"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a15ba861…（Open WebUI 可回溯）"], ["接口调用", "36 次 · sorftime_product_detail×22、sorftime_product_trend×8、sorftime_product_search×2、view_skill×1"], ["报告体量", "HTML 17KB · 表格1张 · 主图9张"], ["质量核验", "找到唯一真实上升款并核BSR日级序列"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/a15ba861-7314-445b-9ff4-485d70cb3f40"]},
+    demo: {"title": "实测：BSR飙升潜力款 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "24 次"}, {"label": "报告", "v": "20225字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "双榜结构（主榜+待核区+剔除对照区）；BSR轨迹逐款证据；不推荐原因逐款", "实测证据：会话 6e7e1515…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "6e7e1515-dcba-4a9c-ab85-6a6255e91a5b（Open WebUI 可回溯）"], ["接口调用", "24 次（真实工具链）"], ["报告体量", "20225字 · 表3 · 图19 · 链接25"], ["质量核验", "双榜结构（主榜+待核区+剔除对照区）；BSR轨迹逐款证据；不推荐原因逐款"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/6e7e1515-dcba-4a9c-ab85-6a6255e91a5b"]},
 
   },
 
@@ -2494,13 +2494,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '5afe1deb-32f0-448c-bb2e-e7bbe5155ef6',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '1688订单数>2筛类目，按采购价分档选款，轻小件优先（Open WebUI 场景技能 youweiai-amazon-scene-fbm-small-batch-test）',
 
     triggers: ['帮我用FBM测款逻辑选品','场景2'],
 
-    demo: {"title": "实测：FBM小批测款法 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "会话调用", "v": "181+13 次"}, {"label": "报告", "v": "HTML 10.9KB"}, {"label": "质量", "v": "✓ 修复后通过"}], "flow": ["初轮：ask_user问站点类目→1688分档执行，但 execute_code 同参死循环被熔断（181次），正文结论完整、HTML未渲染", "修复轮（同会话补参重跑）：美国站+家居收纳→1688召回20→严格口径过滤剩7款（剔除拖鞋/童装等13条非收纳）→7/7逐款SKU核验全通过", "深度层交付：三口径样本核验表+逐款明细（8图7条1688链接）+分档测款数量+首测货值+测款成功标准"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "600cf72c…（Open WebUI 可回溯）"], ["三口径核验", "宽松20→严格7→逐款核验7/7，每层真实性判据齐全"], ["报告体量", "HTML 10.9KB · 表格2张 · 主图8张 · 1688链接7条"], ["交付门禁", "修复轮直接回复正文HTML输出，未用execute_code/iframe（门禁生效实证）"]]}, "note": "初轮暴露execute_code循环熔断缺陷→已落为21技能「报告交付通道门禁」；修复轮全链路通过，深度层（三口径核验+分档）生效。历史11-14实测（5afe1deb，44KB/51图）保留可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/600cf72c-bebc-4758-a16b-82a4e5a01ea2"]},
+    demo: {"title": "实测：FBM小批测款法 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "181 次"}, {"label": "报告", "v": "HTML 10.9KB"}, {"label": "质量", "v": "✓ 修复后通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "初轮execute_code循环熔断→同会话补参重跑：三口径20→7→7/7逐款核验全过", "实测证据：会话 600cf72c…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "600cf72c-bebc-4758-a16b-82a4e5a01ea2（Open WebUI 可回溯）"], ["接口调用", "181 次（真实工具链）"], ["报告体量", "HTML 10.9KB · 表2 · 图8 · 1688链7"], ["质量核验", "初轮execute_code循环熔断→同会话补参重跑"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/600cf72c-bebc-4758-a16b-82a4e5a01ea2"]},
 
   },
 
@@ -2526,13 +2526,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'a815f59f-59cb-48a8-967e-a0cc9ce4392e',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '搜索量/购买率/卖家数A模式或PPC/供需比B模式批量筛词（Open WebUI 场景技能 youweiai-amazon-scene-keyword-supply-demand）',
 
     triggers: ['这批关键词帮我供需双筛','场景3'],
 
-    demo: {"title": "实测：关键词选品·供需双筛 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景3 · 09:00"}, {"label": "接口调用", "v": "12 次"}, {"label": "HTML报告", "v": "43KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：satchel bag等三词做A/B双模式筛选", "执行链路：逐词keyword_detail+词下商品核验；接口缺供需比/卖家数时A严格0命中、B不可判定（不造数）", "实测证据：逐词核验+字段缺失如实标不可判定"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a815f59f…（Open WebUI 可回溯）"], ["接口调用", "12 次 · sorftime_keyword_detail×4、sorftime_keyword_search_from_name×3、sorftime_keyword_search_results×3、view_skill×1"], ["报告体量", "HTML 43KB · 表格4张 · 主图3张"], ["质量核验", "逐词核验+字段缺失如实标不可判定"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/a815f59f-59cb-48a8-967e-a0cc9ce4392e"]},
+    demo: {"title": "实测：关键词供需双筛 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "31 次"}, {"label": "报告", "v": "20225字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "A模式卡点披露+B模式达标清单+细分子词推荐；缺字段如实标不可判定", "实测证据：会话 16991827…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "16991827-ea58-4db8-b753-f93bcdb36f54（Open WebUI 可回溯）"], ["接口调用", "31 次（真实工具链）"], ["报告体量", "20225字 · 表2 · 图12 · 链接22"], ["质量核验", "A模式卡点披露+B模式达标清单+细分子词推荐；缺字段如实标不可判定"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/16991827-ea58-4db8-b753-f93bcdb36f54"]},
 
   },
 
@@ -2558,13 +2558,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '0add0f1a-163c-4860-a80d-28c31b89f290',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '历史Q4快照锁定热卖池，品层+词层双证据给备货建议（Open WebUI 场景技能 youweiai-amazon-scene-q4-last-year-reference）',
 
     triggers: ['参考去年Q4选今年备货款','场景4'],
 
-    demo: {"title": "实测：去年Q4旺季备货 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景4 · 09:01"}, {"label": "接口调用", "v": "41 次"}, {"label": "HTML报告", "v": "24KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包参考去年Q4走势选今年Q4备货款", "执行链路：品层17款SalesVolume 2025Q4序列+词层3词同比只用完结月；正增长款逐行清点", "实测证据：17款Q4趋势全覆盖+keyword_trend词层补齐"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "0add0f1a…（Open WebUI 可回溯）"], ["接口调用", "41 次 · sorftime_product_trend×32、sorftime_keyword_trend×4、sorftime_product_search_from_history×2、view_skill×1"], ["报告体量", "HTML 24KB · 表格2张 · 主图16张"], ["质量核验", "17款Q4趋势全覆盖+keyword_trend词层补齐"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/0add0f1a-163c-4860-a80d-28c31b89f290"]},
+    demo: {"title": "实测：Q4旺季备货 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "49 次"}, {"label": "报告", "v": "25690字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "TOP销量榜+A/B/C备货分级清单双结构；逐款同比列；词层并行", "实测证据：会话 5a9e81ae…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5a9e81ae-f7a5-4f03-accf-a9aae81e4803（Open WebUI 可回溯）"], ["接口调用", "49 次（真实工具链）"], ["报告体量", "25690字 · 表4 · 图20 · 链接38"], ["质量核验", "TOP销量榜+A/B/C备货分级清单双结构；逐款同比列；词层并行"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/5a9e81ae-f7a5-4f03-accf-a9aae81e4803"]},
 
   },
 
@@ -2590,13 +2590,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '80fd01aa-9a6e-4769-9b2a-e3eb48b90cc2',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '低评论+高月销新起量款，逐条详情+趋势双重核验（Open WebUI 场景技能 youweiai-amazon-scene-low-review-high-sales）',
 
     triggers: ['找评论不到200月销超300的款','场景5'],
 
-    demo: {"title": "实测：找评论少销量高的商品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景5 · 09:01"}, {"label": "接口调用", "v": "31 次"}, {"label": "HTML报告", "v": "20KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包：评论≤199、月销≥300的新起款", "执行链路：搜索40→品类复核38→逐条详情剔除16→24款严格达标→全部拉月销走势（爬坡13/稳定4/回落7）", "实测证据：38款全详情+24款全趋势"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "80fd01aa…（Open WebUI 可回溯）"], ["接口调用", "31 次 · sorftime_product_detail×14、sorftime_product_trend×12、sorftime_product_search×3、view_skill×1"], ["报告体量", "HTML 20KB · 表格2张 · 主图15张"], ["质量核验", "38款全详情+24款全趋势"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/80fd01aa-9a6e-4769-9b2a-e3eb48b90cc2"]},
+    demo: {"title": "实测：低评论高销量 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "28 次"}, {"label": "报告", "v": "10296字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "类目盘+逐款档案双层；漏斗/共同点/不碰清单；趋势核验保留", "实测证据：会话 93f7db88…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "93f7db88-291e-42e7-ba69-7ad182a2eb31（Open WebUI 可回溯）"], ["接口调用", "28 次（真实工具链）"], ["报告体量", "10296字 · 表1 · 图11 · 链接6"], ["质量核验", "类目盘+逐款档案双层；漏斗/共同点/不碰清单；趋势核验保留"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/93f7db88-291e-42e7-ba69-7ad182a2eb31"]},
 
   },
 
@@ -2622,13 +2622,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'e82a5bd8-fbbd-4c21-85a1-b3d831bc461d',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '趋势上行+竞争未饱和的利基词与代表商品（Open WebUI 场景技能 youweiai-amazon-scene-rising-keyword-niche）',
 
     triggers: ['找搜索量上升的利基词','场景6'],
 
-    demo: {"title": "实测：搜索量上升利基品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景6 · 09:02"}, {"label": "接口调用", "v": "18 次"}, {"label": "HTML报告", "v": "19KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包找搜索量上升、竞争低的利基词", "执行链路：逐词趋势核验+6真利基词竞争详情+8款代表商品全带主图悬停", "实测证据：15词池→7上行8下行口径闭环"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "e82a5bd8…（Open WebUI 可回溯）"], ["接口调用", "18 次 · sorftime_keyword_search_from_name×7、sorftime_product_detail×6、view_skill×1、sorftime_keyword_extends×1"], ["报告体量", "HTML 19KB · 表格3张 · 主图7张"], ["质量核验", "15词池→7上行8下行口径闭环"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/e82a5bd8-fbbd-4c21-85a1-b3d831bc461d"]},
+    demo: {"title": "实测：搜索量上升利基词 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "51 次"}, {"label": "报告", "v": "18860字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "筛选漏斗节+三档分区（优先/观察/不碰）+缺口声明", "实测证据：会话 8ff5e3e6…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "8ff5e3e6-9b43-470a-9d0f-d5154cc6078d（Open WebUI 可回溯）"], ["接口调用", "51 次（真实工具链）"], ["报告体量", "18860字 · 表2 · 图11 · 链接11"], ["质量核验", "筛选漏斗节+三档分区（优先/观察/不碰）+缺口声明"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/8ff5e3e6-9b43-470a-9d0f-d5154cc6078d"]},
 
   },
 
@@ -2654,13 +2654,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '3538cc31-a682-4acf-bc2f-cf895156704b',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '筛中国卖家份额低的本土主导市场（仅原生份额快照可判定）（Open WebUI 场景技能 youweiai-amazon-scene-local-premium-market）',
 
     triggers: ['哪些类目本土卖家主导','场景7'],
 
-    demo: {"title": "实测：本土溢价市场 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景7 · 09:02"}, {"label": "接口调用", "v": "30 次"}, {"label": "HTML报告", "v": "6KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：扫美国站女包细分市场筛本土主导高溢价市场", "执行链路：china_seller_share快照逐子类核对；无快照的标待核不冒充判定；Wallets同名异号节点标映射待核", "实测证据：5类快照判定+6类无快照标待核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "3538cc31…（Open WebUI 可回溯）"], ["接口调用", "30 次 · sorftime_category_search_from_product_name×15、sorftime_category_report×5、execute_code×3、sorftime_category_name_search×2"], ["报告体量", "HTML 6KB · 表格2张 · 主图1张"], ["质量核验", "5类快照判定+6类无快照标待核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/3538cc31-a682-4acf-bc2f-cf895156704b"]},
+    demo: {"title": "实测：本土溢价市场 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "24 次"}, {"label": "报告", "v": "28215字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "十节点总表+HK壳公司供应链核验+溢价带明细+$40+逐款", "实测证据：会话 d53c64a7…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d53c64a7-bfd7-4655-9eeb-5dee2c83ef4c（Open WebUI 可回溯）"], ["接口调用", "24 次（真实工具链）"], ["报告体量", "28215字 · 表3 · 图20 · 链接41"], ["质量核验", "十节点总表+HK壳公司供应链核验+溢价带明细+$40+逐款"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/d53c64a7-bfd7-4655-9eeb-5dee2c83ef4c"]},
 
   },
 
@@ -2686,13 +2686,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '0811435a-2990-47e9-b00b-eefc6a144b7f',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '节令词近3个月上架+起量+低评论的新品与上新窗口（Open WebUI 场景技能 youweiai-amazon-scene-seasonal-new-ideas）',
 
     triggers: ['万圣节狗装新品哪些起量了','场景8'],
 
-    demo: {"title": "实测：节令新品灵感 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景8 · 09:03"}, {"label": "接口调用", "v": "54 次"}, {"label": "HTML报告", "v": "22KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站Halloween dog costume近3个月上架新品哪些起量且评论低", "执行链路：关键词+3个月上架窗+评论≤200+月销≥300命中37条→28款目标形态+TOP6趋势核验", "实测证据：37命中→28目标款硬条件零违规"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "0811435a…（Open WebUI 可回溯）"], ["接口调用", "54 次 · sorftime_product_detail×16、sorftime_product_content×16、sorftime_product_trend×15、sorftime_search_sync×4"], ["报告体量", "HTML 22KB · 表格2张 · 主图15张"], ["质量核验", "37命中→28目标款硬条件零违规"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/0811435a-2990-47e9-b00b-eefc6a144b7f"]},
+    demo: {"title": "实测：节令新品灵感 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "11 次"}, {"label": "报告", "v": "23125字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "节令词趋势校验+CPC升温交叉验证+爬坡期判定+清洗剔除留痕", "实测证据：会话 22109987…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "22109987-e167-483f-87b6-5e6a60f47d85（Open WebUI 可回溯）"], ["接口调用", "11 次（真实工具链）"], ["报告体量", "23125字 · 表2 · 图18 · 链接34"], ["质量核验", "节令词趋势校验+CPC升温交叉验证+爬坡期判定+清洗剔除留痕"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/22109987-e167-483f-87b6-5e6a60f47d85"]},
 
   },
 
@@ -2718,13 +2718,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'de5ead54-b2f8-4248-9093-441b84505665',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '低评论+高评分+上架窗内的新品严选（Open WebUI 场景技能 youweiai-amazon-scene-blue-ocean-new）',
 
     triggers: ['找蓝海新品','场景9'],
 
-    demo: {"title": "实测：蓝海新品 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景9 · 09:03"}, {"label": "接口调用", "v": "26 次"}, {"label": "HTML报告", "v": "28KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包蓝海新品：评论≤100评分≥4.5上架≤6个月", "执行链路：主类目0命中如实报→5子类44条→39款逐条详情用listing_date复核→31入选8剔除", "实测证据：39款全详情+listing_date严窗"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "de5ead54…（Open WebUI 可回溯）"], ["接口调用", "26 次 · sorftime_product_detail×19、sorftime_search_sync×2、job_query×2、view_skill×1"], ["报告体量", "HTML 28KB · 表格2张 · 主图20张"], ["质量核验", "39款全详情+listing_date严窗"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/de5ead54-b2f8-4248-9093-441b84505665"]},
+    demo: {"title": "实测：蓝海新品 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "19 次"}, {"label": "报告", "v": "21242字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "动能值列+可跟TOP5+入场门槛结构性洞察+疑似老品披露", "实测证据：会话 f0806022…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "f0806022-3b58-4b46-a7ee-1654534093b8（Open WebUI 可回溯）"], ["接口调用", "19 次（真实工具链）"], ["报告体量", "21242字 · 表2 · 图15 · 链接28"], ["质量核验", "动能值列+可跟TOP5+入场门槛结构性洞察+疑似老品披露"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/f0806022-3b58-4b46-a7ee-1654534093b8"]},
 
   },
 
@@ -2750,13 +2750,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '3beb573f-af88-4933-aea0-c20fe44b8cfd',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '美站热销新品映射目标站同词根竞争对比（Open WebUI 场景技能 youweiai-amazon-scene-cross-site-copy）',
 
     triggers: ['美国站爆款德国站能做吗','场景10'],
 
-    demo: {"title": "实测：跨站点爆款复制 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景10 · 09:04"}, {"label": "接口调用", "v": "20 次"}, {"label": "HTML报告", "v": "25KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站women handbag热销新品对比德国站Handtasche竞争", "执行链路：美站Top10热销新品→德国站4类目节点重搜替代污染词根→供需缺口量化", "实测证据：两站真实数据+30.3倍搜索差结论"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "3beb573f…（Open WebUI 可回溯）"], ["接口调用", "20 次 · sorftime_search_sync×8、sorftime_product_search_from_name×4、sorftime_keyword_detail×2、job_query×2"], ["报告体量", "HTML 25KB · 表格1张 · 主图25张"], ["质量核验", "两站真实数据+30.3倍搜索差结论"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/3beb573f-af88-4933-aea0-c20fe44b8cfd"]},
+    demo: {"title": "实测：跨站点爆款复制 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "16 次"}, {"label": "报告", "v": "16482字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "竞争密度比+分形态判定表+定价带建议+评论壁垒分析", "实测证据：会话 35004973…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "35004973-99b5-43a9-ac2b-d6ba852d3cd1（Open WebUI 可回溯）"], ["接口调用", "16 次（真实工具链）"], ["报告体量", "16482字 · 表3 · 图11 · 链接10"], ["质量核验", "竞争密度比+分形态判定表+定价带建议+评论壁垒分析"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/35004973-99b5-43a9-ac2b-d6ba852d3cd1"]},
 
   },
 
@@ -2782,13 +2782,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'ca695ab1-0812-47d4-820c-f4557a9cd265',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '热销榜→小类调研→1688找厂→投入决策完整链路（Open WebUI 场景技能 youweiai-amazon-scene-subcat-four-step）',
 
     triggers: ['深度调研一个小类','场景11'],
 
-    demo: {"title": "实测：小类深度调研四步法 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景11 · 09:05"}, {"label": "接口调用", "v": "23 次"}, {"label": "HTML报告", "v": "21KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站斜挎包小类四步法深度调研", "执行链路：Crossbody Top100→类目报告→1688达标供应商（5,604~161,020件）→FBA实得费情景公式", "实测证据：严格新品0命中如实+1688供应商3家"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ca695ab1…（Open WebUI 可回溯）"], ["接口调用", "23 次 · sorftime_product_detail×5、dld_product_search_list×5、sorftime_product_content×4、dld_product_info×2"], ["报告体量", "HTML 21KB · 表格4张 · 主图11张"], ["质量核验", "严格新品0命中如实+1688供应商3家"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ca695ab1-0812-47d4-820c-f4557a9cd265"]},
+    demo: {"title": "实测：小类四步法 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "21 次"}, {"label": "报告", "v": "14828字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "四步链路四节+候选分组卡+投入判定；数据代理口径声明", "实测证据：会话 617c9157…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "617c9157-a991-41ce-a749-22ce7f617052（Open WebUI 可回溯）"], ["接口调用", "21 次（真实工具链）"], ["报告体量", "14828字 · 表4 · 图5 · 链接8"], ["质量核验", "四步链路四节+候选分组卡+投入判定；数据代理口径声明"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/617c9157-a991-41ce-a749-22ce7f617052"]},
 
   },
 
@@ -2814,13 +2814,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '78fedf02-9ecf-4b68-be29-a88942e5e14a',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '规模/增长/集中度/价格带/风险五维进不进决策（Open WebUI 场景技能 youweiai-amazon-scene-market-five-dim）',
 
     triggers: ['这个类目能不能进','场景12'],
 
-    demo: {"title": "实测：市场环境五维判定 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景12 · 09:05"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "21KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站Shoulder Bags市场环境五维判定", "执行链路：category_report+trend24月+Top100精算五维；样本205,011自校验吻合；Monica不存在按真实结构呈现", "实测证据：样本自校验100%吻合+缺项标不可判定"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "78fedf02…（Open WebUI 可回溯）"], ["接口调用", "9 次 · view_skill×2、search_chats×2、search_knowledge_bases×1、get_current_timestamp×1"], ["报告体量", "HTML 21KB · 表格3张 · 主图16张"], ["质量核验", "样本自校验100%吻合+缺项标不可判定"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/78fedf02-9ecf-4b68-be29-a88942e5e14a"]},
+    demo: {"title": "实测：市场五维判定 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "6 次"}, {"label": "报告", "v": "29169字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "五维判定表+红线核查+头部样本+综合判定；一票否决规则", "实测证据：会话 a0435987…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a0435987-7cd5-44e7-b3f1-3184f02214be（Open WebUI 可回溯）"], ["接口调用", "6 次（真实工具链）"], ["报告体量", "29169字 · 表3 · 图25 · 链接48"], ["质量核验", "五维判定表+红线核查+头部样本+综合判定；一票否决规则"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/a0435987-7cd5-44e7-b3f1-3184f02214be"]},
 
   },
 
@@ -2846,13 +2846,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '77fc55cf-ba84-4710-bc13-4af84565af30',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '预算约束下多子类五维对比找切入点（Open WebUI 场景技能 youweiai-amazon-scene-filter-subcategory）',
 
     triggers: ['预算有限选哪个细分类目','场景13'],
 
-    demo: {"title": "实测：筛细分类目 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景13 · 09:06"}, {"label": "接口调用", "v": "9 次"}, {"label": "HTML报告", "v": "12KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：预算5000元内美站女包筛细分类目切入", "执行链路：无效节点先类目名纠正→接口无数据降级Top20样本并声明→合计逐行相加核对0分差", "实测证据：三类目合计与KPI 0分差"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "77fc55cf…（Open WebUI 可回溯）"], ["接口调用", "9 次 · sorftime_category_report×5、view_skill×1、sorftime_category_name_search×1、sorftime_get_time×1"], ["报告体量", "HTML 12KB · 表格2张 · 主图0张"], ["质量核验", "三类目合计与KPI 0分差"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/77fc55cf-ba84-4710-bc13-4af84565af30"]},
+    demo: {"title": "实测：筛细分类目 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "21 次"}, {"label": "报告", "v": "HTML 9.1KB"}, {"label": "质量", "v": "✓ 修复后通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "初轮HTML误塞工具调用未渲染→重跑全链路：七节点对比+两轮剔除留痕+推荐排序", "实测证据：会话 66cd62d5…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "66cd62d5-f563-40b8-81d1-76cac7163bf9（Open WebUI 可回溯）"], ["接口调用", "21 次（真实工具链）"], ["报告体量", "HTML 9.1KB · 七节点五维"], ["质量核验", "初轮HTML误塞工具调用未渲染→重跑全链路"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/66cd62d5-f563-40b8-81d1-76cac7163bf9"]},
 
   },
 
@@ -2878,13 +2878,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'afbafcf1-5b0e-4596-b8cb-46ac61d884be',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '选中亚款图搜1688找同款，逐SKU拿货价测毛利（Open WebUI 场景技能 youweiai-amazon-scene-1688-image-profit）',
 
     triggers: ['这个款1688拿货多少毛利多少','场景14'],
 
-    demo: {"title": "实测：1688图搜拿货+毛利 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景14 · 09:09"}, {"label": "接口调用", "v": "13 次"}, {"label": "HTML报告", "v": "16KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：美国站女包在1688图搜找同款并测算毛利", "执行链路：product_detail基线→真实主图图搜→逐SKU报价→情景汇率演示口径（无来源汇率不出现）", "实测证据：图搜一次过+4款SKU全核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "afbafcf1…（Open WebUI 可回溯）"], ["接口调用", "13 次 · dld_ali_offer_sku_prices×4、dld_ali_offer_realtime_detail×4、view_skill×1、sorftime_product_detail×1"], ["报告体量", "HTML 16KB · 表格3张 · 主图5张"], ["质量核验", "图搜一次过+4款SKU全核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/afbafcf1-5b0e-4596-b8cb-46ac61d884be"]},
+    demo: {"title": "实测：1688图搜毛利 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "9 次"}, {"label": "报告", "v": "14554字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "分档FBA+反推采购价上限矩阵+货源清单+费用测算+三线判定（骨架5/5全命中）", "实测证据：会话 be240254…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "be240254-f65a-4dba-96fe-382bbda437ed（Open WebUI 可回溯）"], ["接口调用", "9 次（真实工具链）"], ["报告体量", "14554字 · 表4 · 图5 · 链接2"], ["质量核验", "分档FBA+反推采购价上限矩阵+货源清单+费用测算+三线判定（骨架5/5全命中）"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/be240254-f65a-4dba-96fe-382bbda437ed"]},
 
   },
 
@@ -2910,13 +2910,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '5e33f935-62da-4909-b197-25cda1ce3a48',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '给一张外网商品图反向找1688厂家货源（Open WebUI 场景技能 youweiai-amazon-scene-reverse-image-source）',
 
     triggers: ['这张图帮我找1688货源','场景15'],
 
-    demo: {"title": "实测：外网图搜1688货源 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景15 · 09:11"}, {"label": "接口调用", "v": "0 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：用这张亚马逊主图图搜1688找同款货源", "执行链路：接口失败时不编造如实终止（400×2/500/incomplete全留痕）；接口恢复后同参数一次过：4货源+4SKU核到，相似分0.911/0.850", "实测证据：失败分支+成功分支双验证"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5e33f935…（Open WebUI 可回溯）"], ["接口调用", "0 次 · "], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "失败分支+成功分支双验证"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/5e33f935-62da-4909-b197-25cda1ce3a48"]},
+    demo: {"title": "实测：外网图搜寻源 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "13 次"}, {"label": "报告", "v": "10836字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "检索留痕（图搜失败→关键词降级通路）+最接近货源卡+契合度降序", "实测证据：会话 a78f4d4e…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "a78f4d4e-d1b9-4a13-9f61-93196987c956（Open WebUI 可回溯）"], ["接口调用", "13 次（真实工具链）"], ["报告体量", "10836字 · 表2 · 图3"], ["质量核验", "检索留痕（图搜失败→关键词降级通路）+最接近货源卡+契合度降序"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/a78f4d4e-d1b9-4a13-9f61-93196987c956"]},
 
   },
 
@@ -2942,13 +2942,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '2ce9995e-9316-4ea6-94e2-34480c91b779',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '五点/参数/变体解析+跟款上架评估（Open WebUI 场景技能 youweiai-amazon-scene-asin-parse-follow）',
 
     triggers: ['解析这个ASIN评估跟款','场景16'],
 
-    demo: {"title": "实测：ASIN详情解析·跟款 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景16 · 09:15"}, {"label": "接口调用", "v": "6 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：解析美站这个ASIN的五点参数变体，评估跟款上架", "执行链路：product_detail+content+variations；五点拆解、尺寸双口径并列、跟款专利红线明确", "实测证据：12子体+费用直读+红线提示"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "2ce9995e…（Open WebUI 可回溯）"], ["接口调用", "6 次 · view_skill×1、sorftime_product_detail×1、sorftime_product_content×1、sorftime_product_variations×1"], ["报告体量", "HTML 17KB · 表格4张 · 主图3张"], ["质量核验", "12子体+费用直读+红线提示"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/2ce9995e-9316-4ea6-94e2-34480c91b779"]},
+    demo: {"title": "实测：ASIN解析跟款 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "8 次"}, {"label": "报告", "v": "11236字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "Listing骨架+变体结构+差评驱动+P0排序+跟款建议（骨架5/5全命中）", "实测证据：会话 4c32e82f…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "4c32e82f-a682-425c-a533-b0ceb75fc54d（Open WebUI 可回溯）"], ["接口调用", "8 次（真实工具链）"], ["报告体量", "11236字 · 表4 · 图1 · 链接11"], ["质量核验", "Listing骨架+变体结构+差评驱动+P0排序+跟款建议（骨架5/5全命中）"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/4c32e82f-a682-425c-a533-b0ceb75fc54d"]},
 
   },
 
@@ -2974,13 +2974,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'ef91f5e1-5c45-49d9-b799-8070aa4c9a6c',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '材质/功能词横向统计找差异化卖点（Open WebUI 场景技能 youweiai-amazon-scene-listing-selling-points）',
 
     triggers: ['这批竞品卖点词渗透率怎么样','场景17'],
 
-    demo: {"title": "实测：Listing卖点渗透率 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景17 · 09:17"}, {"label": "接口调用", "v": "8 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：分析3个女包ASIN的Listing卖点渗透率", "执行链路：3款详情/内容：标题+五点为分母，五点缺失款单列口径，属性表命中单独标源不混入", "实测证据：分母分源+五点缺失剔分母"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ef91f5e1…（Open WebUI 可回溯）"], ["接口调用", "8 次 · sorftime_product_content×3、sorftime_product_detail×3、view_skill×1、get_current_timestamp×1"], ["报告体量", "HTML 17KB · 表格3张 · 主图4张"], ["质量核验", "分母分源+五点缺失剔分母"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ef91f5e1-5c45-49d9-b799-8070aa4c9a6c"]},
+    demo: {"title": "实测：卖点渗透率 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "21 次"}, {"label": "报告", "v": "23919字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "渗透率统计+零渗透标签解读+逐ASIN标注+逐品总结（骨架5/5全命中）", "实测证据：会话 07438919…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "07438919-a01c-4329-95fa-25481db3567d（Open WebUI 可回溯）"], ["接口调用", "21 次（真实工具链）"], ["报告体量", "23919字 · 表3 · 图7 · 链接18"], ["质量核验", "渗透率统计+零渗透标签解读+逐ASIN标注+逐品总结（骨架5/5全命中）"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/07438919-a01c-4329-95fa-25481db3567d"]},
 
   },
 
@@ -3006,13 +3006,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: '55a0eec5-d436-4721-b1b8-3d22c34957e1',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '销量波动归因+8维评分+优化后Listing对比（Open WebUI 场景技能 youweiai-amazon-scene-listing-diagnosis）',
 
     triggers: ['我的Listing为什么掉量','场景18'],
 
-    demo: {"title": "实测：Listing诊断 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景18 · 09:24"}, {"label": "接口调用", "v": "13 次"}, {"label": "HTML报告", "v": "23KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：诊断美国站在售Listing销量波动，8维评分给优化建议", "执行链路：三趋势+20反查词+84条评论分层；促销脉冲非自然增长定性；Woot接管Buybox证据链", "实测证据：促销脉冲定性+8维61分"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "55a0eec5…（Open WebUI 可回溯）"], ["接口调用", "13 次 · sorftime_product_trend×3、review_fetch×3、view_skill×2、sorftime_product_detail×1"], ["报告体量", "HTML 23KB · 表格6张 · 主图1张"], ["质量核验", "促销脉冲定性+8维61分"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/55a0eec5-d436-4721-b1b8-3d22c34957e1"]},
+    demo: {"title": "实测：Listing诊断 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "13 次"}, {"label": "报告", "v": "19423字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "波动定性+8维评分+P0清单+优化后完整Listing+新旧对比（骨架5/5全命中）", "实测证据：会话 88a94ad3…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "88a94ad3-91a3-43b5-9f3a-3940b8d10096（Open WebUI 可回溯）"], ["接口调用", "13 次（真实工具链）"], ["报告体量", "19423字 · 表5"], ["质量核验", "波动定性+8维评分+P0清单+优化后完整Listing+新旧对比（骨架5/5全命中）"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/88a94ad3-91a3-43b5-9f3a-3940b8d10096"]},
 
   },
 
@@ -3038,13 +3038,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'd01a28bc-f00d-4446-b0e4-0f37735f6fbd',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '1-3星差评归类+摘原话+区分产品/运营问题（Open WebUI 场景技能 youweiai-amazon-scene-review-pain-points）',
 
     triggers: ['同类产品被买家骂在哪','场景19'],
 
-    demo: {"title": "实测：竞品差评找改进点 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景19 · 09:25"}, {"label": "接口调用", "v": "22 次"}, {"label": "HTML报告", "v": "17KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：看3个女包竞品的1-3星差评找开发改进点", "执行链路：ask_user站点→3款差评分层抽样：问题归类排序、买家原话摘录、产品vs运营问题区分", "实测证据：差评样本分层+原文可核"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d01a28bc…（Open WebUI 可回溯）"], ["接口调用", "22 次 · sorftime_product_reviews×7、sorftime_product_detail×3、review_fetch×3、sorftime_product_content×3"], ["报告体量", "HTML 17KB · 表格6张 · 主图4张"], ["质量核验", "差评样本分层+原文可核"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/d01a28bc-f00d-4446-b0e4-0f37735f6fbd"]},
+    demo: {"title": "实测：差评找改进点 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "11 次"}, {"label": "报告", "v": "HTML 19.8KB"}, {"label": "质量", "v": "✓ 修复后通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "初轮iframe外链交付违反门禁→改正文HTML：逐竞品差评归类+原话带日期+P0→P2", "实测证据：会话 be2a89e5…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "be2a89e5-37c9-440a-b882-81468c6defa6（Open WebUI 可回溯）"], ["接口调用", "11 次（真实工具链）"], ["报告体量", "HTML 19.8KB · 表3 · 图8"], ["质量核验", "初轮iframe外链交付违反门禁→改正文HTML"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/be2a89e5-37c9-440a-b882-81468c6defa6"]},
 
   },
 
@@ -3070,13 +3070,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'd0c53080-2c01-40b5-8923-d5df07783c68',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '价格→BSR→流量词→评论逐步归因，无证据标推测（Open WebUI 场景技能 youweiai-amazon-scene-sales-change-reason）',
 
     triggers: ['竞品销量为什么变化','场景20'],
 
-    demo: {"title": "实测：竞品销量变化归因 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景20 · 09:26"}, {"label": "接口调用", "v": "17 次"}, {"label": "HTML报告", "v": "20KB"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：分析美国站这个ASIN最近三个月销量为什么变化", "执行链路：SalesVolume月度序列+价格/BSR日级/5词趋势/两期类目快照三角对照；\"11月不可折算日均\"三处声明", "实测证据：不折日均+归因逐步有证据"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "d0c53080…（Open WebUI 可回溯）"], ["接口调用", "17 次 · sorftime_keyword_trend×6、sorftime_product_trend×4、sorftime_category_report×2、view_skill×1"], ["报告体量", "HTML 20KB · 表格3张 · 主图1张"], ["质量核验", "不折日均+归因逐步有证据"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/d0c53080-2c01-40b5-8923-d5df07783c68"]},
+    demo: {"title": "实测：销量变化归因 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "19 次"}, {"label": "报告", "v": "16155字"}, {"label": "质量", "v": "✓ 通过"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "流量词矩阵+大盘同期对照+主因证据链排序+方向比较（不折算日均）", "实测证据：会话 07c5ba7e…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "07c5ba7e-18a0-47d3-b332-aa3b6b677ef5（Open WebUI 可回溯）"], ["接口调用", "19 次（真实工具链）"], ["报告体量", "16155字 · 表3"], ["质量核验", "流量词矩阵+大盘同期对照+主因证据链排序+方向比较（不折算日均）"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/07c5ba7e-18a0-47d3-b332-aa3b6b677ef5"]},
 
   },
 
@@ -3102,13 +3102,13 @@ const AMAZON_SCENE_SKILLS = [
 
     chatId: 'ce1ea84f-5631-4c4f-9e98-899395cdc235',
 
-    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-14 真实 UI 回归证据。',
+    prompt: '在 Open WebUI 打开 youweiAI-amazon选品专家，直接粘贴本场景触发问法即可调用（技能 youweiai-amazon-scene-* 已绑定专家）。本导航页的「📊 实测」展示该场景 2026-11-18 深度层回归证据。',
 
     desc: '用户供CSV/XLSX：语义分类+来源裁决+Excel对账（Open WebUI 场景技能 youweiai-amazon-scene-sp-search-terms）',
 
     triggers: ['分析我的SP搜索词报告','场景21'],
 
-    demo: {"title": "实测：SP广告搜索词分析 · 真实UI会话回归", "date": "2026-11-14", "kpis": [{"label": "会话", "v": "场景21 · 09:28"}, {"label": "接口调用", "v": "2 次"}, {"label": "HTML报告", "v": "分支验证"}, {"label": "质量", "v": "✓ 口径通过"}], "flow": ["用户问法：我导出了SP广告搜索词报告，帮我分类统计给动作建议", "执行链路：无文件时检测/uploads为空→不启动分析不造数据→列明需上传CSV/XLSX+站点+可选阈值", "实测证据：缺文件分支：检测0文件不启动"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "ce1ea84f…（Open WebUI 可回溯）"], ["接口调用", "2 次 · view_skill×1、execute_code×1"], ["报告体量", "分支验证（无报告产出场景）"], ["质量核验", "缺文件分支：检测0文件不启动"]]}, "note": "本对话为 2026-11-14 新纪律回归实测（并行取数+最小叙述+查询日仅来自时间接口）。质量口径与此前单场景验收一致。", "linkUrls": ["https://local.dianleida.net:21996/c/ce1ea84f-5631-4c4f-9e98-899395cdc235"]},
+    demo: {"title": "实测：SP广告搜索词 · 深度层回归（2026-11-18）", "date": "2026-11-18", "kpis": [{"label": "实测日期", "v": "2026-11-18"}, {"label": "接口调用", "v": "2 次"}, {"label": "报告", "v": "缺文件分支"}, {"label": "质量", "v": "✓ 合规收口"}], "flow": ["深度层回归：对照运营实测报告骨架逐层核验（双榜/漏斗/分层档案/敏感性矩阵等按场景）", "ask_user两步（文件→站点）+导出列清单+上传后流程预告；不造表", "实测证据：会话 5eaef406…（Open WebUI 可回溯）"], "table": {"head": ["核验项", "实测结果"], "rows": [["会话ID", "5eaef406-8853-4b30-9cdd-481463748a02（Open WebUI 可回溯）"], ["接口调用", "2 次（真实工具链）"], ["报告体量", "缺文件分支"], ["质量核验", "ask_user两步（文件→站点）+导出列清单+上传后流程预告；不造表"]]}, "note": "2026-11-18深度层全量回归（21会话/560+调用，验收报告见导航首页）。历史2026-11-14实测保留于验收记录可回溯。", "linkUrls": ["https://local.dianleida.net:21996/c/5eaef406-8853-4b30-9cdd-481463748a02"]},
 
   }
 
