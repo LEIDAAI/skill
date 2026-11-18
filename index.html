@@ -10055,7 +10055,7 @@ function wsRenderVersionContent(e) {
 
   }
 
-  let htmlOut = '<h4>📸 版本 ' + esc(e.ts) + ' · ' + esc(e.summary) + ' <span class="demo-badge">版本快照</span></h4>';
+  let htmlOut = '<h4>📸 ' + esc(String(e.ts).replace(/ \+08:00$/,'')) + ' · ' + esc(String(e.summary).length>60 ? String(e.summary).slice(0,60)+'…' : e.summary) + ' <span class="demo-badge">历史快照</span></h4>';
 
   if (snap.prompt) htmlOut += '<div class="demo-sec">' + (wsMode === 'expert' && snap.prompt.length < 1000 ? '该版本保存的提示词摘要' : '该版本保存的提示词') + '</div><div class="ws-code" style="max-height:40vh">' + esc(snap.prompt) + '</div>';
 
