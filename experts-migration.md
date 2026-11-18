@@ -904,3 +904,10 @@ mcp__1688__monitor_shop_list
 - **真实UI抽验**：新会话只发"我要连衣裙"→ask_user 三问（1/3托管模式：全托管-推荐/半托管/两者都要→2/3站点：美国211-推荐/德国/英国→3/3筛选方向：热销爆款/蓝海低竞争/新品潜力）→选全托+美国+蓝海→view_skill→3轮 temu_search_sync（主口径月销≥300+同款≤100=0条→诊断同款≤200=0→≤500 取1条），0条不造表、给三条可直接复制的下一步（半托连衣裙蓝海/缩窄子品类/全托热销榜）。会话 e772559e-7cbb-4ea1-a57e-94d669c563a5。
 - **线上核验（发布前）**：导航双文件线上与本地逐字节一致（sha256 37d55b52）；21技能 prompt 与 Open WebUI GET 逐字一致；35个实测会话链接（22旧回归+14场景+重跑）全部可达且标题正确。
 - **导航**：desc 标注"精简版"，node --check 通过。
+
+## 2026-11-19 OZON 场景9 demo 旧字段清理（收尾修正）
+- 问题：场景9 换新会话（45e08027，20张全量）后，demo 内一批**不渲染但仍存**的字段仍写着旧的 3 张授权版，维护者读数据会误判。
+- 清理项：`reportTitle`（「独立会话·3张逐张」→「真实UI·20张全量·9款有完整明细」）、`resultSummaries`（5条旧会话1款/3张/504→6条45e08027真实记录）、`rerun`/`fastRerun`/`depthRerun`（「图搜复用昨日」「1款1张」→20张全量）、`fieldGaps`（旧杯类/包类纠正→本轮真实缺口）、`evidenceSources`（指向 scene9_v3_chat.json/scene9_v3_report.html）、`docStandard.finding`（「复用昨日」→20张全量+边搜边落账修复说明）、`acceptanceHistory`（旧 ded97bf8 记录标 `supersededBy=45e08027`）。
+- **并行覆盖坑（重要）**：发布前发现源 `ozon-skill-hub.html` 的 `AMAZON_SCENE_SKILLS` chatId 仍是旧 19 个（51db3259…），而线上已被并行会话换成新的（6e7e1515…）。若直接源覆盖发布会回退 Amazon 成果。处置：先拉线上 `tmp/live_base.html`，把其 Amazon 数组导入源，再发布。
+- 发布：Git Data API 基于最新 HEAD（6636d6e2，被 TEMU 会话推进过）精准发布 index.html → d7066a0。
+- 线上核验：16 个技能 prompt 全精简、9/9 场景四套 chatId 一致、场景9 弹窗 Playwright 实开 KPI 20张/20款/9款/6款/3款/¥2.90起、表格 7 行 5 列、open 链接指向 45e08027、旧表述「3张逐张」「复用昨日」均为 0；16/16 会话可打开、5 个报告页 HTTP 200。

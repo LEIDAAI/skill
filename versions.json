@@ -2722,6 +2722,13 @@
    "snapshots": {
     "note": "回滚：21技能旧正文见 tmp/temu_scenes_20261118/skills_before_simplify.json（可逐字恢复）；导航desc为纯文本标注可revert。"
    }
+  },
+  {
+   "ts": "2026-11-19 07:50",
+   "date": "2026-11-19",
+   "target": "skill:ozon-scene9-demo-stale-cleanup",
+   "action": "update",
+   "summary": "场景9 demo 旧字段清理：reportTitle/resultSummaries/rerun/fastRerun/depthRerun/fieldGaps/evidenceSources/docStandard.finding/acceptanceHistory 全部对齐 45e08027 20张全量版；发布前发现源 Amazon chatId 落后于线上已先行导入，避免回退并行成果。线上核验16技能prompt全精简、9/9四套chatId一致、弹窗open指向45e08027"
   }
  ]
 }
