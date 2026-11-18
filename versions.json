@@ -2713,6 +2713,15 @@
    "snapshots": {
     "note": "回滚：index.html取本次发布父提交blob；14场景技能content见tmp/temu_scenes_20261118/create_results.json与线上GET。"
    }
+  },
+  {
+   "ts": "2026-11-19 00:40:00 +08:00",
+   "target": "hub:index.html + skills:youweiai-tmeu-*",
+   "action": "optimize",
+   "summary": "TEMU 21技能（7公共+14场景）提示词精简版上线：总字数52507→29522（-44%）。精简原则：删公共纪律/异常处理/技术三件套的逐场景重复（收敛到 report-gen 与各公共技能），每技能保留必填追问（未给托管模式/站点必反问，ask_user单独调用）、默认口径、数据源参数、场景口径要点、输出6段与步骤。真实UI抽验通过：只发'我要连衣裙'即触发 ask_user 三问（托管模式1/3→站点2/3→筛选方向3/3），全托+美国站+蓝海低竞争后按精简版口径执行3轮检索与降档诊断（主口径0条→同款≤200→≤500），0条不造表、给三条可直接复制的下一步（会话 e772559e）。导航双文件desc标注精简版，node --check通过。",
+   "snapshots": {
+    "note": "回滚：21技能旧正文见 tmp/temu_scenes_20261118/skills_before_simplify.json（可逐字恢复）；导航desc为纯文本标注可revert。"
+   }
   }
  ]
 }
