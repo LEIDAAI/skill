@@ -10482,7 +10482,7 @@ function renderSkillWs() {
 
       right.innerHTML = '<h4>⚡ ' + esc(s.name) + ' · 技能提示词全文 <span class="demo-badge">' + s.skillMd.length + ' 字</span></h4>' +
 
-        '<div class="demo-note">以下为 Open WebUI 线上正在执行的完整提示词（' + ((s.platforms || []).includes('ozon') ? '2026-11-16' : '2026-11-14') + ' 逐字同步）。调用时只需复制左侧触发示例，无需粘贴全文。</div>' +
+        '<div class="demo-note">以下为 Open WebUI 线上正在执行的完整提示词（' + ((s.skillMd||'').includes('深度交付层') ? '2026-11-18' : ((s.platforms || []).includes('ozon') ? '2026-11-16' : '2026-11-14')) + ' 逐字同步）。调用时只需复制左侧触发示例，无需粘贴全文。</div>' +
 
         '<div class="ws-code" style="max-height:62vh">' + esc(s.skillMd) + '</div>';
 
