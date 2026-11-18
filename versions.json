@@ -2528,6 +2528,16 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 14:55:00",
+   "target": "nav-ui",
+   "action": "修复工作台\"实测/提示词\"tab切换跳到历史版本",
+   "note": "用户实测发现：点左侧版本记录会强行把wsTab设为version并插入\"历史版本\"临时tab，之后点\"实测\"就停留在最新版本记录而非当前版本；且历史版本入口点了出不来(setWsTab对version直接return)。修复：①版本记录只作左栏参考、不再抢占顶部tab ②切提示词/实测时移除残留历史版本tab+清版本高亮+重绘当前内容 ③老版setWsTab对version改为回提示词。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }

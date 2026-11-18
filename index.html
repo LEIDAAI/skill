@@ -9943,15 +9943,8 @@ async function wsShowVersion(i) {
 
   } else if (wsMode === 'skill') {
 
-    wsTab = 'version';
-
-    document.querySelectorAll('#ws-tabs .ws-tab').forEach(tab => tab.classList.remove('on'));
-
-    if (!document.querySelector('#ws-tabs .ws-version-tab')) {
-
-      document.getElementById('ws-tabs').insertAdjacentHTML('beforeend', '<button class="ws-tab ws-version-tab on" onclick="setWsTabGeneric(\'prompt\')">历史版本</button>');
-
-    }
+    /* 历史版本只作为左栏参考：高亮对应条目、右栏显示该版本摘要，
+       不改变顶部"提示词/实测"tab，也不再插入无效的"历史版本"tab。 */
 
   }
 
@@ -10122,7 +10115,8 @@ function renderWsTabs() {
 
 function setWsTab(t) {
 
-  if (t === 'version') return;
+  /* 历史版本不再作为可切换tab：点它等价于回到提示词，避免卡在历史版本视图出不来。 */
+  if (t === 'version') t = 'prompt';
 
   wsTab = t; wsSkillView = 'prompt'; window.__wsVerSel = null;
 
@@ -10360,11 +10354,18 @@ function wsOpenGeneric(mode, obj, tab) {
 
 function setWsTabGeneric(t) {
 
-  /* 切换视图后展示该视图内容，下次打开工作台再默认选最新版本。 */
+  /* 切换提示词/实测时，彻底清除历史版本选中态，并移除可能残留的"历史版本"临时tab，
+     确保右栏始终显示【当前版本】的内容，而不是跳到最新版本记录。 */
 
   if (wsTab !== t) { window.__wsVerSel = null; _wsAutoLatestVersion = false; }
 
   wsTab = t;
+
+  /* 移除历史版本临时tab（点版本记录时曾插入），恢复顶部只有提示词/实测 */
+  document.querySelectorAll('#ws-tabs .ws-version-tab').forEach(el => el.remove());
+
+  /* 清除左栏版本高亮 */
+  document.querySelectorAll('#ws-left .ws-ver-item.sel').forEach(el => el.classList.remove('sel'));
 
   renderSkillWs();
 
