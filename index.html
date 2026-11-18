@@ -3843,6 +3843,15 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 2 dict + 2 spu_search(仅types) + 30 spu_detail(核type2)",
     "finding": "修复后首轮真实UI首答：模型自主类目导航+分段切片+type2双证据，20/20行与独立核算零误差（榜首17,040件）",
     "independentCheck": "直连MCP同参数复现，逐行一致"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "05daed2e-1e2d-43c7-839f-14096e2db7e5",
+    "chatUrl": "https://local.dianleida.net:21996/c/05daed2e-1e2d-43c7-839f-14096e2db7e5",
+    "timeMin": 6.5,
+    "calls": "3 view_skill + 1 dict + 1 spu_search(_fields批量) + 4 detail(抽样复核) + 1 execute_code, 11次调用",
+    "finding": "快车道6.5min（首轮11.8min/42次）：100条批量核验+4款抽样一致，20主图20链接，Top行17,040与首轮及独立核算一致（66,102为TOP20合计口径非单款）"
    }
   }
  },
@@ -4129,6 +4138,15 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 1 dict + 1 spu_search(仅types) + 3 spu_detail + 7 execute_code",
     "finding": "类目导航 total=10000；type2+标题双证据正确剔除化妆包(type4)与男包(标题мужская)；3款销量/价格与独立核算逐字段一致(17,969/17,040/16,992)；季节证据不足如实判\"严格达标0款/趋势未知\"",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "6eba23f0-0a09-43ea-a5ee-4ca9aabe9729",
+    "chatUrl": "https://local.dianleida.net:21996/c/6eba23f0-0a09-43ea-a5ee-4ca9aabe9729",
+    "timeMin": 3.4,
+    "calls": "3 view_skill + 1 spu_search(_fields批量) + 1 mall_search + 3 detail(序列) + 1 execute_code, 10次调用",
+    "finding": "快车道3.4min（首轮7.3min）：3款双证据核验、趋势未知与T−60门禁保留，销量17,969/17,040/16,992与独立核算一致"
    }
   }
  },
@@ -4392,8 +4410,9 @@ const OZON_SCENE_SKILLS = [
     "verdict": "通过",
     "chatId": "008a9c87-fede-4804-9b0e-b8361b159a37",
     "chatUrl": "https://local.dianleida.net:21996/c/008a9c87-fede-4804-9b0e-b8361b159a37",
-    "calls": "2 view_skill + 5 spu_search(_fields批量) + 5 detail(抽样复核) + 1 mall_search + 1 execute_code",
-    "finding": "快车道9.7min（深度版26.1min，提速63%）：302唯一SPU五段切片、TOP5+CR5=38.7%、48双条件候选、20主图20链接全保留、抽样复核5款一致；与独立核算五段total口径吻合"
+    "timeMin": 9.7,
+    "calls": "2 view_skill + 5 spu_search(_fields批量) + 5 detail(抽样) + 1 mall_search + 1 execute_code, 14次调用",
+    "finding": "快车道9.7min（深度版26.1min，提速63%）：302唯一SPU五段切片、CR5=38.7%、48双条件候选、20主图20链接"
    }
   }
  },
@@ -4640,6 +4659,15 @@ const OZON_SCENE_SKILLS = [
     "chatUrl": "https://local.dianleida.net:21996/c/710c5633-12b8-4a18-bdc0-d99ab8d16b46",
     "calls": "3 view_skill + 3 spu_search(三路) + 2 fields_lookup + 1 goods_search + 8 execute_code, 18.8min",
     "finding": "深度版对照验收通过：三路样本合并、词频×销量交叉表(70行)、含词/不含词销量中位差异%（кросс-боди -32.2%等）、强关联浅黄标、非流量归因声明保留"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "3ca0de12-9c05-40d3-ac8a-1718ee296e97",
+    "chatUrl": "https://local.dianleida.net:21996/c/3ca0de12-9c05-40d3-ac8a-1718ee296e97",
+    "timeMin": 4.3,
+    "calls": "3 view_skill + 1 spu_search(_fields批量) + 2 execute_code, 6次调用",
+    "finding": "快车道4.3min（深度版18.8min，提速77%）：30 SPU词频×销量中位差异%、强关联标注保留"
    }
   }
  },
@@ -4861,6 +4889,15 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 2 dict(CATEGORY_BACKEND) + 2 market_stat + 2 execute_code",
     "finding": "先核字典(95203/95201)再调market_stat；比值只作类目规模比较、不判蓝海、无未核币种金额；历史\"首答未通过\"本轮首次真实首答通过",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "9fece052-036f-401f-b987-3ba2993cc02a",
+    "chatUrl": "https://local.dianleida.net:21996/c/9fece052-036f-401f-b987-3ba2993cc02a",
+    "timeMin": 1.3,
+    "calls": "3 view_skill + 2 dict + 2 market_stat + 1 execute_code, 8次调用",
+    "finding": "快车道1.3min（首轮1.9min）：95203/95201数据126,506/50,817与独立核算逐字段一致，不判蓝海保留"
    }
   }
  },
@@ -5107,10 +5144,11 @@ const OZON_SCENE_SKILLS = [
    "fastRerun": {
     "date": "2026-11-18",
     "verdict": "通过",
-    "chatId": "859d4a7e-4dc9-43d9-892d-f42d32373e22",
-    "chatUrl": "https://local.dianleida.net:21996/c/859d4a7e-4dc9-43d9-892d-f42d32373e22",
-    "calls": "3 view_skill + 1 spu_search(_fields批量) + 10 execute_code",
-    "finding": "快车道首答18.0min（深度版25.5min）：99条首页切片一次取回、72严格+2待核、价格带×销量交叉（0-499₽占56.6%销量）、词根统计全保留；首答HTML误存沙箱，追问轮补交付完整版（97tr/75img/74链接），已补\"HTML必须在回复正文输出\"硬门禁"
+    "chatId": "f95cf1a2-4dad-4628-a4d1-0e03c1616ca5",
+    "chatUrl": "https://local.dianleida.net:21996/c/f95cf1a2-4dad-4628-a4d1-0e03c1616ca5",
+    "timeMin": 7.8,
+    "calls": "2 view_skill + 1 fields + 1 spu_search(_fields批量) + 1 detail + 2 execute_code, 7次调用",
+    "finding": "快车道7.8min（深度版25.5min，提速69%）：30 SPU预算内完整榜单、价格带×销量贡献交叉、词根、同款数全保留"
    }
   }
  },
@@ -5353,6 +5391,15 @@ const OZON_SCENE_SKILLS = [
     "chatUrl": "https://local.dianleida.net:21996/c/9696045f-5ea8-4f15-9785-273b5eb432f9",
     "calls": "3 view_skill + 1 market_stat(key=all) + 7 execute_code + 1 read_skill_file, 8.1min",
     "finding": "深度版对照验收通过：50个账期全序列表格(51行)、相邻账期环比+供需增幅差(pp)、月金额源值保留\"币种未核\"、滚动窗口不与自然月混用"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "5f940434-8aff-40cc-8b59-ea088d734c09",
+    "chatUrl": "https://local.dianleida.net:21996/c/5f940434-8aff-40cc-8b59-ea088d734c09",
+    "timeMin": 4.6,
+    "calls": "3 view_skill + 1 market_stat(key=all) + 2 execute_code, 6次调用",
+    "finding": "快车道4.6min（深度版8.1min）：51行50账期全序列+环比+供需增幅差+币种未核保留"
    }
   }
  },
@@ -5574,6 +5621,15 @@ const OZON_SCENE_SKILLS = [
     "calls": "3 view_skill + 4 dict(CATEGORY_BACKEND) + 2 market_stat + 5 execute_code",
     "finding": "父类\"携带和睡眠配件\"字典核对+限定2子类比较、明确未覆盖全分支；供需比只做相对排序、不设蓝海阈值",
     "independentCheck": "直连MCP同参数复现，销量/价格/类目编码逐字段一致"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "92806677-4915-4b34-b887-3f825622ff21",
+    "chatUrl": "https://local.dianleida.net:21996/c/92806677-4915-4b34-b887-3f825622ff21",
+    "timeMin": 2.3,
+    "calls": "3 view_skill + 4 dict + 2 market_stat + 2 execute_code, 11次调用",
+    "finding": "快车道2.3min（首轮4.1min）：限定2类比较、供需比相对排序、不判蓝海声明保留，数据与独立核算一致"
    }
   }
  },
@@ -5830,6 +5886,15 @@ const OZON_SCENE_SKILLS = [
     "chatUrl": "https://local.dianleida.net:21996/c/865c69d4-2cec-46f7-8b3d-193b7efd9606",
     "calls": "3 view_skill + 1 dict + 1 goods_search + 9 1688_native_call(3图搜+3详情+3SKU价) + 2 execute_code, 5.0min",
     "finding": "深度版对照验收通过：3款授权内图搜全成、双图对比、实取阶梯价、价差三档初判(三款1.42~2.93倍均\"一般\"，带\"数量级参考\"字样)、类目编码纠错95205→95203如实声明、精确利润门禁保留"
+   },
+   "fastRerun": {
+    "date": "2026-11-18",
+    "verdict": "通过",
+    "chatId": "2d0141d2-4db6-433a-bd58-b7e9626b4a7d",
+    "chatUrl": "https://local.dianleida.net:21996/c/2d0141d2-4db6-433a-bd58-b7e9626b4a7d",
+    "timeMin": 1.9,
+    "calls": "1 view_skill + 1 search_chats + 1 goods_detail + 2 1688_native_call(realtime_detail+sku_prices) + 1 execute_code, 6次调用",
+    "finding": "快车道收口1.9min（深度版5.0min）：图搜复用昨日已验证结果，OZON侧SKU 5014222925(1,394件/₽297)与1688货源985465320012(¥2.90起)实取核对一致；中途30次调用的首轮(20.3min)已弃用，本轮为最小预算路径"
    }
   }
  }
