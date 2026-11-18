@@ -198,6 +198,32 @@
 **发布**：源 ozon-skill-hub.html 与 skill/index.html 等价（IDENTICAL），node --check 通过；commit `ce90dc8d`，线上 liveVersionId 已核验为 `f0fbcc20-76a0-46d5-81d1-12809544890d`。
 <!-- END OZON ALLGMV CORRECTION 2026-11-18 -->
 
+<!-- BEGIN OZON SCENE7 BIGCAT 2026-11-18 -->
+## 场景7 改造为「大类大盘分析」（2026-11-18 17:10）
+
+**用户要求**：不做全平台了，按截图改成大类维度；技能和标题都改；并列出类目大盘还能分析哪些维度。
+
+**关键技术验证**
+- `yq_dict_lookup(type="CATEGORY_BACKEND", platform="ozon")` 返回 9300 条，其中 `parentValue` 为空的顶层大类共 **30 个**，key 形如 服装15621031 / 住宅和花园17027494 / 汽车用品17027495。
+- **前台 CATEGORY 编码（28女装、95女鞋、580汽车用品、248电子产品）传进 market_stat 全部返回空**，只有 CATEGORY_BACKEND 后台 ID 能取数。
+- 截图 13 个字段逐位对上：服装 allSkuNum 7,260,777→726.1万、allMallNum 182,690→18.27万、monthSkuNum 7,284、monthMallNum 126、monthlySalesNum 22,286,419→2228.6万、skuInfoNum7 15.2亿、skuSearchNum7 56.9亿、skuViewNum7 225.7亿、skuSearchNum28 204.2亿、skuViewNum28 830.5亿。
+- **截图排序是商品数降序**（服装726万→住宅632万→汽车514万→建筑454万→电子307万→小百货240万…）。
+- 大类三口径自洽：30类中29类日/周/月金额除件数后互差<3倍（仅 Ozon Fresh 例外）；与全平台 key=all 的不自洽形成对比。
+- 大类 `items` 序列到 **20261115 共 63 点**，比 key=all 的 20261104/50点更新。
+
+**技能改造**（version f0fbcc20 → 517742e7）
+- 改名：`youweiAI-OZON-场景-大盘趋势快照（目标场景）` → `youweiAI-OZON-场景-大类大盘分析`。
+- 新增「可分析维度」22 项分 6 组：A 规模结构8（商品数占比/店铺数/单店SKU/日周月销量/日周月销售额/客单价/SKU月均出货/单店月销/份额）；B 流量转化4（商品卡浏览/搜索浏览/展示总计7&28、流量结构、粗转化率、搜索依赖度）；C 供给活力3（新品率/新店率/供需匹配预警）；D 趋势4（日序列/供需增速差/份额迁移）；E 下钻3（子类/店铺榜/品牌榜）；F 价格带1（仅 key=all，独立快照口径）。
+- 明确不可用维度：大类 allBrandsNum/allCommentsNum/allSalesNum 返回0；mallsNum 失真禁用；无退货率/动销率/官方GMV排名。
+- 新增「为什么不做全平台」三条理由（金额三口径不自洽 + 账期滞后 + 大类自洽）。
+- 展示规范沿用用户指定：金额₽/¥同列、≥1亿→X.XX亿/≥1万→X万、按商品数降序、无数据账期剔除。
+
+**样本报告**：`skill/ozon-scene7-bigcat-2026-11-18.html`，26 个有效大类（SKU≥1万），大类合计 SKU 4611万 / 月销 2.94亿件 / 月GMV ₽2369.12亿(≈¥196.64亿) / 客单价 ₽806。已在 Chrome 实机核验渲染、列对齐、结构解读与三段式结论。
+
+**发布**：双文件 IDENTICAL，node --check 通过；commit `2dccb51a`；线上 name=场景7·大类大盘分析、liveVersionId=517742e7 已核验。
+<!-- END OZON SCENE7 BIGCAT 2026-11-18 -->
+
+
 
 
 
