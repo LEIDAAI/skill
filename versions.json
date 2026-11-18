@@ -2616,6 +2616,25 @@
     "skill/youweiAI-amazon-scenes/youweiAI-amazon-场景-找评论少销量高的商品.md"
    ],
    "evidence": "skill/amazon-scene5-depth-2026-11-18.html"
+  },
+  {
+   "ts": "2026-11-18 19:50",
+   "date": "2026-11-18",
+   "target": "skill:ozon-scene7+scene9",
+   "action": "update",
+   "summary": "OZON场景7大类大盘（20类全覆盖·流量绝对量·KPI自洽）与场景9批量图搜（3张逐张·2命中1无关如实标注）真实UI复跑证据同步导航",
+   "snapshots": {},
+   "files": [
+    "ozon-skill-hub.html",
+    "skill/index.html",
+    "skill/ozon-scene7-bigcat-2026-11-18.html"
+   ],
+   "evidence": {
+    "chatId": "36a43bf5-7ddd-487f-9566-bbf95078be20",
+    "chatUrl": "https://local.dianleida.net:21996/c/36a43bf5-7ddd-487f-9566-bbf95078be20",
+    "scene7": "20/20大类；SKU 4,358.9万；展示4,109.8亿；搜索987.0亿；依赖度24.0%；偏差<0.001%",
+    "scene9": "3张授权3次调用0失败；2张命中相关货源(¥3.4/双、¥6.5/件)；1张命中但全无关已标注"
+   }
   }
  ]
 }
