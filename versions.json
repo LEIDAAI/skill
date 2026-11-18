@@ -3,6 +3,20 @@
  "entries": [
   {
    "date": "2026-11-18",
+   "target": "amazon-scene-skills-21-depth",
+   "action": "21场景技能逐个对照运营实测报告(amz-01~20.html)骨架，各追加「深度交付层」章节（双榜结构/漏斗叙事/分层档案/敏感性矩阵/分形态判定/新品实证等）；线上21/21回读一致，两份导航同步并发布",
+   "files": [
+    "skill/youweiAI-amazon-scenes/",
+    "ozon-skill-hub.html",
+    "skill/index.html",
+    "tmp/depth_align_amazon_20261118.py",
+    "tmp/depth_align_sync_nav2_20261118.py",
+    "tmp/publish_amazon_depth_20261118.py"
+   ],
+   "evidence": "tmp/scene_compare_20261118/depth_apply_result.json; 远端main=ad20bdbd"
+  },
+  {
+   "date": "2026-11-18",
    "target": "temu-public-skills-7",
    "action": "公共技能交付三件套补齐（KPI卡/主图320悬停/店铺链接）+ selection-search删除旧iframe指令；线上7/7回读一致，导航prompt模板注入（反引号转义）",
    "files": [
