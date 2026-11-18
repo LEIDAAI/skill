@@ -2568,6 +2568,17 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 16:00:00",
+   "target": "ozon-scene7",
+   "action": "场景7升级双币种销售额版并达标",
+   "note": "用户要求月/周/日销售额展示₽和¥。核验发现：类目级market_stat金额字段有值(躺床月销113,322,486₽)，仅全平台key=all被上游置0。技能加\"类目级销售额双币种展示\"章节后重跑：3类目日/周/月₽+¥双币种+客单价(895.79₽≈¥74.35)，全平台标上游停发，51账期保留。会话5d378eed，11.8min。样例报告ozon-scene7-dual-currency-2026-11-18.html。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html",
+    "ozon-scene7-dual-currency-2026-11-18.html"
+   ]
   }
  ]
 }
