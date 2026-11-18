@@ -2558,6 +2558,16 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 15:35:00",
+   "target": "ozon-scenes",
+   "action": "OZON九场景卡片名称加场景编号（对齐亚马逊格式）",
+   "note": "用户要求像亚马逊一样在场景名前加\"场景N·\"。9场景name统一改为\"场景N·中文名\"（如\"场景3·头部跟款铺货\"），id不变。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }

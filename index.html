@@ -3346,7 +3346,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-hot-sales-rise",
   "onlineId": "youweiai-ozon-scene-hot-sales-rise",
-  "name": "youweiAI-OZON-场景-热销飙升",
+  "name": "场景1·热销飙升",
   "description": "OZON俄区热销商品决策：类目导航召回+销量分段切片+详情type2双证据核性别。本轮真实UI首答20/20行与独立核算一致。",
   "desc": "OZON俄区热销商品决策：类目导航召回+销量分段切片+详情type2双证据核性别。本轮真实UI首答20/20行与独立核算一致。",
   "slug": "/youweiai-ozon-scene-hot-sales-rise",
@@ -3817,7 +3817,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-seasonal-stocking",
   "onlineId": "youweiai-ozon-scene-seasonal-stocking",
-  "name": "youweiAI-OZON-场景-本土刚需季节品+备货",
+  "name": "场景2·季节品备货",
   "description": "核验OZON俄区本土需求与季节卖点，依据可比历史判断季节趋势；历史不足时保留当前画像，按提前60天规则给条件性备货窗口，不预测销量。",
   "desc": "核验OZON俄区本土需求与季节卖点，依据可比历史判断季节趋势；历史不足时保留当前画像，按提前60天规则给条件性备货窗口，不预测销量。",
   "slug": "/youweiai-ozon-scene-seasonal-stocking",
@@ -4084,7 +4084,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-top-seller-beginner",
   "onlineId": "youweiai-ozon-scene-top-seller-beginner",
-  "name": "youweiAI-OZON-场景-头部跟款+新手铺货",
+  "name": "场景3·头部跟款铺货",
   "description": "按OZON俄区销量头部60条样本聚合卖家TOP5，再按实核卢布售价≤1000、轻小件、无品牌属性核验新手候选；样本店铺指标不冒充店铺全量经营数据。",
   "desc": "按OZON俄区销量头部60条样本聚合卖家TOP5，再按实核卢布售价≤1000、轻小件、无品牌属性核验新手候选；样本店铺指标不冒充店铺全量经营数据。",
   "slug": "/youweiai-ozon-scene-top-seller-beginner",
@@ -4335,7 +4335,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-title-traffic-terms",
   "onlineId": "youweiai-ozon-scene-title-traffic-terms",
-  "name": "youweiAI-OZON-场景-商品流量词分析",
+  "name": "场景4·流量词分析",
   "description": "用于Ozon俄区指定商品或品类的销量头部标题词分析：默认近28天60条SPU，以真实标题代码统计词出现总次数和去重代表商品数，去种子及停用词、品牌单列。标题关联词不冒充实测搜索归因词，交付带证据与样本边界的HTML报告。",
   "desc": "用于Ozon俄区指定商品或品类的销量头部标题词分析：默认近28天60条SPU，以真实标题代码统计词出现总次数和去重代表商品数，去种子及停用词、品牌单列。标题关联词不冒充实测搜索归因词，交付带证据与样本边界的HTML报告。",
   "slug": "/youweiai-ozon-scene-title-traffic-terms",
@@ -4575,7 +4575,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-pet-subcategory-compare",
   "onlineId": "youweiai-ozon-scene-pet-subcategory-compare",
-  "name": "youweiAI-OZON-场景-宠物细分类目对比",
+  "name": "场景5·宠物类目对比",
   "description": "用于比较Ozon俄区8类宠物用品的类目SKU总数、店铺总数、月销量和统计日期，核实后台分类后逐类取数，并展示月销量÷店铺及÷SKU两项规模比值。只给相对差异与核验顺序，不将店铺总数当活跃竞争者、不将比值当典型单品销量或蓝海判定。",
   "desc": "用于比较Ozon俄区8类宠物用品的类目SKU总数、店铺总数、月销量和统计日期，核实后台分类后逐类取数，并展示月销量÷店铺及÷SKU两项规模比值。只给相对差异与核验顺序，不将店铺总数当活跃竞争者、不将比值当典型单品销量或蓝海判定。",
   "slug": "/youweiai-ozon-scene-pet-subcategory-compare",
@@ -4790,7 +4790,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-search-traffic-ranking",
   "onlineId": "youweiai-ozon-scene-search-traffic-ranking",
-  "name": "youweiAI-OZON-场景-热搜词飙升榜选品",
+  "name": "场景6·热搜词选品",
   "description": "用于Ozon俄区搜索需求榜选品：以SPU近7天搜索会话≥5000、搜索加购转化率>0、销量为正筛选并排序TOP20，显式索取搜索字段和otherCount。词级榜改为商品搜索流量榜，无历史不判飙升；全0/缺失按原场景单列降级且明确不满足严格条件，附标题需求解读与HTML。",
   "desc": "用于Ozon俄区搜索需求榜选品：以SPU近7天搜索会话≥5000、搜索加购转化率>0、销量为正筛选并排序TOP20，显式索取搜索字段和otherCount。词级榜改为商品搜索流量榜，无历史不判飙升；全0/缺失按原场景单列降级且明确不满足严格条件，附标题需求解读与HTML。",
   "slug": "/youweiai-ozon-scene-search-traffic-ranking",
@@ -5026,7 +5026,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-market-trend-snapshot",
   "onlineId": "youweiai-ozon-scene-market-trend-snapshot",
-  "name": "youweiAI-OZON-场景-大盘趋势快照（目标场景）",
+  "name": "场景7·大盘趋势快照",
   "description": "用于OZON俄区全平台或已核实后台类目的大盘快照与同窗口观测比较。以真实stats日期序列核对SKU、店铺与销量；披露缺日及滚动窗口，金额单位未核实不展示GMV或客单价，不把关键词样本冒充大盘。",
   "desc": "用于OZON俄区全平台或已核实后台类目的大盘快照与同窗口观测比较。以真实stats日期序列核对SKU、店铺与销量；披露缺日及滚动窗口，金额单位未核实不展示GMV或客单价，不把关键词样本冒充大盘。",
   "slug": "/youweiai-ozon-scene-market-trend-snapshot",
@@ -5262,7 +5262,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-supply-demand-gaps",
   "onlineId": "youweiai-ozon-scene-supply-demand-gaps",
-  "name": "youweiAI-OZON-场景-冷门空缺类目筛选",
+  "name": "场景8·冷门空缺筛选",
   "description": "用于OZON俄区指定成熟大类下的供需相对排序。核实后台子类编码，逐类取月销量、店铺数与SKU数，计算两项类目总量算术比值，披露日期及覆盖；仅给核验顺序，不判蓝海或预测新店表现。",
   "desc": "用于OZON俄区指定成熟大类下的供需相对排序。核实后台子类编码，逐类取月销量、店铺数与SKU数，计算两项类目总量算术比值，披露日期及覆盖；仅给核验顺序，不判蓝海或预测新店表现。",
   "slug": "/youweiai-ozon-scene-supply-demand-gaps",
@@ -5477,7 +5477,7 @@ const OZON_SCENE_SKILLS = [
  {
   "id": "youweiai-ozon-scene-batch-image-sourcing",
   "onlineId": "youweiai-ozon-scene-batch-image-sourcing",
-  "name": "youweiAI-OZON-场景-批量图搜寻源（Ozon→1688）",
+  "name": "场景9·批量图搜寻源",
   "description": "用于OZON俄区商品图片到1688的批量相似货源检索。云启SKU拉源默认100条，拉源数量与实际付费图搜数量分开；超过10张先询问消耗，首次测试1款。双图对照并核实际供货详情，无汇率不做跨币种价差或倍数。",
   "desc": "用于OZON俄区商品图片到1688的批量相似货源检索。云启SKU拉源默认100条，拉源数量与实际付费图搜数量分开；超过10张先询问消耗，首次测试1款。双图对照并核实际供货详情，无汇率不做跨币种价差或倍数。",
   "slug": "/youweiai-ozon-scene-batch-image-sourcing",
