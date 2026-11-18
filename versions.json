@@ -3,6 +3,17 @@
  "entries": [
   {
    "date": "2026-11-18",
+   "target": "amazon-scene-skills-21-regression-fixed",
+   "action": "三缺陷（13工具交付HTML/2 execute_code循环熔断/19 iframe外链）全部原地续跑修复：场景13重跑全链路正文HTML、场景2补参重跑正文HTML、场景19改正文HTML（iframe清零）；最终20通过+1合规收口；门禁在续跑中被模型实际遵守",
+   "files": [
+    "skill/amazon-depth-regression-2026-11-18.html",
+    "ozon-skill-hub.html",
+    "skill/index.html"
+   ],
+   "evidence": "skill/amazon-depth-regression-2026-11-18.html（修复完成版）"
+  },
+  {
+   "date": "2026-11-18",
    "target": "amazon-scene-skills-21-regression",
    "action": "21场景深度层全量真实UI回归（21会话/560+调用）：17通过/2部分/1未通过/1合规收口；三缺陷（场景13工具交付HTML、场景2 execute_code循环熔断、场景19 iframe外链交付）落为21技能「报告交付通道门禁」章节并同步导航",
    "files": [
