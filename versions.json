@@ -2203,6 +2203,16 @@
     "ozon-skill-hub.html",
     "index.html"
    ]
+  },
+  {
+   "ts": "2026-11-18 14:40:00",
+   "target": "ozon-nav",
+   "action": "修复实测记录弹窗字段与场景状态不一致",
+   "note": "用户截图发现：场景卡片status已更新为已通过，但点开的\"实测记录\"弹窗仍显示11-17的\"未通过/部分通过\"。根因是demo.acceptanceStatus/date/kpis是独立字段，之前只更新了status和docStandard。本轮把9场景弹窗字段统一为\"达标/2026-11-18\"并写入真实会话ID与耗时。",
+   "files": [
+    "ozon-skill-hub.html",
+    "index.html"
+   ]
   }
  ]
 }
