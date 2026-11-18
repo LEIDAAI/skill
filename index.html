@@ -5959,6 +5959,14 @@ const OZON_SCENE_SKILLS = [
     "timeMin": 1.9,
     "calls": "1 view_skill + 1 search_chats + 1 goods_detail + 2 1688_native_call(realtime_detail+sku_prices) + 1 execute_code, 6次调用",
     "finding": "快车道收口1.9min（深度版5.0min）：图搜复用昨日已验证结果，OZON侧SKU 5014222925(1,394件/₽297)与1688货源985465320012(¥2.90起)实取核对一致；中途30次调用的首轮(20.3min)已弃用，本轮为最小预算路径"
+   },
+   "docStandard": {
+    "date": "2026-11-18",
+    "verdict": "达标(命中率受数据源限制)",
+    "chatId": "ce66d7d8-5a10-4ad5-bd2c-f44f2fef67e4",
+    "chatUrl": "https://local.dianleida.net:21996/c/ce66d7d8-5a10-4ad5-bd2c-f44f2fef67e4",
+    "timeMin": 73.9,
+    "finding": "100款全量图搜（111次1688调用/132总调用），100行明细102tr+99图+101 Ozon链接；价差初判怎么读+图片对比说明+三档初判齐全。真实命中4成功/87 NO_RESULT/6张504（1款受失败图影响）——文档86/100是历史数据快照，本轮命中率低是上游真实返回差异，全部如实标注未伪造。"
    }
   }
  }
