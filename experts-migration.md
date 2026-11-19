@@ -1038,3 +1038,14 @@ mcp__1688__monitor_shop_list
 | youweiai-amazon-seller-analysis | 6df123d5-74b2-46b5-9b86-edb311e58b06 | passed-with-notes |
 
 <!-- END AMAZON PUBLIC UI RETEST 2026-11-19 -->
+
+
+<!-- BEGIN amazon-remove-fbm-sp-scenes-20261119 -->
+## 2026-11-19 Amazon移除两项场景
+
+删除当前导航与完整档案中的场景2 FBM小批测款法（scene-fbm-small-batch-test）和场景21 SP广告搜索词分析（scene-sp-search-terms），同时移除两份当前场景Markdown文件。保留其余19场景原sceneNo、名称、完整问法、正文、报告、会话和工具证据；8公共技能与所有初审、返工及最终审计逐值不变，店铺分析12款多卖家问题继续保留。
+
+现为19场景+8公共=27技能；19份场景HTML+8份公共HTML=27份。index.html与ozon-skill-hub.html分别基于自己的远端基线精准移除两个场景常量成员，另补旧缓存移除项守卫，防止缺platforms的旧缓存重新添加场景，其他字节保持；amazon-expert-skill-map.ts现仅含公共技能映射、不含两项删除id，逐字不变。构建器从远端固定commit取最新场景，模板所有计数由数据生成。
+
+后台专家amazon-sorftime-selection-assistant只解除youweiai-amazon-scene-fbm-small-batch-test、youweiai-amazon-scene-sp-search-terms两项meta.skillIds绑定，29→27；system、toolIds及其他配置未改。后台技能实体、真实会话、不可变历史证据、历史日志和既有版本记录均保留。
+<!-- END amazon-remove-fbm-sp-scenes-20261119 -->

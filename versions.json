@@ -7938,6 +7938,51 @@
     "publicCardPromptsOnly": 8,
     "firstDraftsAndCorrectionsPreserved": true
    }
+  },
+  {
+   "date": "2026-11-19",
+   "releaseId": "amazon-remove-fbm-sp-scenes-20261119",
+   "target": "amazon-scene-removal",
+   "action": "delete",
+   "summary": "删除场景2 FBM小批测款法和场景21 SP广告搜索词分析；保留原编号的19场景与8公共技能",
+   "files": [
+    "index.html",
+    "ozon-skill-hub.html",
+    "amazon-scenes-complete-20261119.html",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-FBM小批测款法.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-SP广告搜索词分析（语义分类+来源裁决·用户供文件）.md",
+    "versions.json",
+    "experts-migration.md"
+   ],
+   "snapshots": {
+    "removedSceneIds": [
+     "scene-fbm-small-batch-test",
+     "scene-sp-search-terms"
+    ],
+    "sceneCount": 19,
+    "publicSkillCount": 8,
+    "skillCount": 27,
+    "sceneHtmlCount": 19,
+    "publicHtmlCount": 8,
+    "remainingSceneRecords": "19/19 unchanged",
+    "publicSkillsAndAudits": "8/8 unchanged",
+    "otherNavigationBytes": "UNCHANGED except removed-cache guard",
+    "backend": {
+     "expertId": "amazon-sorftime-selection-assistant",
+     "removedBindings": [
+      "youweiai-amazon-scene-fbm-small-batch-test",
+      "youweiai-amazon-scene-sp-search-terms"
+     ],
+     "beforeCount": 29,
+     "afterCount": 27,
+     "onlySkillIdsConfigChanged": true,
+     "accessGrantSemanticsUnchanged": true,
+     "accessGrantAuditIdsRegeneratedByEndpoint": true,
+     "skillEntitiesPreserved": true,
+     "chatHistoryPreserved": true
+    },
+    "historyPreserved": true
+   }
   }
  ]
 }
