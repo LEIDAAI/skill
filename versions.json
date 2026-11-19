@@ -6177,6 +6177,12 @@
    "target": "hub:index.html#tmeu-scene-*",
    "action": "fix",
    "summary": "TEMU 14场景补 skillMd 字段（Open WebUI线上技能正文逐字同步，1.3~1.9KB/场景），此前只有prompt一句话导致'提示词弹窗只有一句'；弹窗渲染改为两段式：调用提示词（客户复制这一句）+技能规范全文（查看校验）。根因：弹窗有skillMd就显示全文、没有才回退一句话，TEMU场景从未写入skillMd（OZON场景有）。"
+  },
+  {
+   "ts": "2026-11-19 11:40:00 +08:00",
+   "target": "hub:index.html#temu",
+   "action": "fix",
+   "summary": "补齐TEMU技能正文同步：①14场景新增skillMd（Open WebUI线上正文逐字，1.3~1.9KB/场景），此前只有一句prompt导致提示词弹窗只有一句话（OZON场景有skillMd所以显示全文）；②新增'前台主技能'卡 skill-temu-selection-analysis，skillMd=截图1那份SKILL.md（temu_query_list网关流程4868字）；③弹窗渲染改两段式：调用提示词（客户复制这句）+技能规范全文（查看校验）。"
   }
  ]
 }

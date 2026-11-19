@@ -4826,6 +4826,34 @@ TEMU 网关 job 预览只给 view_url 可点击链接（新标签打开），不
 
   },
 
+  {
+
+    id: 'skill-temu-selection-analysis',
+
+    name: 'Temu商品筛选与选品分析（前台主技能）',
+
+    slug: '/skill-temu-selection-analysis',
+
+    platforms: ['temu'],
+
+    scenario: 'product-selection',
+
+    status: 'built',
+
+    desc: '前台单独调用技能：temu_query_list 网关流程 + 托管/站点追问 + 口径与回归规则（截图1 那份 SKILL.md）。客户调用用一句话问法即可，正文供查看校验。｜与 Open WebUI 线上逐字同步 2026-11-19',
+
+    triggers: ['帮我找Temu近30天女包的热销爆款TOP20','Temu商品选品与选品分析','半托美国站宠物饮水机月销大于500'],
+
+    prompt: '帮我找Temu近30天{品类}的热销爆款TOP20（把品类替换成你的实际值；托管模式与站点不用填，专家会追问）',
+
+    skillMd: '# Temu选品与分析\n开始前view_skill。列表只用temu_query_list，一次传全部硬条件和max_results，不直接yq_goods_search、不逐页读取全量、不输出200行Markdown。\n网关regions/opt_ids为字符串：美国211、德国76，多值逗号分隔或JSON数组字符串。托管模式与国家站点未指定时，必须先追问一次再查询，不要自动执行：输出一条简短追问并列出选项文案，托管模式选项为 全托管 / 半托管 / 两者都要(自动合并)，国家选项为 美国 / 德国 / 其他站点请输入名称；用户点击追问选项或直接回复后，按其选择提交 ware_house_type(0/1) 与 regions，提交前用一句话复述最终条件；仅当用户明确说"不限/都要"时才走自动合并（网关全托+半托两阶段合并去重，正文说明mode_dist占比）。ware_house_type为0全托、1半托；站点筛选仅半托有效。未知类目先yq_dict_lookup，不猜ID。keyword映射上游title，中文请求优先保留中文完整商品词，例如宠物饮水机，fuzzy=false；不要自动翻译成pet water fountain，多词英文模糊检索实测会污染结果。价格用min_price/max_price及网关currency=usd或eur；此currency不是直接MCP的国家编码。月销门槛用min_monthly_sales/max_monthly_sales，评分用min_score。max_results按用户要的总条数原样传，上限1000，不得自行下调。\n提交后job_status(wait=25)，done后job_aggregate。整体分析用摘要，品类核验只job_query少量候选；已核实污染可job_derive排除对应ID并使用派生结果。保留用户硬条件，不改站点、不放宽、不凑数；零条如实说本次未命中，不推断市场没有商品。错误最多修正一次。小任务工具预算8次，优先交付。\n任务done且非空，回复必须有完整html围栏代码块，内容为<html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%}iframe{border:0;width:100%;height:100%}</style></head><body><iframe src="https://yidong.dianleida.net:21996/gw/v1/job/view?id={result_id}" width="100%" height="100%"></iframe></body></html>。逐字复制result_id，提示表格可展开筛选导出。\n用户要报告或选品分析，再输出同结构html围栏，src改为https://yidong.dianleida.net:21996/gw/v1/report/view?id={result_id}。表格报告必须用同一结果集。不要另写自包含报告或完整商品Markdown表。正文3至5条摘要，仅用本次实际数据。处理中、失败、零条不生成伪预览。\n真实图片链接来自上游；缺失写未返回，不补零、不编利润GMV。sales是总销量，monthly_sales是近30天销量；老款月销量空不代表零；总销量≥100000时日/周/月销量为空属上游规则，不是零。表格上架时间=issued_date（缺失回退created_at），discovered为首次发现时间；报告按上架月份统计。统计只代表样本，报告采用网关统一1688样式。详情、评论、大盘、店铺和字典继续各自MCP工具；评论分布不冒充原文、不推断地区范围。\n实测回归规则：ware_house_type=0全托时，regions站点筛选不能验证生效。即使返回region=211，也只能称返回站点标签美国，必须明确披露无法验证美国站筛选生效，禁止称全部符合美国站条件。生成最终成品选品表和报告前必须调用job_query核查实际候选标题/类目（每页最多50）；明确的替换盖、滤芯等配件必须从成品候选中剔除，通过job_derive保存合法selected_ids，不要覆盖字段，表格、报告和正文统一派生后的result_id。商品相关性有歧义时披露，不能声称全部相关。若条件无命中可查询等义本地语言词，保持数值、站点和履约硬条件；最终0条时仍可提供同一空结果任务的表格/报告入口以核对条件，不编造统计。\n派生任务只传selected_ids和必要的分析新增字段，不要把price/monthly_sales/score/level等源字段放入analysis_fields；无需新增字段时不传analysis_fields。正文统计以最终派生工具返回值为准，中位数保留小数，禁止把655.5改成655。\n\n\n# 接口地图（全部接口）\n\n1. 网关句柄（server:gateway-temu）：temu_query_list → job_status → job_aggregate →（按需）job_query / job_derive。商品列表一律走这里。\n2. 直连Temu数据源 MCP（server:mcp:temu_data）：**12个工具全部可用**——yq_goods_search（商品搜索，列表仍走网关）、yq_goods_detail（商品详情）、yq_goods_comment（评论）、yq_mall_search / yq_mall_detail（店铺）、yq_market_fully / yq_market_semi（全托/半托大盘）、yq_brand_search（品牌）、yq_goods_img_search（图搜同款）、yq_dict_lookup（类目/字段字典）、yq_fields_lookup（字段说明）、yq_quota_status（额度）。\n   - 未知类目先 yq_dict_lookup（实测"收纳"命中11类目：家庭收纳759/厨房收纳1723/衣橱收纳6926）；字段含义不确定先 yq_fields_lookup，不猜。\n\n## 字段字典（按需读取）\n- 全部12个直连工具的用途与输入字段：read_skill_file(\'temu-selection-analysis\', \'references/tools-mcp.md\')\n- 列表输出行字段/摘要字段/上游规则（总销量≥10万时日周月销为空等）：read_skill_file(\'temu-selection-analysis\', \'references/output-fields.md\')\n\n# 实测经验（持续沉淀）\n- 全托+regions 组合的站点披露口径已验证：只能称"返回站点标签美国"，禁止称已验证美国全托样本。\n- 类目组合策略（实测）：宽品类词拆成2-3个核心二级类目并行覆盖，比单类目更贴近用户语义；类目编码来自 yq_dict_lookup，不猜。\n- 污染剔除走 job_derive 保存 selected_ids，表格/报告/正文统一派生后的 result_id；中位数保留小数。\n\n# 走查实测经验（2026-10-22，12接口全量验证）\n- 12个接口全部真实调用通过；坑位明细固化到 references/output-fields.md 的「走查实测坑位」节。\n- 评论正文不可得、图搜明细裁剪用 _fields 补验、店铺搜索名称前缀匹配——这三个坑遇到时直接按字典口径处理，不要反复重试。\n- _fields 的合法字段名先 yq_fields_lookup 查再传，禁止凭猜测传字段名。\n\n## 多表格对比 artifact 模板（必须响应式）\n\n需要并排对比多个任务的表格页时，HTML 包装页必须用下面的响应式模板（窄面板自动纵向堆叠、宽面板并排），禁止写死固定像素列宽：\n\n```html\n<!DOCTYPE html>\n<html><head><meta charset="utf-8">\n<style>\nhtml,body{margin:0;height:100%}\niframe{border:0;width:33.33%;height:100%;float:left}\n@media (max-width:900px){\n  html,body{height:auto;min-height:100%;overflow-y:auto}\n  iframe{width:100%;height:600px;float:none;display:block}\n}\n</style></head>\n<body>\n<iframe src="/gw/v1/job/view?id=任务ID_1"></iframe>\n<iframe src="/gw/v1/job/view?id=任务ID_2"></iframe>\n<iframe src="/gw/v1/job/view?id=任务ID_3"></iframe>\n</body></html>\n```\n\n规则：两列把 width 改 50%、四列改 25%；iframe src 用相对路径 /gw/v1/job/view?id=...；单个结果页直接给链接不包 iframe。\n\n\n# 上架时间筛选（近N天上架）\n- “近N天上架/新上架” → min_issued_date = 今天-(N-1)天 的 YYYYMMDD 整数（含今天共N天）；可选 max_issued_date 限最晚上架时间。上游按 issued_date 硬筛。\n- 今天日期以系统/工具响应为准，禁止凭记忆猜。例：今天 2026-10-23，“近90天上架” → min_issued_date=20260726。\n- 明细 issued_date（缺失回退 created_at）可用于 job_query 小样抽查；回复中如实说明按上架时间硬筛。\n\n\n# 上架时间筛选（近N天上架）\n- “近N天上架/新上架” → min_issued_date = 今天-(N-1)天 的 YYYYMMDD 整数（含今天共N天）；可选 max_issued_date 限最晚上架时间。上游按 issued_date 硬筛。\n- 今天日期以系统/工具响应为准，禁止凭记忆猜。例：今天 2026-10-23，“近90天上架” → min_issued_date=20260726。\n- 明细 issued_date（缺失回退 created_at）可用于 job_query 小样抽查；回复中如实说明按上架时间硬筛。\n\n\n## 工具口径修正（最高优先级，覆盖下文旧流程）\n- 商品列表检索只用网关 `temu_search_sync`（operation=search）一次调用，返回 saved_count/filters/stats/rows；下文所有「temu_query_list → job_status → job_aggregate → job_query」旧流程已废弃，仅复核既有任务时才用 job_*。\n- 单品详情/评论用网关 `temu_native_call`：operation=`goods_detail`（arguments.id）、operation=`goods_comment`（arguments.id，可选 score/region）；原生调用没有 result_id，不生成 iframe、不调 job_*。\n- 返回 status=processing 时按系统提示词直接输出 iframe。',
+
+    tools: ['temu_query_list','job_status','job_aggregate','job_query','job_derive','report/view'],
+
+    demo: {"title": "前台主技能规范（与 Open WebUI 线上逐字同步）", "date": "2026-11-19", "kpis": [{"label": "正文", "v": "4868 字"}, {"label": "来源", "v": "Open WebUI skill temu-selection-analysis"}, {"label": "同步", "v": "2026-11-19 逐字比对一致"}], "flow": ["本卡为规范同步卡：正文=SKILL.md 全文，调用提示词=上方一句"], "table": {"head": ["项", "值"], "rows": [["网关流程", "temu_query_list → job_status(wait=25) → job_aggregate → 按需 job_query/job_derive"], ["追问", "托管模式(全托/半托/两者)+国家站点(美国211/德国76/其他)未指定必须先追问"], ["交付", "完整 html 围栏 + job/view 或 report/view iframe"]]}, "note": "前台Skill包随编辑器迭代；本卡为 2026-11-19 快照。", "linkUrls": [], "report": "", "reportTitle": "", "conclusion": "前台主技能规范已同步：temu_query_list 网关流程、托管/站点追问、字段口径、回归规则、iframe 交付模板。"}
+
+  },
+
 
 
 ];
