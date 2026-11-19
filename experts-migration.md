@@ -1018,3 +1018,23 @@ mcp__1688__monitor_shop_list
 | 21·SP广告搜索词 | 2026-11-18T11:38:08+08:00 | 2026-11-18T11:38:08+08:00 | 2026-11-18T11:38:08+08:00 | 原值通过 |
 
 <!-- END amazon-scene-date-audit-20261119 -->
+
+
+<!-- BEGIN AMAZON PUBLIC UI RETEST 2026-11-19 -->
+
+## 2026-11-19 Amazon八项公共技能真实UI实测
+
+更新AMAZON_PUBLIC_DEMOS完整展示字段和8项公共卡片问法；真实会话done/view_skill和北京时间日期经只读API核验，初稿错误及多轮纠错记录保留，未宣称首稿通过；旧示例保留为history。其他平台、21场景及所有主逻辑字节保持。
+
+| 公共技能 | 会话 | 审计 |
+|---|---|---|
+| youweiai-amazon-selection-search | f882ea19-6849-4cb2-9c2b-12e868928995 | passed-with-notes |
+| youweiai-amazon-competitor | 4e5a4dfa-8b03-4f11-bddb-984ce37b17df | passed-with-notes |
+| youweiai-amazon-keyword | 7dc8485e-4506-431d-918c-ea91878dfee1 | passed-with-notes |
+| youweiai-amazon-category-trend | dfb060f2-2eb8-4518-a323-27c90f997d59 | passed-with-notes |
+| youweiai-amazon-product-parse | c0ed7598-35bf-4ddb-ac95-aaae4900fb3b | passed-with-notes |
+| youweiai-amazon-profit-calc | bdc3e59a-d036-414e-b4e1-cb6a045e7806 | passed-with-notes |
+| youweiai-amazon-report-gen | f04dbe6d-12ac-4eb8-87d8-1835fdefbd41 | passed-with-notes |
+| youweiai-amazon-seller-analysis | 6df123d5-74b2-46b5-9b86-edb311e58b06 | passed-with-notes |
+
+<!-- END AMAZON PUBLIC UI RETEST 2026-11-19 -->

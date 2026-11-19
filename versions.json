@@ -7837,6 +7837,107 @@
    "target": "skills:youweiai-tmeu-scene-item-blue-ocean,youweiai-tmeu-scene-blue-ocean + hub:index.html",
    "action": "fix",
    "summary": "①专家sysPrompt新增【14场景路由】表（原只有七技能路由，场景技能虽绑定但客户一句话无法命中）——实测：发'帮我筛女包的蓝海商品，同款少、日销稳的，要商品卡片带推荐指数'，模型第一句即'我先加载「商品级蓝海切入」场景技能'，命中场景7并ask_user追问托管/站点，确认后完整交付13.4KB HTML（3款卡片+推荐指数4.1/3.2+诊断链路）。顺带删去sysPrompt重复段落（2859→3794含路由）。②实测发现 max_same_num 服务端筛选在半托美国站女包池会把整池滤空（传4或10都0条，去掉后池恢复2996）——已写入场景2/7技能正文的判空诊断规则，两技能正文与导航skillMd同步。"
+  },
+  {
+   "date": "2026-11-19",
+   "releaseId": "amazon-public-ui-retest-20261119",
+   "target": "amazon-public-demos",
+   "action": "update",
+   "summary": "八项公共技能真实Chrome UI实测证据逐字段同步；旧示例保留为历史",
+   "files": [
+    "index.html",
+    "ozon-skill-hub.html",
+    "versions.json",
+    "experts-migration.md",
+    "amazon-scenes-complete-20261119.html"
+   ],
+   "snapshots": {
+    "chats": {
+     "skill-amazon-selection-search": {
+      "chatId": "f882ea19-6849-4cb2-9c2b-12e868928995",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-selection-search"
+      ],
+      "done": true,
+      "finalAssistantId": "5e2ced57-3f4b-4e55-899c-8b94fecf4a8a",
+      "assistantSha256": "1226dbed00f962eef44f9a910cedb3de6465f7664c2c23f1ed8eda0f5a501644"
+     },
+     "skill-amazon-competitor": {
+      "chatId": "4e5a4dfa-8b03-4f11-bddb-984ce37b17df",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-competitor"
+      ],
+      "done": true,
+      "finalAssistantId": "24597217-6cbc-4384-8e34-a1efafd19bc1",
+      "assistantSha256": "660f5a1e1f21e60e17c115b2f5c03b8ecb9a1dfc5883ececdde20fb4376c4268"
+     },
+     "skill-amazon-keyword": {
+      "chatId": "7dc8485e-4506-431d-918c-ea91878dfee1",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-keyword"
+      ],
+      "done": true,
+      "finalAssistantId": "2a3c24f1-21a8-4cfc-b2b3-5b7c34aa048a",
+      "assistantSha256": "c61a575ff07addfac464a7f8deea9a761211137db7e7e871aef65069ac63a5f7"
+     },
+     "skill-amazon-category-trend": {
+      "chatId": "dfb060f2-2eb8-4518-a323-27c90f997d59",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-category-trend"
+      ],
+      "done": true,
+      "finalAssistantId": "b2052d24-90fb-47df-8fb7-34d84408166b",
+      "assistantSha256": "eb087987dcc89555fb704226ddad6210b5a0f3c6769ca9f2ad82ea0d662adcad"
+     },
+     "skill-amazon-product-parse": {
+      "chatId": "c0ed7598-35bf-4ddb-ac95-aaae4900fb3b",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-product-parse"
+      ],
+      "done": true,
+      "finalAssistantId": "35857152-0447-40de-bf12-04640b2fceee",
+      "assistantSha256": "7004b05ecf8e2f3377a786bf0103e1d5243a2cb4bbb683dec9b993d93fb2c491"
+     },
+     "skill-amazon-profit-calc": {
+      "chatId": "bdc3e59a-d036-414e-b4e1-cb6a045e7806",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-profit-calc"
+      ],
+      "done": true,
+      "finalAssistantId": "41131d0a-6d6f-4910-b0f8-eb5c65ba7b59",
+      "assistantSha256": "45cb8391d2165e9325df0e147045bfa45335a21c314bc998cf22eb24d319b709"
+     },
+     "skill-amazon-report-gen": {
+      "chatId": "f04dbe6d-12ac-4eb8-87d8-1835fdefbd41",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-report-gen"
+      ],
+      "done": true,
+      "finalAssistantId": "64bced95-0a57-4d90-8ee8-34145e57b744",
+      "assistantSha256": "33b434e5cb49a21d5e8d4e8f3fe742bbb366dee85a9d04d7346fbd8d3abff407"
+     },
+     "skill-amazon-seller-analysis": {
+      "chatId": "6df123d5-74b2-46b5-9b86-edb311e58b06",
+      "date": "2026-11-19",
+      "loadedSkills": [
+       "youweiai-amazon-seller-analysis"
+      ],
+      "done": true,
+      "finalAssistantId": "1b9aa346-3bf9-4d0e-a642-aeb779773b43",
+      "assistantSha256": "3f61b2a3844e61a22286c486746f0352ed71aa71bfb59b1e90226a1e67428fac"
+     }
+    },
+    "nonPublicDemoBytes": "UNCHANGED",
+    "publicCardPromptsOnly": 8,
+    "firstDraftsAndCorrectionsPreserved": true
+   }
   }
  ]
 }
