@@ -970,3 +970,12 @@ mcp__1688__monitor_shop_list
 29张Amazon有demo的卡片恢复独立“实测”按钮（data-action=demo），保留工作台入口。点击复用现有openExpertDemo，21场景实际modal主链接与各自最终chatUrl一致；场景5、21既有证据不改写。其他平台按钮及所有卡片数据保持不变。
 
 <!-- END AMAZON DEMO ENTRY 2026-11-19 -->
+
+
+<!-- BEGIN AMAZON CACHE GUARD 2026-11-19 -->
+
+## 2026-11-19 Amazon规范卡片缓存保护
+
+合并sharedSkills/customSkills时先按byId中当前规范卡ID判断Amazon归属，旧对象即使缺失platforms或有待同步状态，也不覆盖29张当前Amazon卡片的demo、最终正文与短问法。不清除用户存储；其他平台合并逻辑保持原样。真实allSkills+renderGrid注入29条共享旧对象及29条本地待同步旧对象后均保持29卡、29份demo、29个实测按钮。
+
+<!-- END AMAZON CACHE GUARD 2026-11-19 -->

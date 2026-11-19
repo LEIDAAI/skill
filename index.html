@@ -9646,11 +9646,11 @@ function allSkills() {
 
 
 
-  sharedSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon')) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
+  sharedSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon') && !(byId.has(s.id) && (byId.get(s.id).platforms || []).includes('amazon'))) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
 
 
 
-  customSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon') && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
+  customSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon') && !(byId.has(s.id) && (byId.get(s.id).platforms || []).includes('amazon')) && (!byId.has(s.id) || skillSyncStates.has(s.id))) byId.set(s.id, Object.assign({ platforms: ['ozon'] }, s)); });
 
 
 

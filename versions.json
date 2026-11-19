@@ -6120,6 +6120,57 @@
    "target": "hub:index.html#tmeu-scene-*",
    "action": "fix",
    "summary": "TEMU 14场景'使用提示词'弹窗改为客户可直接复制的简短问法（原为导航说明文案）：如场景7'帮我选20个品类蓝海商品：同款≤4+日销≥3，商品卡片形式，带推荐指数（把品类/商品替换成你的实际值；托管模式与站点不用填，专家会追问）'。客户不再需要粘贴对照表长结构化指令；必填参数缺失时专家ask_user追问（已实测）。OZON场景弹窗本就展示技能规范不动。"
+  },
+  {
+   "ts": "2026-11-19 11:20",
+   "date": "2026-11-19",
+   "releaseId": "amazon-cache-guard-20261119",
+   "target": "amazon-navigation",
+   "action": "update",
+   "summary": "按规范Amazon卡片ID保护29张卡片，旧共享/本地同ID对象缺平台或待同步时不再覆盖demo与短问法",
+   "files": [
+    "index.html"
+   ],
+   "snapshots": {
+    "runtimeCacheChecks": [
+     {
+      "case": "无本地缓存",
+      "amazonCards": 29,
+      "demoCards": 29,
+      "buttons": 29
+     },
+     {
+      "case": "本地同ID缺平台旧缓存",
+      "amazonCards": 29,
+      "demoCards": 29,
+      "buttons": 29
+     },
+     {
+      "case": "同ID旧缓存有同步状态",
+      "amazonCards": 29,
+      "demoCards": 29,
+      "buttons": 29
+     },
+     {
+      "case": "共享同ID旧对象",
+      "amazonCards": 29,
+      "demoCards": 29,
+      "buttons": 29
+     },
+     {
+      "case": "29同ID共享旧对象",
+      "amazonCards": 29,
+      "demoCards": 29,
+      "buttons": 29
+     },
+     {
+      "case": "29同ID本地旧对象待同步",
+      "amazonCards": 29,
+      "demoCards": 29,
+      "buttons": 29
+     }
+    ]
+   }
   }
  ]
 }
