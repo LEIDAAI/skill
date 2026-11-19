@@ -1,909 +1,909 @@
-# 店雷达专家迁移清单（对话 → leidaaisystem 后台）
-
-<!-- BEGIN OZON SCENES DELIVERY 2026-11-17 -->
-## 2026-11-17 OZON 九场景当前迁移与交付
-
-- 一个专家 `ozon-selection-assistant`（youweiAI-OZON选品专家），模型 `glm-5.3`；保留七个公共技能，追加九场景，实际绑定共16项。完整专家公共配置、九场景正文及七公共技能基线见 `ozon-scenes-configuration-2026-11-17.json`，没有用摘要替代正文。
-- 原七项公共实际ID：`ozon-selection-analysis`、`youweiai-ozon-competitor-monitor`、`youweiai-ozon-category-trend`、`youweiai-ozon-product-parse`、`youweiai-ozon-shop-analysis`、`ozon`、`youweiai-ozon-report-gen`。场景调用公共能力，公共技能不反向调用场景；TS保留既有七项前台ID并导出实际ID快照及九场景定义。
-- 当前索引21个独立会话，逐会话逐轮记录见 `ozon-scenes-acceptance-2026-11-17.html`、`ozon-scenes-delivery-2026-11-17.json` 与 `ozon-scenes-evidence-manifest-2026-11-17.json`。原始测试指令判定：通过11、部分通过4、未通过6、验收中0；仅保留 `acceptance-results.json` 中按chatId匹配的显式status/finalStatus，缺少则验收中。历史限量测试通过仅对应原始测试指令，不能证明默认样本量/全场景完成。验收范围scope、业务达标businessStatus、首次回答firstAnswerStatus分别展示，缺失均为未评估；技术报告渲染仅引用单列preview证据，与业务条件达标分别展示。`done=true`、代码工具外层success、已有HTML均不自动判通过。
-- 热销实际商品交付补充：`ozon-hot-sales-verified-2026-11-17.html` 与同名 JSON 直接读取首轮60个SPU原始返回，独立核算并逐行溯源。导航热销实测的报告入口优先打开商品结果，验收页保留入口。独立核算通过不改写原UI首答或场景业务状态，未重跑真实会话不增加会话计数。
-- 原 `audit-findings.json` 的失败与缺口完整保留。每轮模型回答、工具实参/完整返回、原始HTML按内容哈希独立存档；后续纠正和独立复测不覆盖首轮失败。HTML从每个 `turn.answer` 的围栏提取，损坏内容原样保留，不修复后冒充原报告。
-- 耗时证据缺失写“未提供逐工具耗时”，采集时刻、消息时间、业务数据日期不能代替耗时。本构建不操作浏览器；实际渲染/图片/hover状态只引用主Agent提供的preview证据。
-- 重建命令：`python tmp/ozon_scenes_delivery_20261117.py`。可重复执行并接收索引新增复测/缺参会话；每会话一行并输出数量校验，配置未变不重复追加版本。仅本地交付，不提交、推送或发布，不修改其他平台和两份导航HTML。
-
-| 场景 | 实际技能ID |
-|---|---|
-| youweiAI-OZON-场景-热销飙升 | `youweiai-ozon-scene-hot-sales-rise` |
-| youweiAI-OZON-场景-本土刚需季节品+备货 | `youweiai-ozon-scene-seasonal-stocking` |
-| youweiAI-OZON-场景-头部跟款+新手铺货 | `youweiai-ozon-scene-top-seller-beginner` |
-| youweiAI-OZON-场景-商品流量词分析 | `youweiai-ozon-scene-title-traffic-terms` |
-| youweiAI-OZON-场景-宠物细分类目对比 | `youweiai-ozon-scene-pet-subcategory-compare` |
-| youweiAI-OZON-场景-热搜词飙升榜选品 | `youweiai-ozon-scene-search-traffic-ranking` |
-| youweiAI-OZON-场景-大盘趋势快照（目标场景） | `youweiai-ozon-scene-market-trend-snapshot` |
-| youweiAI-OZON-场景-冷门空缺类目筛选 | `youweiai-ozon-scene-supply-demand-gaps` |
-| youweiAI-OZON-场景-批量图搜寻源（Ozon→1688） | `youweiai-ozon-scene-batch-image-sourcing` |
-
-<!-- END OZON SCENES DELIVERY 2026-11-17 -->
-
-<!-- BEGIN OZON RECALL FIX 2026-11-17 -->
-## 2026-11-17 晚 · OZON 召回口径实测修正（覆盖九场景检索写法）
-
-**触发原因**：用户核对表格 6 个标签页 83 个场景后要求对比我们与表格的差别。逐字比对确认九场景提示词要点 100% 已落进技能正文（热销 6974字/表394字、宠物 6773/695、图搜 6698/547…），**提示词层无遗漏**。真正问题在召回路径：旧正文让模型按用户原话"关键词женская сумка"直搜，实测严重失真。
-
-**真实接口实测（类目 17001，同一 28 天销量降序）**
-
-| 召回写法 | total | 榜首近28天销量 |
-|---|---|---|
-| A 类目导航 `types:['17001']` 不带 spuName | 10000 | 17,969 |
-| B 宽词 `spuName:'сумка'` | 1,575 | 16,992 |
-| C 双词 `spuName:'женская сумка'` | **220** | **1,081** |
-
-命中差 45 倍、榜首差 15.8 倍。原因：OZON 俄区商品标题大量写 `Bag` / `Zara Bag` / `品牌名+Bag`，写全双词的反而集中低销量长尾。
-
-**另两条实测结论**
-- `from` 翻页在 100 条后失效（from=0 返 100 条，from=100 新增 0 条且 total 不变）。改用 `minSoldCount28` 按销量阈值分段切片：`[(2,100),(100,300),(300,800),(800,2000),(2000,None)]`，实测取到 297 个唯一 SPU。`size` 上限 100，传 500 报 `size should be less than or equal to 100`。
-- 性别判定必须用详情 `type2`，但 `type2` 也会误判：标题只写 `Bag` 的 10 款高销量品 10/10 返回 `type2=女士`（只按标题判会全丢，含榜首 17,040 件那款）；而明确写 `Сумка мужская` 的款同样返回 `type2=女士`。故必须 **type2 + 标题双证据，冲突以标题为准**。
-
-**改动清单（已回读线上逐字校验）**
-
-| 对象 | 版本 | 字数 |
-|---|---|---|
-| 九场景技能（各追加「召回口径实测修正」章节） | c0bc4215→ae402f64 / 2d6fdbc9→46430332 / e4b27c54→c93d709a / 8e28e441→daabc246 / ae1cd3e2→1f0ca864 / eacecad2→4d9569e7 / d1bbc744→eb7f05b9 / 6462ca5d→8e50553d / a2c9ab8b→4ee0dcbf | 6974→9046、7076→9148、7137→9209、6237→8309、6773→8845、6704→8776、6338→8410、6678→8750、6698→8770 |
-| `ozon-selection-analysis` 追加「召回路径与翻页实测修正」 | fc304570→**802f9a52** | 6244→7315 |
-| 专家 `ozon-selection-assistant` 追加「召回与交付门禁」两硬门禁 | — | 5031→**5795**，skillIds 保持 16 |
-
-**首答验证（真实 UI 会话 `6a9412b1-75f0-4200-86ca-4cc72ad55a53`）**
-模型未被告知修复，自主走对路径：42 次工具调用 = 3×view_skill + 2×dict_lookup + 2×spu_search（仅 types，不带 spuName）+ 30×spu_detail 核 type2；**20/20 行标题与销量与独立核算逐行零误差**，榜首由 1,081 修正为 17,040。点「预览」后 KPI 四卡、20 行主图、20 条真实链接、悬停 320×320 均正常。
-
-**纪律沿用**：本轮只增加了这一条真实会话；其余 8 个场景未重跑，验收状态按其原有逐会话证据保留，不因正文更新改写历史判定。交付物是结果页（`ozon-prompt-audit-recall-fix-2026-11-17.html` 含六章节核对与修复），不以验收报告充当结果交付。
-
-<!-- END OZON RECALL FIX 2026-11-17 -->
-
-<!-- BEGIN OZON RERUN 2026-11-17 晚 -->
-## OZON 九场景真实首答复验收口（2026-11-17 19:52）
-
-召回口径修正落地后，场景1-9 全部重跑真实 UI 首答（模型未被告知修复内容）：
-
-| # | 场景 | 判定 | 会话 | 关键证据 |
-|---|---|---|---|---|
-| 1 | 热销飙升 | 通过 | 6a9412b1 | 42次工具调用，20/20行与独立核算零误差（榜首17,040） |
-| 2 | 本土刚需季节品+备货 | 通过 | 319968a8 | 类目导航 total=10000；type2+标题双证据剔除化妆包/男包；季节证据不足如实判0款 |
-| 3 | 头部跟款+新手铺货 | 通过 | 5c97f2af | 6 SPU/6唯一卖家，真实sellerId+企业身份；轻小缺证如实判0款 |
-| 4 | 商品流量词分析 | 通过 | 409f948b | 真实标题词频；明确"非流量归因" |
-| 5 | 宠物细分类目对比 | 通过 | b7d31e4b | 先字典后market_stat；不判蓝海（历史"首答未通过"本轮首次首答通过） |
-| 6 | 热搜词飙升榜选品 | 通过 | 33c6a1ba | minSessionCountSearch7=5000 真实入参(total=218) |
-| 7 | 大盘趋势快照 | 通过 | 2cc4da9c | key=all；币种未核不算GMV；两点观测不判内卷 |
-| 8 | 冷门空缺类目筛选 | 通过 | 4373eae7 | 4次字典核对；供需比只做相对排序 |
-| 9 | 批量图搜寻源 | 部分通过 | 271a8840 | OZON侧全对(95205/SKU 5014222925=1,394件)；1688图搜网关502 "no configured MCP connector"，0候选不伪造 |
-
-独立核算：直连 MCP 同参数复现，销量/价格/类目编码逐字段一致。
-导航同步：9 场景 status/demo.rerun/acceptanceHistory 已写入源与发布版，两者 JSON 等价，node --check 通过。
-<!-- END OZON RERUN 2026-11-17 晚 -->
-
-<!-- BEGIN OZON SCENE9 RERUN 2026-11-17 -->
-## OZON 场景9 补跑通过（2026-11-17 21:50）—— 九场景 9/9 全通过
-
-- 根因修复：1688 图搜 502 "no configured MCP connector" 非配置缺失——网关进程（gateway_daemon 守护，2026-11-17 09:01 起）的 ConfigLoader 连接器状态损坏。重启网关进程（taskkill + daemon 3 秒自动拉起）后接口立即恢复（get_category_info/image_search/ali_offer_realtime_detail/ali_offer_sku_prices 全部 200）。
-- 补跑会话 ef2b2e3d-30d6-41b2-b29e-9561091371c3：类目 95205（total=4830）、销量最高 SKU 5014222925（1,394 件/₽297/bin28=leader/广东省跨境卖家 KEYUE1）；图搜命中 4 个 1688 候选，首选义乌舒净 offerId=985465320012「厂家批发宠物垫子」，实取供货详情+SKU 阶梯价 ¥2.90 起（≥1件）。
-- 独立核算：直连同网关通道复现，货源 subject 与 ¥2.90 阶梯价逐字段一致。相似款标注、无汇率不算价差等纪律全部遵守。
-- 导航两份 9 场景全部「已通过」，JSON 等价，node --check 通过；versions.json 追加 1 条。
-- 运维备注：gateway_daemon.py（F://traehuihua//temp_20261010_04//dld-gateway//）常驻，网关 ConfigLoader 每 60s 从 Open WebUI TOOL_SERVER_CONNECTIONS 刷新；再遇 no configured 502 先重启网关进程（旧进程缓存损坏是已知模式）。
-<!-- END OZON SCENE9 RERUN 2026-11-17 -->
-
-<!-- BEGIN OZON DEPTH OPT 2026-11-17 -->
-## OZON 五技能深度优化与对照复验（2026-11-17 23:59）
-
-对照店雷达历史交付（表格 9 场景报告）发现的展示深度差距，4 项做法写进 5 个场景技能，全部真实 UI 复验通过：
-
-| 场景 | 新增章节 | 复验会话 | 复验结果 |
-|---|---|---|---|
-| 3 头部跟款 | 卖家聚合TOP5表+CR集中度+候选分层 | ac9a6a78 | 主样本80款、CR1=11.3%/CR5=43.1%、30款候选分层(A12/B18)、26.1min |
-| 4 流量词 | 词频×销量中位差异+高流量覆盖度 | 710c5633 | 三路样本、交叉表70行、кросс-боди -32.2%强关联标注、18.8min |
-| 6 热搜词 | 100款榜单+价格带×销量贡献交叉 | 32fc7b81 | 101图100链、0-499₽占39.5%款数贡献72.1%销量、词根渗透率、25.5min |
-| 7 大盘 | 全序列账期表+供需增幅差 | 9696045f | 51行50账期、环比17处、币种未核保留源值、8.1min |
-| 9 图搜 | 价差三档数量级参考 | 865c69d4 | 3款图搜+实取阶梯价、1.42~2.93倍均"一般"、汇率门禁保留、5.0min |
-
-版本变更：c93d709a→607aff4a、daabc246→889933fd、4d9569e7→88daa209、eb7f05b9→98034868、4ee0dcbf→3fdd8989。
-深度版耗时明显增加（18~26分钟 vs 之前3~7分钟），由样本量与逐款核验决定，属预期成本。
-<!-- END OZON DEPTH OPT 2026-11-17 -->
-
-<!-- BEGIN OZON SPEED OPT 2026-11-18 -->
-## OZON 全技能执行提速快车道（2026-11-18 早）
-
-实测 `yq_ozon_spu_search` 的 `_fields` 可批量返回 type2/type3/brand/sellerName/link/photo，抽验 10 款与 spu_detail 逐字段一致。快车道章节写进 9 场景+7 公共技能（共16个）：
-
-- **批量核验替代逐款 detail**：spu_search 一次调用=全部样本核验结果；detail 仅用于抽样复核（3~5款）与序列/库存/评论等 search 拿不到的字段
-- **_fields 必含 photo+link**；**禁止 spuIds 参数回取**（实测被接口忽略，total=10000 返无关商品）
-- **交付形态硬门禁**：HTML 必须直接在回复正文输出，禁止只存 execute_code 沙箱（场景6首答曾误存沙箱，追问7.4min才补回）
-- **execute_code 合并少调**；view_skill 每会话每技能只读一次
-- 质量门禁不变：type2+标题双证据照旧；抽样不一致时该样本起全部改回逐款核验
-
-复验：场景3快车道 9.7min/14次调用（深度版 26.1min/61次，提速63%）302唯一SPU+CR5=38.7%+20主图20链接；场景6首答 18.0min（原25.5min）72严格+价格带交叉全保留。两场景与独立核算一致。
-版本：16技能全部更新（场景3 b1920a32、场景6 78489bbe 等）。
-<!-- END OZON SPEED OPT 2026-11-18 -->
-
-<!-- BEGIN OZON FASTLANE ALL 2026-11-18 -->
-## OZON 九场景快车道全量复验（2026-11-18 09:20）—— 9/9 通过
-
-| 场景 | 首轮 | 深度版 | 快车道 | 调用数（首/深/快） | 质量 |
-|---|---|---|---|---|---|
-| 1 热销飙升 | 11.8m | — | 6.5m | 42/—/11 | 100条批量+4款抽样一致，Top17,040 |
-| 2 季节品 | 7.3m | — | 3.4m | 16/—/10 | 双证据+趋势未知+T−60保留 |
-| 3 头部跟款 | 5.0m | 26.1m | 9.7m | 23/61/14 | 302SPU+CR5=38.7%+48候选 |
-| 4 流量词 | 3.4m | 18.8m | 4.3m | 7/18/6 | 词频×中位差异%+强关联 |
-| 5 宠物对比 | 1.9m | — | 1.3m | 9/—/8 | market_stat逐字段一致 |
-| 6 热搜词 | 2.3m | 25.5m | 7.8m | 7/26/7 | 价格带交叉+词根+同款数 |
-| 7 大盘 | 3.0m | 8.1m | 4.6m | 6/12/6 | 51行50账期+环比+币种门禁 |
-| 8 冷门 | 4.1m | — | 2.3m | 14/—/11 | 供需比排序+不判蓝海 |
-| 9 图搜 | 3.0m | 5.0m | 1.9m | 11/16/6 | 复用图搜+实取阶梯价¥2.90 |
-
-快车道平均 **4.6 分钟**（首轮 5.2min、深度版 16.7min）；9 场景全部真实 UI 重跑，独立核算逐字段一致，质量门禁（type2 双证据/趋势未知/不判蓝海/币种未核/价差三档）全部保留。
-会话：05daed2e / 6eba23f0 / 008a9c87 / 3ca0de12 / 9fece052 / f95cf1a2 / 5f940434 / 92806677 / 2d0141d2。
-场景9收口轮图搜复用昨日已验证结果（用户指令"图搜最后再试"，中途30次调用首轮已弃用）。
-<!-- END OZON FASTLANE ALL 2026-11-18 -->
-
-<!-- BEGIN OZON DOC STANDARD 2026-11-18 -->
-## OZON 按文档交付标准重做（2026-11-18 中午）—— 质量优先于耗时
-
-用户明确指出：优化不能以"把100个图搜变成2个"换速度，必须先实现文档的结果标准。对照9份店雷达历史报告逐维核对：
-
-**核对发现**：样本量达标≠分析达标。原8类全量版只有机械排序，缺文档的五层分析价值。补进技能并复验达标：
-- 场景5宠物对比（3f080388，4.7min）：8类全量+三条结论摘要+逐行"如何继续看"+比值三组合(÷店铺高≠新店能卖)+能说明/不能推出/还需检查+下一层研究清单，比文档多月销额维度
-- 场景8冷门（badb3c4b，7.0min）：7类全量+同五层分析
-- 场景1热销（40c6d48a，13.6min）：双路100+60初筛→20主表+6观察26主图，日均对比(前21天)+用途待核+品牌款风险
-- 场景2季节品（86cdb0f4，6.8min）：6候选+1观察+日均变化+storeType实核
-- 场景3跟款（77e400f7，21.4min）：双路清洗+TOP5卖家+CR1/CR5+三条件分层+60图30链（中途9ec0881c因沙箱断开148次重试挂死，已弃用）
-- 场景4流量词（35664127，11.0min）：三路298条→226组唯一（文档116组）
-- 场景6热搜词（32fc7b81，25.5min）：100款完整榜单101图100链（深度版已达标无需重跑；db706740尝试因字段口径反复验证挂死已弃用）
-- 场景7大盘（9696045f，8.1min）：50账期全序列，金额列因上游停字段标待核
-
-技能版本更新：场景1 03083fb1、场景3 6fc22760、场景4 2c47cadc、场景5 eff8646c、场景8 fd7c0359（分析价值深度章节）。
-**浏览器通道**：chrome-devtools MCP profile冲突卡死，用户授权后切换 workbuddy-browser-use 的 Google Chrome 扩展通道（browser_id=2）继续真实UI会话，验收口径不变。
-**待办**：场景9的100张全量图搜（文档4036候选/101行202图）需用户明确点数授权后跑。
-<!-- END OZON DOC STANDARD 2026-11-18 -->
-
-<!-- BEGIN OZON ALL9 DOC STANDARD DONE 2026-11-18 -->
-## OZON 九场景按文档交付标准全部达标（2026-11-18 14:15 完成）
-
-用户指令"全部解决"，完成最后一块场景9的100款全量图搜：会话 ce66d7d8，73.9min/132调用（111次1688 native_call）。100行明细102tr+99图+101 Ozon链接+7个1688链接，价差初判怎么读+图片对比说明+三档初判齐全。**真实命中4成功/87 NO_RESULT/6张504（1款受失败图影响）**——文档86/100是历史数据快照，本轮命中率低是上游真实返回差异，NO_RESULT和504全部如实标注未伪造。
-
-至此9场景docStandard标记9/9：
-场景1 40c6d48a / 2 86cdb0f4 / 3 77e400f7 / 4 35664127 / 5 3f080388 / 6 32fc7b81 / 7 9696045f / 8 badb3c4b / 9 ce66d7d8。
-
-核心结论：按文档标准交付的时间成本显著高于缩样本快车道（场景9 73.9min vs 快车道1.9min），但这是用户明确要求的"质量优先"。命中率等数据源外部因素如实披露，不用缩样本掩盖。
-<!-- END OZON ALL9 DOC STANDARD DONE 2026-11-18 -->
-
-<!-- BEGIN OZON ALLGMV CORRECTION 2026-11-18 -->
-## 场景7 全平台金额"上游停发"结论更正（2026-11-18 16:30）
-
-**用户提问**："全平台的日/周/月 GMV 是每天都没有么"。直连 `yq_ozon_market_stat(key=all)` 实测重核，推翻此前结论。
-
-**实测事实**
-- 50 个账期（20260813—20261104），**49 期 dayPrice/weeklyPrice/monthlyPrice 均有值**，仅序列首期 20260813 为 0。此前"全平台金额被上游置 0 / 停发"的表述作废。
-- 但三口径除同口径件数后单件金额严重不自洽（见下表），不可直接当全平台 GMV。
-
-| 区间 | 点数 | 日金额÷日件数 | 周金额÷周件数 | 月金额÷月件数 |
-|---|---|---|---|---|
-| 20260816—20260925 | 36 | 791₽ | 3,735₽ | 189₽ |
-| 20261007—20261104 | 13 | 686₽ | 778₽ | 734₽ |
-
-- 8-9 月最大相差约 90 倍（20260816：744/8,084/86₽），10-07 起三口径收敛；判定该区间周/月金额与日口径不同源，或上游 10 月换过统计口径。
-- 账期覆盖：84 个日历日仅 50 点，缺 34 天，最长缺口 20260926—20261006 连续 11 天；顶层 updateTime=2026-11-16 但最新账期只到 20261104，滞后约 12 天。
-
-**技能改动**（version 79fbc5e2 → f0fbcc20）
-- 新增章节「★ 全平台金额三口径自洽校验」：展示金额前先算三个单件金额，数量级不一致的账期禁用周/月金额算 GMV、客单价或求和。
-- 原「声明」条改为"金额并非全为 0，但存在口径风险"；原第 1 条"全平台 key=all 被上游置0"改为"全平台金额可用但有口径风险"。
-- 类目级（如 95203）三口径单件金额互相接近，客单价可用。
-
-**发布**：源 ozon-skill-hub.html 与 skill/index.html 等价（IDENTICAL），node --check 通过；commit `ce90dc8d`，线上 liveVersionId 已核验为 `f0fbcc20-76a0-46d5-81d1-12809544890d`。
-<!-- END OZON ALLGMV CORRECTION 2026-11-18 -->
-
-<!-- BEGIN OZON SCENE7 BIGCAT 2026-11-18 -->
-## 场景7 改造为「大类大盘分析」（2026-11-18 17:10）
-
-**用户要求**：不做全平台了，按截图改成大类维度；技能和标题都改；并列出类目大盘还能分析哪些维度。
-
-**关键技术验证**
-- `yq_dict_lookup(type="CATEGORY_BACKEND", platform="ozon")` 返回 9300 条，其中 `parentValue` 为空的顶层大类共 **30 个**，key 形如 服装15621031 / 住宅和花园17027494 / 汽车用品17027495。
-- **前台 CATEGORY 编码（28女装、95女鞋、580汽车用品、248电子产品）传进 market_stat 全部返回空**，只有 CATEGORY_BACKEND 后台 ID 能取数。
-- 截图 13 个字段逐位对上：服装 allSkuNum 7,260,777→726.1万、allMallNum 182,690→18.27万、monthSkuNum 7,284、monthMallNum 126、monthlySalesNum 22,286,419→2228.6万、skuInfoNum7 15.2亿、skuSearchNum7 56.9亿、skuViewNum7 225.7亿、skuSearchNum28 204.2亿、skuViewNum28 830.5亿。
-- **截图排序是商品数降序**（服装726万→住宅632万→汽车514万→建筑454万→电子307万→小百货240万…）。
-- 大类三口径自洽：30类中29类日/周/月金额除件数后互差<3倍（仅 Ozon Fresh 例外）；与全平台 key=all 的不自洽形成对比。
-- 大类 `items` 序列到 **20261115 共 63 点**，比 key=all 的 20261104/50点更新。
-
-**技能改造**（version f0fbcc20 → 517742e7）
-- 改名：`youweiAI-OZON-场景-大盘趋势快照（目标场景）` → `youweiAI-OZON-场景-大类大盘分析`。
-- 新增「可分析维度」22 项分 6 组：A 规模结构8（商品数占比/店铺数/单店SKU/日周月销量/日周月销售额/客单价/SKU月均出货/单店月销/份额）；B 流量转化4（商品卡浏览/搜索浏览/展示总计7&28、流量结构、粗转化率、搜索依赖度）；C 供给活力3（新品率/新店率/供需匹配预警）；D 趋势4（日序列/供需增速差/份额迁移）；E 下钻3（子类/店铺榜/品牌榜）；F 价格带1（仅 key=all，独立快照口径）。
-- 明确不可用维度：大类 allBrandsNum/allCommentsNum/allSalesNum 返回0；mallsNum 失真禁用；无退货率/动销率/官方GMV排名。
-- 新增「为什么不做全平台」三条理由（金额三口径不自洽 + 账期滞后 + 大类自洽）。
-- 展示规范沿用用户指定：金额₽/¥同列、≥1亿→X.XX亿/≥1万→X万、按商品数降序、无数据账期剔除。
-
-**样本报告**：`skill/ozon-scene7-bigcat-2026-11-18.html`，26 个有效大类（SKU≥1万），大类合计 SKU 4611万 / 月销 2.94亿件 / 月GMV ₽2369.12亿(≈¥196.64亿) / 客单价 ₽806。已在 Chrome 实机核验渲染、列对齐、结构解读与三段式结论。
-
-**发布**：双文件 IDENTICAL，node --check 通过；commit `2dccb51a`；线上 name=场景7·大类大盘分析、liveVersionId=517742e7 已核验。
-<!-- END OZON SCENE7 BIGCAT 2026-11-18 -->
-
-
-
-
-
-
-
-
-
-
-## TEMU / OZON 配置核查（2026-11-17，本地待发布）
-- 已只读核查两专家及14技能；线上配置未改。本地评估：`temu-ozon-config-review-2026-11-17.html`，两份导航的相关实测面板增加独立评估入口，不改写历史会话判定与计数。
-- TEMU 优先修复 iframe 指令冲突、异步任务与报告完成边界；核验利润找源工具依赖，按任务区分必要追问，删除重复规则。OZON 优先修复类目趋势白名单、代码故障回退与成功输出门禁冲突，统一跨技能取样预算。
-- 本轮新增真实UI会话0条：browser-skill服务正常但扩展连接0，按用户要求未切换通道。历史回读不算本轮实测。GitHub重新授权已取消或超时，本次仅本地准备，远端发布及线上浏览器验收未完成。
-
-## 亚马逊统一演示页（2026-11-16 下午演示版）
-- 统一入口 `youweiAI-amazon-prompt-ab-20261114.html`：四步决策旅程、29技能唯一清单；每行问题/帮助/问法/实测合一。旧手册 `youweiAI-amazon-29skills-handbook.html` 自动跳转，不再维护第二份正文。
-- 34条历史证据留在实测弹窗，保留各自会话与验收边界。演示推荐：场景12→5→14→19。
-- 用户指定Chrome调试通道已实测29按钮、34记录切换，结果无错、无横向溢出、无控制台警告/错误；分类5/7/3/6/8、搜索空态、关闭焦点恢复离线验证通过。本轮页面验收不代表新增业务实测。
-
-## 亚马逊29技能实测弹窗（2026-11-16）
-- 原A/B报告 `youweiAI-amazon-prompt-ab-20261114.html` 新增29技能分类、用途、帮助说明、搜索及实测入口；客户手册 `youweiAI-amazon-29skills-handbook.html` 同步每行实测按钮。
-- 29技能共34条验收记录，弹窗展示问法摘要、KPI、过程、明细、结论、数据边界和原始会话；基线、独立A/B、上线后抽测分开。场景15历史成功与最新待输入分开；场景21完整广告文件分析待验。
-- 两页面全部技能与记录已通过离线DOM交互和语法检查；Chrome扩展尚未连接，真实浏览器页面验收待补。本次仅整理既有证据，不新增业务实测，也不更改专家或技能绑定。
-
-> 生成时间：2026-11-08（2026-11-09 增补专家四~七：TEMU 四专家）
-> 用途：管理后台（leidaaisystem #/experts）后端就绪后，照本清单逐字段录入或做成导入 JSON。
-> 事实源：导航页 Hub（leidaai.github.io/skill）专家 Tab；本文档是「搬运说明书」。
-> 当前亚马逊迁移口径：公开名称统一 `youweiAI-amazon`，一个亚马逊选品专家绑定八项技能；具体 ID、验收边界与保密要求见文末「当前亚马逊迁移规范」。下文 2026-11-08 至 11-11 的历史专家数、双源方案、七技能配置及实测锚点保留追溯，不可作为当前亚马逊绑定或调用指南。
-> 运行前提：目标运行时需挂载 yunqi-data MCP（Ozon 数据）+ 1688 MCP（图搜/拿货价），知识库需部署「OZON中国跨境佣金与国际物流」4 篇文档。
-
----
-
-## 通用字段映射（后台模型 ↔ 本清单）
-
-| 后台表单项 | 来源字段 | 说明 |
-|---|---|---|
-| 助手名称 | name | |
-| 头像 | — | 后台自选 |
-| 上架开关 | status=built → 开启 | |
-| 默认专家 | 建议选品专家 | 用户主入口 |
-| 可见性 | 全员可见 | 按运营策略调整 |
-| 平台（多选） | platforms | ozon / 1688 / amazon / temu |
-| 场景 | 见各专家「场景」 | 对齐后台现有场景分组 |
-| 模型 / 温度 | 见各专家「模型建议」 | 人设含工具纪律，温度宜低 |
-| 技能绑定 | skills | 按平台过滤后在后台勾选 |
-| MCP 绑定（工具白名单） | mcpTools | ⚠️ 后台就绪后需逐个配置 |
-| 知识库 | knowledge | ⚠️ 需在后台部署同名知识库 |
-| 标题/简介/介绍 | desc | |
-| 开场白 | greet | |
-| 核心能力 | abilities | |
-| 参考提示词 | refPrompts | |
-| 问题建议 | refPrompts 前3条可复用 | |
-| 人设 System Prompt | sysPrompt | 全文复制 |
-
----
-
-## Ozon 选品搜索追加验收（2026-11-11 麻将包）
-
-- 上架时间：近90天对应 2026-08-13 至 2026-11-11；未指定销量周期时，本次按近28天销量>1，即 `minSoldCount28=2`。
-- 同词两义分别核验：麻将牌收纳包俄文 `сумка маджонг` 无硬筛 3 条（1 包、2 牌具套装），加硬条件为0；绗缝手袋俄文 `стеганая сумка` 加硬条件 1 条，却是化妆包，剔除后有效 0。搜索接口有数据（已知 SKU=631000911 可返回），不能误判整体不可用。
-- 验收时必须让专家说明「0 条有证据的合格商品」；服务端筛选不等于每行字段经核验，若 `createDate`/`soldCount28` 缺失，不能声称逐条核验达标。具体纪律以 `ozon-expert-skill-map.ts` 和 `ozon-selection-search.md` 为准。
-
-## 专家一：Ozon选品专家
-
-- **ID 建议**：`ozon-selection`
-- **平台**：OZON
-- **场景**：分销选品
-- **模型建议**：主力模型，温度 0.3（工具参数纪律强，低温防发挥）
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_dict_lookup
-  mcp__yunqi-data__yq_ozon_goods_search
-  mcp__yunqi-data__yq_ozon_goods_detail
-  mcp__yunqi-data__yq_ozon_spu_search
-  mcp__yunqi-data__yq_ozon_spu_detail
-  mcp__1688__global_image_search
-  mcp__1688__image_search
-  mcp__1688__ali_offer_sku_prices
-  ```
-- **知识库绑定**：OZON中国跨境佣金与国际物流（佣金类目表-2025-12-01 / 佣金规则 / 物流线路摘要-2026-03-25 / 物流规则）
-- **绑定技能**：Ozon选品搜索、竞品价格监控、类目趋势分析、商品详情解析、利润测算、选品报告生成
-- **简介**：Ozon（俄罗斯电商）选品助手：类目热销挖掘、时间窗筛新品、竞品/跟卖监控、配知识库测算佣金物流后的卢布利润。
-- **开场白**：
-  > 你好！我是 Ozon 选品专家。可以帮你：按类目找热销款（如"家居类目近28天卖得好的"）、按上架时间筛新品（如"近30天上架的连衣裙"）、分析单品销量趋势与跟卖、用佣金物流知识库测算利润。类目词我会先查字典确认编码再查询。
-- **核心能力**：类目热销榜与时间窗筛新品 / SKU·SPU 商品解析与跟卖监控 / 转化率·库存·销量动态多维筛选 / 佣金+国际物流利润测算（知识库）/ 结构化选品报告
-- **参考提示词**：
-  1. 家居用品类目近28天销售额TOP10有哪些
-  2. 近30天上架的连衣裙，找出有销量的新款
-  3. 分析 SKU 631000911 的销量趋势、价格和跟卖情况
-  4. 测算这个商品的1688分销利润（给我SKU或链接即可）
-- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-ozon-sel → sysPrompt`（含工具链表、指标口径、利润公式、1688图搜纪律），或直接从导航页专家卡片「复制人设提示词」。
-- **实测锚点**（验收用）：家居用品(17028714) 近28天销售额TOP：感应垃圾桶₽2967/4412件/₽1181万；垃圾袋35L ₽190.7/58614件/₽1063万（2026-11-08 实测）。
-
----
-
-## 专家二：Ozon店铺专家
-
-- **ID 建议**：`ozon-mall`
-- **平台**：OZON
-- **场景**：竞品监控
-- **模型建议**：主力模型，温度 0.3
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_ozon_mall_search
-  mcp__yunqi-data__yq_ozon_mall_detail
-  mcp__yunqi-data__yq_ozon_goods_search
-  ```
-- **知识库绑定**：无（店铺分析不依赖费率库）
-- **绑定技能**：店铺排行分析、商品详情解析、竞品价格监控、选品报告生成
-- **简介**：Ozon 店铺分析助手：找标杆店铺、竞店监控、店铺销量/SKU结构与开店轨迹分析、反查店铺在售爆款。
-- **开场白**：
-  > 你好！我是 Ozon 店铺专家。可以帮你：按销量/评分筛店铺找标杆（如"日销最高的跨境店铺"）、看店铺详情（开店时长/等级/分类结构）、反查某个店铺在卖什么爆款、竞店对比分析。给我店铺ID、店铺名或筛选条件都行。
-- **核心能力**：多维筛选找标杆店铺 / 店铺详情解析（等级·开店时长·执照）/ 反查店铺在售商品与爆款结构 / 竞店对比与铺货·精品模式判断 / 店铺销量趋势追踪
-- **参考提示词**：
-  1. 找出日销量TOP10的Ozon跨境店铺
-  2. 分析店铺 2892839 的经营情况和爆款结构
-  3. 对比这两家店铺的铺货策略（给我两个店铺ID）
-  4. 家居类目有哪些值得对标的本土店铺
-- **人设 System Prompt**：见 `exp-ozon-mall → sysPrompt`（含三条实测纪律：自营脏数据过滤 / 类目筛店铺的正确姿势 / monthlySales 字段不存在）。
-- **实测锚点**（验收用）：Rhapsody Home Shop(ID 2892839)=跨境/Plus(level3)/开店1年/日销8738件/周销57706件/1252 SKU/87 SPU/评分4.8；店内爆款创可贴28天60,954件₽66（2026-11-08 实测）。
-
----
-
-## 专家三：Ozon大盘专家
-
-- **ID 建议**：`ozon-market`
-- **平台**：OZON
-- **场景**：分销选品（市场调研子场景，后台有细分则归「市场分析」）
-- **模型建议**：主力模型，温度 0.4（分析框架下允许适度推理）
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_dict_lookup
-  mcp__yunqi-data__yq_ozon_market_stat
-  mcp__yunqi-data__yq_ozon_brand_search
-  ```
-- **知识库绑定**：无
-- **绑定技能**：类目趋势分析、选品报告生成、店铺排行分析
-- **简介**：Ozon 市场分析助手：类目容量与趋势（SKU/店铺/销量/流量）、品牌集中度、价格段分布，回答"该不该入场"。
-- **开场白**：
-  > 你好！我是 Ozon 大盘专家。可以帮你：评估类目容量（多少SKU/店铺/月销）、看类目增长趋势（每日序列）、分析品牌集中度（头部品牌占多少）、价格段分布，帮你判断一个类目该不该入场。说个类目名就行。
-- **核心能力**：类目容量评估（SKU·店铺·销量）/ 每日趋势序列与增长判断 / 品牌集中度与头部竞争分析 / 价格段分布与定价区间建议 / 入场可行性结论
-- **参考提示词**：
-  1. 家居用品类目现在还能进吗
-  2. 分析服装类目的大盘容量和品牌集中度
-  3. 宠物用品类目近3个月的趋势是涨还是跌
-  4. 这个类目头部品牌占多少份额（给我类目名）
-- **人设 System Prompt**：见 `exp-ozon-market → sysPrompt`（含五步分析框架：容量→集中度→流量效率→动销率→趋势；结论强制给入场建议）。
-- **实测锚点**（验收用）：家居用品(17028714) 大盘 = 月销228万件/月销售额8.29亿₽/15.7万SKU/4.67万店铺/月动销SKU仅964(0.6%)/近28天浏览20.6亿次/搜索39亿次（2026-11-08 实测）。
-
----
-
-## 专家四：TEMU选品专家
-
-- **ID 建议**：`temu-selection`
-- **平台**：TEMU
-- **场景**：分销选品
-- **模型建议**：主力模型，温度 0.3（多币种/参数纪律强，低温防发挥）
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_dict_lookup
-  mcp__yunqi-data__yq_goods_search
-  mcp__yunqi-data__yq_goods_detail
-  mcp__yunqi-data__yq_goods_comment
-  mcp__yunqi-data__yq_goods_img_search
-  mcp__yunqi-data__yq_mall_search
-  mcp__yunqi-data__yq_mall_detail
-  mcp__yunqi-data__yq_brand_search
-  mcp__yunqi-data__yq_market_semi
-  mcp__yunqi-data__yq_quota_status
-  mcp__1688__global_image_search
-  mcp__1688__image_search
-  mcp__1688__ali_offer_sku_prices
-  ```
-- **知识库绑定**：无（TEMU 佣金/核价规则暂无知识库，利润估算项须标注）
-- **绑定技能**：TEMU选品搜索、TEMU竞品监控、TEMU类目大盘、TEMU商品解析、TEMU店铺分析、TEMU利润测算、TEMU竞品调研（Hub 内 7 个）
-- **简介**：TEMU 选品助手（云启数据）：全托/半托商品搜索、站内图搜同款、店铺与品牌分析、半托大盘与利润测算。
-- **开场白**：
-  > 你好！我是 TEMU 选品专家，基于云启 TEMU 数据接口工作。可以帮你：按类目/关键词找全托或半托热销款（如"美国站半托管家居类日销TOP"）、用商品图扫站内同款看竞争密度、解析单品多国价格与评论、查店铺和品牌经营数据、看半托大盘选赛道、测算利润。类目词我会先查字典确认编码再查询。
-- **核心能力**：全托/半托商品搜索与多维筛选 / 站内图搜同款与竞争密度分析 / 单品解析（多国价格/评论分布）/ 店铺与品牌经营数据分析 / 半托大盘容量与价格段分析 / 利润测算（接口实查售价）
-- **参考提示词**：
-  1. 帮我看看TEMU家居类目有什么好卖的
-  2. TEMU美国站半托管30美元以内的收纳盒找一下
-  3. 用这张图搜一下TEMU站内同款（发图片给我）
-  4. 解析商品 606713235275597 的价格和评论
-  5. SANRIO 品牌在TEMU卖得怎么样
-  6. TEMU美国站半托管大盘还能进吗
-- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-sel → sysPrompt`（含多币种纪律、goods_detail 裁剪纪律、brand_search 参数坑、market_fully 不可用降级、1688/TEMU 图搜分离纪律），或从导航页专家卡片「复制人设提示词」。
-- **实测锚点**（验收用，2026-11-09）：
-  - 家居厨房用品(36) 全托日销TOP：圣诞耶稣诞生摆件 日销5000件/马来西亚站 RM12.54；KJM马桶清洁片 德国站 €5.05/日销2228件
-  - 单品 606713235275597 评论：allCount 3852，4星+5星占 82.8%
-  - shiny party 店铺(56492256536)：1705 SKU/12.1万评论/4.8分/2022年开店/26站点/餐厨布艺占周销 24.2%
-  - SANRIO 品牌：18553店/98万SKU/月销184.9万件/4.75分
-  - 美国站半托大盘：4883万商品/44.2万店铺/月GMV $9.93亿（2026-10-30 数据点）
-  - 图搜：马桶清洁片主图命中 55 个站内同款，distance 0.21~0.40
-
-### TEMU 接口实测矩阵（2026-11-09）
-
-| # | 接口 | 实测要点 | 结果 |
-|---|---|---|---|
-| 1 | yq_goods_search | opt_ids=[36] + ware_house_type=0 + sort=[{daily_sales:desc}] | ✅ 10000+候选，圣诞品霸榜 |
-| 2 | yq_goods_detail | id=606713235275597 | ✅ 但返回 9 万字符，**必须 _fields 裁剪**；prices=多国价格历史 |
-| 3 | yq_goods_comment | _fields=[allCount,score1..score5] | ✅ 星级分布一次拿全 |
-| 4 | yq_goods_img_search | 图片 URL 直传 + _want | ✅ 55 同款；**_fields 只认 stats/sales/distance 等少数列**，传 id/price 会被忽略（自带返回） |
-| 5 | yq_mall_search | opt_ids+sort 日销降序 | ✅ 头部店铺日销 8964 |
-| 6 | yq_mall_detail | id=56492256536 | ✅ 类目周销占比 opts.weekly_sales_ratio 直接可用 |
-| 7 | yq_brand_search | brand=SANRIO + opt_ids | ✅ 但**排序用 orderByColumn+isAsc（传 sort 数组直接报错）**；**brand/malls_num 等字段不在默认返回，必须 _fields 显式传**，否则返回全是无名义字段 |
-| 8 | yq_market_semi | area=美国站 | ✅ 全量大盘+每日序列+分类/价格段/销量段 |
-| 9 | yq_market_fully | 无参/带 _fields/optId=36 | ❌ **确认不可用**：无参超时×2；optId 只接受枚举 17857099937，传其余值 schema 校验拒绝，传枚举值报 code=-1。人设已写降级路径（goods_search 全托聚合估算） |
-| 10 | yq_dict_lookup | CATEGORY keyword=家居 | ✅ 家居厨房用品=36（一级） |
-| 11 | yq_quota_status | — | ✅ 标准版，总 20 万次剩 19.8 万，2026-11-18 到期 |
-| ⚠️ | 币种陷阱 | region=45 哥伦比亚 | ⚠️ currency 显示"$"实为哥伦比亚比索（商品标价 10306≈2.7 美元）——人设已强制「数值+币种+站点」三元组表述 |
-
----
-
-## 专家五：TEMU核价利润专家
-
-- **ID 建议**：`temu-price`
-- **平台**：TEMU
-- **场景**：供应链对接（核价测算子场景）
-- **模型建议**：主力模型，温度 0.2（金额测算纪律最强，低温防发挥）
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_goods_search
-  mcp__yunqi-data__yq_goods_detail
-  mcp__yunqi-data__yq_goods_img_search
-  mcp__yunqi-data__yq_dict_lookup
-  mcp__yunqi-data__yq_quota_status
-  mcp__1688__image_search
-  mcp__1688__global_image_search
-  mcp__1688__ali_offer_sku_prices
-  mcp__1688__ali_offer_realtime_detail
-  mcp__1688__product_search_list
-  ```
-- **知识库绑定**：无（TEMU 平台扣点/核价规则暂无知识库；测算中平台侧参数按用户后台数据优先，缺失时按行业区间估算并标注）
-- **绑定技能**：TEMU利润测算、TEMU竞品调研、TEMU选品搜索、1688利润测算
-- **简介**：TEMU 供货核价与利润测算：站内售价实查 + 1688 图搜找源 + 拿货价阶梯实查，全托核价博弈/半托自定价双口径。
-- **开场白**：
-  > 你好！我是 TEMU 核价利润专家。给我一个商品（TEMU 链接/ID/图片都行），我会：查它在 TEMU 站内的真实售价与同款价格带 → 用图搜在 1688 找同款货源 → 实查拿货阶梯价与重量 → 按全托管（核价博弈）或半托管（自定价）口径算出利润空间和敏感性区间。也可以直接问我"这个供货价能不能做"。
-- **核心能力**：TEMU 站内售价与同款价格带实查 / 1688 图搜找同款货源（双引擎）/ 拿货阶梯价/SKU/重量/供应商资质实查 / 全托管核价测算与博弈区间 / 半托管自定价利润测算 / 供货价敏感性分析（3档）
-- **参考提示词**：
-  1. 算一下这个 TEMU 商品我供货能不能做（发链接或图片）
-  2. 马桶清洁片在德国站卖 €5.05，我供货价报多少合适
-  3. 用这张图找 1688 货源并测算核价空间
-  4. 这个品 1688 拿货价 ¥3.5，TEMU 核价多少才不亏
-  5. 对比这三个 1688 货源哪个适合供 TEMU
-- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-price → sysPrompt`（含双引擎分工、全托/半托双口径公式、货源甄别优先级），或从导航页专家卡片「复制人设提示词」。
-- **实测锚点**（验收用，2026-11-09）：
-  - 全链路：KJM 马桶清洁片 TEMU 德国站 €5.05 → 1688 image_search 命中 3 精准货源（officialScore 0.74~0.80）→ 阶梯价 3件¥3.5/100件¥3.0/200件¥2.5（10片装）→ 参考重 65g → 供应商「跨境出口专供=是/下游平台含 temu」
-  - 全托供货价底线 ≈ ¥9.0~9.5/30片；站内零售倒推 TEMU 核价区间 ¥15.6~23.4（40%~60% 经验估算）→ 有空间
-
-### 1688 图搜双引擎实测结论（2026-11-09）
-
-| 引擎 | 适用 | 实测 |
-|---|---|---|
-| `image_search`（寻源） | **主引擎**：找同款货源+阶梯价+供应商 | ✅ TEMU 图直搜命中 3 候选，带 quantityPrices/weight1/跨境专供标识 |
-| `global_image_search(platform=1688)` | 辅引擎：全网价格分布广撒网 | ⚠️ 偶发 500（重试即成功）；返回 30 候选但混入蓝泡泡/洁厕棒等非同款，须按 levelName 过滤 |
-
----
-
-## 专家六：TEMU店铺专家
-
-- **ID 建议**：`temu-mall`
-- **平台**：TEMU
-- **场景**：竞品监控
-- **模型建议**：主力模型，温度 0.3
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_mall_search
-  mcp__yunqi-data__yq_mall_detail
-  mcp__yunqi-data__yq_goods_search
-  mcp__yunqi-data__yq_dict_lookup
-  mcp__yunqi-data__yq_quota_status
-  ```
-- **知识库绑定**：无
-- **绑定技能**：TEMU店铺分析、TEMU商品解析、TEMU竞品监控
-- **简介**：TEMU 店铺分析：标杆店挖掘（明星店/Y2店/老店）、竞店监控、SKU 与类目周销结构、反查店内爆款、覆盖站点分析。
-- **开场白**：
-  > 你好！我是 TEMU 店铺专家。可以帮你：按销量/评分/粉丝筛店铺找标杆（如"全托管家居类日销TOP店铺"）、定向挖明星店(mall_star)/Y2店(pre_order)/2022年开店的资深老店、看店铺详情（SKU规模/类目周销占比/覆盖站点）、反查某个店铺在卖什么爆款。给我店铺ID、店铺名或筛选条件都行。
-- **核心能力**：多维筛选找标杆店铺（销量/评分/粉丝/开店时间）/ 明星店(mall_star)与Y2店(pre_order)定向挖掘 / 店铺画像（SKU规模/模式判断/覆盖站点）/ 类目周销占比结构分析 / 反查店内爆款（mall_ids）/ 竞店对比
-- **参考提示词**：
-  1. 找出TEMU全托管日销TOP10的家居店铺
-  2. 分析店铺 56492256536 的经营情况和爆款结构
-  3. 帮我找几个TEMU明星店铺看看他们在卖什么
-  4. 对比这两家TEMU店铺谁的类目更聚焦（给我两个店铺ID）
-- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-mall → sysPrompt`（含 mall_star/pre_order 特有筛选、opts 类目占比框架、mall_ids 反查纪律）。
-- **实测锚点**（验收用，2026-11-09）：shiny party(ID 56492256536)=全托/1705 SKU/12.1万评论/4.8分/opened_at=20220901/26站点/日销8964件；类目结构=餐厨布艺24.2%+节日聚会17.7%+窗饰9.1%；店内反查889动销SKU，爆款=圣诞枕套 日本站円459/日销480、线缆整理夹 €4.32/日销303/总销5.9万。
-
----
-
-## 专家七：TEMU大盘专家
-
-- **ID 建议**：`temu-market`
-- **平台**：TEMU
-- **场景**：分销选品（市场调研子场景）
-- **模型建议**：主力模型，温度 0.4（分析框架下允许适度推理）
-- **MCP 绑定（工具白名单）**：
-  ```
-  mcp__yunqi-data__yq_market_semi
-  mcp__yunqi-data__yq_brand_search
-  mcp__yunqi-data__yq_dict_lookup
-  mcp__yunqi-data__yq_goods_search
-  mcp__yunqi-data__yq_quota_status
-  ```
-- **知识库绑定**：无
-- **绑定技能**：TEMU类目大盘、选品报告生成
-- **简介**：TEMU 市场分析：半托大盘容量与趋势（站点/类目下钻）、价格段与销量段分布、品牌集中度，回答"该不该入场"。
-- **开场白**：
-  > 你好！我是 TEMU 大盘专家。可以帮你：看半托管大盘容量（多少商品/店铺/月GMV）并按站点+类目下钻、看每日增长趋势、价格段与销量段分布（找空缺价位）、品牌集中度分析，帮你判断一个类目该不该入场。⚠️ 全托管大盘接口暂不可用，全托需求我用商品搜索聚合估算（精度打折会注明）。说个站点+类目就行。
-- **核心能力**：半托大盘容量评估（站点×类目下钻）/ 每日趋势序列与增长判断 / 价格段/销量段分布与空缺价位 / 品牌集中度与头部竞争分析 / 全托大盘降级估算（goods_search 聚合）/ 入场可行性结论
-- **参考提示词**：
-  1. TEMU美国站家居半托管还能进吗
-  2. 美国站半托大盘哪个二级类目增长最快
-  3. 家居类目什么价位段竞争最小销量最高
-  4. SANRIO品牌在TEMU占多大份额
-  5. 全托管的清洁用品大盘帮我估一下
-- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-market → sysPrompt`（含六步分析框架、market_fully 降级纪律、brand_search 参数坑）。
-- **实测锚点**（验收用，2026-11-09）：美国站半托全量=4883万商品/44.2万店/月销1.54亿件/月GMV $9.93亿/动销店57%；美国站×家居(36)=876.8万商品/19.25万店/月销2629.7万件/月GMV $1.51亿/客单价$5.7；二级类目=家居装饰月销406万件(8.5万店)、节日饰品204万件(5.2万店)；71.7%商品零销量；品牌 SANRIO=18553店/98万SKU/月销184.9万件。
-
----
-
-## 随行技能资产（后台 #/skills 同步用）
-
-| 技能 | 状态 | 底稿位置 |
-|---|---|---|
-| OZON利润空间测算 | ✅ 全链路对话实测过（连衣裙TOP8利润率38.7%~68.3%） | `skills/ozon-profit-calc.md` |
-| Ozon选品搜索 | ✅ 后台已有 v20261106143542 | `skills/ozon-selection-search.md` |
-| TEMU 7技能（选品搜索/竞品监控/类目大盘/商品解析/店铺分析/利润测算/竞品调研） | ✅ 2026-11-09 接口实测后转为接口式 | Hub 技能 Tab（TEMU 标签） |
-| 其余技能指令（历史口径） | 当时 Hub 展示（1688×7/Ozon×7/亚马逊×4）；亚马逊当前八技能见文末 | 历史技能 Tab，仅供追溯 |
-
-## 知识库资产（后台知识库模块部署用）
-
-| 文档 | 版本 | 位置 |
-|---|---|---|
-| 佣金类目表 | 2025-12-01 生效 | `knowledge/佣金类目表-2025-12-01.md` |
-| 佣金规则-中国跨境 | 检索 2026-10-16 | `knowledge/佣金规则-中国跨境-2025-12-01版.md` |
-| 物流线路摘要 | 2026-03-25 生效 | `knowledge/物流线路摘要-2026-03-25.md` |
-| 物流规则-中国跨境 | 检索 2026-10-16 | `knowledge/物流规则-中国跨境-2026-03版.md` |
-
-## 搬运步骤（后台就绪后）
-
-1. 后台创建 7 个专家（按上方字段逐项填写；人设从 Hub 卡片复制）——Ozon×3 / TEMU×4（选品/核价/店铺/大盘）
-2. 配置每个专家的 MCP 工具白名单（上方代码块内容逐条加；TEMU核价专家需同时勾 yunqi-data + 1688 两库）
-3. 部署知识库 4 篇文档 → 绑定到 Ozon 选品专家（TEMU 四专家暂无知识库，留空）
-4. 用「实测锚点」逐个验收：同一提示词在后台专家里跑，结果应能对上锚点数据
-5. 全部通过后开「上架」开关，Ozon/TEMU 选品专家设为对应平台默认
-
----
-
-## 附：提示词验证矩阵（2026-11-08 对话内实测记录）
-
-> 测试策略：不做全量参数组合（goods_search 180个参数无法穷举），按 P0核心场景 / P1参数类别抽样 / P2真实话术组合 三层验证。以下全部真实调用通过。
-
-### 选品专家（yq_ozon_goods_search 为主）
-
-| # | 类别 | 参数 | 实测结果 |
-|---|---|---|---|
-| 1 | 时间窗 | minCreateDate=2026-10-09 + category | ✅ 975款近30天新品，createDate 返回正常 |
-| 2 | 价格带 | minPrice=500 & maxPrice=1500 | ✅ TOP为洗鞋袋₽559/₽574万 |
-| 3 | 卖家类型 | storeType=1（跨境） | ✅ 家居跨境TOP：垃圾桶₽435/₽488万 |
-| 4 | 转化率 | minConvToCart28=5 | ✅ 674款，垃圾袋转化5.28%月销5205件 |
-| 5 | 中文关键词 | skuNameZh=连衣裙 | ✅ Dress Samy 2409件（中文标签检索可用） |
-| 6 | 销量排序 | sort=[{soldSum28:desc}] / [{soldCount28:desc}] | ✅ 两种口径均正常 |
-
-### 店铺专家（yq_ozon_mall_search/detail 为主）
-
-| # | 类别 | 参数 | 实测结果 |
-|---|---|---|---|
-| 1 | 类型+SKU规模 | storeType=1 & minSkuNum=500 & minScore=4.8 | ✅ Rhapsody 8738件/日居首；**minSkuNum≥500 可自动滤自营脏数据** |
-| 2 | 新店筛选 | minCreateAt=20261001 & maxCreateAt=20261108 | ✅ 36家新店，最早开店4天；**必须用 20261001 日期格式** |
-| 3 | 店铺详情 | mall_detail(id=2892839) | ✅ openTime="1 年"/level=3 |
-| 4 | 反查商品 | goods_search(sellerId=2892839) | ✅ 店内1254 SKU，爆款创可贴6万件 |
-| ⚠️ | 失败样本 | openVal=1 & openUnit=月 | ❌ 0结果——开店时长筛选不可用，用日期区间替代 |
-| ⚠️ | 失败样本 | 参数名 score=4.5 | ❌ 参数校验直接报错——正确名是 minScore/maxScore |
-
-### 大盘专家（market_stat / brand_search 为主）
-
-| # | 类别 | 参数 | 实测结果 |
-|---|---|---|---|
-| 1 | 全站大盘 | key=all | ✅ 6800万SKU/29.4万店/月销售额2558亿₽/月销3.2亿件 + 10个价格段(statPrices) + 每日序列 |
-| 2 | 类目大盘 | key=17028714 | ✅ 月销228万件/8.29亿₽ |
-| 3 | 品牌查询 | brandName=Samsung（正确大小写） | ✅ 正牌 Samsung：749店/1万SKU/月销10.2万件 |
-| ⚠️ | 失败样本 | brandName=samsung（小写） | ❌ 0结果——**大小写敏感** |
-| ⚠️ | 陷阱样本 | brandName=XIAOMI | ⚠️ 返回 XIAOMIMI/XIAOMILA 等近似杂牌——须按 mallsNum/skuNum 规模核对 |
-
-### 结论
-
-- P0（用户真实话术）+ P1（参数类别）已全通过；P2 组合即 refPrompts 本身，已覆盖
-- 3 个新坑已固化进专家人设（minSkuNum 滤脏数据 / 开店日期格式 / 品牌大小写）
-- 后台验收时：按本矩阵逐条在后台专家里重跑，结果对上锚点即通过
-
----
-
-## 全专家对话内实测验收矩阵（2026-11-09 晚间 · 全部 19 专家）
-
-> 测试方式：每个专家抽 1~2 条代表性参考提示词，在对话内以真实 MCP 接口跑通，验证「人设→工具链→输出」闭环。
-
-| 专家 | 实测提示词 | 主接口 | 结果 | 复测发现/修正 |
-|---|---|---|---|---|
-| Ozon选品 | 家居类目28天销售额TOP | yq_ozon_goods_search | ✅ | 首调超时重试即成；数据与 11-08 锚点一致（感应垃圾桶₽2967/4412件居首），goods_search 免费版可稳定复现 |
-| Ozon店铺 | 日销TOP跨境店铺(minSkuNum=500) | yq_ozon_mall_search | ✅ | minSkuNum≥500 滤脏数据再次验证有效；Rhapsody 8738件/日仍居首 |
-| Ozon大盘 | 家居类目大盘(17028714) | yq_ozon_market_stat | ✅ | ⚠️ 新发现：items 序列日期空洞加剧（87天仅60点）；**mallsNum 10月底起断崖失真（2万→583）**，人设已写明近期勿引用该字段 |
-| Ozon大盘(品牌) | Samsung 品牌查询 | yq_ozon_brand_search | ✅ | orderByColumn=monthSales 正常；749店/月销10.86万件 |
-| TEMU选品 | 美国站半托 storage box | yq_goods_search | ✅ | 保鲜盒套装 $8.98/日销838 居首，regions+半托+标题组合稳定 |
-| TEMU核价 | （本日下午已全链路实测） | 5接口联动 | ✅ | 见专家五锚点 |
-| TEMU店铺 | 全托家居日销TOP+明星店核验 | yq_mall_search | ✅ | ⚠️ 新发现：**mall_star 作筛选参数会被忽略**（_note 报字段不存在），正确姿势=日销榜取头部后用返回的 star_seller_time 字段核验（实测头部5店全部在榜明星店）；opened_at 两接口有7天差（20220901 vs 20220908），表述用「2022年9月初」 |
-| TEMU大盘 | 家居类目下钻+玩具品牌榜 | yq_market_semi + brand_search | ✅ | optId 下钻稳定；brand_search+opt_ids=[204] 组合正常，SANRIO 居首 |
-| 亚马逊选品 | Sports Water Bottles 类目报告 | youweiAI-amazon category_report | ✅ | Top100 月销155.2万件/$4664万（与 11-09 早间锚点156.5万/$4698万差<1%，口径稳定）；自营占73.91%、Owala 36.93%+STANLEY 16.44% 双寡头格局不变；退货率9.85%/转化率7.0%/平均上架1158天 |
-| 亚马逊店铺 | 类目中国卖家筛选 | youweiAI-amazon seller_search | ✅ | 18 个 CN 卖家，RAYMYLO Direct 头部（$57.1万/月、top3集中度100%）；is_chinese_seller=1+node_id 组合稳定 |
-| 亚马逊选品(新品) | water bottle 2026新品+月销5000+ | youweiAI-amazon product_search | ✅ | STANLEY IceFlow 2.0（2026-01上架）月销5.1万件/$179万居首；**buybox_seller=Amazon 占比高**是重要信号；混入少量非水杯品（Boppy哺乳枕），按 sub_category 过滤 |
-| 亚马逊关键词 | water bottle 关键词详情 | youweiAI-amazon keyword_detail | ✅ | ⚠️ keyword_list 热词榜 504 超时（重试1次仍失败，属接口侧问题）；keyword_detail 稳定：月搜166.4万/CPC $1.05/首页100坑位(52自然+13广告)/hijack 26%——跟卖率高企是水杯类目特征 |
-| 亚马逊评论洞察 | Owala 差评100条+HP联名款 customers_say | youweiAI-amazon product_reviews + customers_say | ✅ | 差评五主题归纳再次验证（弹簧断裂/吸管脱落/漏水/杯架不兼容/质保踢皮球）；HP联名款正面话题：quality 240提及/负面仅7——正面壁垒数据可交叉使用 |
-| 1688选品 | 收纳盒30天销售额降序 | product_search_list | ✅ | 与 11-09 早间锚点一致（台球杆盒¥125/1万件居首）；⚠️ 「收纳盒」仍混入注塑机（¥83.6万），levelName 二次过滤纪律有效 |
-| 1688榜单 | 收纳品类月榜 | product_billboard_list | ✅ | ⚠️ 新发现：keyWord+sortField 组合返回0（去掉 sortField 即命中10000条）——榜单接口 keyWord 与自定义排序可能冲突，空结果先去排序参数重试；品类月榜 TOP=大容量收纳箱¥5.01/13488件/复购64.6% |
-| 1688新品 | 收纳盒新品 | product_trend_new_list | ✅ | ⚠️ 新发现：**MCP schema 要求 titleTags 必填**，只传关键词报校验错，显式传 ["289794"] 即可；命中仿藤编手提箱15万件（老锚点同款，稳定） |
-| 1688监控 | 加监控+监控池查看 | monitor_offer_add/list | ✅ | ⚠️ 参数格式：offer_add 收**链接或ID**（顶层 offerId 字段，不是 req 对象）；新加监控当天数据为 null（T+1同步）再次验证；监控池历史商品数据正常回填 |
-| 1688店铺 | 店铺榜查询 | shop_rank_list | ❌ | 五榜仍返回空（comprehensive/cross_border 均试），与早间结论一致：服务端暂无数据，降级路径（搜索反查+monitor_shop_analysis）仍有效 |
-
-### 汇总
-
-- 19 专家实测：**18 通过 / 1 接口侧不可用**（1688店铺榜，已有降级路径兜底）
-- 新增人设修正 4 处：Ozon大盘（mallsNum 失真）/ TEMU店铺（mall_star 筛选无效→字段核验法）/ 1688榜单（keyWord+sortField 冲突）/ 1688新品（titleTags schema 必填）
-- 接口侧已知问题 3 个：yunqi ozon goods_search 偶发超时（重试即成）/ youweiAI-amazon keyword_list 504 / 1688 shop_rank_list 空数据
-- 后台验收：按本矩阵重跑，对上锚点即通过
-
-## 原辅助数据源专家五件套（2026-11-09 下午新增 · 24 接口全实测后搭建）
-
-> 背景：原辅助数据源（youweiAI-amazon MCP）接口组评估可做 6 个专家，用户拍板先做 5 个（选品/关键词/大盘/评论/流量）。命名规范延续「数据源前缀+平台+角色」。已写入 Hub（exp-ss-amazon-*，status=built，各带实测 demo）。
-
-| 专家 | id | 接口 | 可行性结论 |
-|---|---|---|---|
-| 原辅助数据源亚马逊选品专家 | exp-ss-amazon-sel | product_node / competitor_lookup / asin_detail / asin_competitor / asin_prediction / bsr_prediction / market_research_statistics | ✅ 全部可用（⚠️ product_research 的 keywords 参数无效，见坑1） |
-| 原辅助数据源亚马逊关键词专家 | exp-ss-amazon-keyword | keyword_research / keyword_research_trends / keyword_miner / keyword_order / keyword_conversion / aba_monthly / aba_weekly / aba_trend | ✅ 全部可用（⚠️ month 滞后一月 / weekly 不能传 date / Acos min-max 顺序异常） |
-| 原辅助数据源亚马逊大盘专家 | exp-ss-amazon-market | market_research(_statistics) + 8 分布接口 + product_node / google_trend | ✅ 全部可用（⚠️ market_research 传 nodeIdPath 返回空，单节点下钻走 statistics） |
-| 原辅助数据源亚马逊评论洞察专家 | exp-ss-amazon-voc | review + asin_detail | ✅ 可用（星级/SKU/时间窗/图视频差评筛选齐全；无 AI 话题计数，与 原主数据源 版互补分工） |
-| 原辅助数据源亚马逊流量专家 | exp-ss-amazon-traffic | traffic_keyword(_stat) / traffic_extend / traffic_listing(_stat) / traffic_source | ✅ 全部可用（⚠️ traffic_keyword 带 month 返回空 / extend queryType=1 空 / relations=["SP"] 空） |
-
-### 原辅助数据源接口参数坑（2026-11-09 实测，人设已内置）
-
-1. **product_research 的 keywords 参数无效**：传 "water bottle" 返回全库商品（Nespresso 咖啡胶囊，total 7848 万）——商品关键词筛选一律用 competitor_lookup(keyword+matchType=3 精准)，不要用 product_research。
-2. **market_research 传 nodeIdPath 返回空**（total=0）：类目下钻用 market_research_statistics + 8 个分布接口（都支持 nodeIdPath）；market_research 只用 departmentKeyword 或纯筛选条件。
-3. **competitor_lookup 不传 matchType 默认=2 模糊匹配**，噪音大（water bottle 模糊出蛋白奶昔）；有关键词必传 matchType=3。
-4. **keyword_research 的 month 滞后一个月**：传 202610 返回 2026.09 数据，输出必须标注数据月份。
-5. **aba_research_weekly 不能传 date**：传上周六日期（20261107）反而报错「只能查询上一周」；不传 date 默认返回上一周。
-6. **keyword_conversion 的 Acos min/max 顺序异常**（min:6.78 > max:0.084），Acos 区间不可信，只引用均值。
-7. **keyword_order 的 page 从 0 开始**（其他接口从 1，不一致）。
-8. **traffic 家族**：traffic_keyword 带 month 必空（默认参数调用）；traffic_extend queryType=1（畅销变体）返回空用 0；traffic_listing relations=["SP"] 空，先 traffic_listing_stat 看 fbt/vav/bab 哪个有量再查明细。
-9. **变体级销量共享**：同 parent 变体 units 相同（父体口径），amzUnit 才是变体自营近期销量。
-10. **bsr_prediction 的 categoryId 是一级类目 code**（284507=Kitchen & Dining），传三级节点失败。
-
-### 实测锚点（2026-11-09 US 站，锚点商品=Owala B0BZYBSRNF 沿用 原主数据源 版）
-
-- competitor_lookup(water bottle 精准)：Owala FreeSip 系霸榜 TOP5，Alpine Sport 24oz 月销 18.8 万件/$659 万/毛利率 68.05%
-- asin_prediction：2026-10 月销 187,455 件；峰值 2026-08=31 万件（8 月旺季/冬季淡季 9.6 万）
-- bsr_prediction(Kitchen, BSR#1)：日销 6,842 件/月销 20.5 万件
-- keyword_research(2026.09 数据)：water bottle 月搜 185.9 万/购买率 2.09%/PPC $1.17/供需比 16.17；keyword_miner：owala 月搜 321 万（品牌词是品类词 1.9 倍）
-- 大盘(3395091)：Owala 品牌份额 25.86% 一家独大未过半；40$+ 高价段 11 款占销量 33.31%；2025-2026 年新款占 63% 销量（新品窗口大开）；中国卖家仅 13%；有 A+ 占 90%
-- review(1-2星)：头号差评主题=漏水（4/5 条，与 原主数据源 版「弹簧断裂」互补）；16oz/24oz 差评集中 32oz 少；差评池 2,254 条
-- 流量(traffic_keyword_stat)：1,343 流量词/自然 1,330/AC 79/广告 0=纯自然打法；owala 词吃 24.7% 流量；121 关联位全免费（fbt 41+vav 62+bab 12）
-
-### 与 原主数据源 版分工边界
-
-- 选品：原主数据源 主库（利润四件套直返）为主，原辅助数据源版强在 competitor_lookup 关键词筛品+asin_prediction 14 个月走势+bsr_prediction 销量换算
-- 关键词：原主数据源 强在单词坑位竞争/跟卖率/CPC 趋势；原辅助数据源强在 ABA 6 模式市场榜+keyword_research 四维筛选+58 个月趋势
-- 大盘：原主数据源 category_report 一站式 19 维；原辅助数据源 8 个分布接口更细（国籍/EBC/上架年份）
-- 评论：原主数据源 有 AI 话题计数+特征销量份额；原辅助数据源有 SKU 级差评+时间窗+图视频筛选
-- 流量：原主数据源 是关键词维度（词位对比）；原辅助数据源是 ASIN 维度（流量词结构/关联商品/免费付费比）——两库互验
-
-
-## 维护约定
-
-- Hub（skill 仓库）是专家人设的**单一事实源**；后台录入后如有改动，反向同步回 Hub
-- 历史维护流程曾包含提交与推送；本次仅更新限定文件，不提交或推送。公开文案须遵守文末当前亚马逊保密规范。
-
----
-
-## 2026-11-10 增量：1688 单专家、八技能路由（覆盖旧六专家方案）
-
-> 上文历史清单和 2026-11-09 实测矩阵保留作历史记录；其中 1688 旧六专家的配置方案已由本节的 `exp-1688-sel` 单专家路由覆盖。后台录入 1688 时以本节及当前 TS 映射为准，不再按旧六专家建档。本次将与映射、导航页、版本记录一同提交推送。
-
-- **专家**：`exp-1688-sel`，1688选品专家；平台 `1688`，状态 `built`。开场白、简介、能力与参考话术取 `skill/1688-expert-skill-map.ts` 的 `a1688Expert`；绑定以下八个技能。`skill/versions.json` 新增 `expert:exp-1688-sel` 的 `merge` 快照和八条 `skill:<id>` 的 `create` 快照，均保留原历史条目。
-- **对应关系**：TS 导出 `a1688Expert` / `a1688Skills` / `a1688ExpertSkillIds`；导航页 `skill/index.html` 末尾模块通过 `import ... from './1688-expert-skill-map.js'` 加载浏览器 JS。每条技能的页面 `prompt` 是 `instructions`、空行、`## 执行步骤` 与从 1 编号的 `steps`、空行、`## 可用工具` 与逐行 `- ` 前缀的 `tools` 按 `\n` 拼接；专家 `sysPrompt` 是 `你是` + `name` + `。` + `desc`，再以两个换行连接 `routing`、`disciplines`。页面显示版 demo 会将原始 `kpis` 转成 `{label,v}`、`table` 转成 `{head,rows}` 并把 `source` 附到 `note`；版本快照的 `demo` 存的是 TS 原始 `JSON.stringify(skill.demo)` 全量数据，专家 demo 对应首技能原始 demo，保留 `title/date/kpis/flow/table/note/source`，没有用显示版代替原始证据。
-- **同步校验**：浏览器 JS 已按字节同步 TS，页面从 JS 导入；版本快照的人设提示词、各技能调用提示词和原始 demo 均与映射一致。更新 TS 后需同步 JS、核对两者哈希及页面实际渲染，再追加版本记录并推送。店铺榜 `shop_rank_list` 空结果和商品搜索降级、新品三条错类样本的返回数值以本次映射为准。
-
-| 入口意图 | 技能 ID | 后台场景 | 工具（`mcp__1688__` 前缀） |
-|---|---|---|---|
-| 条件找品、跨境筛选 | `skill-1688-conditional-search` | product-selection | `product_search_list`, `cross_border_product_search_list` |
-| 商品榜 | `skill-1688-billboard` | product-selection | `product_billboard_list` |
-| 新品发现 | `skill-1688-new-products` | product-selection | `product_trend_new_list` |
-| 以图找货 | `skill-1688-image-search` | product-selection | `image_search`, `global_image_search`, `ali_offer_sku_prices` |
-| 单品深挖 | `skill-1688-product-deep-dive` | product | `product_info`, `ali_offer_realtime_detail`, `ali_offer_sku_prices` |
-| 店铺核验、店铺榜空时降级 | `skill-1688-shop-verification` | shop | `monitor_shop_analysis`, `shop_rank_list`, `product_search_list` |
-| 监控池读取 | `skill-1688-monitor-read` | competitor | `monitor_offer_list`, `monitor_shop_list` |
-| 报价利润情景 | `skill-1688-profit-scenario` | profit | `ali_offer_sku_prices` |
-
-**后台 MCP 白名单（八技能去重并集，13 个）**：绑定 1688 MCP，逐项勾选以下工具；单技能只开放其表内所列工具。页面适配的 `mcpTools` 会去掉 `mcp__1688__` 前缀，后台按实际工具全名绑定。
-
-```text
-mcp__1688__product_search_list
-mcp__1688__cross_border_product_search_list
-mcp__1688__product_billboard_list
-mcp__1688__product_trend_new_list
-mcp__1688__image_search
-mcp__1688__global_image_search
-mcp__1688__ali_offer_sku_prices
-mcp__1688__product_info
-mcp__1688__ali_offer_realtime_detail
-mcp__1688__monitor_shop_analysis
-mcp__1688__shop_rank_list
-mcp__1688__monitor_offer_list
-mcp__1688__monitor_shop_list
-```
-
-**2026-11-10 实测边界与验收**：普通磁吸收纳盒检索原始 `totalCount=10000` 未清洗，跨境 `totalCount=67` 也需逐条去噪；商品榜请求 `date=2026-10-01` 与调用日不同；新品样本的沥水碗架、餐具盒、蛋糕模均属错类。单品 `734800252457` 近30天 48 笔 / 152721 件 / ¥610884；白色磁吸 166*122 的 `skuId=5251111954228` 参考 ¥4.6，不能借用无磁吸 ¥4 或 500 件起阶梯价。店铺 `https://huaijan.1688.com` 核验见店铺分析；本轮店铺榜 `shop_rank_list` 返回 `code=200,totalCount=0`，降级按商品找店铺链接再核验，不得写成榜单上榜。商品监控池 `total=5`、店铺池 `total=10` 属一次分页快照，缺失字段留 `null`，`monthSalesVolume` 单位未核实。图搜本轮 `image_search` 返回 504，`global_image_search` 返回 code 500，无本轮候选；同日历史报告 `reports/wig-profit-batch-a.json` 的成功图搜仅有待拿样候选，与本轮图片和结果分开记录。利润例中 ¥20 售价、¥3 运费、¥2 其他费用为指定假设，配 ¥4.6 SKU 参考价得情景毛利 ¥10.4、毛利率 52%；采购结算价及税损未核，绝非真实利润。验收时按各技能 demo 的 `flow/source/date` 回看请求与口径，不把上文 2026-11-09 旧数字混入本次 demo。
-
----
-
-## 当前亚马逊迁移规范（youweiAI-amazon，八技能单专家）
-
-- **公开身份**：一个亚马逊选品专家；公开名称及数据来源统一写作 `youweiAI-amazon`。历史独立选品/店铺/大盘/关键词/评论/流量专家均只作档案，不再作为并列专家导入或展示。
-- **技能绑定**：以下八项已在 `amazon-expert-skill-map.ts` 与 Hub 页面绑定同一个亚马逊选品专家。前七项沿用稳定 ID，第八项已实现路由与文档，但新增卖家接口尚无本次实测记录；页面人设 `sysPrompt` 已扩充八路由、核验口径与交付规范。
-
-| 技能 | 稳定 ID / 迁移规划 ID | 当前验收边界 |
-|---|---|---|
-| 选品搜索 | `skill-amazon-selection-search` | 旧记录有调用样本；具体条件与结果需按历史日期核查 |
-| 竞品分析 | `skill-amazon-competitor` | 旧记录有调用样本；流量与评论支线以各轮记录为准 |
-| 关键词挖掘 | `skill-amazon-keyword` | 旧记录有调用样本；榜单/趋势支线以各轮记录为准 |
-| 类目体检 | `skill-amazon-category-trend` | 旧记录有节点、报告及趋势样本；冲突字段需隔离 |
-| 商品解析与评论洞察 | `skill-amazon-product-parse` | 旧记录有样本；评论摘要不能冒充单子体结论 |
-| 利润测算 | `skill-amazon-profit-calc` | 旧记录有接口估算样本；未计采购、头程、广告与退货 |
-| 选品报告 | `skill-amazon-report-gen` | 旧记录为真实返回的串联复用，不是独立接口实测 |
-| 卖家店铺分析 | `skill-amazon-seller-analysis` | 已有路由与参数纪律；新增卖家接口尚待业务实调验收 |
-
-- **路由原则**：按用户主意图选择技能，复用同轮已有数据；店铺相关问题由卖家店铺分析处理，实际接口未验收时披露证据边界。历史四技能、七技能和独立关键词专家文档不得作为当前八技能的调用指南。
-- **公开保密规范**：对外标题、简介、提示词、演示、注释和版本摘要只使用 `youweiAI-amazon`；不公开旧数据源品牌或旧 MCP 服务专名。接口方法名、参数名及可核查的历史响应数据按技术语义保留，但历史调用不得包装为新实测；具体服务绑定须由实际运行环境配置核对，不凭文案臆造 MCP 命名空间。
-- **上线校验**：当前页面与映射已发布一个专家、八项技能；人设提示词在页面「提示词」标签查看并可全文复制。八项技能卡片的当前调用指令均已补成分段执行规范，技能弹窗默认显示当前提示词；点击版本记录才显示历史快照，不能把历史摘要当当前指令。此次为提示词和显示口径完善，不等同新增接口业务实调；第八项卖家工具链的业务返回仍待验收，验收前不得写“八技能均已跑通”。
-- **2026-11-12 Open WebUI 实调验收**：模型 `amazon-sorftime-selection-assistant` 界面名 `youweiAI-amazon选品专家`，已绑定八项 `youweiai-amazon-*` 技能且目标模型只选择这八项；绑定现有亚马逊数据工具。八项均在该模型真实对话中触发技能并取证或复用证据：选品搜索 [回归](https://local.dianleida.net:21996/c/4d4a23e2-6572-46c3-b27c-0397950fb3b3) 双词第1页各20条、重复14、去重26、相关5；竞品、关键词、类目均有首次实调对话；商品评论 [回归](https://local.dianleida.net:21996/c/aac8fa25-f935-400a-9a40-3643e353e9ff) 读取100条原文并提供逐条编码，话题汇总另列；卖家 [回归](https://local.dianleida.net:21996/c/31803aa5-761b-4eb9-8b7c-5e791a1eb226) 定位 RAYMYLO Direct 并核店铺详情及商品，店铺级与商品级差额改为统计口径或时点待核；利润 [回归](https://local.dianleida.net:21996/c/7a34e2de-1cf2-4926-b16d-d10a27169aad) 核 B0DGHBV6XS 平台费与用户成本下 $6.62 条件利润，coupon=0 不称折后价；选品报告 [回归](https://local.dianleida.net:21996/c/a4628197-5223-4ad0-9b30-b4ec2582f033) 类目商品份额 Top3=61.59% 与 Top5=49.08% 逆序，已禁用整个商品份额维度并撤回新品流量推断。以上均为当次对话结果，不代表全部参数组合通过；报告第1页品牌计数复核后 Owala 为6款、各品牌合计20款；卖家报告余数13.13%与所列34行合计12.42%相差0.71个百分点，不能归给该34行，差额原因待核。候选日期、父体、金额冲突仍列待核。此前“新增卖家接口尚未实调”的记录仅描述发布前状态。
-- **2026-11-12 方法优化验收**：参考外部选品开发、运营与利润材料的九模块结构、候选二次验证、评论证据链及实物测试方法，分别落到八项现有技能。搜索留可追溯底表；类目/竞品/店铺占比注明有效样本分母；关键词逐词追溯；评论原文关联部件、变体和待测动作；利润仅在成本与费率规则齐全时计算售价/运输/采购量情景；报告缺数据的模块标未核实。接口费用不等于真实净利，售价乘估计月销不称实际销售额；不设固定重量/费率或利润门槛，不采用操控交易或评论的建议。本次仅修改工作流和提示词，未新增接口实调或样品测试。
-- **2026-11-12 八条新对话回归（Open WebUI，当前版技能）**：八项均观察到 `view_skill`，并按意图调用真实工具。选品搜索[连衣裙](https://local.dianleida.net:21996/c/9e2cc3b2-ddf7-4931-8b88-2a9035fda5c6)跨节点筛选得4个详情候选、2个按 `listing_date` 进入近30天，但原报告将41条去日期诊断与20条仅日期诊断混成65条，并从有限入口下“仅有2款”“主节点老品”结论；已在技能增加入口/页码/日期交叉复核并追问。竞品[运动水壶](https://local.dianleida.net:21996/c/ca40cda3-0a7e-4541-af6e-a34aa30a88e7)回归撤回重量2 pounds证明32 fl oz容量、无费率表下15%佣金比较，复算三款估计销售额乘积差额均为0。关键词[mahjong bag](https://local.dianleida.net:21996/c/cd329d5a-a5a9-4c4b-a362-f0746f13d448)回归隔离0点击但非0购买的漏斗，撤回无可核分母的新品机会和不同窗口同比。卖家[店铺](https://local.dianleida.net:21996/c/220faedd-dda6-44e4-bef8-05c497651c30)核详情98件、商品入口第1页11条且1页、诊断第2页空，撤回11/98覆盖率。利润[水杯](https://local.dianleida.net:21996/c/ebf71247-e61e-4181-8e2a-aa27a125d7de)回归对齐 `days_on_shelf=787` 与 `online_date`、另列 `listing_date` 878天及待核差异，并只称当前购物车卖家所在地US，条件利润仍$6.62。类目[水杯](https://local.dianleida.net:21996/c/dca9be73-7a9a-4431-a08c-da58fc04d643)已弃用逆序商品份额，但报告Top100聚合1988131与榜单1390275不同、分层款数122、Top10/20与明细不符及新品上限推断待修。评论[ASIN](https://local.dianleida.net:21996/c/8efbe59a-1ef9-47d0-a87d-338eee55d067)列出54次主题命中含1条交叉，实际53条独立，所谓“其余46条”应待核，且未列其余编号不能称100条全部编码。选品[报告](https://local.dianleida.net:21996/c/ec423a22-be0b-4844-9850-9248d24b8d70)已弃用逆序商品份额，仍用假定15%校佣金并从Top100样本推冷启动；类目/评论/报告三技能已保存补充规则并发起回归。类目回归将1988131件的报告窗口聚合与1390275件的榜单快照分列，撤回新品月销上限与“品牌垄断强化”，商品维度及复算冲突的Top10/20份额弃用，分层款数122≠100也弃用。评论回归确认54次主题命中仅53条独立评论、其余47条未逐条映射，撤回“全部100条已编码”，日期字段冲突标待核；计算沙箱两次断开后改用列式手算。报告回归撤回假定费率验佣金，$6/$39.99仅为算术比例，三个维度份额组因异常停用，保留已核Top100样本事实，缺采购与头程不报真实净利。连衣裙回归分离41条去日期预筛、20条仅日期诊断与4条全条件详情候选，严格日期筛选留2条；不再从有限页推全类目“仅有”。八条对话及修订回归均有最终回答，属于所测问话和数据快照的通过记录，不代表全部参数组合或跨日期稳定性。
-- **2026-11-12 多条件/预览二轮**：在 Open WebUI 同一专家新增八项场景对话：[搜索30天严格条件](https://local.dianleida.net:21996/c/f6ff92c5-79a4-428d-9fac-f3968eb9aacb)、[竞品三ASIN](https://local.dianleida.net:21996/c/df4c8867-d5b9-4a6c-9a67-7b4d4055f716)、[关键词长尾+异类反查](https://local.dianleida.net:21996/c/06d6088e-e1fc-46f8-8a3f-c28bacdfca24)、[类目完整月](https://local.dianleida.net:21996/c/1d8685c2-6add-439b-a3e3-8916faac4968)、[商品评论](https://local.dianleida.net:21996/c/11bb1f1a-90d6-4eae-9ca0-ef3384eb27a1)、[店铺分页](https://local.dianleida.net:21996/c/df1f03c5-631e-4a1f-91a8-b20962502b78)、[利润](https://local.dianleida.net:21996/c/81394c1d-8e01-4a60-a7fc-9d48c094dc4c)、[完整报告](https://local.dianleida.net:21996/c/866ab571-de0e-46b3-9dae-694a9b224659)。八条均加载对应技能并调用工具；搜索30天候选0，另开90天仍保持价格/月销/FBA/卖家国别条件，实得1个详情核验候选；关键词反查ASIN属水杯而非麻将包，已隔离；店铺98件与检索11件的分页冲突已标注；利润按$34.99-$5.93-$6-$8-$2-$1=$12.06，成本敏感性另列假设。初次报告和类目对话只生成聊天内表格并称无法在右侧预览；实测发现把完整 HTML 以标注 `html` 的代码块交付，会出现「预览」并可在右侧渲染。利润、店铺、90天搜索的右侧 HTML 表已通过截图观察（店铺含 KPI、11条图片商品表及异常提示），仅给 `/mnt/uploads/` 路径不能触发预览；完整选品报告也已通过 `html` 代码块在右侧实际渲染，含样本边界、KPI与异常份额弃用说明；其余竞品、关键词、类目、评论尚仅核聊天表格，未验证右侧交互表。店铺商品链接、图片和估计月销售额降序已在右侧看到，主图悬停的320×320效果尚未验明。不要将已生成文件等同右侧已呈现，店铺卡片的11/98只可解释为两套口径并列，不能当覆盖率。
-- **2026-11-12 多条件/预览二轮续验**：竞品三 ASIN 初版「预览」右侧空白，追问要求从 `<!DOCTYPE html>` 至 `</html>` 重新输出后恢复渲染；右侧已见三列对比、ASIN 链接、主图占位、价格/月销/FBA/平台费、父子体数和 `2 pounds` 不是 32oz 容量证据的待核提示。关键词长尾报告右侧已见词卡、CPC/需求表和水杯异类反查隔离提示。类目体检重新输出后右侧已渲染节点确认、2026-09/10 完整月趋势、Top100 KPI、分层/异常/结论分区，并标明样本快照边界；评论报告右侧已渲染日期冲突、商品身份、评论窗口和样本限制。利润追加广告 $3 与售价×5%退货损耗后，右侧情景 B 显示单件条件利润 $7.31、利润率 20.89%，相对情景 A $12.06、34.47%下降 $4.75、13.58 个百分点；退货金额 34.99×5%=1.7495 按展示精度计为 $1.75。店铺右侧已见真实图片、标题/ASIN链接、按估计月销售额降序的 11 条明细和 98/11 分页冲突说明，初版主图悬停未出现约定的放大卡；追问重生成带独立 fixed 浮层的完整 HTML 后，右侧实测鼠标悬停第1条与底部第3条主图均出现 320×320 白底圆角大图，底部悬停时浮层向上翻转且保持视口内。右侧边缘翻转尚未单独触发截图核验。该修复只在本条对话新报告内验证，自动生成规则仍待新会话回归。
-- **2026-11-13 新对话首轮自动预览回归**：分别新建并实发八项对话，均观察到对应 `view_skill` 和业务工具调用；完整 HTML 代码块在首次回答提供，点击后八项右侧均实际渲染（竞品、关键词、类目、评论、店铺、利润、选品报告，以及严格搜索自动渲染）。证据：[严格搜索](https://local.dianleida.net:21996/c/314f8f26-8238-487f-b104-a61933ee9ccc) 的美国站近30天麻将收纳包 $20–45、月销≥100、FBA、中国卖家全保留，6入口/6页、64原始/50去重、严格有效候选0；[竞品](https://local.dianleida.net:21996/c/e194eae6-46c6-4195-b97b-48429e15720d) 三 ASIN 只核实一款水杯，一款详情空、一款实际为扫地机器人，右侧标不可比，没有强排；[关键词](https://local.dianleida.net:21996/c/c9152443-9b15-4956-b500-4bf447bebc98) 右侧三条麻将在售词与水杯 ASIN 异类反查隔离，缺 CPO/页面平均评论数等字段标缺；[类目](https://local.dianleida.net:21996/c/294f1936-e1b5-4daf-a5ee-eaa84a76f144) 两完整月与 Top100 快照分列，异常 TopN 份额/分层计数禁用，初版模板标签错误经本轮沙箱内重生成后首答右侧可见；[评论](https://local.dianleida.net:21996/c/160f63d9-500a-4748-9497-e7c8f4544a13) 右侧显示日期冲突、100条差评与101条好评窗口、40/126变体样本，不外推父体总销量；[店铺](https://local.dianleida.net:21996/c/01674653-de44-440c-a03f-8a76f1584357) 98件店铺口径与本轮11条商品检索仍分列，部分店铺原值与样本合计冲突已提示口径待核，首答预览已有商品表；[利润](https://local.dianleida.net:21996/c/967f2747-f5a4-44b4-bff0-080cf877639d) $34.99 减平台费 $5.93+$6.00、采购 $8、头程 $2、其他 $1、广告 $3、退货损耗 $1.7495，条件利润 $7.31、利润率20.89%，右侧首次渲染；[选品报告](https://local.dianleida.net:21996/c/fefbf7c3-fb12-4cef-865a-a894c81075dc) 右侧首答呈 KPI、商品表与禁用异常份额提示。首轮成功范围是此八问法及其返回快照。2026-11-13 补验：店铺报告主图右边缘翻转已实测——从对话导出 txt 提取 `<!DOCTYPE html>` 至 `</html>` 的原始 HTML（未改动一字节），经 450px 宽 iframe verbatim 加载后悬停第1行主图，320×320 白底圆角浮层正确翻转到指针左侧（截图核验）；至此浮层跟随/下边界上翻/右边缘左翻三项交互全部实测闭合。窄面板下表格横向滚动可读；其余更窄宽度未逐一测试，不称全尺寸通过。对外验收报告仅写统一品牌与数据口径，内部接口名保留在此技术记录。
-- **2026-11-13 侵权排查场景与主图列修订**：[麻将收纳包选品分析](https://local.dianleida.net:21996/c/be75ee09-f6ed-4287-b418-44bb96a3169b)（近180天+月销>10+排除侵权）：专家五路口召回11页202条→去重159→列表筛39（剔除120：套装47/美妆手包26/卡牌10/垫架配件30/无关7）→38详情核验→入选29（轮剔除10：超窗4/美妆1/时装手包2/空返回1/核验后月销≤10 1）→专利两路（tile bag 17条+carrying case 30条，披露单轮上限30未穷尽）→发现漏核B0HG9QPSDS主动补验后出报告；首答自动交付完整html代码块右侧渲染，日期口径严格（早于05-18剔除并披露listing/online矛盾），唯一需人工比对专利US111033770B1单列。缺口：候选明细表无主图列（「表格列主图（若返回）」给了模型省略空间）。修订：在线技能 youweiai-amazon-selection-search（输出段追加强制主图列+悬停浮层条款，3.9→4.3KB）与 youweiai-amazon-report-gen（文末追加候选表主图列强制条款，3.5→3.8KB）均保存；本地 map 表格输出规范同步改硬。回归：[麻将收纳包选品搜索](https://local.dianleida.net:21996/c/1564f148-8c52-4ac8-a534-81570dcf4e2a)（近90天+月销>10）：8入口160原始→71去重→8预筛→详情核验→2合格候选（B0H8DFD2X6 袋组套装月销181 / B0HG5BDQ34 装牌袋月销155），右侧首答渲染，候选明细表**含真实主图列**，悬停实测 320×320 白底圆角浮层出现——主图列规则回归通过。
-- **2026-11-13 亚马逊21场景迁移增补**：Open WebUI模型 `amazon-sorftime-selection-assistant` 绑定原八公共技能及21场景技能（展示名 `youweiAI-amazon-场景-场景名称`，ID `youweiai-amazon-scene-{slug}`）；21条创建完成，不等于21条验收通过。场景技能的本地生成器和逐条验收记录见 `youweiAI-amazon-scenes/gen_scene_skills.py`、`youweiAI-amazon-scenes/验收记录-20261113.md`。本轮真实UI发现并修订：场景7只有5/11女包细分类取得当期中国卖家销量份额，不得把5类0达标说成11类0达标；场景14纠偏撤回无来源汇率与代发结论；场景4/5/13/17/20分别补月值同比、详情趋势、汇总金额、文本来源分母、滚动月销折日均的禁止推断规则；场景6补代表商品真实主图与悬停。以上七个场景技能已同步在线并回读一致；其余新对话复验和右侧交互以验收记录状态为准。
-- **2026-11-14 八技能客户口吻重建回归（8/8）+ Hub 实测记录校对**：每技能一条新问法实测并右侧渲染，证据对话：关键词[dog brush缺站点追问](https://local.dianleida.net:21996/c/fca842d3-99f1-46f5-9127-67b4fd70f56e)、[利润三段追问情景估算](https://local.dianleida.net:21996/c/003435c1-c0a7-4011-91d1-bb28370ada53)、[选品报告·宠物喂食器份额矛盾整组弃用](https://local.dianleida.net:21996/c/4a93d799-dc9b-4806-9a0a-c3da7b56621e)、[选品搜索·浴室置物架类目确认零凑数](https://local.dianleida.net:21996/c/d28464cd-7456-4b60-958c-f28f323312f0)、[竞品·B0DGHBV6XS身份核验](https://local.dianleida.net:21996/c/5151c95c-f960-4d8c-a6f8-83a5c81bbe0e)、[类目趋势·露营灯未完月剔除](https://local.dianleida.net:21996/c/29344035-a99c-4e64-9d47-845d735a7e0d)、[店铺·AnkerDirect样本口径](https://local.dianleida.net:21996/c/a038c620-d641-447c-a8db-fd31f1fe97a9)、[Listing·US文案诊断](https://local.dianleida.net:21996/c/d882ed2c-6c46-41aa-b45d-1fe1f17272d3)。Hub index.html 八条实测记录同日校对：清除占位会话链接（另一对话/同会话/德站链接定站）、选品搜索补 d28464cd、报告补瑜伽垫 149b6c46、实测日期统一 2026-11-13/14、利润 chatUrl 改指 003435c1；八条 JSON 解析校验通过。
-- **2026-11-14 筛选维度扩展回归（3/3）+ 导航同步**：在上轮 8/8 之外补测三种此前未覆盖的筛选条件组合，均为新对话、真实接口调用、右侧 HTML 实际渲染。① 互斥条件（近30天上架×月销5000+×评分4.9+×评论>2000×售价≤$15，列20款）[16b50149](https://local.dianleida.net:21996/c/16b50149-77f9-42f7-beef-c0a2f846bb10)：严格查询无数据后不凑数，两组诊断分解定位瓶颈（近30天上架与评论>2000互斥），用关键词基线20款证明管道正常，输出方案A/B 由用户选。② BSR 排名筛选（小类BSR≤100×月销500+×评论≤500，列10款）[dfadeef8](https://local.dianleida.net:21996/c/dfadeef8-a0e4-425e-8339-244916a6e7ff)：BSR 为接口原生字段未用其他字段替代，10 款 #22–#96 严格达标，BruMate 趋势仅 2 个月如实标待核。③ 老链接反向时间窗（上架>3年×月销1000+×排除 PETLIBRO/Veken）[72172a5c](https://local.dianleida.net:21996/c/72172a5c-4afa-4a60-9385-f0643c0a0193)：先把「3年前」换算为上架≤2023-11-14 锚点，ABA 宽词召回偏差后改走类目入口与标题/属性词路，85条去重53 ASIN 逐条判型，临界样本 FEELNEEDY 单独核 listing_date 后保留，10 款整机达标。同轮已同步 Hub：index.html 选品搜索实测记录问法 3→6 并补三条证据，实测弹窗新增「完整验收报告」入口，验收报告 `amazon-eight-skills-acceptance-2026-11-13.html` 与仓库副本一致。未覆盖维度保留：变体父子条件、卖家类型（FBA/FBM/AMZ）、销量增速环比、缺失字段硬条件。
-
----
-
-## 2026-11-14 OZON 七技能第三轮回归（Amazon 同款流程）
-
-> 2026-11-16复核纠正：以下“15通过/六层通过”为历史原判，不再有效。至少4条原通过已撤回，包含缺成本擅补假设及仅Markdown未验HTML等问题。当前判定以 `ozon-seven-skills-regression-2026-11-16.html` 逐条证据为准；done、业务结果与实际预览交互分别验收。
-
-- **范围**：只改 youweiAI-OZON 专家与七技能（选品搜索 / 竞品监控 / 类目趋势 / 商品解析 / 店铺分析 / 利润测算 / 选品报告），未动亚马逊、TEMU 与并行会话文件。
-- **方法**：A 标准 / B 缺参（品类歧义 + 类目ID）/ C 边界 三类客户口吻问法，6 层验收（追问 → 路由 → 实参 → 口径 → 回答 → 右侧 HTML 渲染）；只在 Open WebUI 真实对话跑，不用 API 直连（直连不执行真实工具、模型会编数据）。
-- **结果**：16 条问法，15 通过，1 待核（A2 猫砂盆中文名索引 skuNameZh 不收敛）。七技能均有真实通过记录，右侧 HTML 均实测渲染（srcdoc 非空 + 真实 ozonstatic 图 + 表格 + 商品链接）。
-- **对话**：选品搜索 A[保温杯跨境4款](https://local.dianleida.net:21996/c/53c620cf-72f2-401f-b6f1-d34f46710e9b) / A2[猫砂盆卡 skuNameZh](https://local.dianleida.net:21996/c/02c3da88-e6eb-48ac-8f40-e416dd5031a3) / B[麻将包 ask_user 追问](https://local.dianleida.net:21996/c/0055df4a-235f-4f30-b499-279ef870b224) / C[多条件0条](https://local.dianleida.net:21996/c/bd0ffe5f-7091-4f63-a20c-1a7ea037fdb0)；竞品 A[SKU异常](https://local.dianleida.net:21996/c/4e71911a-9d2b-4e61-a169-b3246829b822) / C[建基线不称持续监控](https://local.dianleida.net:21996/c/04d934de-7a86-47af-b3e8-fa85907b4c44)；类目 A[家居大盘](https://local.dianleida.net:21996/c/b657c882-9ea6-4d8a-97f7-a1e1e8503b1c) / C[mallsNum失真不引用](https://local.dianleida.net:21996/c/3a808d73-8a7c-49fa-a42f-f7e8679e03e6)；商品 A[标题销量跟卖](https://local.dianleida.net:21996/c/ba490f04-8fc4-42f6-86ec-c563d9e718e8) / C[实重体积重区分](https://local.dianleida.net:21996/c/cfad365b-5f3a-4f2d-94a0-baa320f1ddba)；店铺 A[覆盖缺口不虚构](https://local.dianleida.net:21996/c/3e926fb6-a40c-4c3a-8167-1a20c86aba1a) / C[自营脏数据过滤](https://local.dianleida.net:21996/c/6e6c4a87-e627-4fa2-831c-13037bc88002)；利润 A[1688图搜3次不猜价](https://local.dianleida.net:21996/c/a797b5c0-3ba0-4667-a6b1-7e14c50ed7b2) / C[缺项标估算](https://local.dianleida.net:21996/c/149636a8-326b-472b-ac9a-18cb3f535757)；报告 A[完整串联](https://local.dianleida.net:21996/c/f9b785dd-cc2f-4884-ad37-dc50d7147822) / C[0条不造档位](https://local.dianleida.net:21996/c/8b1036af-79da-46d7-8d9f-5feb7d543cf7)。
-- **纪律复现**：排序字段 dailySales 异常返回 0 自动去 sort 对照（选品搜索 A / 选品报告 A 均触发）；SPU 不支持 storeType → 跨境逐 SKU 补验，无法核验不计达标；mallsNum / 店铺数失真不引用；0 条不造表不造档位，如实给补验路径；实重 / 体积重分开取 max 计费重，不把体积当计费重量；缺项一律标估算，不报真实净利。
-- **待修**：① A2 猫砂盆中文名索引 skuNameZh 检索不收敛（约 15 分钟未出结果，应优先俄文品类词，中文名检索易空易卡）；② 利润测算缺商品时纯文字追问卡 turn（done 卡 false、发送按钮不恢复，应统一 ask_user 追问）。
-- **导航同步**：index.html 七技能 demo 更新为 A/B/C 实测记录，各补 chatUrl 真实会话链接与 report/reportTitle 指向 `ozon-seven-skills-regression-2026-11-14.html`；versions.json 追加一条 `hub:index.html#ozon-public-skills`。
-
----
-
-## 2026-11-14 Amazon 公共技能筛选维度第二轮（补齐剩余 4 维度）+ 数据块恢复
-
-- **范围**：只动 youweiAI-amazon 公共技能回归与导航页数据恢复；不碰 21 场景技能配置与 OZON/TEMU。
-- **新测 4 个筛选维度（4/4 通过）**：
-  - ④ 变体父子聚合（变体数≥5×单变体月销≥500）：[ab48a953](https://local.dianleida.net:21996/c/ab48a953-98e7-4e8b-b079-bcec111fbf99) — 60样本→18父体→10入选，每行=1父体不重复计数，Top1 Gaiam Essentials 12变体月销40,952
-  - ⑤ 卖家类型FBA（排除FBM/自营）：[3595911d](https://local.dianleida.net:21996/c/3595911d-2ede-4531-b747-b85a9b6d1732) — FBA由接口配送方式参数过滤生效；商品列表接口不返回卖家类型字段如实披露（不硬凑）；38款入选
-  - ⑥ 销量增速环比（近28天vs前28天≥+50%）：[2c6e9ae7](https://local.dianleida.net:21996/c/2c6e9ae7-a018-47ca-b07b-3d05d99a426f) — 接口无现成环比字段，日销序列 execute_code 核算真实环比；0款达标如实报（全场最高+31.3%）；2款上架不足56天标"无法判定"不计入
-  - ⑦ 缺失字段硬条件（重量≤500g）：[412db856](https://local.dianleida.net:21996/c/412db856-5fc3-437a-864d-1925d137f8f3) — weight_g 逐款实核16款；"盎司数≠商品实重"（Lulu 9oz实重599g剔除）；缺失不按0g计；收尾旧ASIN详情刷新空壳改用按名称搜索列表接口修复，缺口如实标注
-- **筛选维度合计 7/7**（第一轮：互斥条件诊断/BSR/反向时间窗+品牌排除）。验收报告 skills/youweiAI-amazon-eight-skills-acceptance-2026-11-13.html 与仓库副本已同步 4 条证据行与页脚。
-- **事故与恢复**：OZON 会话重同步 index.html（7899c9a）时把亚马逊实测数据块（AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS/allSkills 挂载/4处report渲染）整体抹掉——此前预警过的"发布版独有内容重同步丢失"风险成真。已从 99f2bcb 提取数据块恢复合并到最新版（51a97f9 基础上），并修掉 isA1688Skill 未定义引用；浏览器实测技能页 29 项亚马逊技能与选品搜索工作台实测 tab（10问法/7/7）渲染正常。
-- **教训**：hub 源 ozon-skill-hub.html 与发布版 index.html 的分叉再次扩大；任何平台重同步 index.html 前必须先 diff 检查 AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS 数据块是否在源里，不在就先合并回源再同步。
-
-## 2026-11-15 OZON 七技能 Hub 展示重建（修复并行会话覆盖事故）
-
-- **事故**：并行 TEMU 会话提交 30712bc 用旧副本覆盖 index.html，将 7899c9a 同步的 OZON 第三轮回归 demo（chatUrl/报告入口）冲掉，实测数据回退到 11-08/09/10 旧版。
-- **重建内容**：① 提示词 Tab 从 228-460 字填空模板改为 `/api/v1/skills/id/` 抓取的线上现行正文逐字嵌入（1630-1824 字；选品搜索弃 2473 字旧底稿换 1691 字现行版）；② 命名统一 `youweiAI-OZON·XXX`、专家名 `youweiAI-OZON选品专家`；③ 实测 Tab 与 TEMU 四段式对齐：KPI 卡 + 执行过程 + 明细表 + 绿色结论区，16 条真实会话链接 + 验收报告入口（ozon-seven-skills-regression-2026-11-14.html）。
-- **技能正文补丁**：Open WebUI 七技能正文全部追加两条第三轮暴露的纪律——追问统一 ask_user 表单一次收集（防纯文字追问卡 turn）、中文名 skuNameZh 只作兜底分路且两轮不收敛即停。更新接口必须带 id 字段，否则 400。专家绑定 skillIds(7)/工具范围/knowledge 复核未动。
-- **源同步**：7 个技能定义块已合并回 ozon-skill-hub.html（脚本级替换，逐块核验与发布版一致）；源文件仍缺专家卡段，整体重同步前须先补齐。
-- **环境事故（未解决）**：模型网关宕机——Open WebUI 两条 OpenAI 连接（host.docker.internal:18081、192.168.1.10:8080）均不可达，宿主机 18081 无监听、192.168.1.10 ping/TCP 全断，/api/models 返回空，新会话发消息无法路由模型。与当晚 WorkBuddy 平台侧反复 ETIMEDOUT 192.168.1.10:8080 同源。已修 ui.default_models 坏值（旧 product-selection-assistant → 1688选品助手，备份于容器内 ui_default_models_backup_20261114.json）并重启容器；A2 猫砂盆复测待网关恢复后补跑。
-
-## 2026-11-16 OZON 七技能真实UI回归与验收纠正
-
-- **现状**：用户修复服务后恢复真实UI独立测试；保留专家 `ozon-selection-assistant`、`glm-5.3`、原七技能ID及工具绑定，本轮只最小更新OZON技能正文。GET复核单专家七技能完整，未改其他平台配置。
-- **纪律修正**：SPU默认、soldCount28排序与去sort对照、前后台类目映射、代表SKU补验；ask_user独立调用和2–3选项；币种逐条保留；禁止由卖家/品牌名判身份、由上架日和滚动销量判起量；链接逐字复制，完整变体无证据不合计，成本缺项不补假设，收入区分售价折算与实收。
-- **交互修正**：真实HTML预览与hover单列记录，图片contain及防溢出，KPI/明细表/独立结论。选品修正版已实测320×320；商品解析复测仍318×320，严格尺寸尚未通过。类目复测仍有month字段、日期范围和序列摘要错误，不以done完成代替业务通过。
-- **验收口径**：七项均覆盖模糊、明确、空结果或缺字段；历史22条归档复核，至少4条原通过撤回。独立首次、人工纠正后可用、部分及未通过分别保留，不称7/7完整通过。
-- **交付与迁移**：`ozon-seven-skills-regression-2026-11-16.html`及三份`ozon-ui-retest-*-2026-11-16.json`为本轮证据；`ozon-regression-evidence-2026-11-16.json`保留历史复核；两导航七份prompt/现有skillMd从线上content逐字同步，实测改本轮问法表、独立会话链接及新报告入口。旧报告保留原始记录并增加撤回说明。
-
-## 2026-11-16 OZON 七技能残留继续修复与最终复测（Playwright 真实浏览器）
-
-- **背景**：用户明确要求「那你要继续解决啊」，不接受只记录未通过。本轮以用户指定的 Playwright 浏览器做真实 UI 独立首答复测，并保留全部历史失败与人工纠正记录。
-- **环境结论**：① 本机回环不可访问 Open WebUI，须用公网地址 `local.dianleida.net`；② Playwright 新会话默认不挂载 `youweiai-ozon` 数据工具，须在「可用工具」面板显式勾选，否则会话内无 `yq_*` 工具（会话会如实报告工具未挂载）；③ 预览 iframe 内 `img.complete/naturalWidth` 判定滞后，图片可用性以 network 响应状态为准。
-- **技能补丁（全部只改 content/description，专家绑定、七技能ID、工具与知识库未动）**：
-  - 选品搜索：`efc74be2→fa71c0db` 用户未限定卢布时保留 `symbol=¥` 原值、不剔除不补换、每次 size<=N、分币种汇总；`fa71c0db→eb344e1f` 未要求不额外加合计、需计算必须真实代码核验、宽表固定局部滚动容器与 320 浮层；`eb344e1f→fe585eea` 类目体系必须与真实 `CATEGORY/types` 或 `CATEGORY_BACKEND/category` 一致，不混称前后台。
-  - 类目趋势：`a9de5de2→c073fce6` 图片按真实 photo/images 候选回退、全部失败显示文字占位，白名单补 `yq_ozon_spu_detail`；`c073fce6→28684703` 代码沙箱不可用属基础设施故障，仍须输出完整 HTML，计算型摘要标待补。
-  - 商品解析：`ab357540→690df4e5` 接口来源字段一律中性表述，禁止上游厂商名与内部服务名（首轮复测曾出现厂商名，属对外口径不合格）。
-- **最终独立首答结果**：选品搜索通过（`ac05e5b9`，5款全部₽、前台类目 types=12368、4 KPI、宽表局部滚动、5图加载、悬浮320×320、5条真实链接）；商品解析通过（`599d21cf`，三条序列点数与窗口覆盖精确到序列、来源字段中性表述、卖家类型标未核验）；类目趋势部分通过（`50d268c3`，周期与断档由代码计算、宽表在 overflow 容器内、HTML与结论完整，但代码沙箱两次断连后按回退规则交付）；竞品监控、店铺分析、利润测算、选品报告此前已通过。
-- **边界修复**：趋势「仅查类目字典」由 description 前置约束后通过（`e4f4522c`，只调用 view_skill 与 dict_lookup，不再越界 fields/大盘/商品）；解析模糊问法 ask_user 表单通过（`66434420`）。
-- **证据与交付**：累计 49 条真实会话（18 通过 / 19 部分通过 / 8 未通过 / 2 人工纠正后可用 / 1 待确认），报告 `ozon-seven-skills-regression-2026-11-16.html` 与两份导航已按最新独立首答同步；七技能线上正文重新 GET 归档，两份 HTML 内嵌 prompt/skillMd 与线上 content 逐字一致。
-
-
-## 2026-11-17 · Amazon 4 场景技能教训回填（表格 v3.108 → 线上+导航）
-- 依据对照表 v3.108 Amazon美站子表 11-13 复跑沉淀，回填 4 个场景技能：
-  1. 去年Q4旺季备货参考（youweiai-amazon-scene-q4-last-year-reference）：★参数陷阱——参数包在 request 对象内、分页 page/size、排序 order:{field,desc}、类目锁定 nodeIdPath（nodeIdPathEqual=false）。
-  2. 市场环境五维判定（scene-market-five-dim）：★六轮返工教训——大类总盘=全部子类相加、统计卡公式、禁分数式/缩略语、多源字段级标注、预测%勿重复拼接、自营一票否决。
-  3. 1688图搜拿货+毛利测算（scene-1688-image-profit）：★书面语纪律——禁口语（出路A/压到/超线等），统一测算结论/方案A/高于上限；两品对比左右卡片布局。
-  4. 小类深度调研四步法（scene-subcat-four-step）：★图搜验证层——双路采样+逐款图搜亚马逊验证（同款集群/邻近空位/召回偏航/未验证），通过才进1688找厂。
-- 线上同步：4/4 POST /update 后 GET 回读 SHA256 逐字一致（脚本 tmp/sync_4scene_lessons_20261117.py）。
-- 导航同步：两份导航（ozon-skill-hub.html + skill/index.html）技能正文键值替换，node 语法校验通过，新增区块 probes 4/4。
-- 场景 1-20 其余教训此前已在线上正文；场景 21 维持待实测不发布口径。表格第 21 行验收链接错填（指向场景 20）已发现待表格侧修正。
-
-## 2026-11-17 · 回填教训实测抽验（2条真实UI会话）
-- Q4备货参考（04b4540b）：教训已加载但快照调用未带 nodeIdPath，靠事后品类清洗剔除混入——已把教训升级为执行步骤0强制锁参（禁止裸快照调用），线上回读一致、导航同步。
-- 市场五维判定（6d85f26f）：通过。三路并行+execute_code；无分数式、自营占比预警、KPI卡齐全；识破接口-29.5%预测与历史旺季相悖改用历史序列；综合判定"谨慎观察"附依据。GMV缩略语1处小瑕疵。
-- 台账 tmp/scene_lessons_verify_20261117.json。
-
-## 2026-11-18 · TEMU 7公共技能交付优化（巡检发现→落地）
-- 巡检（tmp/pubskills_patrol_20261117.json，3条真实UI会话）发现：TEMU报告缺KPI卡/主图320悬停/店铺链接——技能正文未写（AMAZON/OZON均有）；selection-search 存在"processing直接输出iframe"旧指令与新沙箱段冲突。
-- 修复：7技能线上正文补「交付三件套」节；selection-search 旧指令改为"只提供view_url链接与任务状态"。7/7 POST /update 回读逐字一致（tmp/temu_trio_apply_20261118.json）。
-- 导航同步坑：TEMU prompt 字段是反引号模板，正文含 ` 和 ${ 必须转义（\`、\${），否则整页 script SyntaxError；曾污染本地两份导航，已从远端 HEAD 恢复后重注入并 node --check 通过。demo JSON 里的旧指令是历史会话证据，保留不删。
-- 发布 commit 3ea52c3（基于远端 1fdf2cb）；线上核验 trio 7、320×320 156、prompt内旧指令0/新措辞1。
-
-
-## 2026-11-18 Amazon 21场景深度交付层对齐
-- 逐场景对照运营实测报告（wbapp amz-01~20.html，即腾讯表格v3.108 J列验收报告链接）骨架，为21个场景技能各追加「★ 深度交付层」章节：场景1双榜结构+BSR轨迹、场景2三口径核验、场景3结论纪律展示、场景4双结构+同比、场景5全量池42款+18档案+分层+词量基准、场景6筛选漏斗+三档分区、场景7十节点表+HK壳修正、场景8双词互补+爬坡期标注、场景9动能值+入场门槛洞察、场景10分形态判定表、场景11四步链路总览+产业带画像、场景12新品实证节、场景13两轮剔除+新品通道实证、场景14三档敏感性矩阵、场景15四级分组+镜像合并、场景16差评驱动P0、场景17零渗透标签解读、场景18优化后Listing+新旧对比、场景19三款横向对比、场景20双线图+主因证据链、场景21双交付+来源裁决。
-- 保留我方强项：逐款趋势核验、listing_date口径门禁、异常披露、查询日唯一来源、并行取数。
-- 线上21/21回读一致；导航两份同步（AMAZON_SCENE_SKILLMD 21 key全更新，node --check通过，运行时eval解析21key/深度层21）；远端main=ad20bdbd。
-
-
-## 2026-11-18 Amazon 21场景深度层全量回归与交付门禁
-- 21条真实UI会话逐场景对照运营报告（amz-01~20.html）：17通过（深度层骨架特征生效：场景14/16/17/18五项全命中）、2部分通过（场景2 execute_code循环熔断、场景19 iframe外链交付）、1未通过（场景13 HTML误塞工具调用未渲染）、1合规收口（场景21缺文件两步ask_user）。
-- 三缺陷全部落为21技能「★ 报告交付通道门禁」：HTML只允许回复正文输出（禁工具调用/iframe外链）、execute_code单次机会（防循环熔断）、ask_user pending禁API续跑。21/21回读一致并同步两份导航。
-- 验收报告 skill/amazon-depth-regression-2026-11-18.html；会话ID台账 tmp/depth_regression_chats_20261118.json。
-
-
-## 2026-11-18 三缺陷修复闭环（同日）
-- 场景13/2/19 全部原地续跑修复并改为回复正文HTML交付（13重跑全链路七节点五维、2补参重跑三口径+分档、19 iframe清零改正文19.8K）；门禁在续跑中被模型实际遵守。最终21场景：20通过+1合规收口（场景21缺文件）。验收报告更新为修复完成版。
-
-
-## 场景5深度返工复核（2026-11-18）
-- 场景5按运营报告骨架深度返工：采样链路6次搜索/原始120条/ASIN去重57款全部留痕，详情核验15款（严格达标11、超窗4），未核42款按列表层字段列出；11款档案卡含逐款月销趋势图与分档判定，分层归纳、关键词量价基准、切入建议与证据缺口齐备。父体键未产生合并，报告不作变体合并表述；差评仅1款有收录，不外推赛道。
-- 技能修复：评论<200/月销>300严格口径；不得把召回压到15~20款；全部采样池留痕；逐款趋势图、档案、分层及关键词基准纳入成稿门禁。
-- 同一验收会话续跑：https://local.dianleida.net:21996/c/93f7db88-291e-42e7-ba69-7ad182a2eb31（不增加会话总数）。
-- 本次成稿：88273字，2表，11张档案卡，11张月销趋势图；报告：amazon-scene5-depth-2026-11-18.html。
-
-
-## 场景5深度返工复核（2026-11-18）
-- 场景5按运营报告骨架深度返工：带筛选重跑6次检索（评论<200·月销>300·上架≥2026-05-21），原始120条、ASIN去重58款，池表60行=A区严格达标11款+B区详情核验超窗4款+未核45款，全部逐行列出；11款档案卡含逐款月销趋势图与分档判定，分层归纳、关键词量价基准、切入建议与证据缺口齐备。父体键未产生合并，报告不作变体合并表述；差评仅1款有收录，不外推赛道。
-- 技能修复：评论<200/月销>300严格口径；不得把召回压到15~20款；全部采样池留痕；逐款趋势图、档案、分层及关键词基准纳入成稿门禁。
-- 同一验收会话续跑：https://local.dianleida.net:21996/c/93f7db88-291e-42e7-ba69-7ad182a2eb31（不增加会话总数）。
-- 本次成稿：88273字，2表，11张档案卡，11张月销趋势图；报告：amazon-scene5-depth-2026-11-18.html。
+# 店雷达专家迁移清单（对话 → leidaaisystem 后台）
+
+<!-- BEGIN OZON SCENES DELIVERY 2026-11-17 -->
+## 2026-11-17 OZON 九场景当前迁移与交付
+
+- 一个专家 `ozon-selection-assistant`（youweiAI-OZON选品专家），模型 `glm-5.3`；保留七个公共技能，追加九场景，实际绑定共16项。完整专家公共配置、九场景正文及七公共技能基线见 `ozon-scenes-configuration-2026-11-17.json`，没有用摘要替代正文。
+- 原七项公共实际ID：`ozon-selection-analysis`、`youweiai-ozon-competitor-monitor`、`youweiai-ozon-category-trend`、`youweiai-ozon-product-parse`、`youweiai-ozon-shop-analysis`、`ozon`、`youweiai-ozon-report-gen`。场景调用公共能力，公共技能不反向调用场景；TS保留既有七项前台ID并导出实际ID快照及九场景定义。
+- 当前索引21个独立会话，逐会话逐轮记录见 `ozon-scenes-acceptance-2026-11-17.html`、`ozon-scenes-delivery-2026-11-17.json` 与 `ozon-scenes-evidence-manifest-2026-11-17.json`。原始测试指令判定：通过11、部分通过4、未通过6、验收中0；仅保留 `acceptance-results.json` 中按chatId匹配的显式status/finalStatus，缺少则验收中。历史限量测试通过仅对应原始测试指令，不能证明默认样本量/全场景完成。验收范围scope、业务达标businessStatus、首次回答firstAnswerStatus分别展示，缺失均为未评估；技术报告渲染仅引用单列preview证据，与业务条件达标分别展示。`done=true`、代码工具外层success、已有HTML均不自动判通过。
+- 热销实际商品交付补充：`ozon-hot-sales-verified-2026-11-17.html` 与同名 JSON 直接读取首轮60个SPU原始返回，独立核算并逐行溯源。导航热销实测的报告入口优先打开商品结果，验收页保留入口。独立核算通过不改写原UI首答或场景业务状态，未重跑真实会话不增加会话计数。
+- 原 `audit-findings.json` 的失败与缺口完整保留。每轮模型回答、工具实参/完整返回、原始HTML按内容哈希独立存档；后续纠正和独立复测不覆盖首轮失败。HTML从每个 `turn.answer` 的围栏提取，损坏内容原样保留，不修复后冒充原报告。
+- 耗时证据缺失写“未提供逐工具耗时”，采集时刻、消息时间、业务数据日期不能代替耗时。本构建不操作浏览器；实际渲染/图片/hover状态只引用主Agent提供的preview证据。
+- 重建命令：`python tmp/ozon_scenes_delivery_20261117.py`。可重复执行并接收索引新增复测/缺参会话；每会话一行并输出数量校验，配置未变不重复追加版本。仅本地交付，不提交、推送或发布，不修改其他平台和两份导航HTML。
+
+| 场景 | 实际技能ID |
+|---|---|
+| youweiAI-OZON-场景-热销飙升 | `youweiai-ozon-scene-hot-sales-rise` |
+| youweiAI-OZON-场景-本土刚需季节品+备货 | `youweiai-ozon-scene-seasonal-stocking` |
+| youweiAI-OZON-场景-头部跟款+新手铺货 | `youweiai-ozon-scene-top-seller-beginner` |
+| youweiAI-OZON-场景-商品流量词分析 | `youweiai-ozon-scene-title-traffic-terms` |
+| youweiAI-OZON-场景-宠物细分类目对比 | `youweiai-ozon-scene-pet-subcategory-compare` |
+| youweiAI-OZON-场景-热搜词飙升榜选品 | `youweiai-ozon-scene-search-traffic-ranking` |
+| youweiAI-OZON-场景-大盘趋势快照（目标场景） | `youweiai-ozon-scene-market-trend-snapshot` |
+| youweiAI-OZON-场景-冷门空缺类目筛选 | `youweiai-ozon-scene-supply-demand-gaps` |
+| youweiAI-OZON-场景-批量图搜寻源（Ozon→1688） | `youweiai-ozon-scene-batch-image-sourcing` |
+
+<!-- END OZON SCENES DELIVERY 2026-11-17 -->
+
+<!-- BEGIN OZON RECALL FIX 2026-11-17 -->
+## 2026-11-17 晚 · OZON 召回口径实测修正（覆盖九场景检索写法）
+
+**触发原因**：用户核对表格 6 个标签页 83 个场景后要求对比我们与表格的差别。逐字比对确认九场景提示词要点 100% 已落进技能正文（热销 6974字/表394字、宠物 6773/695、图搜 6698/547…），**提示词层无遗漏**。真正问题在召回路径：旧正文让模型按用户原话"关键词женская сумка"直搜，实测严重失真。
+
+**真实接口实测（类目 17001，同一 28 天销量降序）**
+
+| 召回写法 | total | 榜首近28天销量 |
+|---|---|---|
+| A 类目导航 `types:['17001']` 不带 spuName | 10000 | 17,969 |
+| B 宽词 `spuName:'сумка'` | 1,575 | 16,992 |
+| C 双词 `spuName:'женская сумка'` | **220** | **1,081** |
+
+命中差 45 倍、榜首差 15.8 倍。原因：OZON 俄区商品标题大量写 `Bag` / `Zara Bag` / `品牌名+Bag`，写全双词的反而集中低销量长尾。
+
+**另两条实测结论**
+- `from` 翻页在 100 条后失效（from=0 返 100 条，from=100 新增 0 条且 total 不变）。改用 `minSoldCount28` 按销量阈值分段切片：`[(2,100),(100,300),(300,800),(800,2000),(2000,None)]`，实测取到 297 个唯一 SPU。`size` 上限 100，传 500 报 `size should be less than or equal to 100`。
+- 性别判定必须用详情 `type2`，但 `type2` 也会误判：标题只写 `Bag` 的 10 款高销量品 10/10 返回 `type2=女士`（只按标题判会全丢，含榜首 17,040 件那款）；而明确写 `Сумка мужская` 的款同样返回 `type2=女士`。故必须 **type2 + 标题双证据，冲突以标题为准**。
+
+**改动清单（已回读线上逐字校验）**
+
+| 对象 | 版本 | 字数 |
+|---|---|---|
+| 九场景技能（各追加「召回口径实测修正」章节） | c0bc4215→ae402f64 / 2d6fdbc9→46430332 / e4b27c54→c93d709a / 8e28e441→daabc246 / ae1cd3e2→1f0ca864 / eacecad2→4d9569e7 / d1bbc744→eb7f05b9 / 6462ca5d→8e50553d / a2c9ab8b→4ee0dcbf | 6974→9046、7076→9148、7137→9209、6237→8309、6773→8845、6704→8776、6338→8410、6678→8750、6698→8770 |
+| `ozon-selection-analysis` 追加「召回路径与翻页实测修正」 | fc304570→**802f9a52** | 6244→7315 |
+| 专家 `ozon-selection-assistant` 追加「召回与交付门禁」两硬门禁 | — | 5031→**5795**，skillIds 保持 16 |
+
+**首答验证（真实 UI 会话 `6a9412b1-75f0-4200-86ca-4cc72ad55a53`）**
+模型未被告知修复，自主走对路径：42 次工具调用 = 3×view_skill + 2×dict_lookup + 2×spu_search（仅 types，不带 spuName）+ 30×spu_detail 核 type2；**20/20 行标题与销量与独立核算逐行零误差**，榜首由 1,081 修正为 17,040。点「预览」后 KPI 四卡、20 行主图、20 条真实链接、悬停 320×320 均正常。
+
+**纪律沿用**：本轮只增加了这一条真实会话；其余 8 个场景未重跑，验收状态按其原有逐会话证据保留，不因正文更新改写历史判定。交付物是结果页（`ozon-prompt-audit-recall-fix-2026-11-17.html` 含六章节核对与修复），不以验收报告充当结果交付。
+
+<!-- END OZON RECALL FIX 2026-11-17 -->
+
+<!-- BEGIN OZON RERUN 2026-11-17 晚 -->
+## OZON 九场景真实首答复验收口（2026-11-17 19:52）
+
+召回口径修正落地后，场景1-9 全部重跑真实 UI 首答（模型未被告知修复内容）：
+
+| # | 场景 | 判定 | 会话 | 关键证据 |
+|---|---|---|---|---|
+| 1 | 热销飙升 | 通过 | 6a9412b1 | 42次工具调用，20/20行与独立核算零误差（榜首17,040） |
+| 2 | 本土刚需季节品+备货 | 通过 | 319968a8 | 类目导航 total=10000；type2+标题双证据剔除化妆包/男包；季节证据不足如实判0款 |
+| 3 | 头部跟款+新手铺货 | 通过 | 5c97f2af | 6 SPU/6唯一卖家，真实sellerId+企业身份；轻小缺证如实判0款 |
+| 4 | 商品流量词分析 | 通过 | 409f948b | 真实标题词频；明确"非流量归因" |
+| 5 | 宠物细分类目对比 | 通过 | b7d31e4b | 先字典后market_stat；不判蓝海（历史"首答未通过"本轮首次首答通过） |
+| 6 | 热搜词飙升榜选品 | 通过 | 33c6a1ba | minSessionCountSearch7=5000 真实入参(total=218) |
+| 7 | 大盘趋势快照 | 通过 | 2cc4da9c | key=all；币种未核不算GMV；两点观测不判内卷 |
+| 8 | 冷门空缺类目筛选 | 通过 | 4373eae7 | 4次字典核对；供需比只做相对排序 |
+| 9 | 批量图搜寻源 | 部分通过 | 271a8840 | OZON侧全对(95205/SKU 5014222925=1,394件)；1688图搜网关502 "no configured MCP connector"，0候选不伪造 |
+
+独立核算：直连 MCP 同参数复现，销量/价格/类目编码逐字段一致。
+导航同步：9 场景 status/demo.rerun/acceptanceHistory 已写入源与发布版，两者 JSON 等价，node --check 通过。
+<!-- END OZON RERUN 2026-11-17 晚 -->
+
+<!-- BEGIN OZON SCENE9 RERUN 2026-11-17 -->
+## OZON 场景9 补跑通过（2026-11-17 21:50）—— 九场景 9/9 全通过
+
+- 根因修复：1688 图搜 502 "no configured MCP connector" 非配置缺失——网关进程（gateway_daemon 守护，2026-11-17 09:01 起）的 ConfigLoader 连接器状态损坏。重启网关进程（taskkill + daemon 3 秒自动拉起）后接口立即恢复（get_category_info/image_search/ali_offer_realtime_detail/ali_offer_sku_prices 全部 200）。
+- 补跑会话 ef2b2e3d-30d6-41b2-b29e-9561091371c3：类目 95205（total=4830）、销量最高 SKU 5014222925（1,394 件/₽297/bin28=leader/广东省跨境卖家 KEYUE1）；图搜命中 4 个 1688 候选，首选义乌舒净 offerId=985465320012「厂家批发宠物垫子」，实取供货详情+SKU 阶梯价 ¥2.90 起（≥1件）。
+- 独立核算：直连同网关通道复现，货源 subject 与 ¥2.90 阶梯价逐字段一致。相似款标注、无汇率不算价差等纪律全部遵守。
+- 导航两份 9 场景全部「已通过」，JSON 等价，node --check 通过；versions.json 追加 1 条。
+- 运维备注：gateway_daemon.py（F://traehuihua//temp_20261010_04//dld-gateway//）常驻，网关 ConfigLoader 每 60s 从 Open WebUI TOOL_SERVER_CONNECTIONS 刷新；再遇 no configured 502 先重启网关进程（旧进程缓存损坏是已知模式）。
+<!-- END OZON SCENE9 RERUN 2026-11-17 -->
+
+<!-- BEGIN OZON DEPTH OPT 2026-11-17 -->
+## OZON 五技能深度优化与对照复验（2026-11-17 23:59）
+
+对照店雷达历史交付（表格 9 场景报告）发现的展示深度差距，4 项做法写进 5 个场景技能，全部真实 UI 复验通过：
+
+| 场景 | 新增章节 | 复验会话 | 复验结果 |
+|---|---|---|---|
+| 3 头部跟款 | 卖家聚合TOP5表+CR集中度+候选分层 | ac9a6a78 | 主样本80款、CR1=11.3%/CR5=43.1%、30款候选分层(A12/B18)、26.1min |
+| 4 流量词 | 词频×销量中位差异+高流量覆盖度 | 710c5633 | 三路样本、交叉表70行、кросс-боди -32.2%强关联标注、18.8min |
+| 6 热搜词 | 100款榜单+价格带×销量贡献交叉 | 32fc7b81 | 101图100链、0-499₽占39.5%款数贡献72.1%销量、词根渗透率、25.5min |
+| 7 大盘 | 全序列账期表+供需增幅差 | 9696045f | 51行50账期、环比17处、币种未核保留源值、8.1min |
+| 9 图搜 | 价差三档数量级参考 | 865c69d4 | 3款图搜+实取阶梯价、1.42~2.93倍均"一般"、汇率门禁保留、5.0min |
+
+版本变更：c93d709a→607aff4a、daabc246→889933fd、4d9569e7→88daa209、eb7f05b9→98034868、4ee0dcbf→3fdd8989。
+深度版耗时明显增加（18~26分钟 vs 之前3~7分钟），由样本量与逐款核验决定，属预期成本。
+<!-- END OZON DEPTH OPT 2026-11-17 -->
+
+<!-- BEGIN OZON SPEED OPT 2026-11-18 -->
+## OZON 全技能执行提速快车道（2026-11-18 早）
+
+实测 `yq_ozon_spu_search` 的 `_fields` 可批量返回 type2/type3/brand/sellerName/link/photo，抽验 10 款与 spu_detail 逐字段一致。快车道章节写进 9 场景+7 公共技能（共16个）：
+
+- **批量核验替代逐款 detail**：spu_search 一次调用=全部样本核验结果；detail 仅用于抽样复核（3~5款）与序列/库存/评论等 search 拿不到的字段
+- **_fields 必含 photo+link**；**禁止 spuIds 参数回取**（实测被接口忽略，total=10000 返无关商品）
+- **交付形态硬门禁**：HTML 必须直接在回复正文输出，禁止只存 execute_code 沙箱（场景6首答曾误存沙箱，追问7.4min才补回）
+- **execute_code 合并少调**；view_skill 每会话每技能只读一次
+- 质量门禁不变：type2+标题双证据照旧；抽样不一致时该样本起全部改回逐款核验
+
+复验：场景3快车道 9.7min/14次调用（深度版 26.1min/61次，提速63%）302唯一SPU+CR5=38.7%+20主图20链接；场景6首答 18.0min（原25.5min）72严格+价格带交叉全保留。两场景与独立核算一致。
+版本：16技能全部更新（场景3 b1920a32、场景6 78489bbe 等）。
+<!-- END OZON SPEED OPT 2026-11-18 -->
+
+<!-- BEGIN OZON FASTLANE ALL 2026-11-18 -->
+## OZON 九场景快车道全量复验（2026-11-18 09:20）—— 9/9 通过
+
+| 场景 | 首轮 | 深度版 | 快车道 | 调用数（首/深/快） | 质量 |
+|---|---|---|---|---|---|
+| 1 热销飙升 | 11.8m | — | 6.5m | 42/—/11 | 100条批量+4款抽样一致，Top17,040 |
+| 2 季节品 | 7.3m | — | 3.4m | 16/—/10 | 双证据+趋势未知+T−60保留 |
+| 3 头部跟款 | 5.0m | 26.1m | 9.7m | 23/61/14 | 302SPU+CR5=38.7%+48候选 |
+| 4 流量词 | 3.4m | 18.8m | 4.3m | 7/18/6 | 词频×中位差异%+强关联 |
+| 5 宠物对比 | 1.9m | — | 1.3m | 9/—/8 | market_stat逐字段一致 |
+| 6 热搜词 | 2.3m | 25.5m | 7.8m | 7/26/7 | 价格带交叉+词根+同款数 |
+| 7 大盘 | 3.0m | 8.1m | 4.6m | 6/12/6 | 51行50账期+环比+币种门禁 |
+| 8 冷门 | 4.1m | — | 2.3m | 14/—/11 | 供需比排序+不判蓝海 |
+| 9 图搜 | 3.0m | 5.0m | 1.9m | 11/16/6 | 复用图搜+实取阶梯价¥2.90 |
+
+快车道平均 **4.6 分钟**（首轮 5.2min、深度版 16.7min）；9 场景全部真实 UI 重跑，独立核算逐字段一致，质量门禁（type2 双证据/趋势未知/不判蓝海/币种未核/价差三档）全部保留。
+会话：05daed2e / 6eba23f0 / 008a9c87 / 3ca0de12 / 9fece052 / f95cf1a2 / 5f940434 / 92806677 / 2d0141d2。
+场景9收口轮图搜复用昨日已验证结果（用户指令"图搜最后再试"，中途30次调用首轮已弃用）。
+<!-- END OZON FASTLANE ALL 2026-11-18 -->
+
+<!-- BEGIN OZON DOC STANDARD 2026-11-18 -->
+## OZON 按文档交付标准重做（2026-11-18 中午）—— 质量优先于耗时
+
+用户明确指出：优化不能以"把100个图搜变成2个"换速度，必须先实现文档的结果标准。对照9份店雷达历史报告逐维核对：
+
+**核对发现**：样本量达标≠分析达标。原8类全量版只有机械排序，缺文档的五层分析价值。补进技能并复验达标：
+- 场景5宠物对比（3f080388，4.7min）：8类全量+三条结论摘要+逐行"如何继续看"+比值三组合(÷店铺高≠新店能卖)+能说明/不能推出/还需检查+下一层研究清单，比文档多月销额维度
+- 场景8冷门（badb3c4b，7.0min）：7类全量+同五层分析
+- 场景1热销（40c6d48a，13.6min）：双路100+60初筛→20主表+6观察26主图，日均对比(前21天)+用途待核+品牌款风险
+- 场景2季节品（86cdb0f4，6.8min）：6候选+1观察+日均变化+storeType实核
+- 场景3跟款（77e400f7，21.4min）：双路清洗+TOP5卖家+CR1/CR5+三条件分层+60图30链（中途9ec0881c因沙箱断开148次重试挂死，已弃用）
+- 场景4流量词（35664127，11.0min）：三路298条→226组唯一（文档116组）
+- 场景6热搜词（32fc7b81，25.5min）：100款完整榜单101图100链（深度版已达标无需重跑；db706740尝试因字段口径反复验证挂死已弃用）
+- 场景7大盘（9696045f，8.1min）：50账期全序列，金额列因上游停字段标待核
+
+技能版本更新：场景1 03083fb1、场景3 6fc22760、场景4 2c47cadc、场景5 eff8646c、场景8 fd7c0359（分析价值深度章节）。
+**浏览器通道**：chrome-devtools MCP profile冲突卡死，用户授权后切换 workbuddy-browser-use 的 Google Chrome 扩展通道（browser_id=2）继续真实UI会话，验收口径不变。
+**待办**：场景9的100张全量图搜（文档4036候选/101行202图）需用户明确点数授权后跑。
+<!-- END OZON DOC STANDARD 2026-11-18 -->
+
+<!-- BEGIN OZON ALL9 DOC STANDARD DONE 2026-11-18 -->
+## OZON 九场景按文档交付标准全部达标（2026-11-18 14:15 完成）
+
+用户指令"全部解决"，完成最后一块场景9的100款全量图搜：会话 ce66d7d8，73.9min/132调用（111次1688 native_call）。100行明细102tr+99图+101 Ozon链接+7个1688链接，价差初判怎么读+图片对比说明+三档初判齐全。**真实命中4成功/87 NO_RESULT/6张504（1款受失败图影响）**——文档86/100是历史数据快照，本轮命中率低是上游真实返回差异，NO_RESULT和504全部如实标注未伪造。
+
+至此9场景docStandard标记9/9：
+场景1 40c6d48a / 2 86cdb0f4 / 3 77e400f7 / 4 35664127 / 5 3f080388 / 6 32fc7b81 / 7 9696045f / 8 badb3c4b / 9 ce66d7d8。
+
+核心结论：按文档标准交付的时间成本显著高于缩样本快车道（场景9 73.9min vs 快车道1.9min），但这是用户明确要求的"质量优先"。命中率等数据源外部因素如实披露，不用缩样本掩盖。
+<!-- END OZON ALL9 DOC STANDARD DONE 2026-11-18 -->
+
+<!-- BEGIN OZON ALLGMV CORRECTION 2026-11-18 -->
+## 场景7 全平台金额"上游停发"结论更正（2026-11-18 16:30）
+
+**用户提问**："全平台的日/周/月 GMV 是每天都没有么"。直连 `yq_ozon_market_stat(key=all)` 实测重核，推翻此前结论。
+
+**实测事实**
+- 50 个账期（20260813—20261104），**49 期 dayPrice/weeklyPrice/monthlyPrice 均有值**，仅序列首期 20260813 为 0。此前"全平台金额被上游置 0 / 停发"的表述作废。
+- 但三口径除同口径件数后单件金额严重不自洽（见下表），不可直接当全平台 GMV。
+
+| 区间 | 点数 | 日金额÷日件数 | 周金额÷周件数 | 月金额÷月件数 |
+|---|---|---|---|---|
+| 20260816—20260925 | 36 | 791₽ | 3,735₽ | 189₽ |
+| 20261007—20261104 | 13 | 686₽ | 778₽ | 734₽ |
+
+- 8-9 月最大相差约 90 倍（20260816：744/8,084/86₽），10-07 起三口径收敛；判定该区间周/月金额与日口径不同源，或上游 10 月换过统计口径。
+- 账期覆盖：84 个日历日仅 50 点，缺 34 天，最长缺口 20260926—20261006 连续 11 天；顶层 updateTime=2026-11-16 但最新账期只到 20261104，滞后约 12 天。
+
+**技能改动**（version 79fbc5e2 → f0fbcc20）
+- 新增章节「★ 全平台金额三口径自洽校验」：展示金额前先算三个单件金额，数量级不一致的账期禁用周/月金额算 GMV、客单价或求和。
+- 原「声明」条改为"金额并非全为 0，但存在口径风险"；原第 1 条"全平台 key=all 被上游置0"改为"全平台金额可用但有口径风险"。
+- 类目级（如 95203）三口径单件金额互相接近，客单价可用。
+
+**发布**：源 ozon-skill-hub.html 与 skill/index.html 等价（IDENTICAL），node --check 通过；commit `ce90dc8d`，线上 liveVersionId 已核验为 `f0fbcc20-76a0-46d5-81d1-12809544890d`。
+<!-- END OZON ALLGMV CORRECTION 2026-11-18 -->
+
+<!-- BEGIN OZON SCENE7 BIGCAT 2026-11-18 -->
+## 场景7 改造为「大类大盘分析」（2026-11-18 17:10）
+
+**用户要求**：不做全平台了，按截图改成大类维度；技能和标题都改；并列出类目大盘还能分析哪些维度。
+
+**关键技术验证**
+- `yq_dict_lookup(type="CATEGORY_BACKEND", platform="ozon")` 返回 9300 条，其中 `parentValue` 为空的顶层大类共 **30 个**，key 形如 服装15621031 / 住宅和花园17027494 / 汽车用品17027495。
+- **前台 CATEGORY 编码（28女装、95女鞋、580汽车用品、248电子产品）传进 market_stat 全部返回空**，只有 CATEGORY_BACKEND 后台 ID 能取数。
+- 截图 13 个字段逐位对上：服装 allSkuNum 7,260,777→726.1万、allMallNum 182,690→18.27万、monthSkuNum 7,284、monthMallNum 126、monthlySalesNum 22,286,419→2228.6万、skuInfoNum7 15.2亿、skuSearchNum7 56.9亿、skuViewNum7 225.7亿、skuSearchNum28 204.2亿、skuViewNum28 830.5亿。
+- **截图排序是商品数降序**（服装726万→住宅632万→汽车514万→建筑454万→电子307万→小百货240万…）。
+- 大类三口径自洽：30类中29类日/周/月金额除件数后互差<3倍（仅 Ozon Fresh 例外）；与全平台 key=all 的不自洽形成对比。
+- 大类 `items` 序列到 **20261115 共 63 点**，比 key=all 的 20261104/50点更新。
+
+**技能改造**（version f0fbcc20 → 517742e7）
+- 改名：`youweiAI-OZON-场景-大盘趋势快照（目标场景）` → `youweiAI-OZON-场景-大类大盘分析`。
+- 新增「可分析维度」22 项分 6 组：A 规模结构8（商品数占比/店铺数/单店SKU/日周月销量/日周月销售额/客单价/SKU月均出货/单店月销/份额）；B 流量转化4（商品卡浏览/搜索浏览/展示总计7&28、流量结构、粗转化率、搜索依赖度）；C 供给活力3（新品率/新店率/供需匹配预警）；D 趋势4（日序列/供需增速差/份额迁移）；E 下钻3（子类/店铺榜/品牌榜）；F 价格带1（仅 key=all，独立快照口径）。
+- 明确不可用维度：大类 allBrandsNum/allCommentsNum/allSalesNum 返回0；mallsNum 失真禁用；无退货率/动销率/官方GMV排名。
+- 新增「为什么不做全平台」三条理由（金额三口径不自洽 + 账期滞后 + 大类自洽）。
+- 展示规范沿用用户指定：金额₽/¥同列、≥1亿→X.XX亿/≥1万→X万、按商品数降序、无数据账期剔除。
+
+**样本报告**：`skill/ozon-scene7-bigcat-2026-11-18.html`，26 个有效大类（SKU≥1万），大类合计 SKU 4611万 / 月销 2.94亿件 / 月GMV ₽2369.12亿(≈¥196.64亿) / 客单价 ₽806。已在 Chrome 实机核验渲染、列对齐、结构解读与三段式结论。
+
+**发布**：双文件 IDENTICAL，node --check 通过；commit `2dccb51a`；线上 name=场景7·大类大盘分析、liveVersionId=517742e7 已核验。
+<!-- END OZON SCENE7 BIGCAT 2026-11-18 -->
+
+
+
+
+
+
+
+
+
+
+## TEMU / OZON 配置核查（2026-11-17，本地待发布）
+- 已只读核查两专家及14技能；线上配置未改。本地评估：`temu-ozon-config-review-2026-11-17.html`，两份导航的相关实测面板增加独立评估入口，不改写历史会话判定与计数。
+- TEMU 优先修复 iframe 指令冲突、异步任务与报告完成边界；核验利润找源工具依赖，按任务区分必要追问，删除重复规则。OZON 优先修复类目趋势白名单、代码故障回退与成功输出门禁冲突，统一跨技能取样预算。
+- 本轮新增真实UI会话0条：browser-skill服务正常但扩展连接0，按用户要求未切换通道。历史回读不算本轮实测。GitHub重新授权已取消或超时，本次仅本地准备，远端发布及线上浏览器验收未完成。
+
+## 亚马逊统一演示页（2026-11-16 下午演示版）
+- 统一入口 `youweiAI-amazon-prompt-ab-20261114.html`：四步决策旅程、29技能唯一清单；每行问题/帮助/问法/实测合一。旧手册 `youweiAI-amazon-29skills-handbook.html` 自动跳转，不再维护第二份正文。
+- 34条历史证据留在实测弹窗，保留各自会话与验收边界。演示推荐：场景12→5→14→19。
+- 用户指定Chrome调试通道已实测29按钮、34记录切换，结果无错、无横向溢出、无控制台警告/错误；分类5/7/3/6/8、搜索空态、关闭焦点恢复离线验证通过。本轮页面验收不代表新增业务实测。
+
+## 亚马逊29技能实测弹窗（2026-11-16）
+- 原A/B报告 `youweiAI-amazon-prompt-ab-20261114.html` 新增29技能分类、用途、帮助说明、搜索及实测入口；客户手册 `youweiAI-amazon-29skills-handbook.html` 同步每行实测按钮。
+- 29技能共34条验收记录，弹窗展示问法摘要、KPI、过程、明细、结论、数据边界和原始会话；基线、独立A/B、上线后抽测分开。场景15历史成功与最新待输入分开；场景21完整广告文件分析待验。
+- 两页面全部技能与记录已通过离线DOM交互和语法检查；Chrome扩展尚未连接，真实浏览器页面验收待补。本次仅整理既有证据，不新增业务实测，也不更改专家或技能绑定。
+
+> 生成时间：2026-11-08（2026-11-09 增补专家四~七：TEMU 四专家）
+> 用途：管理后台（leidaaisystem #/experts）后端就绪后，照本清单逐字段录入或做成导入 JSON。
+> 事实源：导航页 Hub（leidaai.github.io/skill）专家 Tab；本文档是「搬运说明书」。
+> 当前亚马逊迁移口径：公开名称统一 `youweiAI-amazon`，一个亚马逊选品专家绑定八项技能；具体 ID、验收边界与保密要求见文末「当前亚马逊迁移规范」。下文 2026-11-08 至 11-11 的历史专家数、双源方案、七技能配置及实测锚点保留追溯，不可作为当前亚马逊绑定或调用指南。
+> 运行前提：目标运行时需挂载 yunqi-data MCP（Ozon 数据）+ 1688 MCP（图搜/拿货价），知识库需部署「OZON中国跨境佣金与国际物流」4 篇文档。
+
+---
+
+## 通用字段映射（后台模型 ↔ 本清单）
+
+| 后台表单项 | 来源字段 | 说明 |
+|---|---|---|
+| 助手名称 | name | |
+| 头像 | — | 后台自选 |
+| 上架开关 | status=built → 开启 | |
+| 默认专家 | 建议选品专家 | 用户主入口 |
+| 可见性 | 全员可见 | 按运营策略调整 |
+| 平台（多选） | platforms | ozon / 1688 / amazon / temu |
+| 场景 | 见各专家「场景」 | 对齐后台现有场景分组 |
+| 模型 / 温度 | 见各专家「模型建议」 | 人设含工具纪律，温度宜低 |
+| 技能绑定 | skills | 按平台过滤后在后台勾选 |
+| MCP 绑定（工具白名单） | mcpTools | ⚠️ 后台就绪后需逐个配置 |
+| 知识库 | knowledge | ⚠️ 需在后台部署同名知识库 |
+| 标题/简介/介绍 | desc | |
+| 开场白 | greet | |
+| 核心能力 | abilities | |
+| 参考提示词 | refPrompts | |
+| 问题建议 | refPrompts 前3条可复用 | |
+| 人设 System Prompt | sysPrompt | 全文复制 |
+
+---
+
+## Ozon 选品搜索追加验收（2026-11-11 麻将包）
+
+- 上架时间：近90天对应 2026-08-13 至 2026-11-11；未指定销量周期时，本次按近28天销量>1，即 `minSoldCount28=2`。
+- 同词两义分别核验：麻将牌收纳包俄文 `сумка маджонг` 无硬筛 3 条（1 包、2 牌具套装），加硬条件为0；绗缝手袋俄文 `стеганая сумка` 加硬条件 1 条，却是化妆包，剔除后有效 0。搜索接口有数据（已知 SKU=631000911 可返回），不能误判整体不可用。
+- 验收时必须让专家说明「0 条有证据的合格商品」；服务端筛选不等于每行字段经核验，若 `createDate`/`soldCount28` 缺失，不能声称逐条核验达标。具体纪律以 `ozon-expert-skill-map.ts` 和 `ozon-selection-search.md` 为准。
+
+## 专家一：Ozon选品专家
+
+- **ID 建议**：`ozon-selection`
+- **平台**：OZON
+- **场景**：分销选品
+- **模型建议**：主力模型，温度 0.3（工具参数纪律强，低温防发挥）
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_dict_lookup
+  mcp__yunqi-data__yq_ozon_goods_search
+  mcp__yunqi-data__yq_ozon_goods_detail
+  mcp__yunqi-data__yq_ozon_spu_search
+  mcp__yunqi-data__yq_ozon_spu_detail
+  mcp__1688__global_image_search
+  mcp__1688__image_search
+  mcp__1688__ali_offer_sku_prices
+  ```
+- **知识库绑定**：OZON中国跨境佣金与国际物流（佣金类目表-2025-12-01 / 佣金规则 / 物流线路摘要-2026-03-25 / 物流规则）
+- **绑定技能**：Ozon选品搜索、竞品价格监控、类目趋势分析、商品详情解析、利润测算、选品报告生成
+- **简介**：Ozon（俄罗斯电商）选品助手：类目热销挖掘、时间窗筛新品、竞品/跟卖监控、配知识库测算佣金物流后的卢布利润。
+- **开场白**：
+  > 你好！我是 Ozon 选品专家。可以帮你：按类目找热销款（如"家居类目近28天卖得好的"）、按上架时间筛新品（如"近30天上架的连衣裙"）、分析单品销量趋势与跟卖、用佣金物流知识库测算利润。类目词我会先查字典确认编码再查询。
+- **核心能力**：类目热销榜与时间窗筛新品 / SKU·SPU 商品解析与跟卖监控 / 转化率·库存·销量动态多维筛选 / 佣金+国际物流利润测算（知识库）/ 结构化选品报告
+- **参考提示词**：
+  1. 家居用品类目近28天销售额TOP10有哪些
+  2. 近30天上架的连衣裙，找出有销量的新款
+  3. 分析 SKU 631000911 的销量趋势、价格和跟卖情况
+  4. 测算这个商品的1688分销利润（给我SKU或链接即可）
+- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-ozon-sel → sysPrompt`（含工具链表、指标口径、利润公式、1688图搜纪律），或直接从导航页专家卡片「复制人设提示词」。
+- **实测锚点**（验收用）：家居用品(17028714) 近28天销售额TOP：感应垃圾桶₽2967/4412件/₽1181万；垃圾袋35L ₽190.7/58614件/₽1063万（2026-11-08 实测）。
+
+---
+
+## 专家二：Ozon店铺专家
+
+- **ID 建议**：`ozon-mall`
+- **平台**：OZON
+- **场景**：竞品监控
+- **模型建议**：主力模型，温度 0.3
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_ozon_mall_search
+  mcp__yunqi-data__yq_ozon_mall_detail
+  mcp__yunqi-data__yq_ozon_goods_search
+  ```
+- **知识库绑定**：无（店铺分析不依赖费率库）
+- **绑定技能**：店铺排行分析、商品详情解析、竞品价格监控、选品报告生成
+- **简介**：Ozon 店铺分析助手：找标杆店铺、竞店监控、店铺销量/SKU结构与开店轨迹分析、反查店铺在售爆款。
+- **开场白**：
+  > 你好！我是 Ozon 店铺专家。可以帮你：按销量/评分筛店铺找标杆（如"日销最高的跨境店铺"）、看店铺详情（开店时长/等级/分类结构）、反查某个店铺在卖什么爆款、竞店对比分析。给我店铺ID、店铺名或筛选条件都行。
+- **核心能力**：多维筛选找标杆店铺 / 店铺详情解析（等级·开店时长·执照）/ 反查店铺在售商品与爆款结构 / 竞店对比与铺货·精品模式判断 / 店铺销量趋势追踪
+- **参考提示词**：
+  1. 找出日销量TOP10的Ozon跨境店铺
+  2. 分析店铺 2892839 的经营情况和爆款结构
+  3. 对比这两家店铺的铺货策略（给我两个店铺ID）
+  4. 家居类目有哪些值得对标的本土店铺
+- **人设 System Prompt**：见 `exp-ozon-mall → sysPrompt`（含三条实测纪律：自营脏数据过滤 / 类目筛店铺的正确姿势 / monthlySales 字段不存在）。
+- **实测锚点**（验收用）：Rhapsody Home Shop(ID 2892839)=跨境/Plus(level3)/开店1年/日销8738件/周销57706件/1252 SKU/87 SPU/评分4.8；店内爆款创可贴28天60,954件₽66（2026-11-08 实测）。
+
+---
+
+## 专家三：Ozon大盘专家
+
+- **ID 建议**：`ozon-market`
+- **平台**：OZON
+- **场景**：分销选品（市场调研子场景，后台有细分则归「市场分析」）
+- **模型建议**：主力模型，温度 0.4（分析框架下允许适度推理）
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_dict_lookup
+  mcp__yunqi-data__yq_ozon_market_stat
+  mcp__yunqi-data__yq_ozon_brand_search
+  ```
+- **知识库绑定**：无
+- **绑定技能**：类目趋势分析、选品报告生成、店铺排行分析
+- **简介**：Ozon 市场分析助手：类目容量与趋势（SKU/店铺/销量/流量）、品牌集中度、价格段分布，回答"该不该入场"。
+- **开场白**：
+  > 你好！我是 Ozon 大盘专家。可以帮你：评估类目容量（多少SKU/店铺/月销）、看类目增长趋势（每日序列）、分析品牌集中度（头部品牌占多少）、价格段分布，帮你判断一个类目该不该入场。说个类目名就行。
+- **核心能力**：类目容量评估（SKU·店铺·销量）/ 每日趋势序列与增长判断 / 品牌集中度与头部竞争分析 / 价格段分布与定价区间建议 / 入场可行性结论
+- **参考提示词**：
+  1. 家居用品类目现在还能进吗
+  2. 分析服装类目的大盘容量和品牌集中度
+  3. 宠物用品类目近3个月的趋势是涨还是跌
+  4. 这个类目头部品牌占多少份额（给我类目名）
+- **人设 System Prompt**：见 `exp-ozon-market → sysPrompt`（含五步分析框架：容量→集中度→流量效率→动销率→趋势；结论强制给入场建议）。
+- **实测锚点**（验收用）：家居用品(17028714) 大盘 = 月销228万件/月销售额8.29亿₽/15.7万SKU/4.67万店铺/月动销SKU仅964(0.6%)/近28天浏览20.6亿次/搜索39亿次（2026-11-08 实测）。
+
+---
+
+## 专家四：TEMU选品专家
+
+- **ID 建议**：`temu-selection`
+- **平台**：TEMU
+- **场景**：分销选品
+- **模型建议**：主力模型，温度 0.3（多币种/参数纪律强，低温防发挥）
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_dict_lookup
+  mcp__yunqi-data__yq_goods_search
+  mcp__yunqi-data__yq_goods_detail
+  mcp__yunqi-data__yq_goods_comment
+  mcp__yunqi-data__yq_goods_img_search
+  mcp__yunqi-data__yq_mall_search
+  mcp__yunqi-data__yq_mall_detail
+  mcp__yunqi-data__yq_brand_search
+  mcp__yunqi-data__yq_market_semi
+  mcp__yunqi-data__yq_quota_status
+  mcp__1688__global_image_search
+  mcp__1688__image_search
+  mcp__1688__ali_offer_sku_prices
+  ```
+- **知识库绑定**：无（TEMU 佣金/核价规则暂无知识库，利润估算项须标注）
+- **绑定技能**：TEMU选品搜索、TEMU竞品监控、TEMU类目大盘、TEMU商品解析、TEMU店铺分析、TEMU利润测算、TEMU竞品调研（Hub 内 7 个）
+- **简介**：TEMU 选品助手（云启数据）：全托/半托商品搜索、站内图搜同款、店铺与品牌分析、半托大盘与利润测算。
+- **开场白**：
+  > 你好！我是 TEMU 选品专家，基于云启 TEMU 数据接口工作。可以帮你：按类目/关键词找全托或半托热销款（如"美国站半托管家居类日销TOP"）、用商品图扫站内同款看竞争密度、解析单品多国价格与评论、查店铺和品牌经营数据、看半托大盘选赛道、测算利润。类目词我会先查字典确认编码再查询。
+- **核心能力**：全托/半托商品搜索与多维筛选 / 站内图搜同款与竞争密度分析 / 单品解析（多国价格/评论分布）/ 店铺与品牌经营数据分析 / 半托大盘容量与价格段分析 / 利润测算（接口实查售价）
+- **参考提示词**：
+  1. 帮我看看TEMU家居类目有什么好卖的
+  2. TEMU美国站半托管30美元以内的收纳盒找一下
+  3. 用这张图搜一下TEMU站内同款（发图片给我）
+  4. 解析商品 606713235275597 的价格和评论
+  5. SANRIO 品牌在TEMU卖得怎么样
+  6. TEMU美国站半托管大盘还能进吗
+- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-sel → sysPrompt`（含多币种纪律、goods_detail 裁剪纪律、brand_search 参数坑、market_fully 不可用降级、1688/TEMU 图搜分离纪律），或从导航页专家卡片「复制人设提示词」。
+- **实测锚点**（验收用，2026-11-09）：
+  - 家居厨房用品(36) 全托日销TOP：圣诞耶稣诞生摆件 日销5000件/马来西亚站 RM12.54；KJM马桶清洁片 德国站 €5.05/日销2228件
+  - 单品 606713235275597 评论：allCount 3852，4星+5星占 82.8%
+  - shiny party 店铺(56492256536)：1705 SKU/12.1万评论/4.8分/2022年开店/26站点/餐厨布艺占周销 24.2%
+  - SANRIO 品牌：18553店/98万SKU/月销184.9万件/4.75分
+  - 美国站半托大盘：4883万商品/44.2万店铺/月GMV $9.93亿（2026-10-30 数据点）
+  - 图搜：马桶清洁片主图命中 55 个站内同款，distance 0.21~0.40
+
+### TEMU 接口实测矩阵（2026-11-09）
+
+| # | 接口 | 实测要点 | 结果 |
+|---|---|---|---|
+| 1 | yq_goods_search | opt_ids=[36] + ware_house_type=0 + sort=[{daily_sales:desc}] | ✅ 10000+候选，圣诞品霸榜 |
+| 2 | yq_goods_detail | id=606713235275597 | ✅ 但返回 9 万字符，**必须 _fields 裁剪**；prices=多国价格历史 |
+| 3 | yq_goods_comment | _fields=[allCount,score1..score5] | ✅ 星级分布一次拿全 |
+| 4 | yq_goods_img_search | 图片 URL 直传 + _want | ✅ 55 同款；**_fields 只认 stats/sales/distance 等少数列**，传 id/price 会被忽略（自带返回） |
+| 5 | yq_mall_search | opt_ids+sort 日销降序 | ✅ 头部店铺日销 8964 |
+| 6 | yq_mall_detail | id=56492256536 | ✅ 类目周销占比 opts.weekly_sales_ratio 直接可用 |
+| 7 | yq_brand_search | brand=SANRIO + opt_ids | ✅ 但**排序用 orderByColumn+isAsc（传 sort 数组直接报错）**；**brand/malls_num 等字段不在默认返回，必须 _fields 显式传**，否则返回全是无名义字段 |
+| 8 | yq_market_semi | area=美国站 | ✅ 全量大盘+每日序列+分类/价格段/销量段 |
+| 9 | yq_market_fully | 无参/带 _fields/optId=36 | ❌ **确认不可用**：无参超时×2；optId 只接受枚举 17857099937，传其余值 schema 校验拒绝，传枚举值报 code=-1。人设已写降级路径（goods_search 全托聚合估算） |
+| 10 | yq_dict_lookup | CATEGORY keyword=家居 | ✅ 家居厨房用品=36（一级） |
+| 11 | yq_quota_status | — | ✅ 标准版，总 20 万次剩 19.8 万，2026-11-18 到期 |
+| ⚠️ | 币种陷阱 | region=45 哥伦比亚 | ⚠️ currency 显示"$"实为哥伦比亚比索（商品标价 10306≈2.7 美元）——人设已强制「数值+币种+站点」三元组表述 |
+
+---
+
+## 专家五：TEMU核价利润专家
+
+- **ID 建议**：`temu-price`
+- **平台**：TEMU
+- **场景**：供应链对接（核价测算子场景）
+- **模型建议**：主力模型，温度 0.2（金额测算纪律最强，低温防发挥）
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_goods_search
+  mcp__yunqi-data__yq_goods_detail
+  mcp__yunqi-data__yq_goods_img_search
+  mcp__yunqi-data__yq_dict_lookup
+  mcp__yunqi-data__yq_quota_status
+  mcp__1688__image_search
+  mcp__1688__global_image_search
+  mcp__1688__ali_offer_sku_prices
+  mcp__1688__ali_offer_realtime_detail
+  mcp__1688__product_search_list
+  ```
+- **知识库绑定**：无（TEMU 平台扣点/核价规则暂无知识库；测算中平台侧参数按用户后台数据优先，缺失时按行业区间估算并标注）
+- **绑定技能**：TEMU利润测算、TEMU竞品调研、TEMU选品搜索、1688利润测算
+- **简介**：TEMU 供货核价与利润测算：站内售价实查 + 1688 图搜找源 + 拿货价阶梯实查，全托核价博弈/半托自定价双口径。
+- **开场白**：
+  > 你好！我是 TEMU 核价利润专家。给我一个商品（TEMU 链接/ID/图片都行），我会：查它在 TEMU 站内的真实售价与同款价格带 → 用图搜在 1688 找同款货源 → 实查拿货阶梯价与重量 → 按全托管（核价博弈）或半托管（自定价）口径算出利润空间和敏感性区间。也可以直接问我"这个供货价能不能做"。
+- **核心能力**：TEMU 站内售价与同款价格带实查 / 1688 图搜找同款货源（双引擎）/ 拿货阶梯价/SKU/重量/供应商资质实查 / 全托管核价测算与博弈区间 / 半托管自定价利润测算 / 供货价敏感性分析（3档）
+- **参考提示词**：
+  1. 算一下这个 TEMU 商品我供货能不能做（发链接或图片）
+  2. 马桶清洁片在德国站卖 €5.05，我供货价报多少合适
+  3. 用这张图找 1688 货源并测算核价空间
+  4. 这个品 1688 拿货价 ¥3.5，TEMU 核价多少才不亏
+  5. 对比这三个 1688 货源哪个适合供 TEMU
+- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-price → sysPrompt`（含双引擎分工、全托/半托双口径公式、货源甄别优先级），或从导航页专家卡片「复制人设提示词」。
+- **实测锚点**（验收用，2026-11-09）：
+  - 全链路：KJM 马桶清洁片 TEMU 德国站 €5.05 → 1688 image_search 命中 3 精准货源（officialScore 0.74~0.80）→ 阶梯价 3件¥3.5/100件¥3.0/200件¥2.5（10片装）→ 参考重 65g → 供应商「跨境出口专供=是/下游平台含 temu」
+  - 全托供货价底线 ≈ ¥9.0~9.5/30片；站内零售倒推 TEMU 核价区间 ¥15.6~23.4（40%~60% 经验估算）→ 有空间
+
+### 1688 图搜双引擎实测结论（2026-11-09）
+
+| 引擎 | 适用 | 实测 |
+|---|---|---|
+| `image_search`（寻源） | **主引擎**：找同款货源+阶梯价+供应商 | ✅ TEMU 图直搜命中 3 候选，带 quantityPrices/weight1/跨境专供标识 |
+| `global_image_search(platform=1688)` | 辅引擎：全网价格分布广撒网 | ⚠️ 偶发 500（重试即成功）；返回 30 候选但混入蓝泡泡/洁厕棒等非同款，须按 levelName 过滤 |
+
+---
+
+## 专家六：TEMU店铺专家
+
+- **ID 建议**：`temu-mall`
+- **平台**：TEMU
+- **场景**：竞品监控
+- **模型建议**：主力模型，温度 0.3
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_mall_search
+  mcp__yunqi-data__yq_mall_detail
+  mcp__yunqi-data__yq_goods_search
+  mcp__yunqi-data__yq_dict_lookup
+  mcp__yunqi-data__yq_quota_status
+  ```
+- **知识库绑定**：无
+- **绑定技能**：TEMU店铺分析、TEMU商品解析、TEMU竞品监控
+- **简介**：TEMU 店铺分析：标杆店挖掘（明星店/Y2店/老店）、竞店监控、SKU 与类目周销结构、反查店内爆款、覆盖站点分析。
+- **开场白**：
+  > 你好！我是 TEMU 店铺专家。可以帮你：按销量/评分/粉丝筛店铺找标杆（如"全托管家居类日销TOP店铺"）、定向挖明星店(mall_star)/Y2店(pre_order)/2022年开店的资深老店、看店铺详情（SKU规模/类目周销占比/覆盖站点）、反查某个店铺在卖什么爆款。给我店铺ID、店铺名或筛选条件都行。
+- **核心能力**：多维筛选找标杆店铺（销量/评分/粉丝/开店时间）/ 明星店(mall_star)与Y2店(pre_order)定向挖掘 / 店铺画像（SKU规模/模式判断/覆盖站点）/ 类目周销占比结构分析 / 反查店内爆款（mall_ids）/ 竞店对比
+- **参考提示词**：
+  1. 找出TEMU全托管日销TOP10的家居店铺
+  2. 分析店铺 56492256536 的经营情况和爆款结构
+  3. 帮我找几个TEMU明星店铺看看他们在卖什么
+  4. 对比这两家TEMU店铺谁的类目更聚焦（给我两个店铺ID）
+- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-mall → sysPrompt`（含 mall_star/pre_order 特有筛选、opts 类目占比框架、mall_ids 反查纪律）。
+- **实测锚点**（验收用，2026-11-09）：shiny party(ID 56492256536)=全托/1705 SKU/12.1万评论/4.8分/opened_at=20220901/26站点/日销8964件；类目结构=餐厨布艺24.2%+节日聚会17.7%+窗饰9.1%；店内反查889动销SKU，爆款=圣诞枕套 日本站円459/日销480、线缆整理夹 €4.32/日销303/总销5.9万。
+
+---
+
+## 专家七：TEMU大盘专家
+
+- **ID 建议**：`temu-market`
+- **平台**：TEMU
+- **场景**：分销选品（市场调研子场景）
+- **模型建议**：主力模型，温度 0.4（分析框架下允许适度推理）
+- **MCP 绑定（工具白名单）**：
+  ```
+  mcp__yunqi-data__yq_market_semi
+  mcp__yunqi-data__yq_brand_search
+  mcp__yunqi-data__yq_dict_lookup
+  mcp__yunqi-data__yq_goods_search
+  mcp__yunqi-data__yq_quota_status
+  ```
+- **知识库绑定**：无
+- **绑定技能**：TEMU类目大盘、选品报告生成
+- **简介**：TEMU 市场分析：半托大盘容量与趋势（站点/类目下钻）、价格段与销量段分布、品牌集中度，回答"该不该入场"。
+- **开场白**：
+  > 你好！我是 TEMU 大盘专家。可以帮你：看半托管大盘容量（多少商品/店铺/月GMV）并按站点+类目下钻、看每日增长趋势、价格段与销量段分布（找空缺价位）、品牌集中度分析，帮你判断一个类目该不该入场。⚠️ 全托管大盘接口暂不可用，全托需求我用商品搜索聚合估算（精度打折会注明）。说个站点+类目就行。
+- **核心能力**：半托大盘容量评估（站点×类目下钻）/ 每日趋势序列与增长判断 / 价格段/销量段分布与空缺价位 / 品牌集中度与头部竞争分析 / 全托大盘降级估算（goods_search 聚合）/ 入场可行性结论
+- **参考提示词**：
+  1. TEMU美国站家居半托管还能进吗
+  2. 美国站半托大盘哪个二级类目增长最快
+  3. 家居类目什么价位段竞争最小销量最高
+  4. SANRIO品牌在TEMU占多大份额
+  5. 全托管的清洁用品大盘帮我估一下
+- **人设 System Prompt**：见 Hub 源码 `BASE_EXPERTS → exp-temu-market → sysPrompt`（含六步分析框架、market_fully 降级纪律、brand_search 参数坑）。
+- **实测锚点**（验收用，2026-11-09）：美国站半托全量=4883万商品/44.2万店/月销1.54亿件/月GMV $9.93亿/动销店57%；美国站×家居(36)=876.8万商品/19.25万店/月销2629.7万件/月GMV $1.51亿/客单价$5.7；二级类目=家居装饰月销406万件(8.5万店)、节日饰品204万件(5.2万店)；71.7%商品零销量；品牌 SANRIO=18553店/98万SKU/月销184.9万件。
+
+---
+
+## 随行技能资产（后台 #/skills 同步用）
+
+| 技能 | 状态 | 底稿位置 |
+|---|---|---|
+| OZON利润空间测算 | ✅ 全链路对话实测过（连衣裙TOP8利润率38.7%~68.3%） | `skills/ozon-profit-calc.md` |
+| Ozon选品搜索 | ✅ 后台已有 v20261106143542 | `skills/ozon-selection-search.md` |
+| TEMU 7技能（选品搜索/竞品监控/类目大盘/商品解析/店铺分析/利润测算/竞品调研） | ✅ 2026-11-09 接口实测后转为接口式 | Hub 技能 Tab（TEMU 标签） |
+| 其余技能指令（历史口径） | 当时 Hub 展示（1688×7/Ozon×7/亚马逊×4）；亚马逊当前八技能见文末 | 历史技能 Tab，仅供追溯 |
+
+## 知识库资产（后台知识库模块部署用）
+
+| 文档 | 版本 | 位置 |
+|---|---|---|
+| 佣金类目表 | 2025-12-01 生效 | `knowledge/佣金类目表-2025-12-01.md` |
+| 佣金规则-中国跨境 | 检索 2026-10-16 | `knowledge/佣金规则-中国跨境-2025-12-01版.md` |
+| 物流线路摘要 | 2026-03-25 生效 | `knowledge/物流线路摘要-2026-03-25.md` |
+| 物流规则-中国跨境 | 检索 2026-10-16 | `knowledge/物流规则-中国跨境-2026-03版.md` |
+
+## 搬运步骤（后台就绪后）
+
+1. 后台创建 7 个专家（按上方字段逐项填写；人设从 Hub 卡片复制）——Ozon×3 / TEMU×4（选品/核价/店铺/大盘）
+2. 配置每个专家的 MCP 工具白名单（上方代码块内容逐条加；TEMU核价专家需同时勾 yunqi-data + 1688 两库）
+3. 部署知识库 4 篇文档 → 绑定到 Ozon 选品专家（TEMU 四专家暂无知识库，留空）
+4. 用「实测锚点」逐个验收：同一提示词在后台专家里跑，结果应能对上锚点数据
+5. 全部通过后开「上架」开关，Ozon/TEMU 选品专家设为对应平台默认
+
+---
+
+## 附：提示词验证矩阵（2026-11-08 对话内实测记录）
+
+> 测试策略：不做全量参数组合（goods_search 180个参数无法穷举），按 P0核心场景 / P1参数类别抽样 / P2真实话术组合 三层验证。以下全部真实调用通过。
+
+### 选品专家（yq_ozon_goods_search 为主）
+
+| # | 类别 | 参数 | 实测结果 |
+|---|---|---|---|
+| 1 | 时间窗 | minCreateDate=2026-10-09 + category | ✅ 975款近30天新品，createDate 返回正常 |
+| 2 | 价格带 | minPrice=500 & maxPrice=1500 | ✅ TOP为洗鞋袋₽559/₽574万 |
+| 3 | 卖家类型 | storeType=1（跨境） | ✅ 家居跨境TOP：垃圾桶₽435/₽488万 |
+| 4 | 转化率 | minConvToCart28=5 | ✅ 674款，垃圾袋转化5.28%月销5205件 |
+| 5 | 中文关键词 | skuNameZh=连衣裙 | ✅ Dress Samy 2409件（中文标签检索可用） |
+| 6 | 销量排序 | sort=[{soldSum28:desc}] / [{soldCount28:desc}] | ✅ 两种口径均正常 |
+
+### 店铺专家（yq_ozon_mall_search/detail 为主）
+
+| # | 类别 | 参数 | 实测结果 |
+|---|---|---|---|
+| 1 | 类型+SKU规模 | storeType=1 & minSkuNum=500 & minScore=4.8 | ✅ Rhapsody 8738件/日居首；**minSkuNum≥500 可自动滤自营脏数据** |
+| 2 | 新店筛选 | minCreateAt=20261001 & maxCreateAt=20261108 | ✅ 36家新店，最早开店4天；**必须用 20261001 日期格式** |
+| 3 | 店铺详情 | mall_detail(id=2892839) | ✅ openTime="1 年"/level=3 |
+| 4 | 反查商品 | goods_search(sellerId=2892839) | ✅ 店内1254 SKU，爆款创可贴6万件 |
+| ⚠️ | 失败样本 | openVal=1 & openUnit=月 | ❌ 0结果——开店时长筛选不可用，用日期区间替代 |
+| ⚠️ | 失败样本 | 参数名 score=4.5 | ❌ 参数校验直接报错——正确名是 minScore/maxScore |
+
+### 大盘专家（market_stat / brand_search 为主）
+
+| # | 类别 | 参数 | 实测结果 |
+|---|---|---|---|
+| 1 | 全站大盘 | key=all | ✅ 6800万SKU/29.4万店/月销售额2558亿₽/月销3.2亿件 + 10个价格段(statPrices) + 每日序列 |
+| 2 | 类目大盘 | key=17028714 | ✅ 月销228万件/8.29亿₽ |
+| 3 | 品牌查询 | brandName=Samsung（正确大小写） | ✅ 正牌 Samsung：749店/1万SKU/月销10.2万件 |
+| ⚠️ | 失败样本 | brandName=samsung（小写） | ❌ 0结果——**大小写敏感** |
+| ⚠️ | 陷阱样本 | brandName=XIAOMI | ⚠️ 返回 XIAOMIMI/XIAOMILA 等近似杂牌——须按 mallsNum/skuNum 规模核对 |
+
+### 结论
+
+- P0（用户真实话术）+ P1（参数类别）已全通过；P2 组合即 refPrompts 本身，已覆盖
+- 3 个新坑已固化进专家人设（minSkuNum 滤脏数据 / 开店日期格式 / 品牌大小写）
+- 后台验收时：按本矩阵逐条在后台专家里重跑，结果对上锚点即通过
+
+---
+
+## 全专家对话内实测验收矩阵（2026-11-09 晚间 · 全部 19 专家）
+
+> 测试方式：每个专家抽 1~2 条代表性参考提示词，在对话内以真实 MCP 接口跑通，验证「人设→工具链→输出」闭环。
+
+| 专家 | 实测提示词 | 主接口 | 结果 | 复测发现/修正 |
+|---|---|---|---|---|
+| Ozon选品 | 家居类目28天销售额TOP | yq_ozon_goods_search | ✅ | 首调超时重试即成；数据与 11-08 锚点一致（感应垃圾桶₽2967/4412件居首），goods_search 免费版可稳定复现 |
+| Ozon店铺 | 日销TOP跨境店铺(minSkuNum=500) | yq_ozon_mall_search | ✅ | minSkuNum≥500 滤脏数据再次验证有效；Rhapsody 8738件/日仍居首 |
+| Ozon大盘 | 家居类目大盘(17028714) | yq_ozon_market_stat | ✅ | ⚠️ 新发现：items 序列日期空洞加剧（87天仅60点）；**mallsNum 10月底起断崖失真（2万→583）**，人设已写明近期勿引用该字段 |
+| Ozon大盘(品牌) | Samsung 品牌查询 | yq_ozon_brand_search | ✅ | orderByColumn=monthSales 正常；749店/月销10.86万件 |
+| TEMU选品 | 美国站半托 storage box | yq_goods_search | ✅ | 保鲜盒套装 $8.98/日销838 居首，regions+半托+标题组合稳定 |
+| TEMU核价 | （本日下午已全链路实测） | 5接口联动 | ✅ | 见专家五锚点 |
+| TEMU店铺 | 全托家居日销TOP+明星店核验 | yq_mall_search | ✅ | ⚠️ 新发现：**mall_star 作筛选参数会被忽略**（_note 报字段不存在），正确姿势=日销榜取头部后用返回的 star_seller_time 字段核验（实测头部5店全部在榜明星店）；opened_at 两接口有7天差（20220901 vs 20220908），表述用「2022年9月初」 |
+| TEMU大盘 | 家居类目下钻+玩具品牌榜 | yq_market_semi + brand_search | ✅ | optId 下钻稳定；brand_search+opt_ids=[204] 组合正常，SANRIO 居首 |
+| 亚马逊选品 | Sports Water Bottles 类目报告 | youweiAI-amazon category_report | ✅ | Top100 月销155.2万件/$4664万（与 11-09 早间锚点156.5万/$4698万差<1%，口径稳定）；自营占73.91%、Owala 36.93%+STANLEY 16.44% 双寡头格局不变；退货率9.85%/转化率7.0%/平均上架1158天 |
+| 亚马逊店铺 | 类目中国卖家筛选 | youweiAI-amazon seller_search | ✅ | 18 个 CN 卖家，RAYMYLO Direct 头部（$57.1万/月、top3集中度100%）；is_chinese_seller=1+node_id 组合稳定 |
+| 亚马逊选品(新品) | water bottle 2026新品+月销5000+ | youweiAI-amazon product_search | ✅ | STANLEY IceFlow 2.0（2026-01上架）月销5.1万件/$179万居首；**buybox_seller=Amazon 占比高**是重要信号；混入少量非水杯品（Boppy哺乳枕），按 sub_category 过滤 |
+| 亚马逊关键词 | water bottle 关键词详情 | youweiAI-amazon keyword_detail | ✅ | ⚠️ keyword_list 热词榜 504 超时（重试1次仍失败，属接口侧问题）；keyword_detail 稳定：月搜166.4万/CPC $1.05/首页100坑位(52自然+13广告)/hijack 26%——跟卖率高企是水杯类目特征 |
+| 亚马逊评论洞察 | Owala 差评100条+HP联名款 customers_say | youweiAI-amazon product_reviews + customers_say | ✅ | 差评五主题归纳再次验证（弹簧断裂/吸管脱落/漏水/杯架不兼容/质保踢皮球）；HP联名款正面话题：quality 240提及/负面仅7——正面壁垒数据可交叉使用 |
+| 1688选品 | 收纳盒30天销售额降序 | product_search_list | ✅ | 与 11-09 早间锚点一致（台球杆盒¥125/1万件居首）；⚠️ 「收纳盒」仍混入注塑机（¥83.6万），levelName 二次过滤纪律有效 |
+| 1688榜单 | 收纳品类月榜 | product_billboard_list | ✅ | ⚠️ 新发现：keyWord+sortField 组合返回0（去掉 sortField 即命中10000条）——榜单接口 keyWord 与自定义排序可能冲突，空结果先去排序参数重试；品类月榜 TOP=大容量收纳箱¥5.01/13488件/复购64.6% |
+| 1688新品 | 收纳盒新品 | product_trend_new_list | ✅ | ⚠️ 新发现：**MCP schema 要求 titleTags 必填**，只传关键词报校验错，显式传 ["289794"] 即可；命中仿藤编手提箱15万件（老锚点同款，稳定） |
+| 1688监控 | 加监控+监控池查看 | monitor_offer_add/list | ✅ | ⚠️ 参数格式：offer_add 收**链接或ID**（顶层 offerId 字段，不是 req 对象）；新加监控当天数据为 null（T+1同步）再次验证；监控池历史商品数据正常回填 |
+| 1688店铺 | 店铺榜查询 | shop_rank_list | ❌ | 五榜仍返回空（comprehensive/cross_border 均试），与早间结论一致：服务端暂无数据，降级路径（搜索反查+monitor_shop_analysis）仍有效 |
+
+### 汇总
+
+- 19 专家实测：**18 通过 / 1 接口侧不可用**（1688店铺榜，已有降级路径兜底）
+- 新增人设修正 4 处：Ozon大盘（mallsNum 失真）/ TEMU店铺（mall_star 筛选无效→字段核验法）/ 1688榜单（keyWord+sortField 冲突）/ 1688新品（titleTags schema 必填）
+- 接口侧已知问题 3 个：yunqi ozon goods_search 偶发超时（重试即成）/ youweiAI-amazon keyword_list 504 / 1688 shop_rank_list 空数据
+- 后台验收：按本矩阵重跑，对上锚点即通过
+
+## 原辅助数据源专家五件套（2026-11-09 下午新增 · 24 接口全实测后搭建）
+
+> 背景：原辅助数据源（youweiAI-amazon MCP）接口组评估可做 6 个专家，用户拍板先做 5 个（选品/关键词/大盘/评论/流量）。命名规范延续「数据源前缀+平台+角色」。已写入 Hub（exp-ss-amazon-*，status=built，各带实测 demo）。
+
+| 专家 | id | 接口 | 可行性结论 |
+|---|---|---|---|
+| 原辅助数据源亚马逊选品专家 | exp-ss-amazon-sel | product_node / competitor_lookup / asin_detail / asin_competitor / asin_prediction / bsr_prediction / market_research_statistics | ✅ 全部可用（⚠️ product_research 的 keywords 参数无效，见坑1） |
+| 原辅助数据源亚马逊关键词专家 | exp-ss-amazon-keyword | keyword_research / keyword_research_trends / keyword_miner / keyword_order / keyword_conversion / aba_monthly / aba_weekly / aba_trend | ✅ 全部可用（⚠️ month 滞后一月 / weekly 不能传 date / Acos min-max 顺序异常） |
+| 原辅助数据源亚马逊大盘专家 | exp-ss-amazon-market | market_research(_statistics) + 8 分布接口 + product_node / google_trend | ✅ 全部可用（⚠️ market_research 传 nodeIdPath 返回空，单节点下钻走 statistics） |
+| 原辅助数据源亚马逊评论洞察专家 | exp-ss-amazon-voc | review + asin_detail | ✅ 可用（星级/SKU/时间窗/图视频差评筛选齐全；无 AI 话题计数，与 原主数据源 版互补分工） |
+| 原辅助数据源亚马逊流量专家 | exp-ss-amazon-traffic | traffic_keyword(_stat) / traffic_extend / traffic_listing(_stat) / traffic_source | ✅ 全部可用（⚠️ traffic_keyword 带 month 返回空 / extend queryType=1 空 / relations=["SP"] 空） |
+
+### 原辅助数据源接口参数坑（2026-11-09 实测，人设已内置）
+
+1. **product_research 的 keywords 参数无效**：传 "water bottle" 返回全库商品（Nespresso 咖啡胶囊，total 7848 万）——商品关键词筛选一律用 competitor_lookup(keyword+matchType=3 精准)，不要用 product_research。
+2. **market_research 传 nodeIdPath 返回空**（total=0）：类目下钻用 market_research_statistics + 8 个分布接口（都支持 nodeIdPath）；market_research 只用 departmentKeyword 或纯筛选条件。
+3. **competitor_lookup 不传 matchType 默认=2 模糊匹配**，噪音大（water bottle 模糊出蛋白奶昔）；有关键词必传 matchType=3。
+4. **keyword_research 的 month 滞后一个月**：传 202610 返回 2026.09 数据，输出必须标注数据月份。
+5. **aba_research_weekly 不能传 date**：传上周六日期（20261107）反而报错「只能查询上一周」；不传 date 默认返回上一周。
+6. **keyword_conversion 的 Acos min/max 顺序异常**（min:6.78 > max:0.084），Acos 区间不可信，只引用均值。
+7. **keyword_order 的 page 从 0 开始**（其他接口从 1，不一致）。
+8. **traffic 家族**：traffic_keyword 带 month 必空（默认参数调用）；traffic_extend queryType=1（畅销变体）返回空用 0；traffic_listing relations=["SP"] 空，先 traffic_listing_stat 看 fbt/vav/bab 哪个有量再查明细。
+9. **变体级销量共享**：同 parent 变体 units 相同（父体口径），amzUnit 才是变体自营近期销量。
+10. **bsr_prediction 的 categoryId 是一级类目 code**（284507=Kitchen & Dining），传三级节点失败。
+
+### 实测锚点（2026-11-09 US 站，锚点商品=Owala B0BZYBSRNF 沿用 原主数据源 版）
+
+- competitor_lookup(water bottle 精准)：Owala FreeSip 系霸榜 TOP5，Alpine Sport 24oz 月销 18.8 万件/$659 万/毛利率 68.05%
+- asin_prediction：2026-10 月销 187,455 件；峰值 2026-08=31 万件（8 月旺季/冬季淡季 9.6 万）
+- bsr_prediction(Kitchen, BSR#1)：日销 6,842 件/月销 20.5 万件
+- keyword_research(2026.09 数据)：water bottle 月搜 185.9 万/购买率 2.09%/PPC $1.17/供需比 16.17；keyword_miner：owala 月搜 321 万（品牌词是品类词 1.9 倍）
+- 大盘(3395091)：Owala 品牌份额 25.86% 一家独大未过半；40$+ 高价段 11 款占销量 33.31%；2025-2026 年新款占 63% 销量（新品窗口大开）；中国卖家仅 13%；有 A+ 占 90%
+- review(1-2星)：头号差评主题=漏水（4/5 条，与 原主数据源 版「弹簧断裂」互补）；16oz/24oz 差评集中 32oz 少；差评池 2,254 条
+- 流量(traffic_keyword_stat)：1,343 流量词/自然 1,330/AC 79/广告 0=纯自然打法；owala 词吃 24.7% 流量；121 关联位全免费（fbt 41+vav 62+bab 12）
+
+### 与 原主数据源 版分工边界
+
+- 选品：原主数据源 主库（利润四件套直返）为主，原辅助数据源版强在 competitor_lookup 关键词筛品+asin_prediction 14 个月走势+bsr_prediction 销量换算
+- 关键词：原主数据源 强在单词坑位竞争/跟卖率/CPC 趋势；原辅助数据源强在 ABA 6 模式市场榜+keyword_research 四维筛选+58 个月趋势
+- 大盘：原主数据源 category_report 一站式 19 维；原辅助数据源 8 个分布接口更细（国籍/EBC/上架年份）
+- 评论：原主数据源 有 AI 话题计数+特征销量份额；原辅助数据源有 SKU 级差评+时间窗+图视频筛选
+- 流量：原主数据源 是关键词维度（词位对比）；原辅助数据源是 ASIN 维度（流量词结构/关联商品/免费付费比）——两库互验
+
+
+## 维护约定
+
+- Hub（skill 仓库）是专家人设的**单一事实源**；后台录入后如有改动，反向同步回 Hub
+- 历史维护流程曾包含提交与推送；本次仅更新限定文件，不提交或推送。公开文案须遵守文末当前亚马逊保密规范。
+
+---
+
+## 2026-11-10 增量：1688 单专家、八技能路由（覆盖旧六专家方案）
+
+> 上文历史清单和 2026-11-09 实测矩阵保留作历史记录；其中 1688 旧六专家的配置方案已由本节的 `exp-1688-sel` 单专家路由覆盖。后台录入 1688 时以本节及当前 TS 映射为准，不再按旧六专家建档。本次将与映射、导航页、版本记录一同提交推送。
+
+- **专家**：`exp-1688-sel`，1688选品专家；平台 `1688`，状态 `built`。开场白、简介、能力与参考话术取 `skill/1688-expert-skill-map.ts` 的 `a1688Expert`；绑定以下八个技能。`skill/versions.json` 新增 `expert:exp-1688-sel` 的 `merge` 快照和八条 `skill:<id>` 的 `create` 快照，均保留原历史条目。
+- **对应关系**：TS 导出 `a1688Expert` / `a1688Skills` / `a1688ExpertSkillIds`；导航页 `skill/index.html` 末尾模块通过 `import ... from './1688-expert-skill-map.js'` 加载浏览器 JS。每条技能的页面 `prompt` 是 `instructions`、空行、`## 执行步骤` 与从 1 编号的 `steps`、空行、`## 可用工具` 与逐行 `- ` 前缀的 `tools` 按 `\n` 拼接；专家 `sysPrompt` 是 `你是` + `name` + `。` + `desc`，再以两个换行连接 `routing`、`disciplines`。页面显示版 demo 会将原始 `kpis` 转成 `{label,v}`、`table` 转成 `{head,rows}` 并把 `source` 附到 `note`；版本快照的 `demo` 存的是 TS 原始 `JSON.stringify(skill.demo)` 全量数据，专家 demo 对应首技能原始 demo，保留 `title/date/kpis/flow/table/note/source`，没有用显示版代替原始证据。
+- **同步校验**：浏览器 JS 已按字节同步 TS，页面从 JS 导入；版本快照的人设提示词、各技能调用提示词和原始 demo 均与映射一致。更新 TS 后需同步 JS、核对两者哈希及页面实际渲染，再追加版本记录并推送。店铺榜 `shop_rank_list` 空结果和商品搜索降级、新品三条错类样本的返回数值以本次映射为准。
+
+| 入口意图 | 技能 ID | 后台场景 | 工具（`mcp__1688__` 前缀） |
+|---|---|---|---|
+| 条件找品、跨境筛选 | `skill-1688-conditional-search` | product-selection | `product_search_list`, `cross_border_product_search_list` |
+| 商品榜 | `skill-1688-billboard` | product-selection | `product_billboard_list` |
+| 新品发现 | `skill-1688-new-products` | product-selection | `product_trend_new_list` |
+| 以图找货 | `skill-1688-image-search` | product-selection | `image_search`, `global_image_search`, `ali_offer_sku_prices` |
+| 单品深挖 | `skill-1688-product-deep-dive` | product | `product_info`, `ali_offer_realtime_detail`, `ali_offer_sku_prices` |
+| 店铺核验、店铺榜空时降级 | `skill-1688-shop-verification` | shop | `monitor_shop_analysis`, `shop_rank_list`, `product_search_list` |
+| 监控池读取 | `skill-1688-monitor-read` | competitor | `monitor_offer_list`, `monitor_shop_list` |
+| 报价利润情景 | `skill-1688-profit-scenario` | profit | `ali_offer_sku_prices` |
+
+**后台 MCP 白名单（八技能去重并集，13 个）**：绑定 1688 MCP，逐项勾选以下工具；单技能只开放其表内所列工具。页面适配的 `mcpTools` 会去掉 `mcp__1688__` 前缀，后台按实际工具全名绑定。
+
+```text
+mcp__1688__product_search_list
+mcp__1688__cross_border_product_search_list
+mcp__1688__product_billboard_list
+mcp__1688__product_trend_new_list
+mcp__1688__image_search
+mcp__1688__global_image_search
+mcp__1688__ali_offer_sku_prices
+mcp__1688__product_info
+mcp__1688__ali_offer_realtime_detail
+mcp__1688__monitor_shop_analysis
+mcp__1688__shop_rank_list
+mcp__1688__monitor_offer_list
+mcp__1688__monitor_shop_list
+```
+
+**2026-11-10 实测边界与验收**：普通磁吸收纳盒检索原始 `totalCount=10000` 未清洗，跨境 `totalCount=67` 也需逐条去噪；商品榜请求 `date=2026-10-01` 与调用日不同；新品样本的沥水碗架、餐具盒、蛋糕模均属错类。单品 `734800252457` 近30天 48 笔 / 152721 件 / ¥610884；白色磁吸 166*122 的 `skuId=5251111954228` 参考 ¥4.6，不能借用无磁吸 ¥4 或 500 件起阶梯价。店铺 `https://huaijan.1688.com` 核验见店铺分析；本轮店铺榜 `shop_rank_list` 返回 `code=200,totalCount=0`，降级按商品找店铺链接再核验，不得写成榜单上榜。商品监控池 `total=5`、店铺池 `total=10` 属一次分页快照，缺失字段留 `null`，`monthSalesVolume` 单位未核实。图搜本轮 `image_search` 返回 504，`global_image_search` 返回 code 500，无本轮候选；同日历史报告 `reports/wig-profit-batch-a.json` 的成功图搜仅有待拿样候选，与本轮图片和结果分开记录。利润例中 ¥20 售价、¥3 运费、¥2 其他费用为指定假设，配 ¥4.6 SKU 参考价得情景毛利 ¥10.4、毛利率 52%；采购结算价及税损未核，绝非真实利润。验收时按各技能 demo 的 `flow/source/date` 回看请求与口径，不把上文 2026-11-09 旧数字混入本次 demo。
+
+---
+
+## 当前亚马逊迁移规范（youweiAI-amazon，八技能单专家）
+
+- **公开身份**：一个亚马逊选品专家；公开名称及数据来源统一写作 `youweiAI-amazon`。历史独立选品/店铺/大盘/关键词/评论/流量专家均只作档案，不再作为并列专家导入或展示。
+- **技能绑定**：以下八项已在 `amazon-expert-skill-map.ts` 与 Hub 页面绑定同一个亚马逊选品专家。前七项沿用稳定 ID，第八项已实现路由与文档，但新增卖家接口尚无本次实测记录；页面人设 `sysPrompt` 已扩充八路由、核验口径与交付规范。
+
+| 技能 | 稳定 ID / 迁移规划 ID | 当前验收边界 |
+|---|---|---|
+| 选品搜索 | `skill-amazon-selection-search` | 旧记录有调用样本；具体条件与结果需按历史日期核查 |
+| 竞品分析 | `skill-amazon-competitor` | 旧记录有调用样本；流量与评论支线以各轮记录为准 |
+| 关键词挖掘 | `skill-amazon-keyword` | 旧记录有调用样本；榜单/趋势支线以各轮记录为准 |
+| 类目体检 | `skill-amazon-category-trend` | 旧记录有节点、报告及趋势样本；冲突字段需隔离 |
+| 商品解析与评论洞察 | `skill-amazon-product-parse` | 旧记录有样本；评论摘要不能冒充单子体结论 |
+| 利润测算 | `skill-amazon-profit-calc` | 旧记录有接口估算样本；未计采购、头程、广告与退货 |
+| 选品报告 | `skill-amazon-report-gen` | 旧记录为真实返回的串联复用，不是独立接口实测 |
+| 卖家店铺分析 | `skill-amazon-seller-analysis` | 已有路由与参数纪律；新增卖家接口尚待业务实调验收 |
+
+- **路由原则**：按用户主意图选择技能，复用同轮已有数据；店铺相关问题由卖家店铺分析处理，实际接口未验收时披露证据边界。历史四技能、七技能和独立关键词专家文档不得作为当前八技能的调用指南。
+- **公开保密规范**：对外标题、简介、提示词、演示、注释和版本摘要只使用 `youweiAI-amazon`；不公开旧数据源品牌或旧 MCP 服务专名。接口方法名、参数名及可核查的历史响应数据按技术语义保留，但历史调用不得包装为新实测；具体服务绑定须由实际运行环境配置核对，不凭文案臆造 MCP 命名空间。
+- **上线校验**：当前页面与映射已发布一个专家、八项技能；人设提示词在页面「提示词」标签查看并可全文复制。八项技能卡片的当前调用指令均已补成分段执行规范，技能弹窗默认显示当前提示词；点击版本记录才显示历史快照，不能把历史摘要当当前指令。此次为提示词和显示口径完善，不等同新增接口业务实调；第八项卖家工具链的业务返回仍待验收，验收前不得写“八技能均已跑通”。
+- **2026-11-12 Open WebUI 实调验收**：模型 `amazon-sorftime-selection-assistant` 界面名 `youweiAI-amazon选品专家`，已绑定八项 `youweiai-amazon-*` 技能且目标模型只选择这八项；绑定现有亚马逊数据工具。八项均在该模型真实对话中触发技能并取证或复用证据：选品搜索 [回归](https://local.dianleida.net:21996/c/4d4a23e2-6572-46c3-b27c-0397950fb3b3) 双词第1页各20条、重复14、去重26、相关5；竞品、关键词、类目均有首次实调对话；商品评论 [回归](https://local.dianleida.net:21996/c/aac8fa25-f935-400a-9a40-3643e353e9ff) 读取100条原文并提供逐条编码，话题汇总另列；卖家 [回归](https://local.dianleida.net:21996/c/31803aa5-761b-4eb9-8b7c-5e791a1eb226) 定位 RAYMYLO Direct 并核店铺详情及商品，店铺级与商品级差额改为统计口径或时点待核；利润 [回归](https://local.dianleida.net:21996/c/7a34e2de-1cf2-4926-b16d-d10a27169aad) 核 B0DGHBV6XS 平台费与用户成本下 $6.62 条件利润，coupon=0 不称折后价；选品报告 [回归](https://local.dianleida.net:21996/c/a4628197-5223-4ad0-9b30-b4ec2582f033) 类目商品份额 Top3=61.59% 与 Top5=49.08% 逆序，已禁用整个商品份额维度并撤回新品流量推断。以上均为当次对话结果，不代表全部参数组合通过；报告第1页品牌计数复核后 Owala 为6款、各品牌合计20款；卖家报告余数13.13%与所列34行合计12.42%相差0.71个百分点，不能归给该34行，差额原因待核。候选日期、父体、金额冲突仍列待核。此前“新增卖家接口尚未实调”的记录仅描述发布前状态。
+- **2026-11-12 方法优化验收**：参考外部选品开发、运营与利润材料的九模块结构、候选二次验证、评论证据链及实物测试方法，分别落到八项现有技能。搜索留可追溯底表；类目/竞品/店铺占比注明有效样本分母；关键词逐词追溯；评论原文关联部件、变体和待测动作；利润仅在成本与费率规则齐全时计算售价/运输/采购量情景；报告缺数据的模块标未核实。接口费用不等于真实净利，售价乘估计月销不称实际销售额；不设固定重量/费率或利润门槛，不采用操控交易或评论的建议。本次仅修改工作流和提示词，未新增接口实调或样品测试。
+- **2026-11-12 八条新对话回归（Open WebUI，当前版技能）**：八项均观察到 `view_skill`，并按意图调用真实工具。选品搜索[连衣裙](https://local.dianleida.net:21996/c/9e2cc3b2-ddf7-4931-8b88-2a9035fda5c6)跨节点筛选得4个详情候选、2个按 `listing_date` 进入近30天，但原报告将41条去日期诊断与20条仅日期诊断混成65条，并从有限入口下“仅有2款”“主节点老品”结论；已在技能增加入口/页码/日期交叉复核并追问。竞品[运动水壶](https://local.dianleida.net:21996/c/ca40cda3-0a7e-4541-af6e-a34aa30a88e7)回归撤回重量2 pounds证明32 fl oz容量、无费率表下15%佣金比较，复算三款估计销售额乘积差额均为0。关键词[mahjong bag](https://local.dianleida.net:21996/c/cd329d5a-a5a9-4c4b-a362-f0746f13d448)回归隔离0点击但非0购买的漏斗，撤回无可核分母的新品机会和不同窗口同比。卖家[店铺](https://local.dianleida.net:21996/c/220faedd-dda6-44e4-bef8-05c497651c30)核详情98件、商品入口第1页11条且1页、诊断第2页空，撤回11/98覆盖率。利润[水杯](https://local.dianleida.net:21996/c/ebf71247-e61e-4181-8e2a-aa27a125d7de)回归对齐 `days_on_shelf=787` 与 `online_date`、另列 `listing_date` 878天及待核差异，并只称当前购物车卖家所在地US，条件利润仍$6.62。类目[水杯](https://local.dianleida.net:21996/c/dca9be73-7a9a-4431-a08c-da58fc04d643)已弃用逆序商品份额，但报告Top100聚合1988131与榜单1390275不同、分层款数122、Top10/20与明细不符及新品上限推断待修。评论[ASIN](https://local.dianleida.net:21996/c/8efbe59a-1ef9-47d0-a87d-338eee55d067)列出54次主题命中含1条交叉，实际53条独立，所谓“其余46条”应待核，且未列其余编号不能称100条全部编码。选品[报告](https://local.dianleida.net:21996/c/ec423a22-be0b-4844-9850-9248d24b8d70)已弃用逆序商品份额，仍用假定15%校佣金并从Top100样本推冷启动；类目/评论/报告三技能已保存补充规则并发起回归。类目回归将1988131件的报告窗口聚合与1390275件的榜单快照分列，撤回新品月销上限与“品牌垄断强化”，商品维度及复算冲突的Top10/20份额弃用，分层款数122≠100也弃用。评论回归确认54次主题命中仅53条独立评论、其余47条未逐条映射，撤回“全部100条已编码”，日期字段冲突标待核；计算沙箱两次断开后改用列式手算。报告回归撤回假定费率验佣金，$6/$39.99仅为算术比例，三个维度份额组因异常停用，保留已核Top100样本事实，缺采购与头程不报真实净利。连衣裙回归分离41条去日期预筛、20条仅日期诊断与4条全条件详情候选，严格日期筛选留2条；不再从有限页推全类目“仅有”。八条对话及修订回归均有最终回答，属于所测问话和数据快照的通过记录，不代表全部参数组合或跨日期稳定性。
+- **2026-11-12 多条件/预览二轮**：在 Open WebUI 同一专家新增八项场景对话：[搜索30天严格条件](https://local.dianleida.net:21996/c/f6ff92c5-79a4-428d-9fac-f3968eb9aacb)、[竞品三ASIN](https://local.dianleida.net:21996/c/df4c8867-d5b9-4a6c-9a67-7b4d4055f716)、[关键词长尾+异类反查](https://local.dianleida.net:21996/c/06d6088e-e1fc-46f8-8a3f-c28bacdfca24)、[类目完整月](https://local.dianleida.net:21996/c/1d8685c2-6add-439b-a3e3-8916faac4968)、[商品评论](https://local.dianleida.net:21996/c/11bb1f1a-90d6-4eae-9ca0-ef3384eb27a1)、[店铺分页](https://local.dianleida.net:21996/c/df1f03c5-631e-4a1f-91a8-b20962502b78)、[利润](https://local.dianleida.net:21996/c/81394c1d-8e01-4a60-a7fc-9d48c094dc4c)、[完整报告](https://local.dianleida.net:21996/c/866ab571-de0e-46b3-9dae-694a9b224659)。八条均加载对应技能并调用工具；搜索30天候选0，另开90天仍保持价格/月销/FBA/卖家国别条件，实得1个详情核验候选；关键词反查ASIN属水杯而非麻将包，已隔离；店铺98件与检索11件的分页冲突已标注；利润按$34.99-$5.93-$6-$8-$2-$1=$12.06，成本敏感性另列假设。初次报告和类目对话只生成聊天内表格并称无法在右侧预览；实测发现把完整 HTML 以标注 `html` 的代码块交付，会出现「预览」并可在右侧渲染。利润、店铺、90天搜索的右侧 HTML 表已通过截图观察（店铺含 KPI、11条图片商品表及异常提示），仅给 `/mnt/uploads/` 路径不能触发预览；完整选品报告也已通过 `html` 代码块在右侧实际渲染，含样本边界、KPI与异常份额弃用说明；其余竞品、关键词、类目、评论尚仅核聊天表格，未验证右侧交互表。店铺商品链接、图片和估计月销售额降序已在右侧看到，主图悬停的320×320效果尚未验明。不要将已生成文件等同右侧已呈现，店铺卡片的11/98只可解释为两套口径并列，不能当覆盖率。
+- **2026-11-12 多条件/预览二轮续验**：竞品三 ASIN 初版「预览」右侧空白，追问要求从 `<!DOCTYPE html>` 至 `</html>` 重新输出后恢复渲染；右侧已见三列对比、ASIN 链接、主图占位、价格/月销/FBA/平台费、父子体数和 `2 pounds` 不是 32oz 容量证据的待核提示。关键词长尾报告右侧已见词卡、CPC/需求表和水杯异类反查隔离提示。类目体检重新输出后右侧已渲染节点确认、2026-09/10 完整月趋势、Top100 KPI、分层/异常/结论分区，并标明样本快照边界；评论报告右侧已渲染日期冲突、商品身份、评论窗口和样本限制。利润追加广告 $3 与售价×5%退货损耗后，右侧情景 B 显示单件条件利润 $7.31、利润率 20.89%，相对情景 A $12.06、34.47%下降 $4.75、13.58 个百分点；退货金额 34.99×5%=1.7495 按展示精度计为 $1.75。店铺右侧已见真实图片、标题/ASIN链接、按估计月销售额降序的 11 条明细和 98/11 分页冲突说明，初版主图悬停未出现约定的放大卡；追问重生成带独立 fixed 浮层的完整 HTML 后，右侧实测鼠标悬停第1条与底部第3条主图均出现 320×320 白底圆角大图，底部悬停时浮层向上翻转且保持视口内。右侧边缘翻转尚未单独触发截图核验。该修复只在本条对话新报告内验证，自动生成规则仍待新会话回归。
+- **2026-11-13 新对话首轮自动预览回归**：分别新建并实发八项对话，均观察到对应 `view_skill` 和业务工具调用；完整 HTML 代码块在首次回答提供，点击后八项右侧均实际渲染（竞品、关键词、类目、评论、店铺、利润、选品报告，以及严格搜索自动渲染）。证据：[严格搜索](https://local.dianleida.net:21996/c/314f8f26-8238-487f-b104-a61933ee9ccc) 的美国站近30天麻将收纳包 $20–45、月销≥100、FBA、中国卖家全保留，6入口/6页、64原始/50去重、严格有效候选0；[竞品](https://local.dianleida.net:21996/c/e194eae6-46c6-4195-b97b-48429e15720d) 三 ASIN 只核实一款水杯，一款详情空、一款实际为扫地机器人，右侧标不可比，没有强排；[关键词](https://local.dianleida.net:21996/c/c9152443-9b15-4956-b500-4bf447bebc98) 右侧三条麻将在售词与水杯 ASIN 异类反查隔离，缺 CPO/页面平均评论数等字段标缺；[类目](https://local.dianleida.net:21996/c/294f1936-e1b5-4daf-a5ee-eaa84a76f144) 两完整月与 Top100 快照分列，异常 TopN 份额/分层计数禁用，初版模板标签错误经本轮沙箱内重生成后首答右侧可见；[评论](https://local.dianleida.net:21996/c/160f63d9-500a-4748-9497-e7c8f4544a13) 右侧显示日期冲突、100条差评与101条好评窗口、40/126变体样本，不外推父体总销量；[店铺](https://local.dianleida.net:21996/c/01674653-de44-440c-a03f-8a76f1584357) 98件店铺口径与本轮11条商品检索仍分列，部分店铺原值与样本合计冲突已提示口径待核，首答预览已有商品表；[利润](https://local.dianleida.net:21996/c/967f2747-f5a4-44b4-bff0-080cf877639d) $34.99 减平台费 $5.93+$6.00、采购 $8、头程 $2、其他 $1、广告 $3、退货损耗 $1.7495，条件利润 $7.31、利润率20.89%，右侧首次渲染；[选品报告](https://local.dianleida.net:21996/c/fefbf7c3-fb12-4cef-865a-a894c81075dc) 右侧首答呈 KPI、商品表与禁用异常份额提示。首轮成功范围是此八问法及其返回快照。2026-11-13 补验：店铺报告主图右边缘翻转已实测——从对话导出 txt 提取 `<!DOCTYPE html>` 至 `</html>` 的原始 HTML（未改动一字节），经 450px 宽 iframe verbatim 加载后悬停第1行主图，320×320 白底圆角浮层正确翻转到指针左侧（截图核验）；至此浮层跟随/下边界上翻/右边缘左翻三项交互全部实测闭合。窄面板下表格横向滚动可读；其余更窄宽度未逐一测试，不称全尺寸通过。对外验收报告仅写统一品牌与数据口径，内部接口名保留在此技术记录。
+- **2026-11-13 侵权排查场景与主图列修订**：[麻将收纳包选品分析](https://local.dianleida.net:21996/c/be75ee09-f6ed-4287-b418-44bb96a3169b)（近180天+月销>10+排除侵权）：专家五路口召回11页202条→去重159→列表筛39（剔除120：套装47/美妆手包26/卡牌10/垫架配件30/无关7）→38详情核验→入选29（轮剔除10：超窗4/美妆1/时装手包2/空返回1/核验后月销≤10 1）→专利两路（tile bag 17条+carrying case 30条，披露单轮上限30未穷尽）→发现漏核B0HG9QPSDS主动补验后出报告；首答自动交付完整html代码块右侧渲染，日期口径严格（早于05-18剔除并披露listing/online矛盾），唯一需人工比对专利US111033770B1单列。缺口：候选明细表无主图列（「表格列主图（若返回）」给了模型省略空间）。修订：在线技能 youweiai-amazon-selection-search（输出段追加强制主图列+悬停浮层条款，3.9→4.3KB）与 youweiai-amazon-report-gen（文末追加候选表主图列强制条款，3.5→3.8KB）均保存；本地 map 表格输出规范同步改硬。回归：[麻将收纳包选品搜索](https://local.dianleida.net:21996/c/1564f148-8c52-4ac8-a534-81570dcf4e2a)（近90天+月销>10）：8入口160原始→71去重→8预筛→详情核验→2合格候选（B0H8DFD2X6 袋组套装月销181 / B0HG5BDQ34 装牌袋月销155），右侧首答渲染，候选明细表**含真实主图列**，悬停实测 320×320 白底圆角浮层出现——主图列规则回归通过。
+- **2026-11-13 亚马逊21场景迁移增补**：Open WebUI模型 `amazon-sorftime-selection-assistant` 绑定原八公共技能及21场景技能（展示名 `youweiAI-amazon-场景-场景名称`，ID `youweiai-amazon-scene-{slug}`）；21条创建完成，不等于21条验收通过。场景技能的本地生成器和逐条验收记录见 `youweiAI-amazon-scenes/gen_scene_skills.py`、`youweiAI-amazon-scenes/验收记录-20261113.md`。本轮真实UI发现并修订：场景7只有5/11女包细分类取得当期中国卖家销量份额，不得把5类0达标说成11类0达标；场景14纠偏撤回无来源汇率与代发结论；场景4/5/13/17/20分别补月值同比、详情趋势、汇总金额、文本来源分母、滚动月销折日均的禁止推断规则；场景6补代表商品真实主图与悬停。以上七个场景技能已同步在线并回读一致；其余新对话复验和右侧交互以验收记录状态为准。
+- **2026-11-14 八技能客户口吻重建回归（8/8）+ Hub 实测记录校对**：每技能一条新问法实测并右侧渲染，证据对话：关键词[dog brush缺站点追问](https://local.dianleida.net:21996/c/fca842d3-99f1-46f5-9127-67b4fd70f56e)、[利润三段追问情景估算](https://local.dianleida.net:21996/c/003435c1-c0a7-4011-91d1-bb28370ada53)、[选品报告·宠物喂食器份额矛盾整组弃用](https://local.dianleida.net:21996/c/4a93d799-dc9b-4806-9a0a-c3da7b56621e)、[选品搜索·浴室置物架类目确认零凑数](https://local.dianleida.net:21996/c/d28464cd-7456-4b60-958c-f28f323312f0)、[竞品·B0DGHBV6XS身份核验](https://local.dianleida.net:21996/c/5151c95c-f960-4d8c-a6f8-83a5c81bbe0e)、[类目趋势·露营灯未完月剔除](https://local.dianleida.net:21996/c/29344035-a99c-4e64-9d47-845d735a7e0d)、[店铺·AnkerDirect样本口径](https://local.dianleida.net:21996/c/a038c620-d641-447c-a8db-fd31f1fe97a9)、[Listing·US文案诊断](https://local.dianleida.net:21996/c/d882ed2c-6c46-41aa-b45d-1fe1f17272d3)。Hub index.html 八条实测记录同日校对：清除占位会话链接（另一对话/同会话/德站链接定站）、选品搜索补 d28464cd、报告补瑜伽垫 149b6c46、实测日期统一 2026-11-13/14、利润 chatUrl 改指 003435c1；八条 JSON 解析校验通过。
+- **2026-11-14 筛选维度扩展回归（3/3）+ 导航同步**：在上轮 8/8 之外补测三种此前未覆盖的筛选条件组合，均为新对话、真实接口调用、右侧 HTML 实际渲染。① 互斥条件（近30天上架×月销5000+×评分4.9+×评论>2000×售价≤$15，列20款）[16b50149](https://local.dianleida.net:21996/c/16b50149-77f9-42f7-beef-c0a2f846bb10)：严格查询无数据后不凑数，两组诊断分解定位瓶颈（近30天上架与评论>2000互斥），用关键词基线20款证明管道正常，输出方案A/B 由用户选。② BSR 排名筛选（小类BSR≤100×月销500+×评论≤500，列10款）[dfadeef8](https://local.dianleida.net:21996/c/dfadeef8-a0e4-425e-8339-244916a6e7ff)：BSR 为接口原生字段未用其他字段替代，10 款 #22–#96 严格达标，BruMate 趋势仅 2 个月如实标待核。③ 老链接反向时间窗（上架>3年×月销1000+×排除 PETLIBRO/Veken）[72172a5c](https://local.dianleida.net:21996/c/72172a5c-4afa-4a60-9385-f0643c0a0193)：先把「3年前」换算为上架≤2023-11-14 锚点，ABA 宽词召回偏差后改走类目入口与标题/属性词路，85条去重53 ASIN 逐条判型，临界样本 FEELNEEDY 单独核 listing_date 后保留，10 款整机达标。同轮已同步 Hub：index.html 选品搜索实测记录问法 3→6 并补三条证据，实测弹窗新增「完整验收报告」入口，验收报告 `amazon-eight-skills-acceptance-2026-11-13.html` 与仓库副本一致。未覆盖维度保留：变体父子条件、卖家类型（FBA/FBM/AMZ）、销量增速环比、缺失字段硬条件。
+
+---
+
+## 2026-11-14 OZON 七技能第三轮回归（Amazon 同款流程）
+
+> 2026-11-16复核纠正：以下“15通过/六层通过”为历史原判，不再有效。至少4条原通过已撤回，包含缺成本擅补假设及仅Markdown未验HTML等问题。当前判定以 `ozon-seven-skills-regression-2026-11-16.html` 逐条证据为准；done、业务结果与实际预览交互分别验收。
+
+- **范围**：只改 youweiAI-OZON 专家与七技能（选品搜索 / 竞品监控 / 类目趋势 / 商品解析 / 店铺分析 / 利润测算 / 选品报告），未动亚马逊、TEMU 与并行会话文件。
+- **方法**：A 标准 / B 缺参（品类歧义 + 类目ID）/ C 边界 三类客户口吻问法，6 层验收（追问 → 路由 → 实参 → 口径 → 回答 → 右侧 HTML 渲染）；只在 Open WebUI 真实对话跑，不用 API 直连（直连不执行真实工具、模型会编数据）。
+- **结果**：16 条问法，15 通过，1 待核（A2 猫砂盆中文名索引 skuNameZh 不收敛）。七技能均有真实通过记录，右侧 HTML 均实测渲染（srcdoc 非空 + 真实 ozonstatic 图 + 表格 + 商品链接）。
+- **对话**：选品搜索 A[保温杯跨境4款](https://local.dianleida.net:21996/c/53c620cf-72f2-401f-b6f1-d34f46710e9b) / A2[猫砂盆卡 skuNameZh](https://local.dianleida.net:21996/c/02c3da88-e6eb-48ac-8f40-e416dd5031a3) / B[麻将包 ask_user 追问](https://local.dianleida.net:21996/c/0055df4a-235f-4f30-b499-279ef870b224) / C[多条件0条](https://local.dianleida.net:21996/c/bd0ffe5f-7091-4f63-a20c-1a7ea037fdb0)；竞品 A[SKU异常](https://local.dianleida.net:21996/c/4e71911a-9d2b-4e61-a169-b3246829b822) / C[建基线不称持续监控](https://local.dianleida.net:21996/c/04d934de-7a86-47af-b3e8-fa85907b4c44)；类目 A[家居大盘](https://local.dianleida.net:21996/c/b657c882-9ea6-4d8a-97f7-a1e1e8503b1c) / C[mallsNum失真不引用](https://local.dianleida.net:21996/c/3a808d73-8a7c-49fa-a42f-f7e8679e03e6)；商品 A[标题销量跟卖](https://local.dianleida.net:21996/c/ba490f04-8fc4-42f6-86ec-c563d9e718e8) / C[实重体积重区分](https://local.dianleida.net:21996/c/cfad365b-5f3a-4f2d-94a0-baa320f1ddba)；店铺 A[覆盖缺口不虚构](https://local.dianleida.net:21996/c/3e926fb6-a40c-4c3a-8167-1a20c86aba1a) / C[自营脏数据过滤](https://local.dianleida.net:21996/c/6e6c4a87-e627-4fa2-831c-13037bc88002)；利润 A[1688图搜3次不猜价](https://local.dianleida.net:21996/c/a797b5c0-3ba0-4667-a6b1-7e14c50ed7b2) / C[缺项标估算](https://local.dianleida.net:21996/c/149636a8-326b-472b-ac9a-18cb3f535757)；报告 A[完整串联](https://local.dianleida.net:21996/c/f9b785dd-cc2f-4884-ad37-dc50d7147822) / C[0条不造档位](https://local.dianleida.net:21996/c/8b1036af-79da-46d7-8d9f-5feb7d543cf7)。
+- **纪律复现**：排序字段 dailySales 异常返回 0 自动去 sort 对照（选品搜索 A / 选品报告 A 均触发）；SPU 不支持 storeType → 跨境逐 SKU 补验，无法核验不计达标；mallsNum / 店铺数失真不引用；0 条不造表不造档位，如实给补验路径；实重 / 体积重分开取 max 计费重，不把体积当计费重量；缺项一律标估算，不报真实净利。
+- **待修**：① A2 猫砂盆中文名索引 skuNameZh 检索不收敛（约 15 分钟未出结果，应优先俄文品类词，中文名检索易空易卡）；② 利润测算缺商品时纯文字追问卡 turn（done 卡 false、发送按钮不恢复，应统一 ask_user 追问）。
+- **导航同步**：index.html 七技能 demo 更新为 A/B/C 实测记录，各补 chatUrl 真实会话链接与 report/reportTitle 指向 `ozon-seven-skills-regression-2026-11-14.html`；versions.json 追加一条 `hub:index.html#ozon-public-skills`。
+
+---
+
+## 2026-11-14 Amazon 公共技能筛选维度第二轮（补齐剩余 4 维度）+ 数据块恢复
+
+- **范围**：只动 youweiAI-amazon 公共技能回归与导航页数据恢复；不碰 21 场景技能配置与 OZON/TEMU。
+- **新测 4 个筛选维度（4/4 通过）**：
+  - ④ 变体父子聚合（变体数≥5×单变体月销≥500）：[ab48a953](https://local.dianleida.net:21996/c/ab48a953-98e7-4e8b-b079-bcec111fbf99) — 60样本→18父体→10入选，每行=1父体不重复计数，Top1 Gaiam Essentials 12变体月销40,952
+  - ⑤ 卖家类型FBA（排除FBM/自营）：[3595911d](https://local.dianleida.net:21996/c/3595911d-2ede-4531-b747-b85a9b6d1732) — FBA由接口配送方式参数过滤生效；商品列表接口不返回卖家类型字段如实披露（不硬凑）；38款入选
+  - ⑥ 销量增速环比（近28天vs前28天≥+50%）：[2c6e9ae7](https://local.dianleida.net:21996/c/2c6e9ae7-a018-47ca-b07b-3d05d99a426f) — 接口无现成环比字段，日销序列 execute_code 核算真实环比；0款达标如实报（全场最高+31.3%）；2款上架不足56天标"无法判定"不计入
+  - ⑦ 缺失字段硬条件（重量≤500g）：[412db856](https://local.dianleida.net:21996/c/412db856-5fc3-437a-864d-1925d137f8f3) — weight_g 逐款实核16款；"盎司数≠商品实重"（Lulu 9oz实重599g剔除）；缺失不按0g计；收尾旧ASIN详情刷新空壳改用按名称搜索列表接口修复，缺口如实标注
+- **筛选维度合计 7/7**（第一轮：互斥条件诊断/BSR/反向时间窗+品牌排除）。验收报告 skills/youweiAI-amazon-eight-skills-acceptance-2026-11-13.html 与仓库副本已同步 4 条证据行与页脚。
+- **事故与恢复**：OZON 会话重同步 index.html（7899c9a）时把亚马逊实测数据块（AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS/allSkills 挂载/4处report渲染）整体抹掉——此前预警过的"发布版独有内容重同步丢失"风险成真。已从 99f2bcb 提取数据块恢复合并到最新版（51a97f9 基础上），并修掉 isA1688Skill 未定义引用；浏览器实测技能页 29 项亚马逊技能与选品搜索工作台实测 tab（10问法/7/7）渲染正常。
+- **教训**：hub 源 ozon-skill-hub.html 与发布版 index.html 的分叉再次扩大；任何平台重同步 index.html 前必须先 diff 检查 AMAZON_PUBLIC_DEMOS/AMAZON_SCENE_SKILLS 数据块是否在源里，不在就先合并回源再同步。
+
+## 2026-11-15 OZON 七技能 Hub 展示重建（修复并行会话覆盖事故）
+
+- **事故**：并行 TEMU 会话提交 30712bc 用旧副本覆盖 index.html，将 7899c9a 同步的 OZON 第三轮回归 demo（chatUrl/报告入口）冲掉，实测数据回退到 11-08/09/10 旧版。
+- **重建内容**：① 提示词 Tab 从 228-460 字填空模板改为 `/api/v1/skills/id/` 抓取的线上现行正文逐字嵌入（1630-1824 字；选品搜索弃 2473 字旧底稿换 1691 字现行版）；② 命名统一 `youweiAI-OZON·XXX`、专家名 `youweiAI-OZON选品专家`；③ 实测 Tab 与 TEMU 四段式对齐：KPI 卡 + 执行过程 + 明细表 + 绿色结论区，16 条真实会话链接 + 验收报告入口（ozon-seven-skills-regression-2026-11-14.html）。
+- **技能正文补丁**：Open WebUI 七技能正文全部追加两条第三轮暴露的纪律——追问统一 ask_user 表单一次收集（防纯文字追问卡 turn）、中文名 skuNameZh 只作兜底分路且两轮不收敛即停。更新接口必须带 id 字段，否则 400。专家绑定 skillIds(7)/工具范围/knowledge 复核未动。
+- **源同步**：7 个技能定义块已合并回 ozon-skill-hub.html（脚本级替换，逐块核验与发布版一致）；源文件仍缺专家卡段，整体重同步前须先补齐。
+- **环境事故（未解决）**：模型网关宕机——Open WebUI 两条 OpenAI 连接（host.docker.internal:18081、192.168.1.10:8080）均不可达，宿主机 18081 无监听、192.168.1.10 ping/TCP 全断，/api/models 返回空，新会话发消息无法路由模型。与当晚 WorkBuddy 平台侧反复 ETIMEDOUT 192.168.1.10:8080 同源。已修 ui.default_models 坏值（旧 product-selection-assistant → 1688选品助手，备份于容器内 ui_default_models_backup_20261114.json）并重启容器；A2 猫砂盆复测待网关恢复后补跑。
+
+## 2026-11-16 OZON 七技能真实UI回归与验收纠正
+
+- **现状**：用户修复服务后恢复真实UI独立测试；保留专家 `ozon-selection-assistant`、`glm-5.3`、原七技能ID及工具绑定，本轮只最小更新OZON技能正文。GET复核单专家七技能完整，未改其他平台配置。
+- **纪律修正**：SPU默认、soldCount28排序与去sort对照、前后台类目映射、代表SKU补验；ask_user独立调用和2–3选项；币种逐条保留；禁止由卖家/品牌名判身份、由上架日和滚动销量判起量；链接逐字复制，完整变体无证据不合计，成本缺项不补假设，收入区分售价折算与实收。
+- **交互修正**：真实HTML预览与hover单列记录，图片contain及防溢出，KPI/明细表/独立结论。选品修正版已实测320×320；商品解析复测仍318×320，严格尺寸尚未通过。类目复测仍有month字段、日期范围和序列摘要错误，不以done完成代替业务通过。
+- **验收口径**：七项均覆盖模糊、明确、空结果或缺字段；历史22条归档复核，至少4条原通过撤回。独立首次、人工纠正后可用、部分及未通过分别保留，不称7/7完整通过。
+- **交付与迁移**：`ozon-seven-skills-regression-2026-11-16.html`及三份`ozon-ui-retest-*-2026-11-16.json`为本轮证据；`ozon-regression-evidence-2026-11-16.json`保留历史复核；两导航七份prompt/现有skillMd从线上content逐字同步，实测改本轮问法表、独立会话链接及新报告入口。旧报告保留原始记录并增加撤回说明。
+
+## 2026-11-16 OZON 七技能残留继续修复与最终复测（Playwright 真实浏览器）
+
+- **背景**：用户明确要求「那你要继续解决啊」，不接受只记录未通过。本轮以用户指定的 Playwright 浏览器做真实 UI 独立首答复测，并保留全部历史失败与人工纠正记录。
+- **环境结论**：① 本机回环不可访问 Open WebUI，须用公网地址 `local.dianleida.net`；② Playwright 新会话默认不挂载 `youweiai-ozon` 数据工具，须在「可用工具」面板显式勾选，否则会话内无 `yq_*` 工具（会话会如实报告工具未挂载）；③ 预览 iframe 内 `img.complete/naturalWidth` 判定滞后，图片可用性以 network 响应状态为准。
+- **技能补丁（全部只改 content/description，专家绑定、七技能ID、工具与知识库未动）**：
+  - 选品搜索：`efc74be2→fa71c0db` 用户未限定卢布时保留 `symbol=¥` 原值、不剔除不补换、每次 size<=N、分币种汇总；`fa71c0db→eb344e1f` 未要求不额外加合计、需计算必须真实代码核验、宽表固定局部滚动容器与 320 浮层；`eb344e1f→fe585eea` 类目体系必须与真实 `CATEGORY/types` 或 `CATEGORY_BACKEND/category` 一致，不混称前后台。
+  - 类目趋势：`a9de5de2→c073fce6` 图片按真实 photo/images 候选回退、全部失败显示文字占位，白名单补 `yq_ozon_spu_detail`；`c073fce6→28684703` 代码沙箱不可用属基础设施故障，仍须输出完整 HTML，计算型摘要标待补。
+  - 商品解析：`ab357540→690df4e5` 接口来源字段一律中性表述，禁止上游厂商名与内部服务名（首轮复测曾出现厂商名，属对外口径不合格）。
+- **最终独立首答结果**：选品搜索通过（`ac05e5b9`，5款全部₽、前台类目 types=12368、4 KPI、宽表局部滚动、5图加载、悬浮320×320、5条真实链接）；商品解析通过（`599d21cf`，三条序列点数与窗口覆盖精确到序列、来源字段中性表述、卖家类型标未核验）；类目趋势部分通过（`50d268c3`，周期与断档由代码计算、宽表在 overflow 容器内、HTML与结论完整，但代码沙箱两次断连后按回退规则交付）；竞品监控、店铺分析、利润测算、选品报告此前已通过。
+- **边界修复**：趋势「仅查类目字典」由 description 前置约束后通过（`e4f4522c`，只调用 view_skill 与 dict_lookup，不再越界 fields/大盘/商品）；解析模糊问法 ask_user 表单通过（`66434420`）。
+- **证据与交付**：累计 49 条真实会话（18 通过 / 19 部分通过 / 8 未通过 / 2 人工纠正后可用 / 1 待确认），报告 `ozon-seven-skills-regression-2026-11-16.html` 与两份导航已按最新独立首答同步；七技能线上正文重新 GET 归档，两份 HTML 内嵌 prompt/skillMd 与线上 content 逐字一致。
+
+
+## 2026-11-17 · Amazon 4 场景技能教训回填（表格 v3.108 → 线上+导航）
+- 依据对照表 v3.108 Amazon美站子表 11-13 复跑沉淀，回填 4 个场景技能：
+  1. 去年Q4旺季备货参考（youweiai-amazon-scene-q4-last-year-reference）：★参数陷阱——参数包在 request 对象内、分页 page/size、排序 order:{field,desc}、类目锁定 nodeIdPath（nodeIdPathEqual=false）。
+  2. 市场环境五维判定（scene-market-five-dim）：★六轮返工教训——大类总盘=全部子类相加、统计卡公式、禁分数式/缩略语、多源字段级标注、预测%勿重复拼接、自营一票否决。
+  3. 1688图搜拿货+毛利测算（scene-1688-image-profit）：★书面语纪律——禁口语（出路A/压到/超线等），统一测算结论/方案A/高于上限；两品对比左右卡片布局。
+  4. 小类深度调研四步法（scene-subcat-four-step）：★图搜验证层——双路采样+逐款图搜亚马逊验证（同款集群/邻近空位/召回偏航/未验证），通过才进1688找厂。
+- 线上同步：4/4 POST /update 后 GET 回读 SHA256 逐字一致（脚本 tmp/sync_4scene_lessons_20261117.py）。
+- 导航同步：两份导航（ozon-skill-hub.html + skill/index.html）技能正文键值替换，node 语法校验通过，新增区块 probes 4/4。
+- 场景 1-20 其余教训此前已在线上正文；场景 21 维持待实测不发布口径。表格第 21 行验收链接错填（指向场景 20）已发现待表格侧修正。
+
+## 2026-11-17 · 回填教训实测抽验（2条真实UI会话）
+- Q4备货参考（04b4540b）：教训已加载但快照调用未带 nodeIdPath，靠事后品类清洗剔除混入——已把教训升级为执行步骤0强制锁参（禁止裸快照调用），线上回读一致、导航同步。
+- 市场五维判定（6d85f26f）：通过。三路并行+execute_code；无分数式、自营占比预警、KPI卡齐全；识破接口-29.5%预测与历史旺季相悖改用历史序列；综合判定"谨慎观察"附依据。GMV缩略语1处小瑕疵。
+- 台账 tmp/scene_lessons_verify_20261117.json。
+
+## 2026-11-18 · TEMU 7公共技能交付优化（巡检发现→落地）
+- 巡检（tmp/pubskills_patrol_20261117.json，3条真实UI会话）发现：TEMU报告缺KPI卡/主图320悬停/店铺链接——技能正文未写（AMAZON/OZON均有）；selection-search 存在"processing直接输出iframe"旧指令与新沙箱段冲突。
+- 修复：7技能线上正文补「交付三件套」节；selection-search 旧指令改为"只提供view_url链接与任务状态"。7/7 POST /update 回读逐字一致（tmp/temu_trio_apply_20261118.json）。
+- 导航同步坑：TEMU prompt 字段是反引号模板，正文含 ` 和 ${ 必须转义（\`、\${），否则整页 script SyntaxError；曾污染本地两份导航，已从远端 HEAD 恢复后重注入并 node --check 通过。demo JSON 里的旧指令是历史会话证据，保留不删。
+- 发布 commit 3ea52c3（基于远端 1fdf2cb）；线上核验 trio 7、320×320 156、prompt内旧指令0/新措辞1。
+
+
+## 2026-11-18 Amazon 21场景深度交付层对齐
+- 逐场景对照运营实测报告（wbapp amz-01~20.html，即腾讯表格v3.108 J列验收报告链接）骨架，为21个场景技能各追加「★ 深度交付层」章节：场景1双榜结构+BSR轨迹、场景2三口径核验、场景3结论纪律展示、场景4双结构+同比、场景5全量池42款+18档案+分层+词量基准、场景6筛选漏斗+三档分区、场景7十节点表+HK壳修正、场景8双词互补+爬坡期标注、场景9动能值+入场门槛洞察、场景10分形态判定表、场景11四步链路总览+产业带画像、场景12新品实证节、场景13两轮剔除+新品通道实证、场景14三档敏感性矩阵、场景15四级分组+镜像合并、场景16差评驱动P0、场景17零渗透标签解读、场景18优化后Listing+新旧对比、场景19三款横向对比、场景20双线图+主因证据链、场景21双交付+来源裁决。
+- 保留我方强项：逐款趋势核验、listing_date口径门禁、异常披露、查询日唯一来源、并行取数。
+- 线上21/21回读一致；导航两份同步（AMAZON_SCENE_SKILLMD 21 key全更新，node --check通过，运行时eval解析21key/深度层21）；远端main=ad20bdbd。
+
+
+## 2026-11-18 Amazon 21场景深度层全量回归与交付门禁
+- 21条真实UI会话逐场景对照运营报告（amz-01~20.html）：17通过（深度层骨架特征生效：场景14/16/17/18五项全命中）、2部分通过（场景2 execute_code循环熔断、场景19 iframe外链交付）、1未通过（场景13 HTML误塞工具调用未渲染）、1合规收口（场景21缺文件两步ask_user）。
+- 三缺陷全部落为21技能「★ 报告交付通道门禁」：HTML只允许回复正文输出（禁工具调用/iframe外链）、execute_code单次机会（防循环熔断）、ask_user pending禁API续跑。21/21回读一致并同步两份导航。
+- 验收报告 skill/amazon-depth-regression-2026-11-18.html；会话ID台账 tmp/depth_regression_chats_20261118.json。
+
+
+## 2026-11-18 三缺陷修复闭环（同日）
+- 场景13/2/19 全部原地续跑修复并改为回复正文HTML交付（13重跑全链路七节点五维、2补参重跑三口径+分档、19 iframe清零改正文19.8K）；门禁在续跑中被模型实际遵守。最终21场景：20通过+1合规收口（场景21缺文件）。验收报告更新为修复完成版。
+
+
+## 场景5深度返工复核（2026-11-18）
+- 场景5按运营报告骨架深度返工：采样链路6次搜索/原始120条/ASIN去重57款全部留痕，详情核验15款（严格达标11、超窗4），未核42款按列表层字段列出；11款档案卡含逐款月销趋势图与分档判定，分层归纳、关键词量价基准、切入建议与证据缺口齐备。父体键未产生合并，报告不作变体合并表述；差评仅1款有收录，不外推赛道。
+- 技能修复：评论<200/月销>300严格口径；不得把召回压到15~20款；全部采样池留痕；逐款趋势图、档案、分层及关键词基准纳入成稿门禁。
+- 同一验收会话续跑：https://local.dianleida.net:21996/c/93f7db88-291e-42e7-ba69-7ad182a2eb31（不增加会话总数）。
+- 本次成稿：88273字，2表，11张档案卡，11张月销趋势图；报告：amazon-scene5-depth-2026-11-18.html。
+
+
+## 场景5深度返工复核（2026-11-18）
+- 场景5按运营报告骨架深度返工：带筛选重跑6次检索（评论<200·月销>300·上架≥2026-05-21），原始120条、ASIN去重58款，池表60行=A区严格达标11款+B区详情核验超窗4款+未核45款，全部逐行列出；11款档案卡含逐款月销趋势图与分档判定，分层归纳、关键词量价基准、切入建议与证据缺口齐备。父体键未产生合并，报告不作变体合并表述；差评仅1款有收录，不外推赛道。
+- 技能修复：评论<200/月销>300严格口径；不得把召回压到15~20款；全部采样池留痕；逐款趋势图、档案、分层及关键词基准纳入成稿门禁。
+- 同一验收会话续跑：https://local.dianleida.net:21996/c/93f7db88-291e-42e7-ba69-7ad182a2eb31（不增加会话总数）。
+- 本次成稿：88273字，2表，11张档案卡，11张月销趋势图；报告：amazon-scene5-depth-2026-11-18.html。
+
+
+## 2026-11-18 OZON 16 技能提示词精简（客户可直接使用版）
+- 目标：所有 OZON 公共技能与场景技能提示词压到 800~1700 字，效果不变，供客户直接使用。
+- 结果：9 场景 78,408 → 9,513 字（平均 1,057，压 88%）；7 公共 37,764 → 9,858 字（平均 1,408，压 74%）；合计 116,172 → 19,371 字（压 83%）。
+- **关键坑（双轨）**：导航页 prompt 只是展示副本，青虎AI 实际执行用后台 `api/v1/skills/id/{sid}` 的 content；且导航里 `OZON_PUBLIC_SKILL_SNAPSHOTS` 会用 `Object.assign` 覆盖 BASE_SKILLS 的 prompt。三处（场景数组/快照/后台）必须同改，否则页面显示仍是旧长版。
+- 保留全部硬口径：soldCount28 不改称30天、price+symbol 同行原值不补₽、禁双词短语召回、from=100后翻页失效改销量分段、key=all 三口径不自洽用大类汇总、前台CATEGORY传types/后台传category禁猜码、派生指标公式、0条不造表。
+- 缺参追问落地：16 个技能全部含 ask_user 规则；`report-gen` 增加整节兜底——客户只说"我要销售榜单"没给品类时必须先问类目，禁止拿示例品类（女包）直接跑、禁止套全30大类大盘。
+- 场景9 真实UI重跑（会话 45e08027）：按精简版「默认20张不追问」实测确实跑满 20 张，未追问未缩样；9 款有完整明细（6命中/2无关/1 NO_RESULT），最低 ¥2.90。暴露真实缺陷：连续20张触发上下文压缩，款1-11、13 明细丢失 → 技能新增「边搜边落账」硬要求（每张 execute_code append、每5张回报行数、第20张从数组出报告）。
+- 验收报告 skill/ozon-scene9-batch-image-2026-11-18.html（20张全量版）；后台 16/16 回读一致。
+
+
+## 2026-11-18 youweiAI-TMEU 14场景技能层搭建与真实UI回归
+
+- **来源**：腾讯文档《店雷达跨境选品提示词库·平台对照表 v3.112》Temu页（sheet_id 000003），14场景全部P0已实测，报告链接逐条HTTP 200核验。
+- **技能落地**：14个场景技能（youweiai-tmeu-scene-*）照OZON模板创建，正文含必填追问/触发/公共与场景分工/输出形态/原始场景口径逐字/数据源/执行步骤/公共纪律/异常处理；TEMU口径坑（min_usd_price价格带、same_num需_fields显式指定、sales≥10万脱敏、日销快照非均值、issued_date字段先查清单、IP初筛提示、504切global降级、分页重复切互不相交切片）写入对应技能。专家绑7公共+14场景=21技能，并补绑1688通道（dld-gateway-1688+1688数据源）。
+- **真实UI回归**：14场景逐个新会话执行结构化提示词（ask_user追问/降档阶梯/语义清洗/execute_code汇总全链路），13场景通过；场景6部分通过（全托大盘统计接口不可用，按技能降级通道样本估算并醒目标注，增速类指标标"缺失-不可推"）；场景13首次1688工具未绑定如实披露0造表，补绑后重跑通过（图1连续2次504+备用通道缺失不编造，第3次恢复成功；图2命中42条剔6下架；图3两次NO_RESULT如实）；场景14前次回答截断（分页重复切片策略正确执行但正文未收口），换新会话重跑收口通过（4切片合并去重40款TOP20）。
+- **查优补漏**：对照表内14份原验收报告逐一下载比对8维度（字段/口径/缺口/结论/样本/链接/视觉/空结果），本轮新发现并如实披露：服务端max_same_num会排除same_num缺失行（场景2诊断75条中34款无值）、TEMU宽词召回污染需精确词重检、多国本地币种价格带不可跨币种混算（场景6 €/zł/COP比索逐条标注）。
+- **交付**：报告 skill/temu-scene-acceptance-2026-11-18.html（本地 reports/ 同名），导航两份HTML新增14场景卡片（KPI+执行过程+核验表+结论+会话链接），versions.json追加build条目。
 
 
-## 2026-11-18 OZON 16 技能提示词精简（客户可直接使用版）
-- 目标：所有 OZON 公共技能与场景技能提示词压到 800~1700 字，效果不变，供客户直接使用。
-- 结果：9 场景 78,408 → 9,513 字（平均 1,057，压 88%）；7 公共 37,764 → 9,858 字（平均 1,408，压 74%）；合计 116,172 → 19,371 字（压 83%）。
-- **关键坑（双轨）**：导航页 prompt 只是展示副本，青虎AI 实际执行用后台 `api/v1/skills/id/{sid}` 的 content；且导航里 `OZON_PUBLIC_SKILL_SNAPSHOTS` 会用 `Object.assign` 覆盖 BASE_SKILLS 的 prompt。三处（场景数组/快照/后台）必须同改，否则页面显示仍是旧长版。
-- 保留全部硬口径：soldCount28 不改称30天、price+symbol 同行原值不补₽、禁双词短语召回、from=100后翻页失效改销量分段、key=all 三口径不自洽用大类汇总、前台CATEGORY传types/后台传category禁猜码、派生指标公式、0条不造表。
-- 缺参追问落地：16 个技能全部含 ask_user 规则；`report-gen` 增加整节兜底——客户只说"我要销售榜单"没给品类时必须先问类目，禁止拿示例品类（女包）直接跑、禁止套全30大类大盘。
-- 场景9 真实UI重跑（会话 45e08027）：按精简版「默认20张不追问」实测确实跑满 20 张，未追问未缩样；9 款有完整明细（6命中/2无关/1 NO_RESULT），最低 ¥2.90。暴露真实缺陷：连续20张触发上下文压缩，款1-11、13 明细丢失 → 技能新增「边搜边落账」硬要求（每张 execute_code append、每5张回报行数、第20张从数组出报告）。
-- 验收报告 skill/ozon-scene9-batch-image-2026-11-18.html（20张全量版）；后台 16/16 回读一致。
+## 2026-11-19 youweiAI-TMEU 21技能提示词精简版（用户可直接使用）
 
-
-## 2026-11-18 youweiAI-TMEU 14场景技能层搭建与真实UI回归
-
-- **来源**：腾讯文档《店雷达跨境选品提示词库·平台对照表 v3.112》Temu页（sheet_id 000003），14场景全部P0已实测，报告链接逐条HTTP 200核验。
-- **技能落地**：14个场景技能（youweiai-tmeu-scene-*）照OZON模板创建，正文含必填追问/触发/公共与场景分工/输出形态/原始场景口径逐字/数据源/执行步骤/公共纪律/异常处理；TEMU口径坑（min_usd_price价格带、same_num需_fields显式指定、sales≥10万脱敏、日销快照非均值、issued_date字段先查清单、IP初筛提示、504切global降级、分页重复切互不相交切片）写入对应技能。专家绑7公共+14场景=21技能，并补绑1688通道（dld-gateway-1688+1688数据源）。
-- **真实UI回归**：14场景逐个新会话执行结构化提示词（ask_user追问/降档阶梯/语义清洗/execute_code汇总全链路），13场景通过；场景6部分通过（全托大盘统计接口不可用，按技能降级通道样本估算并醒目标注，增速类指标标"缺失-不可推"）；场景13首次1688工具未绑定如实披露0造表，补绑后重跑通过（图1连续2次504+备用通道缺失不编造，第3次恢复成功；图2命中42条剔6下架；图3两次NO_RESULT如实）；场景14前次回答截断（分页重复切片策略正确执行但正文未收口），换新会话重跑收口通过（4切片合并去重40款TOP20）。
-- **查优补漏**：对照表内14份原验收报告逐一下载比对8维度（字段/口径/缺口/结论/样本/链接/视觉/空结果），本轮新发现并如实披露：服务端max_same_num会排除same_num缺失行（场景2诊断75条中34款无值）、TEMU宽词召回污染需精确词重检、多国本地币种价格带不可跨币种混算（场景6 €/zł/COP比索逐条标注）。
-- **交付**：报告 skill/temu-scene-acceptance-2026-11-18.html（本地 reports/ 同名），导航两份HTML新增14场景卡片（KPI+执行过程+核验表+结论+会话链接），versions.json追加build条目。
-
-
-## 2026-11-19 youweiAI-TMEU 21技能提示词精简版（用户可直接使用）
-
-- **动机**：用户要求"后期给用户直接使用的提示词要简短，但效果要达到"，且自由提问（如"我要连衣裙"）时必须追问托管模式与站点，不默认。
-- **做法**：7公共+14场景全部重写为精简版（52507→29522字，-44%）。删除逐场景重复的公共纪律/异常处理/技术三件套（收敛到 report-gen 公共纪律详版与各公共技能交付三件套）；每技能保留：必填与追问（未给托管模式/站点必反问，ask_user 单独调用不与业务工具并发）、默认口径（阈值逐字保留）、数据源参数（字段/端点/坑位）、场景口径要点、输出6段、步骤。
-- **真实UI抽验**：新会话只发"我要连衣裙"→ask_user 三问（1/3托管模式：全托管-推荐/半托管/两者都要→2/3站点：美国211-推荐/德国/英国→3/3筛选方向：热销爆款/蓝海低竞争/新品潜力）→选全托+美国+蓝海→view_skill→3轮 temu_search_sync（主口径月销≥300+同款≤100=0条→诊断同款≤200=0→≤500 取1条），0条不造表、给三条可直接复制的下一步（半托连衣裙蓝海/缩窄子品类/全托热销榜）。会话 e772559e-7cbb-4ea1-a57e-94d669c563a5。
-- **线上核验（发布前）**：导航双文件线上与本地逐字节一致（sha256 37d55b52）；21技能 prompt 与 Open WebUI GET 逐字一致；35个实测会话链接（22旧回归+14场景+重跑）全部可达且标题正确。
-- **导航**：desc 标注"精简版"，node --check 通过。
+- **动机**：用户要求"后期给用户直接使用的提示词要简短，但效果要达到"，且自由提问（如"我要连衣裙"）时必须追问托管模式与站点，不默认。
+- **做法**：7公共+14场景全部重写为精简版（52507→29522字，-44%）。删除逐场景重复的公共纪律/异常处理/技术三件套（收敛到 report-gen 公共纪律详版与各公共技能交付三件套）；每技能保留：必填与追问（未给托管模式/站点必反问，ask_user 单独调用不与业务工具并发）、默认口径（阈值逐字保留）、数据源参数（字段/端点/坑位）、场景口径要点、输出6段、步骤。
+- **真实UI抽验**：新会话只发"我要连衣裙"→ask_user 三问（1/3托管模式：全托管-推荐/半托管/两者都要→2/3站点：美国211-推荐/德国/英国→3/3筛选方向：热销爆款/蓝海低竞争/新品潜力）→选全托+美国+蓝海→view_skill→3轮 temu_search_sync（主口径月销≥300+同款≤100=0条→诊断同款≤200=0→≤500 取1条），0条不造表、给三条可直接复制的下一步（半托连衣裙蓝海/缩窄子品类/全托热销榜）。会话 e772559e-7cbb-4ea1-a57e-94d669c563a5。
+- **线上核验（发布前）**：导航双文件线上与本地逐字节一致（sha256 37d55b52）；21技能 prompt 与 Open WebUI GET 逐字一致；35个实测会话链接（22旧回归+14场景+重跑）全部可达且标题正确。
+- **导航**：desc 标注"精简版"，node --check 通过。
 
 ## 2026-11-19 OZON 场景9 demo 旧字段清理（收尾修正）
 - 问题：场景9 换新会话（45e08027，20张全量）后，demo 内一批**不渲染但仍存**的字段仍写着旧的 3 张授权版，维护者读数据会误判。
@@ -911,3 +911,14 @@ mcp__1688__monitor_shop_list
 - **并行覆盖坑（重要）**：发布前发现源 `ozon-skill-hub.html` 的 `AMAZON_SCENE_SKILLS` chatId 仍是旧 19 个（51db3259…），而线上已被并行会话换成新的（6e7e1515…）。若直接源覆盖发布会回退 Amazon 成果。处置：先拉线上 `tmp/live_base.html`，把其 Amazon 数组导入源，再发布。
 - 发布：Git Data API 基于最新 HEAD（6636d6e2，被 TEMU 会话推进过）精准发布 index.html → d7066a0。
 - 线上核验：16 个技能 prompt 全精简、9/9 场景四套 chatId 一致、场景9 弹窗 Playwright 实开 KPI 20张/20款/9款/6款/3款/¥2.90起、表格 7 行 5 列、open 链接指向 45e08027、旧表述「3张逐张」「复用昨日」均为 0；16/16 会话可打开、5 个报告页 HTTP 200。
+
+
+## 2026-11-19 场景6 部分通过→通过（根因修复+重跑收口）
+
+- **根因**：11-18"全托大盘统计接口不可用"为误判——①专家未绑 server:mcp:temu_data（yq_market_fully 所在数据源，URL yunqi-mcp-adapter-v2:8951，key yqk_live_*）；②补绑该数据源后与 server:gateway（8940 根 openapi.json）暴露的同名工具 job_derive 冲突，模型上游报"duplicate top-level executable tool name"直接炸会话（done=True content=0）。
+- **修复**：专家 toolIds 调整为 gateway-temu + mcp:dld + mcp:temu_data（移除 server:gateway，1688 根路径工具本就由 mcp:dld 提供）；场景6技能正文数据源节改为直接调 temu_data_yq_market_fully(optId=731)。
+- **接口实测**：yq_market_fully 可用（schema 仅 _fields/_want/optId 三参，ware_house_type 无法传；optId=731 返回 opt_id 回填空字符串为接口瑕疵，但 30 个二级 key 全为箱包周边=口径正确）。快照 2026-11-14：商品 4,942,438/店铺 127,611/月GMV $123,158,923/近30天销量 14,129,521 件；周 GMV 自 10/24 低点 $61.7M 连续回升至 $71.2M（+15.4%）= 黑五企稳信号。
+- **重跑会话**：928ceb41（真实UI）——五问结构、女包 11 子类全景（单肩 149.97万件 Top1 店均 50.2）、热销 400 条去重 30 款逐行（分页重复按规则停翻）、头部店铺 Top10、行动建议进3（单肩/斜挎/背包）/避2（收纳包/旅行配件）/观察5 + 备货节奏 + 零销量 65.7% 基线。
+- **与 11-16 原报告交叉一致**：商品 4,900,885→4,942,438（同口径连日快照）、单肩月销 152.2万→150.0万、均价 $9.82→$9.71，回落趋势与原报告 GMV -16.1% 一致。
+- **经验入库**：多个 8940 gateway 子路径 openapi 共享 /v1/job/* 端点——同一专家**不得同时绑根 openapi（server:gateway）与子路径 openapi（server:gateway-temu 等）**，job_derive/top-level 同名工具会让上游模型直接拒绝会话。
+- **导航**：场景6 demo 已更新为重跑收口证据（chatUrl→928ceb41），验收报告补"11-19 补充2"节；14/14 全部通过。

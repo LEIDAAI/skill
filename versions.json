@@ -2729,6 +2729,15 @@
    "target": "skill:ozon-scene9-demo-stale-cleanup",
    "action": "update",
    "summary": "场景9 demo 旧字段清理：reportTitle/resultSummaries/rerun/fastRerun/depthRerun/fieldGaps/evidenceSources/docStandard.finding/acceptanceHistory 全部对齐 45e08027 20张全量版；发布前发现源 Amazon chatId 落后于线上已先行导入，避免回退并行成果。线上核验16技能prompt全精简、9/9四套chatId一致、弹窗open指向45e08027"
+  },
+  {
+   "ts": "2026-11-19 10:20:00 +08:00",
+   "target": "hub:index.html + skills:youweiai-tmeu-scene-ftd-market-report + expert:temu-selection-assistant",
+   "action": "fix",
+   "summary": "场景6部分通过→通过（根因修复+重跑收口）：①误判根因=专家未绑server:mcp:temu_data（yq_market_fully所在数据源）；②补绑后又与server:gateway(8940根openapi)的同名工具job_derive冲突致会话炸（duplicate top-level tool name）→移除server:gateway。重跑会话928ceb41：temu_data_yq_market_fully(optId=731)真实调用成功，快照11-14（商品494.2万/店12.76万/月GMV$123.2M/周GMV+15.4%企稳），五问+女包11子类全景+热销30款+头部店铺+进3避2观察5。与11-16原报告同源口径交叉一致（商品/单肩月销/均价）。14场景全部通过。报告补充节2已发布。",
+   "snapshots": {
+    "note": "回滚：场景6技能旧正文见tmp/temu_scenes_20261118/skills_before_simplify.json；导航index.html取63444b39 blob。"
+   }
   }
  ]
 }
