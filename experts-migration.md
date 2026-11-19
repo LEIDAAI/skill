@@ -1080,3 +1080,16 @@ mcp__1688__monitor_shop_list
 
 [查看完整档案](amazon-scenes-complete-20261119.html)
 <!-- END amazon-product-identity-display-20261119 -->
+
+
+<!-- BEGIN amazon-product-identity-loading-and-expert-20261119-v2 -->
+## 2026-11-19 Amazon商品身份展示与规则加固
+
+19场景与8公共技能的27份报告按同商品ID证据修订主图、完整标题与商品标识；每张涉及具体商品的结果表、深度表、对比、推荐、变体、附录及全部命中清单都包含身份信息。Amazon并列ASIN与有证据的PASIN（父ASIN），无证据标未返回；1688展示offerId。缺图先按同ID补查，无法取得或加载失败明确显示缺口，不以相似款、图搜文字或空框代替。真实主图有缩略与320×320白底悬停，标题和ID新窗口直达。纯聚合与严格0结果不造商品。
+
+当前27项技能正文与真实专家system已追加硬规则并回读核验；图片预览明确使用eager/async和已失败图检查，覆盖历史lazy模板。仅system及技能正文发生配置更新，27绑定与其他配置保持。导航两页各自按最新远端基线逐字段合并，Amazon专家sysPrompt也与当前后台公开脱敏版全文一致；其他平台、会话demo及旧静态入口保留，本轮档案入口仅一处。
+
+本轮为证据支持的报告展示修订与当前规则更新，未重新运行原会话；原始完整实测响应、活跃/历史消息、工具次数、会话时间、原始业务数字及不可变审计链保持，执行时技能与修订展示各自标注。缺字段仍明确未返回，不编造父体关系或商品图片。
+
+[查看完整档案](amazon-scenes-complete-20261119.html)
+<!-- END amazon-product-identity-loading-and-expert-20261119-v2 -->
