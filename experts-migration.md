@@ -922,3 +922,42 @@ mcp__1688__monitor_shop_list
 - **与 11-16 原报告交叉一致**：商品 4,900,885→4,942,438（同口径连日快照）、单肩月销 152.2万→150.0万、均价 $9.82→$9.71，回落趋势与原报告 GMV -16.1% 一致。
 - **经验入库**：多个 8940 gateway 子路径 openapi 共享 /v1/job/* 端点——同一专家**不得同时绑根 openapi（server:gateway）与子路径 openapi（server:gateway-temu 等）**，job_derive/top-level 同名工具会让上游模型直接拒绝会话。
 - **导航**：场景6 demo 已更新为重跑收口证据（chatUrl→928ceb41），验收报告补"11-19 补充2"节；14/14 全部通过。
+
+
+<!-- BEGIN AMAZON FINAL SYNC 2026-11-19 -->
+
+## 2026-11-19 Amazon最终正文与导航同步
+
+29张卡片使用简短自然用户问法，正文为21场景最终版与8公共技能后台逐字回读值。缺少站点、ASIN或文件时按技能必填项追问，不在卡片内硬编码演示ASIN或未填变量。
+
+19场景采用2026-11-18深度补丁复测台账的最终会话，chatId、chatUrl、chatUrls、linkUrls、docStandard、验收结论与报告说明一致；旧demo保留在evidenceHistory并通过supersededBy指向本轮会话。场景5、21沿用最新远端证据，本轮仅更新短问法与正文。
+
+复测合计：19会话、474次调用；报告体量按原始成稿字符数记录，不等同于纯中文正文长度。
+
+| 场景 | 最终会话 | 本轮处理 |
+|---|---|---|
+| 1·BSR飙升潜力款 | [51db3259-6b11-4950-ae88-34c05d88eec2](https://local.dianleida.net:21996/c/51db3259-6b11-4950-ae88-34c05d88eec2) | 复测通过，保留历史 |
+| 2·FBM小批测款法 | [3eee21f3-00e2-4ca6-85bc-299f653838af](https://local.dianleida.net:21996/c/3eee21f3-00e2-4ca6-85bc-299f653838af) | 复测通过，保留历史 |
+| 3·关键词供需双筛 | [13b72064-b5bf-44ea-9fe5-2cb32486969b](https://local.dianleida.net:21996/c/13b72064-b5bf-44ea-9fe5-2cb32486969b) | 复测通过，保留历史 |
+| 4·Q4旺季备货 | [de3e3ba5-a24e-43cf-ad5c-b5b8c038c418](https://local.dianleida.net:21996/c/de3e3ba5-a24e-43cf-ad5c-b5b8c038c418) | 复测通过，保留历史 |
+| 5·低评论高销量 | [93f7db88-291e-42e7-ba69-7ad182a2eb31](https://local.dianleida.net:21996/c/93f7db88-291e-42e7-ba69-7ad182a2eb31) | 保留远端既有证据 |
+| 6·搜索量上升利基词 | [7b55486c-02b5-416e-ad2f-6f26394db8fb](https://local.dianleida.net:21996/c/7b55486c-02b5-416e-ad2f-6f26394db8fb) | 复测通过，保留历史 |
+| 7·本土溢价市场 | [3124c874-366c-421e-9180-6802a0f1b2c5](https://local.dianleida.net:21996/c/3124c874-366c-421e-9180-6802a0f1b2c5) | 复测通过，保留历史 |
+| 8·节令新品灵感 | [82c65f8d-5649-4f04-9129-3db66d0c808f](https://local.dianleida.net:21996/c/82c65f8d-5649-4f04-9129-3db66d0c808f) | 复测通过，保留历史 |
+| 9·蓝海新品 | [cc5aa798-b55f-4e57-b68c-db1a9c4fc30f](https://local.dianleida.net:21996/c/cc5aa798-b55f-4e57-b68c-db1a9c4fc30f) | 复测通过，保留历史 |
+| 10·跨站点爆款复制 | [32a6555e-3f04-45e4-a452-5200ce22d5a9](https://local.dianleida.net:21996/c/32a6555e-3f04-45e4-a452-5200ce22d5a9) | 复测通过，保留历史 |
+| 11·小类四步法 | [e12318a8-1ac9-4bb9-b527-06681754522a](https://local.dianleida.net:21996/c/e12318a8-1ac9-4bb9-b527-06681754522a) | 复测通过，保留历史 |
+| 12·市场五维判定 | [18295d4b-15ec-438d-b890-2e7a330e1105](https://local.dianleida.net:21996/c/18295d4b-15ec-438d-b890-2e7a330e1105) | 复测通过，保留历史 |
+| 13·筛细分类目 | [4bba63ef-ee14-4eee-93f8-d9fa5eed189b](https://local.dianleida.net:21996/c/4bba63ef-ee14-4eee-93f8-d9fa5eed189b) | 复测通过，保留历史 |
+| 14·1688图搜毛利 | [84a1b52d-8c43-440a-afc6-0a58ba829169](https://local.dianleida.net:21996/c/84a1b52d-8c43-440a-afc6-0a58ba829169) | 复测通过，保留历史 |
+| 15·外网图搜寻源 | [e8b97cb7-07df-478e-930e-984e0a2edc64](https://local.dianleida.net:21996/c/e8b97cb7-07df-478e-930e-984e0a2edc64) | 复测通过，保留历史 |
+| 16·ASIN解析跟款 | [71b7378d-8427-4fdb-b1b9-c31e05eb3247](https://local.dianleida.net:21996/c/71b7378d-8427-4fdb-b1b9-c31e05eb3247) | 复测通过，保留历史 |
+| 17·卖点渗透率 | [3515539d-8510-421c-bd74-e6156da71e85](https://local.dianleida.net:21996/c/3515539d-8510-421c-bd74-e6156da71e85) | 复测通过，保留历史 |
+| 18·Listing诊断 | [c17dda6c-472c-417b-ac5e-c7d4027084b8](https://local.dianleida.net:21996/c/c17dda6c-472c-417b-ac5e-c7d4027084b8) | 复测通过，保留历史 |
+| 19·差评找改进点 | [aa9896b8-1dfb-4f5d-9282-09e042995458](https://local.dianleida.net:21996/c/aa9896b8-1dfb-4f5d-9282-09e042995458) | 复测通过，保留历史 |
+| 20·销量变化归因 | [33012f1a-82ca-461e-b82f-cf0acf3eaae0](https://local.dianleida.net:21996/c/33012f1a-82ca-461e-b82f-cf0acf3eaae0) | 复测通过，保留历史 |
+| 21·SP广告搜索词 | [5eaef406-8853-4b30-9cdd-481463748a02](https://local.dianleida.net:21996/c/5eaef406-8853-4b30-9cdd-481463748a02) | 保留远端既有证据 |
+
+本次仅发布Amazon技能正文、导航、迁移与版本记录，OZON/TEMU导航源块逐字校验不变。
+
+<!-- END AMAZON FINAL SYNC 2026-11-19 -->
