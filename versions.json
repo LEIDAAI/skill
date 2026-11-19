@@ -2744,6 +2744,12 @@
    "target": "hub:report",
    "action": "verify",
    "summary": "13份原报告数据源/工具逐份核对完成（场景6同类问题排查）：接口覆盖无遗漏；场景13 global备用通道与场景5真1688价随mcp:dld补绑后已可用。场景5重跑c869f54f：真1688图搜median价（圣诞¥25.5/波西米亚¥7.15/灯芯绒¥19.5）+关键口径修正（三款实测ware_house_type=1半托非全托，11-18版有偏差，本轮双情景修正）。报告补充节3/4发布。"
+  },
+  {
+   "ts": "2026-11-19 09:58:00 +08:00",
+   "target": "hub:index.html#ozon-scene-*",
+   "action": "fix",
+   "summary": "OZON 9场景中7个（hot-sales-rise/seasonal-stocking/top-seller-beginner/title-traffic-terms/pet-subcategory-compare/search-traffic-ranking/supply-demand-gaps）补齐缺失的 acceptanceDate 字段（取各场景demo实测日期2026-11-18，与场景7取值规则一致），实测弹窗顶部日期标签不再显示为空。数据本身（status/history/demo六套字段）不动。"
   }
  ]
 }
