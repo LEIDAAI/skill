@@ -6099,6 +6099,21 @@
    "target": "hub:index.html#temu-public-skills",
    "action": "fix",
    "summary": "TEMU七公共技能demo标注精简版说明：22条11-16实测会话逐个可达核对通过；note注明2026-11-19提示词已精简（效果抽验会话e772559e'我要连衣裙'），本卡实测为精简前版本执行记录，硬口径与降档未变。"
+  },
+  {
+   "ts": "2026-11-19 11:00",
+   "date": "2026-11-19",
+   "releaseId": "amazon-demo-entry-20261119",
+   "target": "amazon-navigation",
+   "action": "update",
+   "summary": "恢复29张Amazon卡片实测入口，保留工作台；21场景modal对话链接实际渲染校验通过",
+   "files": [
+    "index.html"
+   ],
+   "snapshots": {
+    "demoButton": "Amazon且存在demo时显示data-action=demo",
+    "modalLinkValidation": "21/21 PASS"
+   }
   }
  ]
 }

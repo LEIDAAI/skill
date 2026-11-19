@@ -10305,6 +10305,7 @@ function renderGrid() {
 
 
         '<button class="btn-plain" data-action="workbench">🔍 工作台</button>' +
+        ((s.platforms || []).includes('amazon') && s.demo ? '<button class="btn-plain" data-action="demo">实测</button>' : '') +
 
 
 

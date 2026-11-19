@@ -961,3 +961,12 @@ mcp__1688__monitor_shop_list
 本次仅发布Amazon技能正文、导航、迁移与版本记录，OZON/TEMU导航源块逐字校验不变。
 
 <!-- END AMAZON FINAL SYNC 2026-11-19 -->
+
+
+<!-- BEGIN AMAZON DEMO ENTRY 2026-11-19 -->
+
+## 2026-11-19 Amazon卡片实测入口
+
+29张Amazon有demo的卡片恢复独立“实测”按钮（data-action=demo），保留工作台入口。点击复用现有openExpertDemo，21场景实际modal主链接与各自最终chatUrl一致；场景5、21既有证据不改写。其他平台按钮及所有卡片数据保持不变。
+
+<!-- END AMAZON DEMO ENTRY 2026-11-19 -->
