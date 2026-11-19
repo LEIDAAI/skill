@@ -6093,6 +6093,12 @@
     "youweiAI-amazon-scenes/"
    ],
    "evidence": "https://local.dianleida.net:21996/c/5eaef406-8853-4b30-9cdd-481463748a02"
+  },
+  {
+   "ts": "2026-11-19 10:50:00 +08:00",
+   "target": "hub:index.html#temu-public-skills",
+   "action": "fix",
+   "summary": "TEMU七公共技能demo标注精简版说明：22条11-16实测会话逐个可达核对通过；note注明2026-11-19提示词已精简（效果抽验会话e772559e'我要连衣裙'），本卡实测为精简前版本执行记录，硬口径与降档未变。"
   }
  ]
 }
