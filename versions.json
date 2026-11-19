@@ -2750,6 +2750,12 @@
    "target": "hub:index.html#ozon-scene-*",
    "action": "fix",
    "summary": "OZON 9场景中7个（hot-sales-rise/seasonal-stocking/top-seller-beginner/title-traffic-terms/pet-subcategory-compare/search-traffic-ranking/supply-demand-gaps）补齐缺失的 acceptanceDate 字段（取各场景demo实测日期2026-11-18，与场景7取值规则一致），实测弹窗顶部日期标签不再显示为空。数据本身（status/history/demo六套字段）不动。"
+  },
+  {
+   "ts": "2026-11-19 10:12:00 +08:00",
+   "target": "hub:index.html#tmeu-scene-ftd-profit",
+   "action": "fix",
+   "summary": "场景5导航实测更新：demo改指真1688价重跑会话c869f54f（11-19 09:28），KPI/flow/table/conclusion同步重跑内容（真价核回+半托口径修正+双情景）；chatId替换09e8290a→c869f54f。"
   }
  ]
 }
