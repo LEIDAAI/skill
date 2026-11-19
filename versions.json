@@ -2738,6 +2738,12 @@
    "snapshots": {
     "note": "回滚：场景6技能旧正文见tmp/temu_scenes_20261118/skills_before_simplify.json；导航index.html取63444b39 blob。"
    }
+  },
+  {
+   "ts": "2026-11-19 09:35:00 +08:00",
+   "target": "hub:report",
+   "action": "verify",
+   "summary": "13份原报告数据源/工具逐份核对完成（场景6同类问题排查）：接口覆盖无遗漏；场景13 global备用通道与场景5真1688价随mcp:dld补绑后已可用。场景5重跑c869f54f：真1688图搜median价（圣诞¥25.5/波西米亚¥7.15/灯芯绒¥19.5）+关键口径修正（三款实测ware_house_type=1半托非全托，11-18版有偏差，本轮双情景修正）。报告补充节3/4发布。"
   }
  ]
 }
