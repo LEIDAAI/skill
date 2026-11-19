@@ -2756,6 +2756,12 @@
    "target": "hub:index.html#tmeu-scene-ftd-profit",
    "action": "fix",
    "summary": "场景5导航实测更新：demo改指真1688价重跑会话c869f54f（11-19 09:28），KPI/flow/table/conclusion同步重跑内容（真价核回+半托口径修正+双情景）；chatId替换09e8290a→c869f54f。"
+  },
+  {
+   "ts": "2026-11-19 10:24:00 +08:00",
+   "target": "hub:index.html#ozon-scene-*",
+   "action": "fix",
+   "summary": "OZON 5场景demo.title旧文案修正：hot-sales-rise/seasonal-stocking/title-traffic-terms原来写'未通过'、search-traffic-ranking/supply-demand-gaps写'部分通过'，但各场景kpi与acceptanceStatus均为达标/已通过（11-18重跑后）——title与kpi自相矛盾，统一改为'最新会话原指令判定：达标'（含场景3 top-seller-beginner共6处）。"
   }
  ]
 }
