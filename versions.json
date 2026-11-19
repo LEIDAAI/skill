@@ -7983,6 +7983,30 @@
     },
     "historyPreserved": true
    }
+  },
+  {
+   "releaseId": "amazon-public-archive-privacy-expert-20261119",
+   "date": "2026-11-19",
+   "target": "amazon-public-archive",
+   "action": "update",
+   "summary": "公开档案移除第三方来源标识、内部地址与路径；增加当前真实亚马逊专家提示词独立入口；19场景和8公共业务证据保留。",
+   "files": [
+    "index.html",
+    "ozon-skill-hub.html",
+    "versions.json",
+    "experts-migration.md",
+    "amazon-scenes-complete-20261119.html"
+   ],
+   "evidence": "amazon-scenes-complete-20261119.html",
+   "checks": {
+    "sceneCount": 19,
+    "publicCount": 8,
+    "reports": 27,
+    "reportScriptsChecked": 22,
+    "expertCharacters": 2318,
+    "forbiddenHits": 0,
+    "recordAndAssetChecks": true
+   }
   }
  ]
 }

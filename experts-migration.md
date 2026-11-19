@@ -1049,3 +1049,12 @@ mcp__1688__monitor_shop_list
 
 后台专家amazon-sorftime-selection-assistant只解除youweiai-amazon-scene-fbm-small-batch-test、youweiai-amazon-scene-sp-search-terms两项meta.skillIds绑定，29→27；system、toolIds及其他配置未改。后台技能实体、真实会话、不可变历史证据、历史日志和既有版本记录均保留。
 <!-- END amazon-remove-fbm-sp-scenes-20261119 -->
+
+
+<!-- AMAZON PUBLIC ARCHIVE PRIVACY 2026-11-19 -->
+## 2026-11-19 亚马逊公开档案与专家提示词
+
+- 完整档案仍为19场景（原编号1、3至20）与8公共技能，27份报告及纠错历史保留。
+- 全部公开正文、完整输入、报告、历史、工具阅读别名、复制和下载统一处理第三方来源名称、内部域名与私有路径；后台可执行技能和历史会话未改。
+- 左侧总览下新增“亚马逊专家提示词”，来自当前真实system，展示版全文可复制下载。展示SHA与私有原始审计指纹分别标注。
+- 商品链接、图片和报告业务数字逐项比对；真实完整运行耗时仍未记录。
