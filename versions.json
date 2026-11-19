@@ -8137,6 +8137,59 @@
     "originalChatRerun": false,
     "historicalMessagesAndBusinessNumbersPreserved": true
    }
+  },
+  {
+   "releaseId": "amazon-business-fields-compact-table-csv-20261119-v1",
+   "date": "2026-11-19",
+   "ts": "2026-11-19T22:20:06+08:00",
+   "target": "amazon-report-tables",
+   "action": "update",
+   "summary": "27份报告核对有意义业务字段，相关字段合列减少横滚，所有表格区域提供CSV导出；27技能与专家追加字段、口径、紧凑表格及逐表导出规则，保留原始历史。",
+   "files": [
+    "index.html",
+    "ozon-skill-hub.html",
+    "amazon-scenes-complete-20261119.html",
+    "versions.json",
+    "experts-migration.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-category-trend.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-competitor.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-keyword.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-product-parse.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-profit-calc.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-report-gen.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-selection-search.md",
+    "youweiAI-amazon-scenes/_ref_youweiai-amazon-seller-analysis.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-1688图搜拿货+毛利测算.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-ASIN详情解析·跟款参考.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-BSR飙升潜力款.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-Listing卖点渗透率分析（材质／功能词横向统计）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-Listing诊断.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-从竞品差评找产品改进点.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-关键词选品（供需双筛）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-分析竞品销量为什么变化.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-去年Q4旺季备货参考.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-外网图搜1688货源（反向寻源）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-小类深度调研四步法.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-市场环境五维判定（进不进决策）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-找评论少销量高的商品.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-搜索量上升利基品.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-本土溢价市场（供应链壁垒）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-筛细分类目.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-节令新品灵感（关键词+上架窗口+低评论）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-蓝海新品（低评论高评分）.md",
+    "youweiAI-amazon-scenes/youweiAI-amazon-场景-跨站点爆款复制.md"
+   ],
+   "evidence": "amazon-scenes-complete-20261119.html",
+   "snapshots": {
+    "sceneCount": 19,
+    "publicCount": 8,
+    "skillCount": 27,
+    "reportCount": 27,
+    "ruleSha256": "ca9890efa855fd0d02482aa436e31fe3284239f8f3e4e4c5c8c3fdd7a2182332",
+    "expertSystemSha256": "dc65e0cbbb135d6b99b785f02a10136a1362171b883829d32a47d68415f454e7",
+    "originalChatRerun": false,
+    "historicalMessagesToolsAndAssistantPreserved": true
+   }
   }
  ]
 }
