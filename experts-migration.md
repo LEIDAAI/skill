@@ -1108,3 +1108,12 @@ mcp__1688__monitor_shop_list
 
 [查看完整档案](amazon-scenes-complete-20261119.html)
 <!-- END amazon-business-fields-compact-table-csv-20261119-v1 -->
+
+
+<!-- BEGIN amazon-business-fields-compact-table-csv-20261119-v1-runtime-title-fix -->
+### 表格运行态与完整标题补充核验
+
+已修复合列后原身份增强脚本重复插卡：27报告运行后重复身份行0。98张报告表对应98个导出工具条，106项可见行及DOM排序断言通过。动态Top100由14列合为5个展示列，CSV为100行22个独立字段，标题两段字段按同会话、同站点、同商品ID证据补齐，标题冲突保留待核。原响应、历史消息、业务单元格和原计算脚本保留。
+
+原资料库分享页同步为第6版；本轮为展示修订，未重新执行历史27会话。真实CSV下载和线上逐字回读范围见本轮交付证据。
+<!-- END amazon-business-fields-compact-table-csv-20261119-v1-runtime-title-fix -->

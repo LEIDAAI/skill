@@ -8190,6 +8190,27 @@
     "originalChatRerun": false,
     "historicalMessagesToolsAndAssistantPreserved": true
    }
+  },
+  {
+   "releaseId": "amazon-business-fields-compact-table-csv-20261119-v1-runtime-title-fix",
+   "date": "2026-11-19",
+   "target": "amazon-report-tables",
+   "action": "fix",
+   "summary": "修复合列后商品身份卡重复；按同会话同商品完整标题证据补齐展示与CSV。98表98导出控件、106项筛选排序检查通过；Top100为5展示列、22独立导出字段，原历史与原计算脚本保留。",
+   "files": [
+    "amazon-scenes-complete-20261119.html",
+    "versions.json",
+    "experts-migration.md"
+   ],
+   "evidence": "amazon-scenes-complete-20261119.html",
+   "snapshots": {
+    "reports": 27,
+    "tables": 98,
+    "duplicateIdentityRows": 0,
+    "dynamicProducts": 100,
+    "csvFields": 22,
+    "originalChatRerun": false
+   }
   }
  ]
 }
