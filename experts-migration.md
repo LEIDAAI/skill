@@ -1117,3 +1117,14 @@ mcp__1688__monitor_shop_list
 
 原资料库分享页同步为第6版；本轮为展示修订，未重新执行历史27会话。真实CSV下载和线上逐字回读范围见本轮交付证据。
 <!-- END amazon-business-fields-compact-table-csv-20261119-v1-runtime-title-fix -->
+
+
+<!-- BEGIN amazon-business-fields-compact-table-csv-20261119-v1-xlsx-export -->
+## 2026-11-20 Amazon表格导出改为XLSX
+
+98张报告表均可单独导出当前筛选和排序下的行，文件格式为.xlsx。纯数值单元格写为数字，外部文本转义后写为文本。导出恢复展示中合并的列，保留完整标题、ASIN/PASIN或offerId、主图URL、商品链接及指标口径。
+
+27份技能正文、专家提示词、27份Markdown与两份导航统一采用XLSX导出规则。历史实测记录保留。
+
+27份报告的98份工作簿均通过生成和ZIP校验。Chrome在独立报告页实测下载后独立读取了场景12的Top100明细（100行、22列）和五维判定表（5行、4列）。资料库原分享页已发布第7版，发布态档案数据和脚本与GitHub发布版一致。
+<!-- END amazon-business-fields-compact-table-csv-20261119-v1-xlsx-export -->
