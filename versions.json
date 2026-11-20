@@ -8144,7 +8144,7 @@
    "ts": "2026-11-19T22:20:06+08:00",
    "target": "amazon-report-tables",
    "action": "update",
-   "summary": "27份报告核对有意义业务字段，相关字段合列减少横滚，所有表格区域提供CSV导出；27技能与专家追加字段、口径、紧凑表格及逐表导出规则，保留原始历史。",
+   "summary": "27份报告核对有意义业务字段，相关字段合列减少横滚，所有表格区域提供XLSX导出；27技能与专家追加字段、口径、紧凑表格及逐表导出规则，保留原始历史。",
    "files": [
     "index.html",
     "ozon-skill-hub.html",
@@ -8185,8 +8185,8 @@
     "publicCount": 8,
     "skillCount": 27,
     "reportCount": 27,
-    "ruleSha256": "ca9890efa855fd0d02482aa436e31fe3284239f8f3e4e4c5c8c3fdd7a2182332",
-    "expertSystemSha256": "dc65e0cbbb135d6b99b785f02a10136a1362171b883829d32a47d68415f454e7",
+    "ruleSha256": "814712db3002c5dbacfb645a57066ee389637f65eaeaa324ce0590dcc90fa77b",
+    "expertSystemSha256": "089d064388935bd35ea64ecb609b86d492bc895008ffe009234e88c79f707503",
     "originalChatRerun": false,
     "historicalMessagesToolsAndAssistantPreserved": true
    }
@@ -8209,6 +8209,27 @@
     "duplicateIdentityRows": 0,
     "dynamicProducts": 100,
     "csvFields": 22,
+    "originalChatRerun": false
+   }
+  },
+  {
+   "releaseId": "amazon-business-fields-compact-table-csv-20261119-v1-xlsx-export",
+   "date": "2026-11-20",
+   "target": "amazon-report-tables",
+   "action": "update",
+   "summary": "全部98表导出由CSV改为XLSX：报告内嵌最小OOXML生成器（数值单元格、文本转义与公式注入防护），按钮/提示/规则文本/技能正文/专家system同步为XLSX口径；历史响应与原始数据不变。",
+   "files": [
+    "amazon-scenes-complete-20261119.html",
+    "versions.json",
+    "experts-migration.md"
+   ],
+   "evidence": "amazon-scenes-complete-20261119.html",
+   "snapshots": {
+    "reports": 27,
+    "tables": 98,
+    "format": "xlsx",
+    "moduleVersion": "20261120.1",
+    "openpyxlVerified": true,
     "originalChatRerun": false
    }
   }
