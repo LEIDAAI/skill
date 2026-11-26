@@ -1910,6 +1910,7 @@
 
 
 
+<script src="amazon-skill-navigation.js"></script>
 <script>
 
 
@@ -8322,6 +8323,8 @@ function allSkills() {
 
 
 
+  mergeAmazonNavigation(byId);
+
   sharedSkills.filter(isCurrentAmazonSkill).forEach(s => { if (!(s.platforms || []).includes('amazon') && !(byId.has(s.id) && (byId.get(s.id).platforms || []).includes('amazon'))) byId.set(s.id, Object.assign({}, s, { custom: false, repositorySkill: true })); });
 
 
@@ -8832,7 +8835,7 @@ function renderGrid() {
 
 
 
-    const hay = (s.name + ' ' + (s.desc || '') + ' ' + (s.triggers || []).join(' ') + (s.id.startsWith('skill-amazon-') ? ' youweiAI-amazon' : '')).toLowerCase();
+    const hay = (s.name + ' ' + (s.cardTitle || '') + ' ' + (s.desc || '') + ' ' + (s.triggers || []).join(' ') + (s.id.startsWith('skill-amazon-') ? ' youweiAI-amazon' : '')).toLowerCase();
 
 
 
@@ -8960,6 +8963,7 @@ function renderGrid() {
 
 
 
+      (s.cardTitle ? '<div class="card-sub"><strong>' + esc(s.cardTitle) + '</strong></div>' : '') +
       '<div class="desc">' + esc(s.desc || '') + '</div>' +
 
 
@@ -16931,7 +16935,7 @@ function renderSkillWs() {
 
 
 
-    '<div class="ws-sec">技能简介</div><div class="ws-desc">' + esc(s.desc || '—') + '</div>' +
+    (renderAmazonSkillPresentation(s) || '<div class="ws-sec">技能简介</div><div class="ws-desc">' + esc(s.desc || '—') + '</div>') +
 
 
 
@@ -17075,7 +17079,7 @@ function renderSkillWs() {
 
 
 
-      sceneOptBlock(s);
+      renderAmazonArchiveLinks(s) + sceneOptBlock(s);
 
 
 
@@ -17631,7 +17635,7 @@ function openExpertDemo(expert, which) {
 
 
 
-  document.getElementById('modal-content').innerHTML = demoTabs + kpis + flow + table + note;
+  document.getElementById('modal-content').innerHTML = demoTabs + kpis + flow + table + note + renderAmazonArchiveLinks(expert);
 
 
 
